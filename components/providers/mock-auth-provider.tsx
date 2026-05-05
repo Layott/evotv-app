@@ -59,9 +59,11 @@ export function MockAuthProvider({ children }: MockAuthProviderProps) {
       const followsList = await persist.get<string[]>(FOLLOWS_KEY);
       const onboarded = await persist.get<boolean>(ONBOARD_KEY);
       if (cancelled) return;
-      if (session?.role) {
-        setRole(session.role);
-        setUser(pickProfileByRole(session.role));
+      const hydratedRole: Role = session?.role ?? "user";
+      setRole(hydratedRole);
+      setUser(pickProfileByRole(hydratedRole));
+      if (!session?.role) {
+        void persist.set<PersistedSession>(SESSION_KEY, { role: "user" });
       }
       if (Array.isArray(followsList)) {
         setFollows(new Set(followsList));

@@ -1,5 +1,12 @@
 import { Tabs } from "expo-router";
-import { Compass, Home, ShoppingBag, Trophy } from "lucide-react-native";
+import {
+  Compass,
+  Home,
+  Library,
+  ShoppingBag,
+  Trophy,
+  User,
+} from "lucide-react-native";
 
 export default function PublicLayout() {
   return (
@@ -50,6 +57,20 @@ export default function PublicLayout() {
           tabBarIcon: ({ color, size }) => (
             <ShoppingBag color={color} size={size} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="library-tab/index"
+        options={{
+          title: "Library",
+          tabBarIcon: ({ color, size }) => <Library color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile-tab/index"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
         }}
       />
 

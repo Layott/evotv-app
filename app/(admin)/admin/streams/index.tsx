@@ -1,16 +1,12 @@
-import { ScrollView, Text, View } from "react-native";
 import { Stack } from "expo-router";
+
+import { StreamsManagerPage } from "@/components/admin/streams-manager-page";
 
 export default function AdminStreamsScreen() {
   return (
     <>
       <Stack.Screen options={{ title: "Streams" }} />
-      <ScrollView className="flex-1 bg-background">
-        <View className="px-4 py-6">
-          <Text className="text-2xl font-bold text-brand">Streams</Text>
-          <Text className="mt-4 text-foreground">Coming soon — port from web.</Text>
-        </View>
-      </ScrollView>
+      <StreamsManagerPage />
     </>
   );
 }

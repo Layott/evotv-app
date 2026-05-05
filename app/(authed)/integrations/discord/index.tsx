@@ -1,16 +1,24 @@
-import { ScrollView, Text, View } from "react-native";
-import { Stack } from "expo-router";
+import { BotConfigPage } from "@/components/integrations/bot-config-page";
 
 export default function IntegrationsDiscordScreen() {
   return (
-    <>
-      <Stack.Screen options={{ title: "Discord" }} />
-      <ScrollView className="flex-1 bg-background">
-        <View className="px-4 py-6">
-          <Text className="text-2xl font-bold text-brand">Discord</Text>
-          <Text className="mt-4 text-foreground">Coming soon — port from web.</Text>
-        </View>
-      </ScrollView>
-    </>
+    <BotConfigPage
+      kind="discord"
+      brand={{
+        label: "Discord",
+        containerClass: "bg-indigo-500/15 border border-indigo-500/30",
+        iconLabel: "D",
+        iconColor: "#A5B4FC",
+        helpToken:
+          "Create a bot at discord.com/developers/applications, copy the bot token under the Bot tab.",
+        helpServerLabel: "Server (Guild) ID",
+        helpServerHint:
+          "Discord server IDs are 17-20 digits. Enable Developer Mode to copy yours.",
+        serverLabelTitle: "Server name",
+        placeholderToken:
+          "MTAwMDAwMDAwMDAwMDAwMDAw.YxYxYx.aBcDeFgHiJkLmNoPqRsTuVwXyZ123456",
+        placeholderServer: "1234567890123456789",
+      }}
+    />
   );
 }

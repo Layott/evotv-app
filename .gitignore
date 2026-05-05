@@ -20,3 +20,5 @@ ios/Pods/
 # TypeScript
 *.tsbuildinfo
 expo-env.d.ts
+
+.vercel

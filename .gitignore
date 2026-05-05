@@ -1,0 +1,22 @@
+node_modules/
+.expo/
+dist/
+web-build/
+*.log
+.DS_Store
+.env
+.env.local
+.env.*.local
+
+# Native build outputs
+android/app/build/
+ios/build/
+ios/Pods/
+
+# IDE
+.vscode/
+.idea/
+
+# TypeScript
+*.tsbuildinfo
+expo-env.d.ts

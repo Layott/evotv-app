@@ -1,0 +1,63 @@
+import * as React from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { TopNavbar } from "@/components/home/top-navbar";
+import { HeroCarousel } from "@/components/home/hero-carousel";
+import { LiveNowSection } from "@/components/home/live-now-section";
+import { Recommendations } from "@/components/home/recommendations";
+import { TrendingClipsSection } from "@/components/home/trending-clips-section";
+import { UpcomingEventsSection } from "@/components/home/upcoming-events-section";
+import { AdBanner } from "@/components/home/ad-banner";
+import { listFeaturedStreams, listLiveStreams } from "@/lib/mock/streams";
+import { listVods, listTrendingClips } from "@/lib/mock/vods";
+import { listEvents } from "@/lib/mock/events";
+import { games } from "@/lib/mock/games";
+
+export default function HomeScreen() {
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const featured = useQuery({ queryKey: ["home", "featured"], queryFn: () => listFeaturedStreams() });
+  const live = useQuery({ queryKey: ["home", "live"], queryFn: () => listLiveStreams() });
+  const events = useQuery({ queryKey: ["home", "events"], queryFn: () => listEvents({ status: "scheduled" }) });
+  const clips = useQuery({ queryKey: ["home", "clips"], queryFn: () => listTrendingClips() });
+  const vods = useQuery({ queryKey: ["home", "vods"], queryFn: () => listVods({ limit: 12 }) });
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await queryClient.invalidateQueries({ queryKey: ["home"] });
+    } finally {
+      setRefreshing(false);
+    }
+  }, [queryClient]);
+
+  return (
+    <View className="flex-1 bg-background">
+      <TopNavbar />
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="pb-8"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#2CD7E3"
+            colors={["#2CD7E3"]}
+            progressBackgroundColor="#0A0A0A"
+          />
+        }
+      >
+        <View className="gap-6">
+          <HeroCarousel streams={featured.data ?? []} />
+          <LiveNowSection streams={live.data ?? []} games={games} loading={live.isLoading} />
+          <AdBanner />
+          <UpcomingEventsSection events={events.data ?? []} games={games} loading={events.isLoading} />
+          <TrendingClipsSection clips={clips.data ?? []} loading={clips.isLoading} />
+          <Recommendations vods={vods.data ?? []} games={games} loading={vods.isLoading} />
+        </View>
+      </ScrollView>
+    </View>
+  );
+}

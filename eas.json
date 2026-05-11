@@ -1,0 +1,41 @@
+{
+  "cli": {
+    "version": ">= 7.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "http://localhost:3060",
+        "EXPO_PUBLIC_PAYMENT_PROVIDER": "paystack"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "ios": {
+        "simulator": false
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://evo-tv.vercel.app",
+        "EXPO_PUBLIC_PAYMENT_PROVIDER": "paystack"
+      }
+    },
+    "production": {
+      "channel": "production",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://evo-tv.vercel.app",
+        "EXPO_PUBLIC_PAYMENT_PROVIDER": "paystack"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

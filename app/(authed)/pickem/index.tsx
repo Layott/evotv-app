@@ -10,8 +10,8 @@ import {
   Trophy,
 } from "lucide-react-native";
 
-import { listEvents } from "@/lib/mock/events";
-import { listGames } from "@/lib/mock/games";
+import { listEvents } from "@/lib/api/events";
+import { listGames } from "@/lib/api/games";
 import { listMyEntries } from "@/lib/mock/pickem";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";

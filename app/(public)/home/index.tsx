@@ -10,9 +10,9 @@ import { TrendingClipsSection } from "@/components/home/trending-clips-section";
 import { UpcomingEventsSection } from "@/components/home/upcoming-events-section";
 import { AdBanner } from "@/components/home/ad-banner";
 import { QuickAccess } from "@/components/home/quick-access";
-import { listFeaturedStreams, listLiveStreams } from "@/lib/mock/streams";
-import { listVods, listTrendingClips } from "@/lib/mock/vods";
-import { listEvents } from "@/lib/mock/events";
+import { listFeaturedStreams, listLiveStreams } from "@/lib/api/streams";
+import { listVods, listTrendingClips } from "@/lib/api/vods";
+import { listEvents } from "@/lib/api/events";
 import { games } from "@/lib/mock/games";
 
 export default function HomeScreen() {

@@ -12,11 +12,11 @@ import { Button } from "@/components/ui/button";
 import {
   getEventById,
   listMatchesForEvent,
-} from "@/lib/mock/events";
-import { getGameById } from "@/lib/mock/games";
-import { getTeamById } from "@/lib/mock/teams";
-import { listPlayers } from "@/lib/mock/players";
-import { listLiveStreams } from "@/lib/mock/streams";
+} from "@/lib/api/events";
+import { getGameById } from "@/lib/api/games";
+import { getTeamById } from "@/lib/api/teams";
+import { listPlayers } from "@/lib/api/players";
+import { listLiveStreams } from "@/lib/api/streams";
 import { syncGet, syncSet } from "@/lib/storage/persist";
 import type { Team } from "@/lib/types";
 

@@ -7,8 +7,8 @@ import { ArrowLeft } from "lucide-react-native";
 import { BracketView } from "@/components/events/bracket-view";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { getEventById, listMatchesForEvent } from "@/lib/mock/events";
-import { listTeams } from "@/lib/mock/teams";
+import { getEventById, listMatchesForEvent } from "@/lib/api/events";
+import { listTeams } from "@/lib/api/teams";
 import type { Team } from "@/lib/types";
 
 export default function EventBracketScreen() {

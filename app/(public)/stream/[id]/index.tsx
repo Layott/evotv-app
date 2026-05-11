@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Eye, MessageSquare, Info } from "lucide-react-native";
 import { format } from "date-fns";
 
-import { getStreamById } from "@/lib/mock/streams";
+import { getStreamById } from "@/lib/api/streams";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

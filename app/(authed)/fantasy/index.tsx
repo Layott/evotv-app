@@ -10,7 +10,7 @@ import {
   scoringLabel,
   type FantasyLeague,
 } from "@/lib/mock/fantasy";
-import { listGames } from "@/lib/mock/games";
+import { listGames } from "@/lib/api/games";
 import { eventBanner } from "@/lib/mock/_media";
 import { useMockAuth } from "@/components/providers";
 import {

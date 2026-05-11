@@ -6,7 +6,7 @@ import { toast } from "sonner-native";
 import { Sparkles } from "lucide-react-native";
 
 import { createLeague, scoringLabel, type ScoringSystem } from "@/lib/mock/fantasy";
-import { listGames } from "@/lib/mock/games";
+import { listGames } from "@/lib/api/games";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

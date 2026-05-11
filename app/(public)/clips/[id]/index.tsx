@@ -18,7 +18,7 @@ import {
   VolumeX,
 } from "lucide-react-native";
 
-import { getClipById, listTrendingClips } from "@/lib/mock/vods";
+import { getClipById, listTrendingClips } from "@/lib/api/vods";
 import type { Clip } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

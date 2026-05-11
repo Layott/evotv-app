@@ -17,10 +17,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useMockAuth } from "@/components/providers";
-import { getTeamBySlug } from "@/lib/mock/teams";
-import { getGameById } from "@/lib/mock/games";
-import { listPlayers } from "@/lib/mock/players";
-import { listEvents, listMatchesForEvent } from "@/lib/mock/events";
+import { getTeamBySlug } from "@/lib/api/teams";
+import { getGameById } from "@/lib/api/games";
+import { listPlayers } from "@/lib/api/players";
+import { listEvents, listMatchesForEvent } from "@/lib/api/events";
 import type { Match } from "@/lib/types";
 
 function formatFollowers(n: number): string {

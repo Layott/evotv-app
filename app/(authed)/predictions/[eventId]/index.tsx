@@ -14,9 +14,9 @@ import {
   submitPrediction,
   type Prediction,
 } from "@/lib/mock/predictions";
-import { getEventById, listMatchesForEvent } from "@/lib/mock/events";
-import { listTeams } from "@/lib/mock/teams";
-import { listGames } from "@/lib/mock/games";
+import { getEventById, listMatchesForEvent } from "@/lib/api/events";
+import { listTeams } from "@/lib/api/teams";
+import { listGames } from "@/lib/api/games";
 import type { Match, Team } from "@/lib/types";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";

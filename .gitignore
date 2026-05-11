@@ -22,3 +22,11 @@ ios/Pods/
 expo-env.d.ts
 
 .vercel
+
+# Claude local + transient
+.claude/settings.local.json
+.claude/audit/
+.claude/scheduled_tasks.lock
+
+# graphify outputs (regenerable knowledge graph)
+graphify-out/

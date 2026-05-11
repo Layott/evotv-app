@@ -15,12 +15,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { getGameBySlug } from "@/lib/mock/games";
-import { listLiveStreams } from "@/lib/mock/streams";
-import { listEvents } from "@/lib/mock/events";
-import { listTeams } from "@/lib/mock/teams";
-import { listPlayers } from "@/lib/mock/players";
-import { listVods } from "@/lib/mock/vods";
+import { getGameBySlug } from "@/lib/api/games";
+import { listLiveStreams } from "@/lib/api/streams";
+import { listEvents } from "@/lib/api/events";
+import { listTeams } from "@/lib/api/teams";
+import { listPlayers } from "@/lib/api/players";
+import { listVods } from "@/lib/api/vods";
 
 function formatViewers(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;

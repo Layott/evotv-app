@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Crown } from "lucide-react-native";
 
 import { listLeagueLeaderboardForEvent } from "@/lib/mock/pickem";
-import { getEventById } from "@/lib/mock/events";
+import { getEventById } from "@/lib/api/events";
 import { useMockAuth } from "@/components/providers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";

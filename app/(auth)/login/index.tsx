@@ -50,12 +50,14 @@ export default function LoginScreen() {
   const onSubmit = async (values: LoginValues) => {
     setSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      signIn("user");
+      await signIn(values.email, values.password);
       toast.success("Welcome back to EVO TV", {
         description: `Signed in as ${values.email}`,
       });
       router.replace("/(public)/home");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Sign-in failed";
+      toast.error("Couldn't sign in", { description: msg });
     } finally {
       setSubmitting(false);
     }

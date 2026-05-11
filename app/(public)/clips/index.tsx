@@ -5,7 +5,7 @@ import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { Flame, Heart, Play } from "lucide-react-native";
 
-import { listTrendingClips } from "@/lib/mock/vods";
+import { listTrendingClips } from "@/lib/api/vods";
 import type { Clip } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";

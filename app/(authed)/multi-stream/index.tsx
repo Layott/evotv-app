@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react-native";
 
-import { listLiveStreams } from "@/lib/mock/streams";
+import { listLiveStreams } from "@/lib/api/streams";
 import type { Stream } from "@/lib/types";
 import { HlsPlayer } from "@/components/stream/hls-player";
 import { Button } from "@/components/ui/button";

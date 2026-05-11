@@ -14,9 +14,9 @@ import {
   type BracketMatch,
   type BracketPick,
 } from "@/lib/mock/pickem";
-import { getEventById } from "@/lib/mock/events";
-import { listGames } from "@/lib/mock/games";
-import { listTeams } from "@/lib/mock/teams";
+import { getEventById } from "@/lib/api/events";
+import { listGames } from "@/lib/api/games";
+import { listTeams } from "@/lib/api/teams";
 import type { Team } from "@/lib/types";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";

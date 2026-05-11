@@ -14,7 +14,7 @@ import {
   Users,
 } from "lucide-react-native";
 
-import { getStreamById } from "@/lib/mock/streams";
+import { getStreamById } from "@/lib/api/streams";
 import {
   listCoStreamTracks,
   type CoStreamTrack,

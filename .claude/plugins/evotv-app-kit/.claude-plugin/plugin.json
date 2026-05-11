@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin.json",
+  "name": "evotv-app-kit",
+  "version": "0.1.0",
+  "description": "EVO TV native app — bundled skills, subagents, and hooks for Expo Router 4 + NativeWind + mock-data scaffolding.",
+  "author": {
+    "name": "EVO TV",
+    "url": "https://evotv.vercel.app"
+  },
+  "skills": [
+    "../../skills/mock-feature-add",
+    "../../skills/route-register",
+    "../../skills/platform-split",
+    "../../skills/expo-screen-scaffold",
+    "../../skills/phase1a-swap"
+  ],
+  "agents": [
+    "../../agents/code-reviewer.md",
+    "../../agents/test-runner.md",
+    "../../agents/explorer.md",
+    "../../agents/feature-dev.md"
+  ],
+  "hooks": [
+    "../../hooks/SessionStart.sh",
+    "../../hooks/PreToolUse.sh",
+    "../../hooks/PostToolUse.sh",
+    "../../hooks/SubagentStop.sh"
+  ],
+  "commands": []
+}

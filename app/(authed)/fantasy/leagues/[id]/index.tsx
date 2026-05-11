@@ -24,7 +24,7 @@ import {
   scoringLabel,
   type FantasyActivityItem,
 } from "@/lib/mock/fantasy";
-import { listGames } from "@/lib/mock/games";
+import { listGames } from "@/lib/api/games";
 import { eventBanner } from "@/lib/mock/_media";
 import { useMockAuth } from "@/components/providers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

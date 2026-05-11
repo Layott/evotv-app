@@ -11,7 +11,7 @@ import {
   type WatchPartyLanguage,
   type WatchPartyVisibility,
 } from "@/lib/mock/watch-parties";
-import { listLiveStreams } from "@/lib/mock/streams";
+import { listLiveStreams } from "@/lib/api/streams";
 import type { Stream } from "@/lib/types";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";

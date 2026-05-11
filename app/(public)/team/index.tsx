@@ -6,8 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Trophy, Users } from "lucide-react-native";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { listGames } from "@/lib/mock/games";
-import { listTeams } from "@/lib/mock/teams";
+import { listGames } from "@/lib/api/games";
+import { listTeams } from "@/lib/api/teams";
 import type { Team } from "@/lib/types";
 
 function formatFollowers(n: number): string {

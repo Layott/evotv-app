@@ -7,12 +7,12 @@ import { Clock, Eye, Search, UserRound, Users, X } from "lucide-react-native";
 
 import { TopNavbar } from "@/components/home/top-navbar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { listGames } from "@/lib/mock/games";
-import { listLiveStreams } from "@/lib/mock/streams";
-import { listVods } from "@/lib/mock/vods";
-import { listTeams } from "@/lib/mock/teams";
-import { listPlayers } from "@/lib/mock/players";
-import { globalSearch, searchSuggestions } from "@/lib/mock/search";
+import { listGames } from "@/lib/api/games";
+import { listLiveStreams } from "@/lib/api/streams";
+import { listVods } from "@/lib/api/vods";
+import { listTeams } from "@/lib/api/teams";
+import { listPlayers } from "@/lib/api/players";
+import { globalSearch, searchSuggestions } from "@/lib/api/search";
 
 type ContentType = "all" | "streams" | "vods" | "teams" | "players";
 

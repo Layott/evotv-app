@@ -16,7 +16,7 @@ import {
   ThumbsUp,
 } from "lucide-react-native";
 
-import { getVodById, listRelatedVods } from "@/lib/mock/vods";
+import { getVodById, listRelatedVods } from "@/lib/api/vods";
 import type { Vod } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

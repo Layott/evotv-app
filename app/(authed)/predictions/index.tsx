@@ -11,7 +11,7 @@ import {
   listOpenPredictionEvents,
   type PredictionEventSummary,
 } from "@/lib/mock/predictions";
-import { listGames } from "@/lib/mock/games";
+import { listGames } from "@/lib/api/games";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";

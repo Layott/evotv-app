@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Users } from "lucide-react-native";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { listGames } from "@/lib/mock/games";
+import { listGames } from "@/lib/api/games";
 
 function formatPlayers(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;

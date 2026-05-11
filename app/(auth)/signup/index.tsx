@@ -56,7 +56,7 @@ type SignupValues = z.infer<typeof signupSchema>;
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { login } = useMockAuth();
+  const { signUp } = useMockAuth();
   const [submitting, setSubmitting] = React.useState(false);
 
   const {
@@ -81,15 +81,22 @@ export default function SignupScreen() {
   const country = watch("country");
   const acceptTerms = watch("acceptTerms");
 
-  const onSubmit = async (_values: SignupValues) => {
+  const onSubmit = async (values: SignupValues) => {
     setSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      login("user");
-      toast.success("Account created", {
-        description: "Check your email for the verification code.",
+      await signUp({
+        email: values.email,
+        password: values.password,
+        name: values.handle,
+        handle: values.handle,
       });
-      router.replace("/(auth)/verify-email");
+      toast.success("Account created", {
+        description: "Welcome to EVO TV.",
+      });
+      router.replace("/(auth)/onboarding");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Sign-up failed";
+      toast.error("Couldn't create account", { description: msg });
     } finally {
       setSubmitting(false);
     }

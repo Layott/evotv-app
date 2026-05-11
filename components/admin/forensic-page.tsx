@@ -18,7 +18,7 @@ import {
   type ForensicAction,
   type ForensicMark,
 } from "@/lib/mock/forensic";
-import { listLiveStreams } from "@/lib/mock/streams";
+import { listLiveStreams } from "@/lib/api/streams";
 import type { Stream } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";

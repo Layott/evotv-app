@@ -8,9 +8,9 @@ import { Clock, Eye, Heart, Info, Radio } from "lucide-react-native";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { getMainChannel, listLiveStreams } from "@/lib/mock/streams";
-import { listTrendingClips } from "@/lib/mock/vods";
-import { listEvents } from "@/lib/mock/events";
+import { getMainChannel, listLiveStreams } from "@/lib/api/streams";
+import { listTrendingClips } from "@/lib/api/vods";
+import { listEvents } from "@/lib/api/events";
 
 function fmtViewers(n: number) {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;

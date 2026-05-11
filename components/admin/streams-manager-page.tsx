@@ -12,8 +12,10 @@ import { Copy, Key, Plus, RefreshCw, Search, Trash2, X } from "lucide-react-nati
 import { toast } from "sonner-native";
 import { useQuery } from "@tanstack/react-query";
 
-import { listLiveStreams, streams as streamsSource } from "@/lib/mock/streams";
-import { listGames, games as gamesSource } from "@/lib/mock/games";
+import { listLiveStreams } from "@/lib/api/streams";
+import { streams as streamsSource } from "@/lib/mock/streams";
+import { listGames } from "@/lib/api/games";
+import { games as gamesSource } from "@/lib/mock/games";
 import { events as eventsSource } from "@/lib/mock/events";
 import type { Stream } from "@/lib/types";
 

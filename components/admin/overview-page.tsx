@@ -12,7 +12,7 @@ import {
   Users,
 } from "lucide-react-native";
 
-import { listLiveStreams } from "@/lib/mock/streams";
+import { listLiveStreams } from "@/lib/api/streams";
 import { profiles } from "@/lib/mock/users";
 
 import { MetricCard } from "./metric-card";

@@ -40,7 +40,7 @@ import {
   type CalendarMatch,
   type CalendarTier,
 } from "@/lib/mock/calendar";
-import { listGames } from "@/lib/mock/games";
+import { listGames } from "@/lib/api/games";
 import { userPrefs } from "@/lib/mock/users";
 import type { Game } from "@/lib/types";
 import { cn } from "@/lib/utils";

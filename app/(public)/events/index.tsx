@@ -7,8 +7,8 @@ import { Calendar, MapPin, Trophy } from "lucide-react-native";
 
 import { TopNavbar } from "@/components/home/top-navbar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { listEvents } from "@/lib/mock/events";
-import { listGames } from "@/lib/mock/games";
+import { listEvents } from "@/lib/api/events";
+import { listGames } from "@/lib/api/games";
 import type { EsportsEvent, EventTier } from "@/lib/types";
 
 type SortKey = "soonest" | "prize";

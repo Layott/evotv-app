@@ -8,6 +8,9 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Providers } from "@/components/providers";
 import { SplashGate } from "@/components/providers/splash-gate";
+import { initSentry } from "@/sentry.config";
+
+initSentry();
 
 export default function RootLayout() {
   return (

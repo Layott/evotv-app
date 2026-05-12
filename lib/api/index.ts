@@ -39,10 +39,14 @@ export * from "./push";
 export * from "./vod-progress";
 export * from "./rewards";
 
+// `tips` is intentionally NOT re-exported here (collision: getCoinBalance
+// also exists on predictions). Import directly:
+//   import { sendTip, getCoinBalance as getWalletBalance } from "@/lib/api/tips";
+
 // Modules to mirror as backend routes land:
 //   - admin, chat, users
-//   - predictions / tips / lite-mode — collision, import directly with rename
-//   - feature-specific: pickem, fantasy, rewards, creators, payment-methods,
+//   - predictions / lite-mode — collision, import directly with rename
+//   - feature-specific: pickem, fantasy, creators, payment-methods,
 //     ussd, downloads, apps, cast, embed, bots, sso, captions, ai-commentary,
 //     commentary-tracks, forensic, api-keys, calendar, auto-clips, partners,
 //     watch-parties

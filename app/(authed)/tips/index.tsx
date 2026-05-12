@@ -13,7 +13,7 @@ import {
   topTippers,
   type Tip,
   type TopTipper,
-} from "@/lib/mock/tips";
+} from "@/lib/api/tips";
 import { useMockAuth } from "@/components/providers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {

@@ -4,8 +4,8 @@ import { Mail, Palette, Save, ToggleLeft } from "lucide-react-native";
 import { toast } from "sonner-native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { listFlags, setFlag } from "@/lib/mock/flags";
-import { saveEmailTemplate } from "@/lib/mock/admin";
+import { listFlags, setFlag } from "@/lib/api/flags";
+import { saveEmailTemplate } from "@/lib/api/admin";
 import type { FeatureFlag } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";

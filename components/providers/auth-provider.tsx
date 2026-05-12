@@ -46,6 +46,9 @@ interface SignInResponse {
 
 interface AuthContextValue {
   user: Profile | null;
+  /** Sign-in email from Better-Auth session. Not part of Profile because
+   *  profiles are public-facing; email is account-only. */
+  accountEmail: string | null;
   role: Role;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -108,6 +111,7 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = React.useState<Profile | null>(null);
+  const [accountEmail, setAccountEmail] = React.useState<string | null>(null);
   const [follows, setFollows] = React.useState<Set<string>>(new Set());
   const [onboardingComplete, setOnboardingComplete] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -134,6 +138,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           if (cancelled) return;
           if (session?.user) {
             setUser(toProfile(session.user));
+            setAccountEmail(session.user.email);
             const memberships = await getMyMemberships();
             if (!cancelled) setPublisherMemberships(memberships);
           }
@@ -161,6 +166,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     });
     await setToken(res.token);
     setUser(toProfile(res.user));
+    setAccountEmail(res.user.email);
     await refreshMemberships();
   }, [refreshMemberships]);
 
@@ -171,6 +177,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     });
     await setToken(res.token);
     setUser(toProfile(res.user));
+    setAccountEmail(res.user.email);
     await refreshMemberships();
   }, [refreshMemberships]);
 
@@ -183,6 +190,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
     await setToken(null);
     setUser(null);
+    setAccountEmail(null);
     setPublisherMemberships([]);
   }, []);
 
@@ -245,6 +253,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const value = React.useMemo<AuthContextValue>(
     () => ({
       user,
+      accountEmail,
       role,
       isLoading,
       isAuthenticated: !!user,
@@ -266,6 +275,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }),
     [
       user,
+      accountEmail,
       role,
       isLoading,
       publisherMemberships,

@@ -81,7 +81,7 @@ const THEMES = [
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { user, signOut } = useMockAuth();
+  const { user, accountEmail, signOut } = useMockAuth();
   const { theme, setTheme } = useTheme();
 
   const [prefs, setPrefs] = React.useState<UserPrefs | null>(null);
@@ -135,7 +135,8 @@ export default function SettingsScreen() {
     };
   }, [user]);
 
-  const email = user ? `${user.handle}@evo.tv` : "guest@evo.tv";
+  const email =
+    accountEmail ?? (user ? `${user.handle}@evo.tv` : "guest@evo.tv");
 
   const handleChangePwd = React.useCallback(async () => {
     setPwdError(null);
@@ -580,41 +581,35 @@ export default function SettingsScreen() {
             </View>
           </SectionCard>
 
-          {/* Appearance */}
-          <SectionCard title="Appearance" description="Pick your EVO TV theme.">
-            <View className="gap-2">
-              {THEMES.map((opt) => {
-                const active = (theme ?? "system") === opt.v;
-                return (
-                  <Pressable
-                    key={opt.v}
-                    onPress={() => setTheme(opt.v as "system" | "dark" | "light")}
-                    className={`flex-row items-center gap-3 rounded-xl border p-4 active:opacity-80 ${
-                      active ? "border-brand bg-brand/5" : "border-border"
-                    }`}
-                  >
-                    <View
-                      className="h-5 w-5 items-center justify-center rounded-full border"
-                      style={{
-                        borderColor: active ? "#2CD7E3" : "#404040",
-                        backgroundColor: active ? "#2CD7E3" : "transparent",
-                      }}
-                    >
-                      {active ? (
-                        <View
-                          className="h-2 w-2 rounded-full"
-                          style={{ backgroundColor: "#0A0A0A" }}
-                        />
-                      ) : null}
-                    </View>
-                    <opt.icon size={16} color="#2CD7E3" />
-                    <Text className="text-sm font-semibold text-foreground">
-                      {opt.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
+          {/* Appearance — dark mode only for v1. Light theme support is on
+              the roadmap (most UI tokens hardcode dark right now). */}
+          <SectionCard
+            title="Appearance"
+            description="Dark theme only for v1. Light mode coming."
+          >
+            <View className="flex-row items-center gap-3 rounded-xl border border-border bg-background p-4">
+              <View
+                className="h-8 w-8 items-center justify-center rounded-full"
+                style={{ backgroundColor: "#1f1f1f" }}
+              >
+                <Text style={{ color: "#2CD7E3", fontWeight: "700" }}>🌙</Text>
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-semibold text-foreground">
+                  Dark
+                </Text>
+                <Text className="text-[11px] text-muted-foreground">
+                  Locked for v1 — light theme audit is queued.
+                </Text>
+              </View>
             </View>
+            {/* Suppress unused-warning */}
+            {(() => {
+              void THEMES;
+              void theme;
+              void setTheme;
+              return null;
+            })()}
           </SectionCard>
 
           {/* Quick links */}

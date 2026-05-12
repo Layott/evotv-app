@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useMockAuth } from "@/components/providers";
-import { getActiveSubscription } from "@/lib/mock";
+import { getActiveSubscription } from "@/lib/api";
 import { formatNgn } from "@/components/profile/ngn";
 import type { Subscription } from "@/lib/types";
 

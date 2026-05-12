@@ -65,12 +65,6 @@ export default function PublicLayout() {
           title: "Library",
           tabBarIcon: ({ color, size }) => <Library color={color} size={size} />,
         }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            e.preventDefault();
-            navigation.navigate("library" as never);
-          },
-        })}
       />
       <Tabs.Screen
         name="profile-tab/index"
@@ -78,12 +72,6 @@ export default function PublicLayout() {
           title: "Profile",
           tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
         }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            e.preventDefault();
-            navigation.navigate("profile" as never);
-          },
-        })}
       />
 
       {/* Hidden public routes — exist as routes, not in tab bar */}

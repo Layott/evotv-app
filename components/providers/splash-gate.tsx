@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as SplashScreen from "expo-splash-screen";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 import { useGeistFonts } from "./font-loader";
 import { useAuth } from "./auth-provider";
@@ -25,5 +26,12 @@ export function SplashGate({ children }: SplashGateProps) {
   }, [ready]);
 
   if (!ready) return null;
-  return <>{children}</>;
+  return (
+    <Animated.View
+      entering={FadeIn.duration(380)}
+      style={{ flex: 1, backgroundColor: "#0A0A0A" }}
+    >
+      {children}
+    </Animated.View>
+  );
 }

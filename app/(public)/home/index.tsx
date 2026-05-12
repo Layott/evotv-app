@@ -1,5 +1,6 @@
 import * as React from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { TopNavbar } from "@/components/home/top-navbar";
@@ -14,6 +15,11 @@ import { listFeaturedStreams, listLiveStreams } from "@/lib/api/streams";
 import { listVods, listTrendingClips } from "@/lib/api/vods";
 import { listEvents } from "@/lib/api/events";
 import { listGames } from "@/lib/api/games";
+
+const SECTION_DURATION = 420;
+const SECTION_STEP = 90;
+const section = (idx: number) =>
+  FadeInDown.duration(SECTION_DURATION).delay(idx * SECTION_STEP);
 
 export default function HomeScreen() {
   const queryClient = useQueryClient();
@@ -53,13 +59,27 @@ export default function HomeScreen() {
         }
       >
         <View className="gap-6">
-          <HeroCarousel streams={featured.data ?? []} />
-          <QuickAccess />
-          <LiveNowSection streams={live.data ?? []} games={games} loading={live.isLoading} />
-          <AdBanner />
-          <UpcomingEventsSection events={events.data ?? []} games={games} loading={events.isLoading} />
-          <TrendingClipsSection clips={clips.data ?? []} loading={clips.isLoading} />
-          <Recommendations vods={vods.data ?? []} games={games} loading={vods.isLoading} />
+          <Animated.View entering={section(0)}>
+            <HeroCarousel streams={featured.data ?? []} />
+          </Animated.View>
+          <Animated.View entering={section(1)}>
+            <QuickAccess />
+          </Animated.View>
+          <Animated.View entering={section(2)}>
+            <LiveNowSection streams={live.data ?? []} games={games} loading={live.isLoading} />
+          </Animated.View>
+          <Animated.View entering={section(3)}>
+            <AdBanner />
+          </Animated.View>
+          <Animated.View entering={section(4)}>
+            <UpcomingEventsSection events={events.data ?? []} games={games} loading={events.isLoading} />
+          </Animated.View>
+          <Animated.View entering={section(5)}>
+            <TrendingClipsSection clips={clips.data ?? []} loading={clips.isLoading} />
+          </Animated.View>
+          <Animated.View entering={section(6)}>
+            <Recommendations vods={vods.data ?? []} games={games} loading={vods.isLoading} />
+          </Animated.View>
         </View>
       </ScrollView>
     </View>

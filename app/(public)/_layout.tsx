@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import {
   Compass,
   Home,
@@ -9,6 +9,7 @@ import {
 } from "lucide-react-native";
 
 export default function PublicLayout() {
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={{
@@ -65,12 +66,24 @@ export default function PublicLayout() {
           title: "Library",
           tabBarIcon: ({ color, size }) => <Library color={color} size={size} />,
         }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/library" as never);
+          },
+        }}
       />
       <Tabs.Screen
         name="profile-tab/index"
         options={{
           title: "Profile",
           tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
+        }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/profile" as never);
+          },
         }}
       />
 

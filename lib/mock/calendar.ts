@@ -215,20 +215,41 @@ export function buildIcsFile(matches: CalendarMatch[]): string {
 }
 
 /**
- * Web parity: the web build dropped a Blob via `URL.createObjectURL`.
- * RN has no Blob/URL/<a> — callers should hand the returned string to
- * expo-file-system + expo-sharing instead. This shim is a no-op so existing
- * call-sites compile; pages will get a runtime warning if they hit it.
+ * Cross-platform .ics download. On web: Blob + <a> download. On native:
+ * write to expo-file-system cache then surface via expo-sharing's share sheet
+ * (the system picker lets the user save to Files, Drive, mail it, etc.).
  */
-export function downloadIcs(filename: string, ics: string) {
-  // Intentional no-op in RN. Use expo-file-system to write `ics` and
-  // expo-sharing to surface it to the user.
-  void filename;
-  void ics;
-  if (typeof console !== "undefined") {
-    console.warn(
-      "[mock/calendar] downloadIcs() is a no-op in React Native — pipe the .ics string into expo-file-system + expo-sharing instead.",
-    );
+export async function downloadIcs(filename: string, ics: string): Promise<void> {
+  const safe = filename.endsWith(".ics") ? filename : `${filename}.ics`;
+
+  if (typeof window !== "undefined" && typeof Blob !== "undefined") {
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = safe;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    return;
+  }
+
+  // Native — require at call time so web bundle never resolves expo-sharing.
+  /* eslint-disable @typescript-eslint/no-require-imports */
+  const FileSystem = require("expo-file-system") as typeof import("expo-file-system");
+  const Sharing = require("expo-sharing") as typeof import("expo-sharing");
+  /* eslint-enable @typescript-eslint/no-require-imports */
+  const uri = `${FileSystem.cacheDirectory ?? FileSystem.documentDirectory}${safe}`;
+  await FileSystem.writeAsStringAsync(uri, ics, {
+    encoding: FileSystem.EncodingType.UTF8,
+  });
+  if (await Sharing.isAvailableAsync()) {
+    await Sharing.shareAsync(uri, {
+      mimeType: "text/calendar",
+      dialogTitle: "Save EVO TV calendar",
+      UTI: "com.apple.ical.ics",
+    });
   }
 }
 

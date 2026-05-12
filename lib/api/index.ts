@@ -23,7 +23,13 @@ export * from "./notifications";
 export * from "./follows";
 export * from "./products";
 export * from "./orders";
-export * from "./subs";
+export {
+  listTiers,
+  getActiveSubscription,
+  cancelSubscription,
+  type TierId,
+  type Tier as SubscriptionTier,
+} from "./subs";
 export * from "./payments";
 export * from "./likes";
 export * from "./recommendations";
@@ -31,6 +37,7 @@ export * from "./feed";
 export * from "./ads";
 export * from "./push";
 export * from "./vod-progress";
+export * from "./rewards";
 
 // Modules to mirror as backend routes land:
 //   - admin, chat, users

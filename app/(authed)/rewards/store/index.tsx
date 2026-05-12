@@ -11,7 +11,8 @@ import {
   type Drop,
   type DropKind,
   type XpTierInfo,
-} from "@/lib/mock/rewards";
+} from "@/lib/api/rewards";
+import { ApiError } from "@/lib/api/_client";
 import { useMockAuth } from "@/components/providers";
 import {
   Dialog,
@@ -113,25 +114,31 @@ export default function RewardsStoreScreen() {
   async function performRedeem() {
     if (!user || !pendingDrop) return;
     setRedeeming(true);
-    const result = await redeemDrop(pendingDrop.id, user.id);
-    if (!result.success || !result.redemption) {
-      toast.error(result.reason ?? "Redemption failed");
-      setRedeeming(false);
-      return;
-    }
     const redeemed = pendingDrop;
-    setDrops((prev) =>
-      prev.map((d) =>
-        d.id === redeemed.id ? { ...d, stock: Math.max(0, d.stock - 1) } : d,
-      ),
-    );
-    setInfo((prev) =>
-      prev ? { ...prev, coinsBalance: prev.coinsBalance - redeemed.cost } : prev,
-    );
-    setSuccessCode({ code: result.redemption.code, drop: redeemed });
-    setPendingDrop(null);
-    setRedeeming(false);
-    toast.success(`Redeemed: ${redeemed.name}`);
+    try {
+      const redemption = await redeemDrop(redeemed.id, user.id);
+      setDrops((prev) =>
+        prev.map((d) =>
+          d.id === redeemed.id ? { ...d, stock: Math.max(0, d.stock - 1) } : d,
+        ),
+      );
+      setInfo((prev) =>
+        prev
+          ? { ...prev, coinsBalance: prev.coinsBalance - redeemed.cost }
+          : prev,
+      );
+      setSuccessCode({ code: redemption.code, drop: redeemed });
+      setPendingDrop(null);
+      toast.success(`Redeemed: ${redeemed.name}`);
+    } catch (err) {
+      const msg =
+        err instanceof ApiError || err instanceof Error
+          ? err.message
+          : "Redemption failed";
+      toast.error(msg);
+    } finally {
+      setRedeeming(false);
+    }
   }
 
   if (!user) {

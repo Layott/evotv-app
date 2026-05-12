@@ -7,7 +7,7 @@ import { History as HistoryIcon, Loader2, Package } from "lucide-react-native";
 import {
   listMyRedemptions,
   type Redemption,
-} from "@/lib/mock/rewards";
+} from "@/lib/api/rewards";
 import { useMockAuth } from "@/components/providers";
 import {
   Tabs,

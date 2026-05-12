@@ -114,18 +114,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
     let cancelled = false;
     void (async () => {
       try {
-        const session = await api<SessionResponse>("/api/auth/get-session");
+        try {
+          const session = await api<SessionResponse>("/api/auth/get-session");
+          if (cancelled) return;
+          if (session?.user) setUser(toProfile(session.user));
+        } catch {
+          // No valid session — stay guest.
+        }
+        const followsList = await persist.get<string[]>(FOLLOWS_KEY);
+        const onboarded = await persist.get<boolean>(ONBOARD_KEY);
         if (cancelled) return;
-        if (session?.user) setUser(toProfile(session.user));
-      } catch {
-        // No valid session — stay guest.
+        if (Array.isArray(followsList)) setFollows(new Set(followsList));
+        if (onboarded === true) setOnboardingComplete(true);
+      } finally {
+        // Whatever happens above, never leave SplashGate spinning.
+        if (!cancelled) setIsLoading(false);
       }
-      const followsList = await persist.get<string[]>(FOLLOWS_KEY);
-      const onboarded = await persist.get<boolean>(ONBOARD_KEY);
-      if (cancelled) return;
-      if (Array.isArray(followsList)) setFollows(new Set(followsList));
-      if (onboarded === true) setOnboardingComplete(true);
-      setIsLoading(false);
     })();
     return () => {
       cancelled = true;

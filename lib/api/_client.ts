@@ -4,7 +4,14 @@ import { Platform } from "react-native";
 const BASE_URL =
   process.env.EXPO_PUBLIC_API_BASE_URL ?? "http://localhost:3060";
 
-const TOKEN_KEY = "evotv:session-token";
+/**
+ * Token storage key. MUST match expo-secure-store's allowed character set
+ * (`[A-Za-z0-9._-]+`). Colons are REJECTED by SecureStore on iOS/Android —
+ * earlier `"evotv:session-token"` silently failed every write, so sessions
+ * didn't survive app close. Fixed by using underscores.
+ */
+const TOKEN_KEY = "evotv_session_token";
+const LEGACY_TOKEN_KEY = "evotv:session-token"; // web localStorage migration
 
 /**
  * Token storage.
@@ -17,14 +24,29 @@ const TOKEN_KEY = "evotv:session-token";
 async function getToken(): Promise<string | null> {
   if (Platform.OS === "web") {
     try {
-      return globalThis.localStorage?.getItem(TOKEN_KEY) ?? null;
+      const fresh = globalThis.localStorage?.getItem(TOKEN_KEY) ?? null;
+      if (fresh) return fresh;
+      // Migrate from the legacy colon-keyed value if present.
+      const legacy = globalThis.localStorage?.getItem(LEGACY_TOKEN_KEY) ?? null;
+      if (legacy) {
+        try {
+          globalThis.localStorage?.setItem(TOKEN_KEY, legacy);
+          globalThis.localStorage?.removeItem(LEGACY_TOKEN_KEY);
+        } catch {
+          /* noop */
+        }
+      }
+      return legacy;
     } catch {
       return null;
     }
   }
   try {
     return await SecureStore.getItemAsync(TOKEN_KEY);
-  } catch {
+  } catch (err) {
+    if (__DEV__) {
+      console.warn("[auth] SecureStore.getItem failed", err);
+    }
     return null;
   }
 }
@@ -33,7 +55,10 @@ export async function setToken(token: string | null): Promise<void> {
   if (Platform.OS === "web") {
     try {
       if (token) globalThis.localStorage?.setItem(TOKEN_KEY, token);
-      else globalThis.localStorage?.removeItem(TOKEN_KEY);
+      else {
+        globalThis.localStorage?.removeItem(TOKEN_KEY);
+        globalThis.localStorage?.removeItem(LEGACY_TOKEN_KEY);
+      }
     } catch {
       /* noop */
     }
@@ -42,8 +67,10 @@ export async function setToken(token: string | null): Promise<void> {
   try {
     if (token) await SecureStore.setItemAsync(TOKEN_KEY, token);
     else await SecureStore.deleteItemAsync(TOKEN_KEY);
-  } catch {
-    /* noop */
+  } catch (err) {
+    if (__DEV__) {
+      console.warn("[auth] SecureStore.setItem failed", err);
+    }
   }
 }
 

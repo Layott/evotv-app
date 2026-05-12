@@ -8,6 +8,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Providers } from "@/components/providers";
 import { SplashGate } from "@/components/providers/splash-gate";
+import { ErrorBoundary } from "@/components/providers/error-boundary";
 import { initSentry } from "@/sentry.config";
 
 initSentry();
@@ -16,6 +17,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
+        <ErrorBoundary>
         <Providers>
           <SplashGate>
             <KeyboardAvoidingView
@@ -43,6 +45,7 @@ export default function RootLayout() {
             </KeyboardAvoidingView>
           </SplashGate>
         </Providers>
+        </ErrorBoundary>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

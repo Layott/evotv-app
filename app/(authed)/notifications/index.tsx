@@ -225,7 +225,7 @@ export default function NotificationsScreen() {
         // Web links use plain paths — RN accepts the same string in expo-router.
         // If push fails (not a known route), the catch swallows so we don't crash.
         try {
-          router.push(n.linkUrl);
+          router.push(n.linkUrl as never);
         } catch {
           /* noop */
         }

@@ -118,7 +118,7 @@ function FollowingList({ items }: { items: FollowingItem[] }) {
       {items.map((it) => (
         <Pressable
           key={it.id}
-          onPress={() => router.push(it.href)}
+          onPress={() => router.push(it.href as never)}
           className="flex-row items-center gap-3 rounded-xl border border-border bg-card p-3 active:opacity-80"
         >
           <View

@@ -60,6 +60,12 @@
         "projectId": "4f9bf255-7b3b-4c57-8be1-318bab0385df"
       }
     },
-    "owner": "layott"
+    "owner": "layott",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4f9bf255-7b3b-4c57-8be1-318bab0385df"
+    }
   }
 }

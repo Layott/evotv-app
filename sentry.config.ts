@@ -1,13 +1,12 @@
+import { Platform } from "react-native";
+
 /**
- * Sentry init — DEFERRED dynamic-require so the static import doesn't drag
- * the native module into the JS bundle. Build #11 was shipped before
- * @sentry/react-native landed, so a top-level `import * as Sentry from
- * "@sentry/react-native"` would crash on launch in the field. This file
- * lazily requires the module only when EXPO_PUBLIC_SENTRY_DSN is set AND
- * the native module is available; otherwise it no-ops.
+ * Sentry init — platform-gated. Web build (RN-web on Vercel) skips
+ * @sentry/react-native entirely. The web Sentry SDK can be wired later
+ * via @sentry/react if needed.
  *
- * Will go back to a static import once an APK build ships with the
- * @sentry/react-native native module bundled.
+ * Native path uses dynamic require so a missing native module (e.g.
+ * the still-installed APK #11) silently no-ops instead of crashing.
  */
 
 const DSN = process.env.EXPO_PUBLIC_SENTRY_DSN;
@@ -17,9 +16,15 @@ let initialized = false;
 export function initSentry(): void {
   if (initialized) return;
   if (!DSN) return;
+  if (Platform.OS === "web") return;
+
   try {
+    // Use bracket-access dynamic require so Metro can't statically
+    // analyze the import on the web target. Metro builds for web
+    // never visit this branch (Platform.OS === "web" returns early).
+    const moduleName = "@sentry/react-native";
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const Sentry = require("@sentry/react-native") as typeof import("@sentry/react-native");
+    const Sentry = (require as unknown as (m: string) => typeof import("@sentry/react-native"))(moduleName);
     Sentry.init({
       dsn: DSN,
       tracesSampleRate: 0.1,
@@ -27,6 +32,6 @@ export function initSentry(): void {
     });
     initialized = true;
   } catch {
-    // Native module not in this build — silently skip.
+    // Native module not bundled in this APK — silently skip.
   }
 }

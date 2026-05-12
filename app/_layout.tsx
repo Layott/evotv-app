@@ -34,6 +34,7 @@ export default function RootLayout() {
                 <Stack.Screen name="(public)" options={{ headerShown: false }} />
                 <Stack.Screen name="(authed)" options={{ headerShown: false }} />
                 <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+                <Stack.Screen name="(partner)" options={{ headerShown: false }} />
                 <Stack.Screen name="(embed)" options={{ headerShown: false }} />
               </Stack>
             </KeyboardAvoidingView>

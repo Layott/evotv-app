@@ -2,6 +2,7 @@ import * as React from "react";
 
 import type { Profile, Role } from "@/lib/types";
 import { api, ApiError, setToken } from "@/lib/api/_client";
+import { getMyMemberships, type PublisherMembership } from "@/lib/api/partner";
 import { persist } from "@/lib/storage/persist";
 
 /**
@@ -48,6 +49,8 @@ interface AuthContextValue {
   role: Role;
   isLoading: boolean;
   isAuthenticated: boolean;
+  publisherMemberships: PublisherMembership[];
+  refreshMemberships: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (input: SignUpInput) => Promise<void>;
   signOut: () => Promise<void>;
@@ -108,6 +111,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [follows, setFollows] = React.useState<Set<string>>(new Set());
   const [onboardingComplete, setOnboardingComplete] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [publisherMemberships, setPublisherMemberships] = React.useState<
+    PublisherMembership[]
+  >([]);
+
+  const refreshMemberships = React.useCallback(async () => {
+    try {
+      const memberships = await getMyMemberships();
+      setPublisherMemberships(memberships);
+    } catch {
+      setPublisherMemberships([]);
+    }
+  }, []);
 
   // Hydrate session from stored token on mount.
   React.useEffect(() => {
@@ -117,7 +132,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         try {
           const session = await api<SessionResponse>("/api/auth/get-session");
           if (cancelled) return;
-          if (session?.user) setUser(toProfile(session.user));
+          if (session?.user) {
+            setUser(toProfile(session.user));
+            const memberships = await getMyMemberships();
+            if (!cancelled) setPublisherMemberships(memberships);
+          }
         } catch {
           // No valid session — stay guest.
         }
@@ -127,7 +146,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (Array.isArray(followsList)) setFollows(new Set(followsList));
         if (onboarded === true) setOnboardingComplete(true);
       } finally {
-        // Whatever happens above, never leave SplashGate spinning.
         if (!cancelled) setIsLoading(false);
       }
     })();
@@ -143,7 +161,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     });
     await setToken(res.token);
     setUser(toProfile(res.user));
-  }, []);
+    await refreshMemberships();
+  }, [refreshMemberships]);
 
   const signUp = React.useCallback(async (input: SignUpInput) => {
     const res = await api<SignInResponse>("/api/auth/sign-up/email", {
@@ -152,7 +171,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     });
     await setToken(res.token);
     setUser(toProfile(res.user));
-  }, []);
+    await refreshMemberships();
+  }, [refreshMemberships]);
 
   const signOut = React.useCallback(async () => {
     try {
@@ -163,6 +183,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
     await setToken(null);
     setUser(null);
+    setPublisherMemberships([]);
   }, []);
 
   const toggleFollow = React.useCallback((targetType: FollowTarget, targetId: string) => {
@@ -227,6 +248,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       role,
       isLoading,
       isAuthenticated: !!user,
+      publisherMemberships,
+      refreshMemberships,
       signIn,
       signUp,
       signOut,
@@ -245,6 +268,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       user,
       role,
       isLoading,
+      publisherMemberships,
+      refreshMemberships,
       signIn,
       signUp,
       signOut,

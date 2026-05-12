@@ -177,19 +177,21 @@ export function SplashGate({ children }: SplashGateProps) {
   const ready = (fontsLoaded || fontError !== null) && !authLoading;
   const [minDelayElapsed, setMinDelayElapsed] = React.useState(false);
 
+  // Hide the native expo-splash-screen.png IMMEDIATELY so our animated
+  // React splash is visible. If we wait until `showSplash` flips false,
+  // the native splash sits on top of our animation the entire time.
+  React.useEffect(() => {
+    void SplashScreen.hideAsync().catch(() => {
+      // Already hidden.
+    });
+  }, []);
+
   React.useEffect(() => {
     const t = setTimeout(() => setMinDelayElapsed(true), 2400);
     return () => clearTimeout(t);
   }, []);
 
   const showSplash = !ready || !minDelayElapsed;
-
-  React.useEffect(() => {
-    if (showSplash) return;
-    void SplashScreen.hideAsync().catch(() => {
-      // Already hidden.
-    });
-  }, [showSplash]);
 
   if (showSplash) return <SplashScreenView />;
   return <FadingChildren>{children}</FadingChildren>;

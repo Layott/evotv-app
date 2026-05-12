@@ -49,6 +49,12 @@ export default function ChannelHomeScreen() {
               title="Stream key"
               subtitle="View status, rotate to issue a new RTMP key"
             />
+            <NavRow
+              href={`/(partner)/channels/${id}/analytics` as never}
+              icon={<ShieldCheck size={16} color="#FAFAFA" />}
+              title="Analytics"
+              subtitle="Daily rollup — views, watch time, tips"
+            />
           </View>
 
           <View className="mt-6 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
@@ -56,7 +62,6 @@ export default function ChannelHomeScreen() {
               Coming next
             </Text>
             <View className="mt-2 gap-1.5">
-              <Text className="text-xs text-muted-foreground">· Analytics (Phase 3.7-3.8)</Text>
               <Text className="text-xs text-muted-foreground">· Chat moderation (Phase 3.11)</Text>
               <Text className="text-xs text-muted-foreground">· Payouts (Phase 3.9)</Text>
             </View>

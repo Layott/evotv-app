@@ -75,3 +75,54 @@ export async function rotateChannelKey(
     { method: "POST" },
   );
 }
+
+export type AnalyticsPeriod = "7d" | "30d" | "90d" | "all";
+
+export interface AnalyticsDailyRow {
+  channelId: string;
+  date: string;
+  views: number;
+  uniqueViewers: number;
+  watchMinutes: number;
+  peakConcurrent: number;
+  followersGained: number;
+  followersLost: number;
+  tipCoinsReceived: number;
+  tipCount: number;
+  productOrders: number;
+  productRevenueNgn: number;
+  adImpressions: number;
+  adRevenueNgn: number;
+  updatedAt: string;
+}
+
+export interface AnalyticsTotals {
+  views: number;
+  uniqueViewers: number;
+  watchMinutes: number;
+  peakConcurrent: number;
+  tipCoinsReceived: number;
+  tipCount: number;
+  followersGained: number;
+  followersLost: number;
+  productOrders: number;
+  productRevenueNgn: number;
+}
+
+export interface ChannelAnalytics {
+  channelId: string;
+  period: AnalyticsPeriod;
+  from: string | null;
+  to: string | null;
+  rows: AnalyticsDailyRow[];
+  totals: AnalyticsTotals;
+}
+
+export async function getChannelAnalytics(
+  channelId: string,
+  period: AnalyticsPeriod = "30d",
+): Promise<ChannelAnalytics> {
+  return api<ChannelAnalytics>(
+    `/api/partner/channels/${encodeURIComponent(channelId)}/analytics?period=${period}`,
+  );
+}

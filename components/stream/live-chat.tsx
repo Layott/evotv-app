@@ -11,12 +11,12 @@ import { Gauge, Send, Users } from "lucide-react-native";
 import { toast } from "sonner-native";
 
 import type { ChatMessage, Role } from "@/lib/types";
-import { listInitialMessages, makeIncomingMessage } from "@/lib/mock/chat";
 import { useMockAuth } from "@/components/providers";
 import { Switch } from "@/components/ui/switch";
+import { useStreamChat } from "@/hooks/useStreamChat";
+import { ChatPostError } from "@/lib/api/chat";
 import { cn } from "@/lib/utils";
 
-const MAX_MSGS = 200;
 const CHAR_LIMIT = 400;
 
 interface LiveChatProps {
@@ -78,7 +78,7 @@ function MessageRow({ msg }: RowProps) {
 
 export function LiveChat({ streamId, className }: LiveChatProps) {
   const { user, role } = useMockAuth();
-  const [messages, setMessages] = React.useState<ChatMessage[]>([]);
+  const { messages, send, status } = useStreamChat(streamId);
   const [input, setInput] = React.useState("");
   const [subsOnly, setSubsOnly] = React.useState(false);
   const listRef = React.useRef<FlatList<ChatMessage>>(null);
@@ -86,32 +86,6 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
 
   const canToggleSubs = role === "admin" || role === "premium";
 
-  // Initial load
-  React.useEffect(() => {
-    let cancelled = false;
-    void listInitialMessages(streamId).then((msgs) => {
-      if (!cancelled) setMessages(msgs);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [streamId]);
-
-  // Simulated incoming messages
-  React.useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-    const tick = () => {
-      setMessages((prev) => {
-        const next = [...prev, makeIncomingMessage(streamId)];
-        return next.length > MAX_MSGS ? next.slice(next.length - MAX_MSGS) : next;
-      });
-      timer = setTimeout(tick, 2000 + Math.random() * 2000);
-    };
-    timer = setTimeout(tick, 2000 + Math.random() * 2000);
-    return () => clearTimeout(timer);
-  }, [streamId]);
-
-  // Auto-scroll on new messages when stuck to bottom
   React.useEffect(() => {
     if (!stuckToBottom.current) return;
     requestAnimationFrame(() => {
@@ -119,31 +93,24 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
     });
   }, [messages.length]);
 
-  const send = () => {
+  const handleSend = async () => {
     const body = input.trim();
     if (!body) return;
     if (!user) {
       toast.error("Sign in to chat");
       return;
     }
-    const msg: ChatMessage = {
-      id: `msg_local_${Date.now()}`,
-      streamId,
-      userId: user.id,
-      userHandle: user.handle,
-      userAvatarUrl: user.avatarUrl,
-      userRole: role,
-      body,
-      createdAt: new Date().toISOString(),
-      isDeleted: false,
-      isPinned: false,
-    };
-    setMessages((prev) => {
-      const next = [...prev, msg];
-      return next.length > MAX_MSGS ? next.slice(next.length - MAX_MSGS) : next;
-    });
     setInput("");
     stuckToBottom.current = true;
+    try {
+      await send(body);
+    } catch (err) {
+      if (err instanceof ChatPostError) {
+        toast.error(err.message);
+      } else {
+        toast.error("Send failed");
+      }
+    }
   };
 
   const visibleMessages = subsOnly
@@ -151,6 +118,15 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
         (m) => m.userRole === "premium" || m.userRole === "admin",
       )
     : messages;
+
+  const statusLabel =
+    status === "open"
+      ? "Live"
+      : status === "connecting"
+        ? "Connecting…"
+        : status === "error"
+          ? "Reconnecting…"
+          : "Offline";
 
   return (
     <View className={cn("flex-1 bg-background", className)}>
@@ -163,11 +139,12 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
           <Text className="text-sm font-semibold text-foreground">
             Stream Chat
           </Text>
+          <Text className="text-[10px] text-muted-foreground">· {statusLabel}</Text>
         </View>
         <View className="flex-row items-center gap-3">
           <View className="flex-row items-center gap-1">
             <Gauge size={12} color="#737373" />
-            <Text className="text-[10px] text-muted-foreground">Slow: 3s</Text>
+            <Text className="text-[10px] text-muted-foreground">Slow: 2s</Text>
           </View>
           {canToggleSubs ? (
             <View className="flex-row items-center gap-1.5">
@@ -223,12 +200,12 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
             placeholder={user ? "Send a message" : "Sign in to chat"}
             placeholderTextColor="#737373"
             editable={!!user}
-            onSubmitEditing={send}
+            onSubmitEditing={handleSend}
             returnKeyType="send"
             className="h-9 flex-1 rounded-md border border-border bg-card px-3 text-sm text-foreground"
           />
           <Pressable
-            onPress={send}
+            onPress={handleSend}
             disabled={!user || !input.trim()}
             accessibilityLabel="Send"
             className={cn(

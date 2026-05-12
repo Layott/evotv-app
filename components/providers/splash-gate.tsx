@@ -2,7 +2,7 @@ import * as React from "react";
 import * as SplashScreen from "expo-splash-screen";
 
 import { useGeistFonts } from "./font-loader";
-import { useMockAuth } from "./mock-auth-provider";
+import { useAuth } from "./auth-provider";
 
 void SplashScreen.preventAutoHideAsync().catch(() => {
   // Splash already hidden — safe to ignore.
@@ -14,7 +14,7 @@ interface SplashGateProps {
 
 export function SplashGate({ children }: SplashGateProps) {
   const { loaded: fontsLoaded, error: fontError } = useGeistFonts();
-  const { isLoading: authLoading } = useMockAuth();
+  const { isLoading: authLoading } = useAuth();
   const ready = (fontsLoaded || fontError !== null) && !authLoading;
 
   React.useEffect(() => {

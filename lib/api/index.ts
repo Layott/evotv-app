@@ -21,10 +21,19 @@ export * from "./search";
 export * from "./polls";
 export * from "./notifications";
 export * from "./follows";
+export * from "./products";
+export * from "./orders";
+export * from "./subs";
+export * from "./payments";
+export * from "./likes";
+export * from "./recommendations";
+export * from "./feed";
+export * from "./ads";
+export * from "./push";
+export * from "./vod-progress";
 
 // Modules to mirror as backend routes land:
-//   - admin, ads, chat, likes, orders, payments, products, push,
-//     recommendations, subscriptions, teams, trending, users, vod-progress
+//   - admin, chat, users
 //   - predictions / tips / lite-mode — collision, import directly with rename
 //   - feature-specific: pickem, fantasy, rewards, creators, payment-methods,
 //     ussd, downloads, apps, cast, embed, bots, sso, captions, ai-commentary,

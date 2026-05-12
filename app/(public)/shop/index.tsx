@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { TopNavbar } from "@/components/home/top-navbar";
 import { ProductCard } from "@/components/shop/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { listProducts } from "@/lib/mock/products";
+import { listProducts } from "@/lib/api/products";
 import type { Product } from "@/lib/types";
 
 const CATEGORIES: { v: Product["category"] | "all"; label: string }[] = [

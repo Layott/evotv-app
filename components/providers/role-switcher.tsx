@@ -10,7 +10,7 @@ import {
 } from "lucide-react-native";
 
 import type { Role } from "@/lib/types";
-import { useMockAuth } from "./mock-auth-provider";
+import { useAuth } from "./auth-provider";
 
 interface RoleEntry {
   value: Role;
@@ -30,7 +30,7 @@ const FG = "#FAFAFA";
 const MUTED = "#A3A3A3";
 
 export function RoleSwitcher() {
-  const { role, login, logout } = useMockAuth();
+  const { role, login, logout } = useAuth();
   const [open, setOpen] = React.useState(false);
 
   if (!__DEV__) return null;

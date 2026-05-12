@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 import {
   ArrowLeft,
@@ -14,15 +15,29 @@ import {
   X,
 } from "lucide-react-native";
 
-import { tiers } from "@/lib/mock/subs";
+import { listTiers, type Tier } from "@/lib/api/subs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+
+interface DisplayTier extends Tier {
+  tagline: string;
+  cta: string;
+}
+
+function decorateTier(t: Tier): DisplayTier {
+  return {
+    ...t,
+    tagline: t.features[0] ?? "",
+    cta: t.priceNgn === 0 ? "Current plan" : "Upgrade",
+  };
+}
 
 const FAQ = [
   {
@@ -114,7 +129,7 @@ function PaymentMethodCard({
 }
 
 interface TierCardProps {
-  tier: (typeof tiers)[number];
+  tier: DisplayTier;
   current?: boolean;
   highlight?: boolean;
   onUpgrade: () => void;
@@ -203,8 +218,15 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
 
 export default function UpgradeScreen() {
   const router = useRouter();
-  const free = tiers.find((t) => t.id === "free")!;
-  const premium = tiers.find((t) => t.id === "premium")!;
+  const tiersQ = useQuery({
+    queryKey: ["tiers"],
+    queryFn: () => listTiers(),
+  });
+
+  const displayTiers = React.useMemo(
+    () => (tiersQ.data ?? []).map(decorateTier),
+    [tiersQ.data],
+  );
 
   const onUpgrade = () => {
     toast.success("Opening Paystack checkout (mock)");
@@ -246,8 +268,21 @@ export default function UpgradeScreen() {
         </View>
 
         <View className="px-4 pt-8 gap-4">
-          <TierCard tier={free} current onUpgrade={onUpgrade} />
-          <TierCard tier={premium} highlight onUpgrade={onUpgrade} />
+          {tiersQ.isLoading ? (
+            <View className="items-center py-12">
+              <Spinner size="large" />
+            </View>
+          ) : (
+            displayTiers.map((t) => (
+              <TierCard
+                key={t.id}
+                tier={t}
+                current={t.priceNgn === 0}
+                highlight={t.id === "premium"}
+                onUpgrade={onUpgrade}
+              />
+            ))
+          )}
         </View>
 
         <Text className="text-xs text-muted-foreground text-center mt-3 px-6">

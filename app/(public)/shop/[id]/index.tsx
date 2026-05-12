@@ -17,7 +17,7 @@ import {
   getProductById,
   getProductBySlug,
   listProducts,
-} from "@/lib/mock/products";
+} from "@/lib/api/products";
 import type { Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
 

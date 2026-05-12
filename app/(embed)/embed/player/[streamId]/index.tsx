@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Text, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
 
 import { HLSPlayer } from "@/components/stream/hls-player";
-import { streams } from "@/lib/mock/streams";
-import { vods } from "@/lib/mock/vods";
+import { getStreamById } from "@/lib/api/streams";
+import { getVodById } from "@/lib/api/vods";
 
 const SAMPLE_HLS = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
@@ -27,8 +28,29 @@ export default function EmbedPlayerScreen() {
   const autoplay = params.autoplay === "1";
   const muted = params.muted === "1";
 
-  const stream = streams.find((s) => s.id === id);
-  const vod = !stream ? vods.find((v) => v.id === id) : null;
+  const streamQ = useQuery({
+    queryKey: ["streams", "byId", id],
+    queryFn: () => getStreamById(id),
+    enabled: !!id,
+  });
+  const vodQ = useQuery({
+    queryKey: ["vods", "byId", id],
+    queryFn: () => getVodById(id),
+    enabled: !!id && streamQ.isFetched && !streamQ.data,
+  });
+
+  const stream = streamQ.data ?? null;
+  const vod = !stream ? vodQ.data ?? null : null;
+  const loading = streamQ.isLoading || (vodQ.isFetching && !stream);
+
+  if (loading) {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View className="flex-1 items-center justify-center bg-black" />
+      </>
+    );
+  }
 
   if (!stream && !vod) {
     return (

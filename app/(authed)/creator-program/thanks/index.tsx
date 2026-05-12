@@ -12,7 +12,7 @@ import {
 } from "lucide-react-native";
 
 import { useMockAuth } from "@/components/providers";
-import { games } from "@/lib/mock/games";
+import { listGames } from "@/lib/api/games";
 import { getMyApplication } from "@/lib/mock/creators";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,8 @@ export default function CreatorProgramThanksScreen() {
     queryFn: () => getMyApplication(user!.id),
     enabled: !!user,
   });
+  const gamesQ = useQuery({ queryKey: ["games"], queryFn: () => listGames() });
+  const games = gamesQ.data ?? [];
 
   React.useEffect(() => {
     if (appQ.isSuccess && !appQ.data) {

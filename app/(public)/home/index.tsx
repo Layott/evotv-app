@@ -13,7 +13,7 @@ import { QuickAccess } from "@/components/home/quick-access";
 import { listFeaturedStreams, listLiveStreams } from "@/lib/api/streams";
 import { listVods, listTrendingClips } from "@/lib/api/vods";
 import { listEvents } from "@/lib/api/events";
-import { games } from "@/lib/mock/games";
+import { listGames } from "@/lib/api/games";
 
 export default function HomeScreen() {
   const queryClient = useQueryClient();
@@ -24,6 +24,8 @@ export default function HomeScreen() {
   const events = useQuery({ queryKey: ["home", "events"], queryFn: () => listEvents({ status: "scheduled" }) });
   const clips = useQuery({ queryKey: ["home", "clips"], queryFn: () => listTrendingClips() });
   const vods = useQuery({ queryKey: ["home", "vods"], queryFn: () => listVods({ limit: 12 }) });
+  const gamesQ = useQuery({ queryKey: ["games"], queryFn: () => listGames() });
+  const games = gamesQ.data ?? [];
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);

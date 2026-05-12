@@ -21,7 +21,8 @@ import {
 import { toast } from "sonner-native";
 
 import { useMockAuth } from "@/components/providers";
-import { games } from "@/lib/mock/games";
+import { useQuery } from "@tanstack/react-query";
+import { listGames } from "@/lib/api/games";
 import {
   getMyApplication,
   submitApplication,
@@ -97,18 +98,22 @@ export default function CreatorProgramApplyScreen() {
   const [submitting, setSubmitting] = React.useState(false);
   const [bootstrapping, setBootstrapping] = React.useState(true);
 
+  const gamesQ = useQuery({ queryKey: ["games"], queryFn: () => listGames() });
+  const games = gamesQ.data ?? [];
+
   const {
     control,
     handleSubmit,
     watch,
     trigger,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
       bio: "",
       country: "NG",
-      primaryGameId: games[0]?.id ?? "",
+      primaryGameId: "",
       socialPlatform: "youtube",
       socialHandle: "",
       followerCount: 0,
@@ -118,6 +123,12 @@ export default function CreatorProgramApplyScreen() {
   });
 
   const values = watch();
+
+  React.useEffect(() => {
+    if (gamesQ.data && gamesQ.data[0] && !values.primaryGameId) {
+      setValue("primaryGameId", gamesQ.data[0].id);
+    }
+  }, [gamesQ.data, values.primaryGameId, setValue]);
 
   React.useEffect(() => {
     if (!user) return;
@@ -137,7 +148,7 @@ export default function CreatorProgramApplyScreen() {
     };
   }, [user, router]);
 
-  if (!user || bootstrapping) {
+  if (!user || bootstrapping || gamesQ.isLoading) {
     return (
       <>
         <Stack.Screen options={{ title: "Apply" }} />

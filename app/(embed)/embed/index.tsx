@@ -27,8 +27,8 @@ import {
   type EmbedSource,
   type EmbedTheme,
 } from "@/lib/mock/embed";
-import { streams } from "@/lib/mock/streams";
-import { vods } from "@/lib/mock/vods";
+import { listLiveStreams } from "@/lib/api/streams";
+import { listVods } from "@/lib/api/vods";
 
 const SAMPLE_HLS = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
@@ -186,6 +186,16 @@ function EmbedGenerator() {
     queryKey: ["embed", "sources"],
     queryFn: listEmbedSources,
   });
+  const streamsQ = useQuery({
+    queryKey: ["streams", "live", "embed"],
+    queryFn: () => listLiveStreams(),
+  });
+  const vodsQ = useQuery({
+    queryKey: ["vods", "embed"],
+    queryFn: () => listVods({ limit: 30 }),
+  });
+  const streams = streamsQ.data ?? [];
+  const vods = vodsQ.data ?? [];
 
   const [streamId, setStreamId] = React.useState<string>("");
   const [width, setWidth] = React.useState<number>(720);
@@ -238,7 +248,7 @@ function EmbedGenerator() {
       };
     }
     return null;
-  }, [streamId]);
+  }, [streamId, streams, vods]);
 
   function applyPreset(preset: { width: number; height: number }) {
     setWidth(preset.width);

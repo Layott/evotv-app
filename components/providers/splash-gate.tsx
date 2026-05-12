@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ActivityIndicator, Image, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 
 import { useGeistFonts } from "./font-loader";
@@ -126,9 +126,6 @@ function SplashScreenView() {
       >
         EVO TV
       </Text>
-      <View style={{ marginTop: 16 }}>
-        <ActivityIndicator size="small" color={CYAN} />
-      </View>
       <Text
         style={{
           position: "absolute",

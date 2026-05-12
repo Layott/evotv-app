@@ -126,3 +126,21 @@ export async function getChannelAnalytics(
     `/api/partner/channels/${encodeURIComponent(channelId)}/analytics?period=${period}`,
   );
 }
+
+export interface Payout {
+  id: string;
+  publisherId: string;
+  periodStart: string;
+  periodEnd: string;
+  grossNgn: number;
+  feeNgn: number;
+  netNgn: number;
+  status: "pending" | "approved" | "paid" | "failed";
+  paystackTransferRef: string | null;
+  createdAt: string;
+  paidAt: string | null;
+}
+
+export async function listPayouts(): Promise<Payout[]> {
+  return api<Payout[]>("/api/partner/payouts");
+}

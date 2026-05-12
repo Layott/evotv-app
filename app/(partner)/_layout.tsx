@@ -29,6 +29,14 @@ export default function PartnerLayout() {
         name="channels/[id]/stream-key/index"
         options={{ title: "Stream key" }}
       />
+      <Stack.Screen
+        name="channels/[id]/analytics/index"
+        options={{ title: "Analytics" }}
+      />
+      <Stack.Screen
+        name="payouts/index"
+        options={{ title: "Payouts" }}
+      />
     </Stack>
   );
 }

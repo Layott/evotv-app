@@ -90,6 +90,7 @@ export default function PublicLayout() {
       <Tabs.Screen name="categories/index" options={{ href: null }} />
       <Tabs.Screen name="categories/[slug]/index" options={{ href: null }} />
       <Tabs.Screen name="channel/index" options={{ href: null }} />
+      <Tabs.Screen name="c/[slug]/index" options={{ href: null }} />
       <Tabs.Screen name="clips/index" options={{ href: null }} />
       <Tabs.Screen name="clips/[id]/index" options={{ href: null }} />
       <Tabs.Screen name="events/[id]/index" options={{ href: null }} />

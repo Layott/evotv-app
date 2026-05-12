@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Link, Stack } from "expo-router";
-import { ArrowRight, BadgeCheck, Building2, Radio } from "lucide-react-native";
+import { ArrowRight, BadgeCheck, Banknote, Building2, Radio } from "lucide-react-native";
 
 import { useMockAuth } from "@/components/providers";
 import { cn } from "@/lib/utils";
@@ -41,6 +41,26 @@ export default function PartnerDashboard() {
               value={channelCount}
             />
           </View>
+
+          <Link href={"/(partner)/payouts" as never} asChild>
+            <Pressable className="mt-3 flex-row items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900/40 p-3 active:opacity-80">
+              <View
+                className="h-9 w-9 items-center justify-center rounded-md"
+                style={{ backgroundColor: "#1f1f1f" }}
+              >
+                <Banknote size={16} color="#2CD7E3" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-semibold text-foreground">
+                  Payouts
+                </Text>
+                <Text className="text-[11px] text-muted-foreground">
+                  Weekly rollup of net revenue per publisher
+                </Text>
+              </View>
+              <ArrowRight size={16} color="#737373" />
+            </Pressable>
+          </Link>
 
           {publisherMemberships.map((m) => (
             <View

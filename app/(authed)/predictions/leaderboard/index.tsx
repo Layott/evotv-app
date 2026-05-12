@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { Crown } from "lucide-react-native";
 
-import { listLeaderboard } from "@/lib/mock/predictions";
+import { listLeaderboard } from "@/lib/api/predictions";
 import { useMockAuth } from "@/components/providers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";

@@ -13,7 +13,7 @@ import {
   submitPickemEntry,
   type BracketMatch,
   type BracketPick,
-} from "@/lib/mock/pickem";
+} from "@/lib/api/pickem";
 import { getEventById } from "@/lib/api/events";
 import { listGames } from "@/lib/api/games";
 import { listTeams } from "@/lib/api/teams";

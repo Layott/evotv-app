@@ -12,7 +12,7 @@ import {
 
 import { listEvents } from "@/lib/api/events";
 import { listGames } from "@/lib/api/games";
-import { listMyEntries } from "@/lib/mock/pickem";
+import { listMyEntries } from "@/lib/api/pickem";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";

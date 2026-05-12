@@ -13,7 +13,7 @@ import {
   listPredictionsForEvent,
   submitPrediction,
   type Prediction,
-} from "@/lib/mock/predictions";
+} from "@/lib/api/predictions";
 import { getEventById, listMatchesForEvent } from "@/lib/api/events";
 import { listTeams } from "@/lib/api/teams";
 import { listGames } from "@/lib/api/games";

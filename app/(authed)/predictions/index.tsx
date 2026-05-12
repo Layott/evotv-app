@@ -10,7 +10,7 @@ import {
   listMyPredictions,
   listOpenPredictionEvents,
   type PredictionEventSummary,
-} from "@/lib/mock/predictions";
+} from "@/lib/api/predictions";
 import { listGames } from "@/lib/api/games";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";

@@ -8,6 +8,7 @@ import {
   Download,
   Eye,
   Globe,
+  KeyRound,
   Lock,
   LogOut,
   Palette,
@@ -237,6 +238,28 @@ export default function SettingsScreen() {
               </Text>
               <Text className="text-xs text-muted-foreground">
                 Plan, payment method, receipts
+              </Text>
+            </View>
+            <ChevronRight size={18} color="#737373" />
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push("/(authed)/settings/api-keys" as never)}
+            className="flex-row items-center gap-3 rounded-2xl border border-border bg-card p-4 active:opacity-80"
+            accessibilityRole="button"
+          >
+            <View
+              className="h-10 w-10 items-center justify-center rounded-lg"
+              style={{ backgroundColor: "rgba(168,85,247,0.12)" }}
+            >
+              <KeyRound size={18} color="#A855F7" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm font-semibold text-foreground">
+                API keys
+              </Text>
+              <Text className="text-xs text-muted-foreground">
+                Generate keys for scripts + integrations
               </Text>
             </View>
             <ChevronRight size={18} color="#737373" />

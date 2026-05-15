@@ -101,6 +101,11 @@ export default function ApiUsageScreen() {
     enabled: isPremium,
   });
 
+  const sortedBreakdown = React.useMemo<ApiUsageBreakdown[]>(() => {
+    if (!usage) return [];
+    return [...usage.breakdown].sort((a, b) => b.requests - a.requests);
+  }, [usage]);
+
   if (!isPremium) {
     return (
       <>
@@ -127,11 +132,6 @@ export default function ApiUsageScreen() {
           Math.max(1, usage.daily.length),
       )
     : 0;
-  const sortedBreakdown = React.useMemo<ApiUsageBreakdown[]>(() => {
-    if (!usage) return [];
-    return [...usage.breakdown].sort((a, b) => b.requests - a.requests);
-  }, [usage]);
-
   return (
     <>
       <Stack.Screen options={{ title: "API Usage" }} />

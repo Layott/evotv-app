@@ -38,6 +38,12 @@ export default function ProfileScreen() {
         });
         return;
       }
+      if (code === "file_too_large") {
+        toast.error("Photo too large", {
+          description: "Try a smaller image or take a new one.",
+        });
+        return;
+      }
       toast.error("Couldn't update photo", { description: code });
     } finally {
       setAvatarUploading(false);

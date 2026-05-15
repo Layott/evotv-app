@@ -6,26 +6,38 @@ export interface UploadAvatarResult {
   url: string;
 }
 
+/** Vercel function body cap is 4.5 MB. Stay safely under with 3.5 MB. */
+const MAX_UPLOAD_BYTES = 3.5 * 1024 * 1024;
+
 /**
  * Pick an image from the device library, upload to the backend's
  * `/api/users/me/avatar` endpoint, and return the public Vercel Blob URL.
  *
  * Throws `Error("permission_denied")` if media-library permission is denied,
- * `Error("cancelled")` if the user backs out, or `ApiError` for backend
- * failures (415/413/422 etc).
+ * `Error("cancelled")` if the user backs out, `Error("file_too_large")` if
+ * the picker output exceeds the cap (re-pick at lower quality), or
+ * `ApiError` for backend failures.
  */
 export async function pickAndUploadAvatar(): Promise<UploadAvatarResult> {
   const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (!perm.granted) throw new Error("permission_denied");
 
+  // quality: 0.5 + 1:1 crop reliably brings phone photos under 4 MB. The
+  // picker may still emit a larger file if the source is HEIC w/ rich
+  // metadata; the size check below catches that.
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
     aspect: [1, 1],
-    quality: 0.8,
+    quality: 0.5,
+    exif: false,
   });
   if (result.canceled || !result.assets[0]) throw new Error("cancelled");
   const asset = result.assets[0];
+
+  if (asset.fileSize && asset.fileSize > MAX_UPLOAD_BYTES) {
+    throw new Error("file_too_large");
+  }
 
   const form = new FormData();
   const filename = asset.uri.split("/").pop() ?? "avatar.jpg";
@@ -47,6 +59,9 @@ export async function pickAndUploadAvatar(): Promise<UploadAvatarResult> {
 
   if (!res.ok) {
     const body = await res.json().catch(() => null);
+    if (res.status === 413) {
+      throw new Error("file_too_large");
+    }
     throw new ApiError(res.status, body, `Avatar upload failed (${res.status})`);
   }
   return (await res.json()) as UploadAvatarResult;

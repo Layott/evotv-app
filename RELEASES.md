@@ -11,6 +11,7 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 | Date | Label | Update group ID | Commit | Highlights |
 |---|---|---|---|---|
 | 2026-05-15 | oauth-landing-stub | `0f7aca0f-f73f-473c-ac7e-5da508bafa32` | `329ddb5` | Absorb evotv://oauth deep link on Android so the user lands on /home, not +not-found |
+| 2026-05-15 | phase-b-admin-complete | `d4cb7faf-c381-4466-a198-34a0f0784bac` | `3142806` | Phase B end-to-end: VOD/clip admin pages, sanctions list, audit filters+CSV, global banner, bulk reports, deep links, per-admin history, self-delete UI. |
 | 2026-05-15 | admin-restore-deleted-streams | `bb9264f7-7d4f-44ba-8b93-9216568d743f` | `b707dac` | Streams-manager gets Deleted filter pill + Restore button on deleted streams. |
 | 2026-05-15 | report-buttons-vod-clip-profile | `402a6ea7-697c-4c8f-be3f-df2a9bd7d5a1` | `3028192` | Report button extended to VOD detail, clip detail (TikTok-style flag in action stack), profile detail. |
 | 2026-05-15 | report-button-stream | `0c100dcd-d854-4c6e-bd87-890a82e8586f` | `f938850` | User-facing Report button on stream pages — modal with 7 category chips + details + submits to /api/reports. |
@@ -44,6 +45,7 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 
 | Date | Label | Commit | Highlights |
 |---|---|---|---|
+| 2026-05-15 | phase-b-backend | `9cc3381` | Channels suspend + login_events forensic + email_templates + bulk reports/users + maintenance flag endpoint + chat_message report enrichment + sanctions list + audit filters/CSV. Migrations 0014/0015/0016. |
 | 2026-05-15 | admin-streams-deleted-filter | `6a208b8` | GET /api/admin/streams accepts ?deleted=only / ?deleted=include + returns deletedAt. |
 | 2026-05-15 | gdpr-purge-cron | `3dbee70` | Vercel Cron Sunday 04:00 UTC: anonymizes user rows 30+ days post self-delete + hard-deletes personal data (watch_events, picks, pickem, vod_progress, party_*, api_keys, chat_messages). |
 | 2026-05-15 | content-reports | `3993f8c` | content_reports table (migration 0013) + POST /api/reports + admin queue list + resolve/dismiss endpoint. 20 open-report cap per reporter. |

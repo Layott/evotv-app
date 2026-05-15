@@ -265,21 +265,37 @@ export default function SignupScreen() {
                 }
                 className="mt-0.5"
               />
-              <Pressable
-                className="flex-1"
-                onPress={() =>
-                  setValue(
-                    "acceptTerms",
-                    (!acceptTerms) as unknown as true,
-                    { shouldValidate: true },
-                  )
-                }
-              >
-                <Label className="text-xs leading-snug text-muted-foreground">
-                  I agree to the <Text className="text-brand">Terms</Text> and{" "}
-                  <Text className="text-brand">Privacy Policy</Text>.
-                </Label>
-              </Pressable>
+              <View className="flex-1">
+                <Pressable
+                  onPress={() =>
+                    setValue(
+                      "acceptTerms",
+                      (!acceptTerms) as unknown as true,
+                      { shouldValidate: true },
+                    )
+                  }
+                >
+                  <Label className="text-xs leading-snug text-muted-foreground">
+                    I agree to the EVO TV terms and privacy policy.
+                  </Label>
+                </Pressable>
+                <View className="mt-1 flex-row gap-3">
+                  <Pressable
+                    onPress={() => router.push("/(authed)/settings/terms" as never)}
+                  >
+                    <Text className="text-xs font-semibold text-brand underline">
+                      Read Terms
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => router.push("/(authed)/settings/privacy" as never)}
+                  >
+                    <Text className="text-xs font-semibold text-brand underline">
+                      Read Privacy
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
             </View>
             {errors.acceptTerms ? (
               <Text className="-mt-2 text-xs" style={{ color: "#f87171" }}>

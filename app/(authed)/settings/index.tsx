@@ -7,11 +7,13 @@ import {
   CreditCard,
   Download,
   Eye,
+  FileText,
   Globe,
   KeyRound,
   Lock,
   LogOut,
   Palette,
+  ShieldCheck,
   Trash2,
   UserCog,
 } from "lucide-react-native";
@@ -260,6 +262,50 @@ export default function SettingsScreen() {
               </Text>
               <Text className="text-xs text-muted-foreground">
                 Generate keys for scripts + integrations
+              </Text>
+            </View>
+            <ChevronRight size={18} color="#737373" />
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push("/(authed)/settings/privacy" as never)}
+            className="flex-row items-center gap-3 rounded-2xl border border-border bg-card p-4 active:opacity-80"
+            accessibilityRole="button"
+          >
+            <View
+              className="h-10 w-10 items-center justify-center rounded-lg"
+              style={{ backgroundColor: "rgba(34,197,94,0.12)" }}
+            >
+              <ShieldCheck size={18} color="#22C55E" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm font-semibold text-foreground">
+                Privacy Policy
+              </Text>
+              <Text className="text-xs text-muted-foreground">
+                How we handle your data
+              </Text>
+            </View>
+            <ChevronRight size={18} color="#737373" />
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push("/(authed)/settings/terms" as never)}
+            className="flex-row items-center gap-3 rounded-2xl border border-border bg-card p-4 active:opacity-80"
+            accessibilityRole="button"
+          >
+            <View
+              className="h-10 w-10 items-center justify-center rounded-lg"
+              style={{ backgroundColor: "rgba(148,163,184,0.12)" }}
+            >
+              <FileText size={18} color="#94A3B8" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm font-semibold text-foreground">
+                Terms of Service
+              </Text>
+              <Text className="text-xs text-muted-foreground">
+                Rules of the road
               </Text>
             </View>
             <ChevronRight size={18} color="#737373" />

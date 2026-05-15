@@ -9,6 +9,7 @@ import {
   Bookmark,
   ChevronDown,
   ChevronUp,
+  Flag,
   Heart,
   MessageCircle,
   Pause,
@@ -29,6 +30,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ReportButton } from "@/components/common/report-button";
 import { useMockAuth } from "@/components/providers";
 
 function relTime(iso: string): string {
@@ -347,6 +349,17 @@ export default function ClipDetailScreen() {
                   setSaved((v) => !v);
                   toast.success(saved ? "Removed from saved" : "Saved");
                 }}
+              />
+              <ReportButton
+                targetType="clip"
+                targetId={clip.id}
+                trigger={(open) => (
+                  <ActionButton
+                    icon={<Flag size={22} color="#fff" />}
+                    label="Report"
+                    onPress={open}
+                  />
+                )}
               />
             </View>
 

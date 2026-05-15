@@ -31,6 +31,7 @@ import { Separator } from "@/components/ui/separator";
 import { HLSPlayer } from "@/components/stream/hls-player";
 import { VodRelated } from "@/components/vod/vod-related";
 import { VodComments } from "@/components/vod/vod-comments";
+import { ReportButton } from "@/components/common/report-button";
 import { useMockAuth } from "@/components/providers";
 
 function relTime(iso: string): string {
@@ -363,6 +364,7 @@ export default function VodScreen() {
               />
               {saved ? "Saved" : "Save"}
             </Button>
+            <ReportButton targetType="vod" targetId={vod.id} />
           </View>
 
           {vod.description ? (

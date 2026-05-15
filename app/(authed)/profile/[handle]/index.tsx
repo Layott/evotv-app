@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/tabs";
 import { useMockAuth } from "@/components/providers";
 import { ProfileHeader } from "@/components/profile/profile-header";
+import { ReportButton } from "@/components/common/report-button";
 import { ProfileTabs } from "@/components/profile/profile-tabs";
 import {
   getUserByHandle,
@@ -119,6 +120,9 @@ export default function PublicProfileScreen() {
             isFollowing={followingProfile}
             onFollowToggle={() => toggleFollow("streamer", profile.id)}
           />
+          <View className="mt-3 flex-row justify-end">
+            <ReportButton targetType="user" targetId={profile.id} />
+          </View>
         </View>
 
         <View className="mt-6 px-4">

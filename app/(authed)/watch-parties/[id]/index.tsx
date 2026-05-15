@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
-import { Image } from "expo-image";
+import { ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { toast } from "sonner-native";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Crown,
   DoorOpen,
@@ -16,16 +16,14 @@ import {
 } from "lucide-react-native";
 
 import {
-  addPartyMessage,
-  getWatchPartyById,
+  endWatchParty,
+  getWatchParty,
   joinWatchParty,
   leaveWatchParty,
-  listPartyMessages,
-  makeIncomingPartyMessage,
-  partyLanguageLabel,
-  type PartyMessage,
-  type WatchParty,
-} from "@/lib/mock/watch-parties";
+  type PartyChatMessage,
+  type PartyMemberRow,
+} from "@/lib/api/watch-parties";
+import { usePartyChat } from "@/hooks/usePartyChat";
 import { useMockAuth } from "@/components/providers";
 import { HlsPlayer } from "@/components/stream/hls-player";
 import {
@@ -46,7 +44,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const SAMPLE_HLS = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
 
-function ChatBubble({ msg, isMe }: { msg: PartyMessage; isMe: boolean }) {
+function ChatBubble({ msg, isMe }: { msg: PartyChatMessage; isMe: boolean }) {
   if (msg.isSystem) {
     return (
       <View className="my-1 items-center">
@@ -56,18 +54,19 @@ function ChatBubble({ msg, isMe }: { msg: PartyMessage; isMe: boolean }) {
       </View>
     );
   }
+  const handle = msg.userHandle ?? msg.userName ?? msg.userId.slice(0, 6);
   return (
     <View className="mb-2 flex-row items-start gap-2">
       <Avatar className="h-7 w-7">
-        <AvatarImage src={msg.userAvatarUrl} />
-        <AvatarFallback>{msg.userHandle.slice(0, 2).toUpperCase()}</AvatarFallback>
+        <AvatarImage src={msg.userAvatarUrl ?? undefined} />
+        <AvatarFallback>{handle.slice(0, 2).toUpperCase()}</AvatarFallback>
       </Avatar>
       <View className="min-w-0 flex-1">
         <View className="flex-row items-baseline gap-1.5">
           <Text
             className={`text-xs font-semibold ${isMe ? "text-brand" : "text-neutral-200"}`}
           >
-            @{msg.userHandle}
+            @{handle}
           </Text>
           <Text className="text-[9px] text-neutral-500">
             {new Date(msg.createdAt).toLocaleTimeString([], {
@@ -86,14 +85,15 @@ function MemberRow({
   member,
   currentUserId,
 }: {
-  member: WatchParty["members"][number];
+  member: PartyMemberRow;
   currentUserId?: string;
 }) {
+  const fallbackHandle = member.handle ?? member.name?.slice(0, 2) ?? "??";
   return (
     <View className="flex-row items-center gap-2 border-b border-neutral-800/40 py-2 last:border-0">
       <Avatar className="h-8 w-8">
-        <AvatarImage src={member.avatarUrl} />
-        <AvatarFallback>{member.handle.slice(0, 2).toUpperCase()}</AvatarFallback>
+        <AvatarImage src={member.avatarUrl ?? undefined} />
+        <AvatarFallback>{fallbackHandle.slice(0, 2).toUpperCase()}</AvatarFallback>
       </Avatar>
       <View className="min-w-0 flex-1">
         <View className="flex-row items-center gap-1">
@@ -101,11 +101,13 @@ function MemberRow({
             className={`text-sm ${member.userId === currentUserId ? "text-brand font-semibold" : "text-neutral-100"}`}
             numberOfLines={1}
           >
-            {member.displayName}
+            {member.name || member.handle || member.userId}
           </Text>
           {member.isHost ? <Crown size={12} color="#FCD34D" /> : null}
         </View>
-        <Text className="text-[10px] text-neutral-500">@{member.handle}</Text>
+        {member.handle ? (
+          <Text className="text-[10px] text-neutral-500">@{member.handle}</Text>
+        ) : null}
       </View>
     </View>
   );
@@ -113,99 +115,87 @@ function MemberRow({
 
 export default function WatchPartyRoomScreen() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { id } = useLocalSearchParams<{ id: string }>();
   const partyId = id ?? "";
   const { user } = useMockAuth();
 
-  const [party, setParty] = React.useState<WatchParty | null | undefined>(
-    undefined,
-  );
-  const [messages, setMessages] = React.useState<PartyMessage[]>([]);
+  const partyQuery = useQuery({
+    queryKey: ["watch-party", partyId],
+    queryFn: () => getWatchParty(partyId),
+    enabled: !!partyId,
+    refetchInterval: 10_000,
+  });
+  const party = partyQuery.data;
+
   const [text, setText] = React.useState("");
-  const [busy, setBusy] = React.useState(false);
-
-  const refresh = React.useCallback(async () => {
-    const [p, msgs] = await Promise.all([
-      getWatchPartyById(partyId),
-      listPartyMessages(partyId),
-    ]);
-    setParty(p);
-    setMessages(msgs);
-  }, [partyId]);
-
-  React.useEffect(() => {
-    void refresh();
-  }, [refresh]);
-
-  // Ambient incoming chatter every 9s
-  React.useEffect(() => {
-    if (!party) return;
-    const id = setInterval(() => {
-      setMessages((prev) => [...prev, makeIncomingPartyMessage(partyId)]);
-    }, 9000);
-    return () => clearInterval(id);
-  }, [partyId, party]);
 
   const joined =
     !!user && !!party && party.members.some((m) => m.userId === user.id);
-  const isHost = !!user && !!party && party.hostId === user.id;
+  const isHost = !!user && !!party && party.hostUserId === user.id;
 
-  async function handleJoin() {
-    if (!user || !party) return;
-    setBusy(true);
-    try {
-      const updated = await joinWatchParty(party.id, user);
-      if (updated) {
-        setParty(updated);
-        toast.success(`Welcome to "${updated.name}"`);
-      } else {
-        toast.error("Could not join");
-      }
-    } finally {
-      setBusy(false);
-    }
-  }
+  const chat = usePartyChat(partyId, joined);
+  const { messages } = chat;
 
-  async function handleLeave() {
-    if (!user || !party) return;
-    setBusy(true);
-    try {
-      const updated = await leaveWatchParty(party.id, user.id);
-      if (updated === null) {
-        toast.success("Party closed");
-        router.replace("/watch-parties");
-        return;
-      }
-      setParty(updated);
+  const joinMutation = useMutation({
+    mutationFn: () => joinWatchParty(partyId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["watch-party", partyId] });
+      void queryClient.invalidateQueries({ queryKey: ["watch-parties"] });
+      toast.success(`Welcome to "${party?.name ?? "party"}"`);
+    },
+    onError: (err) => {
+      toast.error("Couldn't join", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+  });
+
+  const leaveMutation = useMutation({
+    mutationFn: () => leaveWatchParty(partyId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["watch-party", partyId] });
+      void queryClient.invalidateQueries({ queryKey: ["watch-parties"] });
       toast.success("You left the party");
-    } finally {
-      setBusy(false);
-    }
-  }
+    },
+    onError: (err) => {
+      toast.error("Couldn't leave", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+  });
+
+  const endMutation = useMutation({
+    mutationFn: () => endWatchParty(partyId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["watch-parties"] });
+      toast.success("Party closed");
+      router.replace("/watch-parties" as never);
+    },
+    onError: (err) => {
+      toast.error("Couldn't close party", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+  });
+
+  const busy = joinMutation.isPending || leaveMutation.isPending || endMutation.isPending;
 
   async function handleSend() {
     const body = text.trim();
     if (!body || !user || !party) return;
-    const optimistic: PartyMessage = {
-      id: `local_${Date.now()}`,
-      partyId: party.id,
-      userId: user.id,
-      userHandle: user.handle,
-      userAvatarUrl: user.avatarUrl,
-      body,
-      createdAt: new Date().toISOString(),
-    };
-    setMessages((prev) => [...prev, optimistic]);
     setText("");
-    await addPartyMessage(party.id, {
-      userId: user.id,
-      userHandle: user.handle,
-      userAvatarUrl: user.avatarUrl,
-      body,
-    });
+    try {
+      await chat.send(body);
+    } catch (err) {
+      toast.error("Send failed", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+      setText(body);
+    }
   }
 
-  if (party === undefined) {
+  if (partyQuery.isLoading) {
     return (
       <>
         <Stack.Screen options={{ title: "Watch Party" }} />
@@ -218,7 +208,7 @@ export default function WatchPartyRoomScreen() {
     );
   }
 
-  if (party === null) {
+  if (partyQuery.isError || !party) {
     return (
       <>
         <Stack.Screen options={{ title: "Not Found" }} />
@@ -232,7 +222,7 @@ export default function WatchPartyRoomScreen() {
           </Text>
           <Button
             className="mt-5 bg-brand"
-            onPress={() => router.replace("/watch-parties")}
+            onPress={() => router.replace("/watch-parties" as never)}
             textClassName="text-black"
           >
             Browse parties
@@ -242,22 +232,26 @@ export default function WatchPartyRoomScreen() {
     );
   }
 
+  const hostHandle = party.host?.handle ?? null;
+  const hostName = party.host?.name ?? "Unknown host";
+
   return (
     <>
       <Stack.Screen options={{ title: party.name, headerBackTitle: "Back" }} />
       <ScrollView className="flex-1 bg-background">
-        {/* HLS player */}
-        <HlsPlayer src={SAMPLE_HLS} poster={party.streamThumbnailUrl} />
+        <HlsPlayer
+          src={SAMPLE_HLS}
+          poster={party.stream?.thumbnailUrl ?? ""}
+        />
 
         <View className="px-4 py-4">
-          {/* Header actions */}
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-1.5 rounded-full border border-neutral-700 bg-neutral-900/60 px-2 py-1">
               <View
                 style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#fff" }}
               />
               <Text className="text-[10px] font-bold uppercase text-neutral-200">
-                Party · {party.viewerCount} together
+                Party · {party.activeMembers} together
               </Text>
             </View>
             {joined ? (
@@ -265,7 +259,7 @@ export default function WatchPartyRoomScreen() {
                 size="sm"
                 variant="outline"
                 className="border-neutral-700"
-                onPress={handleLeave}
+                onPress={() => (isHost ? endMutation.mutate() : leaveMutation.mutate())}
                 disabled={busy}
                 textClassName="text-neutral-300"
               >
@@ -276,7 +270,7 @@ export default function WatchPartyRoomScreen() {
               <Button
                 size="sm"
                 className="bg-brand"
-                onPress={handleJoin}
+                onPress={() => joinMutation.mutate()}
                 disabled={busy}
                 textClassName="text-black"
               >
@@ -286,47 +280,37 @@ export default function WatchPartyRoomScreen() {
             )}
           </View>
 
-          {/* Title */}
           <Text className="mt-3 text-xl font-bold text-neutral-50">
             {party.name}
           </Text>
-          <Text className="mt-1 text-sm text-neutral-400" numberOfLines={1}>
-            Watching: {party.streamTitle}
-          </Text>
-
-          {party.topic ? (
-            <View className="mt-2 rounded-md border border-neutral-800 bg-neutral-900/60 px-3 py-2">
-              <Text className="text-xs text-neutral-300">
-                <Text className="font-semibold text-neutral-400">Topic: </Text>
-                {party.topic}
-              </Text>
-            </View>
+          {party.stream ? (
+            <Text className="mt-1 text-sm text-neutral-400" numberOfLines={1}>
+              Watching: {party.stream.title}
+            </Text>
           ) : null}
 
-          {/* Host strip */}
           <View className="mt-3 flex-row items-center gap-2">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={party.hostAvatarUrl} />
+              <AvatarImage src={party.host?.image ?? undefined} />
               <AvatarFallback>
-                {party.hostDisplayName.slice(0, 2).toUpperCase()}
+                {hostName.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <View className="flex-1">
               <View className="flex-row items-center gap-1">
                 <Text className="text-sm font-semibold text-neutral-100">
-                  {party.hostDisplayName}
+                  {hostName}
                 </Text>
                 <Crown size={13} color="#FCD34D" />
               </View>
               <Text className="text-[11px] uppercase tracking-wider text-neutral-500">
-                Host · @{party.hostHandle}
+                Host{hostHandle ? ` · @${hostHandle}` : ""}
               </Text>
             </View>
           </View>
 
-          {/* Badges */}
           <View className="mt-3 flex-row flex-wrap gap-1.5">
-            {party.visibility === "invite" ? (
+            {party.isPrivate ? (
               <Badge className="bg-amber-500" textClassName="text-black">
                 <Lock size={11} color="#000" /> Invite-only
               </Badge>
@@ -336,20 +320,22 @@ export default function WatchPartyRoomScreen() {
               </Badge>
             )}
             <Badge variant="outline">
-              <Text className="text-[11px] text-neutral-300">
-                {partyLanguageLabel(party.language)}
-              </Text>
-            </Badge>
-            <Badge variant="outline">
               <Users size={11} color="#A3A3A3" />
               <Text className="text-[11px] text-neutral-300">
-                {party.members.length} / {party.maxGuests}
+                {party.activeMembers} / {party.maxMembers}
               </Text>
             </Badge>
             <Badge variant="outline">
               <Tv2 size={11} color="#A3A3A3" />
               <Text className="text-[11px] text-neutral-300">Watch party</Text>
             </Badge>
+            {isHost && party.inviteCode ? (
+              <Badge className="bg-neutral-700">
+                <Text className="text-[11px] text-neutral-100">
+                  Code: {party.inviteCode}
+                </Text>
+              </Badge>
+            ) : null}
           </View>
 
           {!joined ? (
@@ -360,7 +346,6 @@ export default function WatchPartyRoomScreen() {
             </View>
           ) : null}
 
-          {/* Tabs */}
           <Tabs defaultValue="chat" className="mt-5">
             <TabsList>
               <TabsTrigger value="chat">
@@ -380,7 +365,19 @@ export default function WatchPartyRoomScreen() {
                 className="rounded-xl border border-neutral-800 bg-neutral-950 p-3"
                 style={{ minHeight: 320 }}
               >
-                {messages.length === 0 ? (
+                {!joined ? (
+                  <Text className="py-10 text-center text-xs text-neutral-500">
+                    Join the party to see chat.
+                  </Text>
+                ) : chat.status !== "open" && messages.length === 0 ? (
+                  <Text className="py-10 text-center text-xs text-neutral-500">
+                    {chat.status === "connecting"
+                      ? "Connecting to chat…"
+                      : chat.status === "error"
+                        ? `Chat error: ${chat.error ?? "reconnecting"}`
+                        : "No messages yet — say something."}
+                  </Text>
+                ) : messages.length === 0 ? (
                   <Text className="py-10 text-center text-xs text-neutral-500">
                     No messages yet — say something.
                   </Text>
@@ -418,13 +415,19 @@ export default function WatchPartyRoomScreen() {
 
             <TabsContent value="members">
               <View className="rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2">
-                {party.members.map((m) => (
-                  <MemberRow
-                    key={m.userId}
-                    member={m}
-                    currentUserId={user?.id}
-                  />
-                ))}
+                {party.members.length === 0 ? (
+                  <Text className="py-6 text-center text-xs text-neutral-500">
+                    No active members.
+                  </Text>
+                ) : (
+                  party.members.map((m) => (
+                    <MemberRow
+                      key={m.userId}
+                      member={m}
+                      currentUserId={user?.id}
+                    />
+                  ))
+                )}
               </View>
             </TabsContent>
           </Tabs>

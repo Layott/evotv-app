@@ -16,15 +16,60 @@
 
 import { api } from "./_client";
 import type { Order, OrderStatus, Poll, Role } from "@/lib/types";
-import {
-  saveEmailTemplate as mockSaveEmailTemplate,
-  getEmailTemplate as mockGetEmailTemplate,
-  listEmailTemplates as mockListEmailTemplates,
-} from "@/lib/mock/admin";
 
-export const saveEmailTemplate = mockSaveEmailTemplate;
-export const getEmailTemplate = mockGetEmailTemplate;
-export const listEmailTemplates = mockListEmailTemplates;
+export interface EmailTemplate {
+  key: string;
+  subject: string;
+  htmlBody: string;
+  textBody: string;
+  version: number;
+  updatedBy: string | null;
+  updatedAt: string;
+}
+
+/**
+ * Backend admin/email-templates routes. Versioned + audit-logged.
+ *
+ * - GET /api/admin/email-templates → list all
+ * - GET /api/admin/email-templates/[key] → read one (404 when missing)
+ * - PATCH /api/admin/email-templates/[key] → upsert with version bump
+ */
+export async function listEmailTemplates(): Promise<EmailTemplate[]> {
+  const res = await api<{ templates: EmailTemplate[] }>(
+    "/api/admin/email-templates",
+  );
+  return res.templates;
+}
+
+export async function getEmailTemplate(
+  key: string,
+): Promise<EmailTemplate | null> {
+  try {
+    return await api<EmailTemplate>(
+      `/api/admin/email-templates/${encodeURIComponent(key)}`,
+    );
+  } catch {
+    return null;
+  }
+}
+
+export async function saveEmailTemplate(
+  key: string,
+  /** Subject line (was `label` in the mock). Keep arg name for compat. */
+  label: string,
+  body: string,
+): Promise<{ savedAt: string; version: number }> {
+  // The mock used `body` as a single field; backend separates html + text.
+  // Send the same content to both so existing call sites don't need to change.
+  const res = await api<{ ok: true; key: string; version: number }>(
+    `/api/admin/email-templates/${encodeURIComponent(key)}`,
+    {
+      method: "PATCH",
+      body: { subject: label, htmlBody: body, textBody: body },
+    },
+  );
+  return { savedAt: new Date().toISOString(), version: res.version };
+}
 
 export interface OverviewMetrics {
   liveStreams: number;
@@ -46,6 +91,40 @@ export interface ViewsPoint {
 
 export async function getViewsOverTime(days = 30): Promise<ViewsPoint[]> {
   return api<ViewsPoint[]>(`/api/admin/analytics/views?days=${days}`);
+}
+
+export interface RetentionData {
+  cohorts: { weekStart: string; size: number }[];
+  matrix: (number | null)[][];
+}
+export async function getRetention(weeks = 8): Promise<RetentionData> {
+  return api<RetentionData>(`/api/admin/analytics/retention?weeks=${weeks}`);
+}
+
+export interface RevenuePoint {
+  month: string;
+  ngn: number;
+}
+export async function getRevenueByMonth(months = 6): Promise<RevenuePoint[]> {
+  return api<RevenuePoint[]>(`/api/admin/analytics/revenue?months=${months}`);
+}
+
+export interface TopVodRow {
+  id: string;
+  title: string;
+  viewCount: number;
+}
+export async function getTopVods(limit = 10): Promise<TopVodRow[]> {
+  return api<TopVodRow[]>(`/api/admin/analytics/top-vods?limit=${limit}`);
+}
+
+export interface ConversionData {
+  totalUsers: number;
+  convertedUsers: number;
+  pct: number;
+}
+export async function getFreeToPremiumConversion(): Promise<ConversionData> {
+  return api<ConversionData>(`/api/admin/analytics/conversion`);
 }
 
 export interface AuditLogEntry {
@@ -280,6 +359,30 @@ export interface ListSanctionsResult {
   total: number;
   limit: number;
   offset: number;
+}
+
+export interface LoginEventRow {
+  id: string;
+  userId: string;
+  ipHash: string | null;
+  region: string | null;
+  userAgent: string | null;
+  deviceFp: string | null;
+  method: string;
+  createdAt: string;
+  userHandle: string | null;
+  userEmail: string;
+  userName: string;
+}
+
+export async function listAdminLoginEvents(opts: {
+  ipHash?: string;
+  deviceFp?: string;
+  limit?: number;
+} = {}): Promise<{ events: LoginEventRow[] }> {
+  return api(`/api/admin/login-events`, {
+    query: { ipHash: opts.ipHash, deviceFp: opts.deviceFp, limit: opts.limit ?? 50 },
+  });
 }
 
 export async function listAllSanctions(

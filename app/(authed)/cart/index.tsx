@@ -16,7 +16,7 @@ import {
   subscribeCart,
   updateQty,
 } from "@/components/shop/cart-store";
-import { getProductById } from "@/lib/mock";
+import { getProductById } from "@/lib/api/products";
 import { formatNgn } from "@/components/profile/ngn";
 import type { Product } from "@/lib/types";
 

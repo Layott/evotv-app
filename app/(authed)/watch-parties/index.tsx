@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  ActivityIndicator,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -9,6 +10,7 @@ import {
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { toast } from "sonner-native";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Globe,
   Lock,
@@ -22,10 +24,8 @@ import {
   joinWatchParty,
   leaveWatchParty,
   listWatchParties,
-  partyLanguageLabel,
-  type WatchParty,
-  type WatchPartyVisibility,
-} from "@/lib/mock/watch-parties";
+  type PartyListItem,
+} from "@/lib/api/watch-parties";
 import { useMockAuth } from "@/components/providers";
 import {
   Tabs,
@@ -36,6 +36,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+
+type VisibilityFilter = "all" | "public" | "private";
 
 function StatTile({
   icon,
@@ -61,14 +63,14 @@ function StatTile({
 
 function PartyCard({
   party,
-  joined,
+  isHost,
   busy,
   onJoin,
   onLeave,
   onOpen,
 }: {
-  party: WatchParty;
-  joined: boolean;
+  party: PartyListItem;
+  isHost: boolean;
   busy: boolean;
   onJoin: () => void;
   onLeave: () => void;
@@ -81,20 +83,20 @@ function PartyCard({
           style={{ aspectRatio: 16 / 9, backgroundColor: "#171717" }}
           className="overflow-hidden"
         >
-          <Image
-            source={party.streamThumbnailUrl}
-            style={{ width: "100%", height: "100%" }}
-            contentFit="cover"
-          />
+          {party.streamThumbnailUrl ? (
+            <Image
+              source={party.streamThumbnailUrl}
+              style={{ width: "100%", height: "100%" }}
+              contentFit="cover"
+            />
+          ) : null}
           <View className="absolute left-2 top-2 flex-row items-center gap-1 rounded bg-red-600/90 px-1.5 py-0.5">
             <View
               style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#fff" }}
             />
-            <Text className="text-[9px] font-bold uppercase text-white">
-              Live
-            </Text>
+            <Text className="text-[9px] font-bold uppercase text-white">Live</Text>
           </View>
-          {party.visibility === "invite" ? (
+          {party.isPrivate ? (
             <View className="absolute right-2 top-2 flex-row items-center gap-1 rounded bg-amber-500/90 px-1.5 py-0.5">
               <Lock size={9} color="#000" />
               <Text className="text-[9px] font-bold uppercase text-black">
@@ -108,55 +110,60 @@ function PartyCard({
             {party.name}
           </Text>
           <Text className="mt-0.5 text-[11px] text-neutral-400" numberOfLines={1}>
-            Watching: {party.streamTitle}
+            {party.streamTitle
+              ? `Watching: ${party.streamTitle}`
+              : "No stream attached"}
+          </Text>
+          <Text className="mt-0.5 text-[10px] text-neutral-500" numberOfLines={1}>
+            Host: {party.hostHandle ? `@${party.hostHandle}` : party.hostName ?? "—"}
           </Text>
           <View className="mt-2 flex-row flex-wrap items-center gap-2">
             <View className="flex-row items-center gap-1 rounded bg-neutral-800 px-1.5 py-0.5">
               <Users size={10} color="#A3A3A3" />
               <Text className="text-[10px] text-neutral-300">
-                {party.members.length}/{party.maxGuests}
+                {party.activeMembers}/{party.maxMembers}
               </Text>
             </View>
-            <View className="rounded bg-neutral-800 px-1.5 py-0.5">
-              <Text className="text-[10px] text-neutral-300">
-                {partyLanguageLabel(party.language)}
-              </Text>
-            </View>
+            {isHost ? (
+              <View className="rounded bg-brand/20 px-1.5 py-0.5">
+                <Text className="text-[10px] text-brand">Hosting</Text>
+              </View>
+            ) : null}
           </View>
         </View>
       </Pressable>
       <View className="flex-row gap-2 px-3 pb-3">
-        {joined ? (
-          <>
-            <Button
-              size="sm"
-              className="flex-1 bg-brand"
-              onPress={onOpen}
-              disabled={busy}
-              textClassName="text-black"
-            >
-              Open room
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="border-neutral-700"
-              onPress={onLeave}
-              disabled={busy}
-              textClassName="text-neutral-300"
-            >
-              Leave
-            </Button>
-          </>
-        ) : (
+        <Button
+          size="sm"
+          className="flex-1 bg-brand"
+          onPress={onOpen}
+          disabled={busy}
+          textClassName="text-black"
+        >
+          Open room
+        </Button>
+        {isHost ? null : (
           <Button
             size="sm"
-            className="flex-1 bg-brand"
+            variant="outline"
+            className="border-neutral-700"
             onPress={onJoin}
             disabled={busy}
-            textClassName="text-black"
+            textClassName="text-neutral-300"
           >
-            Join party
+            Join
+          </Button>
+        )}
+        {isHost ? null : (
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-neutral-700"
+            onPress={onLeave}
+            disabled={busy}
+            textClassName="text-neutral-300"
+          >
+            Leave
           </Button>
         )}
       </View>
@@ -166,94 +173,78 @@ function PartyCard({
 
 export default function WatchPartiesScreen() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { user } = useMockAuth();
 
-  const [parties, setParties] = React.useState<WatchParty[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [visibilityFilter, setVisibilityFilter] =
+    React.useState<VisibilityFilter>("all");
   const [busyId, setBusyId] = React.useState<string | null>(null);
-  const [visibilityFilter, setVisibilityFilter] = React.useState<
-    WatchPartyVisibility | "all"
-  >("all");
-  const [langFilter, setLangFilter] = React.useState<string>("all");
 
-  const refresh = React.useCallback(async () => {
-    const list = await listWatchParties();
-    setParties(list);
-  }, []);
+  const partiesQuery = useQuery({
+    queryKey: ["watch-parties"],
+    queryFn: listWatchParties,
+    staleTime: 20_000,
+  });
 
-  React.useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    refresh().finally(() => {
-      if (!cancelled) setLoading(false);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [refresh]);
+  const parties = partiesQuery.data ?? [];
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await refresh();
-    setRefreshing(false);
-  };
+  const joinMutation = useMutation({
+    mutationFn: (partyId: string) => joinWatchParty(partyId),
+    onSuccess: (_res, partyId) => {
+      void queryClient.invalidateQueries({ queryKey: ["watch-parties"] });
+      toast.success("Joined the party");
+      router.push(`/watch-parties/${partyId}` as never);
+    },
+    onError: (err) => {
+      toast.error("Couldn't join", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+    onSettled: () => setBusyId(null),
+  });
 
-  async function handleJoin(partyId: string) {
+  const leaveMutation = useMutation({
+    mutationFn: (partyId: string) => leaveWatchParty(partyId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["watch-parties"] });
+      toast.success("Left the party");
+    },
+    onError: (err) => {
+      toast.error("Couldn't leave", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+    onSettled: () => setBusyId(null),
+  });
+
+  function handleJoin(partyId: string) {
     if (!user) {
       toast.error("Sign in to join a party");
       return;
     }
     setBusyId(partyId);
-    try {
-      const res = await joinWatchParty(partyId, user);
-      if (!res) {
-        toast.error("Could not join party");
-        return;
-      }
-      toast.success("Joined the party");
-      router.push(`/watch-parties/${partyId}`);
-    } finally {
-      setBusyId(null);
-    }
+    joinMutation.mutate(partyId);
   }
 
-  async function handleLeave(partyId: string) {
+  function handleLeave(partyId: string) {
     if (!user) return;
     setBusyId(partyId);
-    try {
-      await leaveWatchParty(partyId, user.id);
-      toast.success("Left the party");
-      await refresh();
-    } finally {
-      setBusyId(null);
-    }
+    leaveMutation.mutate(partyId);
   }
 
   const filtered = React.useMemo(() => {
-    return parties.filter((p) => {
-      if (visibilityFilter !== "all" && p.visibility !== visibilityFilter)
-        return false;
-      if (langFilter !== "all" && p.language !== langFilter) return false;
-      return true;
-    });
-  }, [parties, visibilityFilter, langFilter]);
+    if (visibilityFilter === "all") return parties;
+    if (visibilityFilter === "public") return parties.filter((p) => !p.isPrivate);
+    return parties.filter((p) => p.isPrivate);
+  }, [parties, visibilityFilter]);
 
-  const myParties = React.useMemo(() => {
-    if (!user) return [] as WatchParty[];
-    return filtered.filter((p) => p.members.some((m) => m.userId === user.id));
+  const myHosted = React.useMemo(() => {
+    if (!user) return [] as PartyListItem[];
+    return filtered.filter((p) => p.hostUserId === user.id);
   }, [filtered, user]);
 
-  const publicParties = React.useMemo(
-    () => filtered.filter((p) => p.visibility === "public"),
-    [filtered],
-  );
-
-  const totalMembers = parties.reduce((sum, p) => sum + p.members.length, 0);
-  const languages = React.useMemo<string[]>(() => {
-    const set = new Set(parties.map((p) => p.language as string));
-    return Array.from(set);
-  }, [parties]);
+  const totalMembers = parties.reduce((sum, p) => sum + p.activeMembers, 0);
+  const privateCount = parties.filter((p) => p.isPrivate).length;
 
   return (
     <>
@@ -262,8 +253,8 @@ export default function WatchPartiesScreen() {
         className="flex-1 bg-background"
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
+            refreshing={partiesQuery.isFetching && !partiesQuery.isLoading}
+            onRefresh={() => partiesQuery.refetch()}
             tintColor="#2CD7E3"
           />
         }
@@ -278,7 +269,7 @@ export default function WatchPartiesScreen() {
 
           <Button
             className="mt-4 bg-brand"
-            onPress={() => router.push("/watch-parties/new")}
+            onPress={() => router.push("/watch-parties/new" as never)}
             textClassName="text-black"
           >
             <Plus size={16} color="#000" />
@@ -296,17 +287,10 @@ export default function WatchPartiesScreen() {
               label="Watching"
               value={totalMembers}
             />
-          </View>
-          <View className="mt-2 flex-row gap-2">
-            <StatTile
-              icon={<Globe size={12} color="#34D399" />}
-              label="Languages"
-              value={languages.length}
-            />
             <StatTile
               icon={<Lock size={12} color="#A3A3A3" />}
               label="Invite-only"
-              value={parties.filter((p) => p.visibility === "invite").length}
+              value={privateCount}
             />
           </View>
 
@@ -318,7 +302,7 @@ export default function WatchPartiesScreen() {
             showsHorizontalScrollIndicator={false}
             className="mt-2"
           >
-            {(["all", "public", "invite"] as const).map((v) => (
+            {(["all", "public", "private"] as const).map((v) => (
               <Pressable
                 key={v}
                 onPress={() => setVisibilityFilter(v)}
@@ -341,55 +325,6 @@ export default function WatchPartiesScreen() {
             ))}
           </ScrollView>
 
-          <Text className="mt-4 text-[10px] uppercase tracking-wider text-neutral-500">
-            Language
-          </Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className="mt-2"
-          >
-            <Pressable
-              onPress={() => setLangFilter("all")}
-              className={cn(
-                "mr-2 rounded-full border px-3 py-1.5",
-                langFilter === "all"
-                  ? "border-brand/50 bg-brand/10"
-                  : "border-neutral-800 bg-neutral-900/60",
-              )}
-            >
-              <Text
-                className={cn(
-                  "text-xs font-medium",
-                  langFilter === "all" ? "text-brand" : "text-neutral-400",
-                )}
-              >
-                All
-              </Text>
-            </Pressable>
-            {languages.map((l) => (
-              <Pressable
-                key={l}
-                onPress={() => setLangFilter(l)}
-                className={cn(
-                  "mr-2 rounded-full border px-3 py-1.5",
-                  langFilter === l
-                    ? "border-brand/50 bg-brand/10"
-                    : "border-neutral-800 bg-neutral-900/60",
-                )}
-              >
-                <Text
-                  className={cn(
-                    "text-xs font-medium",
-                    langFilter === l ? "text-brand" : "text-neutral-400",
-                  )}
-                >
-                  {partyLanguageLabel(l as never)}
-                </Text>
-              </Pressable>
-            ))}
-          </ScrollView>
-
           <Tabs defaultValue="browse" className="mt-5">
             <TabsList>
               <TabsTrigger value="browse">
@@ -401,32 +336,41 @@ export default function WatchPartiesScreen() {
               <TabsTrigger value="mine">
                 <Users size={14} color="#A3A3A3" />
                 <Text className="text-sm font-medium text-neutral-300">
-                  Mine ({myParties.length})
+                  Hosting ({myHosted.length})
                 </Text>
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="browse">
-              {loading ? (
+              {partiesQuery.isLoading ? (
                 <View className="gap-3">
                   {Array.from({ length: 3 }).map((_, i) => (
                     <Skeleton key={i} className="h-56 rounded-xl" />
                   ))}
                 </View>
-              ) : publicParties.length === 0 ? (
+              ) : partiesQuery.isError ? (
+                <View className="rounded-2xl border border-dashed border-neutral-800 bg-neutral-900/30 p-10 items-center">
+                  <Text className="text-sm text-red-400">
+                    Failed to load parties.{" "}
+                    {partiesQuery.error instanceof Error
+                      ? partiesQuery.error.message
+                      : ""}
+                  </Text>
+                </View>
+              ) : filtered.length === 0 ? (
                 <View className="rounded-2xl border border-dashed border-neutral-800 bg-neutral-900/30 p-10">
                   <View className="items-center">
                     <Sparkles size={32} color="#525252" />
                   </View>
                   <Text className="mt-3 text-center text-sm font-semibold text-neutral-200">
-                    No public parties match your filters
+                    No parties match your filter
                   </Text>
                   <Text className="mt-1 text-center text-xs text-neutral-500">
                     Adjust filters above or host one yourself.
                   </Text>
                   <Button
                     className="mt-4 bg-brand"
-                    onPress={() => router.push("/watch-parties/new")}
+                    onPress={() => router.push("/watch-parties/new" as never)}
                     textClassName="text-black"
                   >
                     Host a party
@@ -434,15 +378,17 @@ export default function WatchPartiesScreen() {
                 </View>
               ) : (
                 <View className="gap-3">
-                  {publicParties.map((p) => (
+                  {filtered.map((p) => (
                     <PartyCard
                       key={p.id}
                       party={p}
-                      joined={!!user && p.members.some((m) => m.userId === user.id)}
+                      isHost={user?.id === p.hostUserId}
                       busy={busyId === p.id}
                       onJoin={() => handleJoin(p.id)}
                       onLeave={() => handleLeave(p.id)}
-                      onOpen={() => router.push(`/watch-parties/${p.id}`)}
+                      onOpen={() =>
+                        router.push(`/watch-parties/${p.id}` as never)
+                      }
                     />
                   ))}
                 </View>
@@ -450,44 +396,44 @@ export default function WatchPartiesScreen() {
             </TabsContent>
 
             <TabsContent value="mine">
-              {loading ? (
+              {partiesQuery.isLoading ? (
                 <View className="gap-3">
                   {Array.from({ length: 2 }).map((_, i) => (
                     <Skeleton key={i} className="h-56 rounded-xl" />
                   ))}
                 </View>
               ) : !user ? (
-                <View className="rounded-2xl border border-dashed border-neutral-800 bg-neutral-900/30 p-10">
-                  <View className="items-center">
-                    <Sparkles size={32} color="#525252" />
-                  </View>
+                <View className="rounded-2xl border border-dashed border-neutral-800 bg-neutral-900/30 p-10 items-center">
+                  <Sparkles size={32} color="#525252" />
                   <Text className="mt-3 text-center text-sm font-semibold text-neutral-200">
-                    Sign in to track parties
+                    Sign in to see your hosted parties
                   </Text>
                 </View>
-              ) : myParties.length === 0 ? (
+              ) : myHosted.length === 0 ? (
                 <View className="rounded-2xl border border-dashed border-neutral-800 bg-neutral-900/30 p-10">
                   <View className="items-center">
                     <Tv2 size={32} color="#525252" />
                   </View>
                   <Text className="mt-3 text-center text-sm font-semibold text-neutral-200">
-                    You're not in any parties
+                    You're not hosting any parties
                   </Text>
                   <Text className="mt-1 text-center text-xs text-neutral-500">
-                    Join a public party from the Browse tab, or host one.
+                    Host one to see it here.
                   </Text>
                 </View>
               ) : (
                 <View className="gap-3">
-                  {myParties.map((p) => (
+                  {myHosted.map((p) => (
                     <PartyCard
                       key={p.id}
                       party={p}
-                      joined
+                      isHost
                       busy={busyId === p.id}
                       onJoin={() => handleJoin(p.id)}
                       onLeave={() => handleLeave(p.id)}
-                      onOpen={() => router.push(`/watch-parties/${p.id}`)}
+                      onOpen={() =>
+                        router.push(`/watch-parties/${p.id}` as never)
+                      }
                     />
                   ))}
                 </View>

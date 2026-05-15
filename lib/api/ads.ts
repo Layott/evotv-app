@@ -1,6 +1,16 @@
 import { api } from "./_client";
 import type { Ad, AdPlacement } from "@/lib/types";
 
+/**
+ * GET /api/ads/serve?placement=<slot> — public. Returns one active ad
+ * (weight-biased) for the slot or `{ ad: null }` if none.
+ */
+export function serveAd(placement: AdPlacement): Promise<{ ad: Ad | null }> {
+  return api<{ ad: Ad | null }>("/api/ads/serve", {
+    query: { placement },
+  });
+}
+
 /** POST /api/ads/impression — increments impression count. */
 export function recordAdImpression(adId: string): Promise<{ ok: true }> {
   return api<{ ok: true }>("/api/ads/impression", {

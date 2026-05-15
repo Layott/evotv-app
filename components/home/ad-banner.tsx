@@ -3,7 +3,7 @@ import { Linking, Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 
 import type { Ad, AdPlacement } from "@/lib/types";
-import { pickAd } from "@/lib/mock/ads";
+import { recordAdClick, recordAdImpression, serveAd } from "@/lib/api/ads";
 
 interface AdBannerProps {
   placement?: AdPlacement;
@@ -15,8 +15,18 @@ export function AdBanner({ placement = "home_banner" }: AdBannerProps) {
   React.useEffect(() => {
     let cancelled = false;
     void (async () => {
-      const next = await pickAd(placement);
-      if (!cancelled) setAd(next);
+      try {
+        const { ad: next } = await serveAd(placement);
+        if (cancelled) return;
+        setAd(next);
+        if (next) {
+          void recordAdImpression(next.id).catch(() => {
+            /* fire-and-forget */
+          });
+        }
+      } catch {
+        /* swallow — ad slot just stays empty if backend is down */
+      }
     })();
     return () => {
       cancelled = true;
@@ -25,8 +35,13 @@ export function AdBanner({ placement = "home_banner" }: AdBannerProps) {
 
   if (!ad) return null;
 
-  const open = () => {
-    void Linking.openURL(ad.clickUrl);
+  const open = async () => {
+    try {
+      const { clickUrl } = await recordAdClick(ad.id);
+      void Linking.openURL(clickUrl || ad.clickUrl);
+    } catch {
+      void Linking.openURL(ad.clickUrl);
+    }
   };
 
   return (

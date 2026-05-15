@@ -41,9 +41,11 @@ export function getOrderById(id: string): Promise<Order | null> {
 }
 
 /**
- * Backend does not expose a list endpoint yet. Stub returns []; swap when the
- * route lands. Kept for signature parity with `lib/mock/orders.ts`.
+ * GET /api/orders — current user's orders, newest first.
+ * Note: backend resolves the user from the bearer; the userId arg is
+ * retained for call-site compatibility with the old mock signature.
  */
 export async function listOrdersForUser(_userId: string): Promise<Order[]> {
-  return [];
+  const res = await api<{ orders: Order[] }>("/api/orders");
+  return res.orders;
 }

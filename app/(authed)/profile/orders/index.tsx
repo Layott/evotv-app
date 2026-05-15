@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useMockAuth } from "@/components/providers";
-import { listOrdersForUser } from "@/lib/mock";
+import { listOrdersForUser } from "@/lib/api/orders";
 import { readLocalOrders } from "@/components/shop/cart-store";
 import { formatNgn, relativeTime } from "@/components/profile/ngn";
 import type { Order, OrderStatus } from "@/lib/types";

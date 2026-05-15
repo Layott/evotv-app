@@ -305,6 +305,7 @@ export function OverviewPage() {
             { label: "Content", to: "/admin/content" },
             { label: "Audit log", to: "/admin/audit-log" },
             { label: "Sanctions", to: "/admin/sanctions" },
+            { label: "Channels", to: "/admin/channels" },
           ].map((q) => (
             <Text
               key={q.to}

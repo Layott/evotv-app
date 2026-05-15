@@ -25,7 +25,7 @@ import {
   type CartLine,
 } from "@/components/shop/cart-store";
 import { syncRemove } from "@/lib/storage/persist";
-import { getProductById } from "@/lib/mock";
+import { getProductById } from "@/lib/api/products";
 import { formatNgn } from "@/components/profile/ngn";
 import type { Order, OrderItem, Product } from "@/lib/types";
 

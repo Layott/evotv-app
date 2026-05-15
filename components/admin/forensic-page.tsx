@@ -9,7 +9,7 @@ import {
 } from "lucide-react-native";
 import { useQuery } from "@tanstack/react-query";
 
-import { listAuditLog } from "@/lib/api/admin";
+import { listAdminLoginEvents, listAuditLog } from "@/lib/api/admin";
 import { Spinner } from "@/components/ui/spinner";
 
 import { PageHeader } from "./page-header";
@@ -31,6 +31,12 @@ export function ForensicPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "audit-log", "preview"],
     queryFn: () => listAuditLog({ limit: 20 }),
+    staleTime: 30_000,
+  });
+
+  const loginsQ = useQuery({
+    queryKey: ["admin", "login-events", "preview"],
+    queryFn: () => listAdminLoginEvents({ limit: 25 }),
     staleTime: 30_000,
   });
 
@@ -121,6 +127,57 @@ export function ForensicPage() {
                     {row.actorId ? row.actorId.slice(0, 12) + "…" : "system"}
                   </Text>
                 </Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        <View className="mt-6 flex-row items-center gap-2">
+          <ShieldCheck size={14} color="#A855F7" />
+          <Text className="text-sm font-semibold text-foreground">
+            Recent sign-ins
+          </Text>
+        </View>
+
+        {loginsQ.isLoading ? (
+          <View className="items-center py-6">
+            <Spinner />
+          </View>
+        ) : (loginsQ.data?.events ?? []).length === 0 ? (
+          <View className="mt-3 rounded-xl border border-dashed border-border p-6">
+            <Text className="text-center text-sm text-muted-foreground">
+              No sign-in events logged yet.
+            </Text>
+          </View>
+        ) : (
+          <View className="mt-3 gap-2">
+            {(loginsQ.data?.events ?? []).map((ev) => (
+              <View
+                key={ev.id}
+                className="rounded-xl border border-border bg-card p-3"
+              >
+                <View className="flex-row items-center justify-between mb-1">
+                  <Text className="text-sm font-semibold text-foreground" numberOfLines={1}>
+                    {ev.userHandle ? `@${ev.userHandle}` : ev.userName}
+                  </Text>
+                  <Text className="text-[11px] text-muted-foreground">
+                    {timeAgo(ev.createdAt)}
+                  </Text>
+                </View>
+                <Text className="text-[11px] text-muted-foreground" numberOfLines={1}>
+                  {ev.region ?? "?"} ·{" "}
+                  <Text className="font-mono">
+                    {ev.ipHash ? ev.ipHash.slice(0, 12) + "…" : "no-ip"}
+                  </Text>
+                </Text>
+                {ev.userAgent ? (
+                  <Text
+                    className="mt-0.5 text-[10px] text-muted-foreground"
+                    numberOfLines={1}
+                  >
+                    {ev.userAgent}
+                  </Text>
+                ) : null}
               </View>
             ))}
           </View>

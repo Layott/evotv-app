@@ -1,12 +1,21 @@
 import * as React from "react";
 import { ScrollView, Text, View } from "react-native";
-import { Clock, PercentCircle, TrendingDown, Users } from "lucide-react-native";
+import { Clock, PercentCircle, Radio, Users } from "lucide-react-native";
+import { useQuery } from "@tanstack/react-query";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  getFreeToPremiumConversion,
+  getOverviewMetrics,
+  getRetention,
+  getRevenueByMonth,
+  getTopVods,
+  getViewsOverTime,
+} from "@/lib/api/admin";
 
 import { MetricCard } from "./metric-card";
 import { PageHeader } from "./page-header";
-import { formatCompact, formatNgn, formatNumber, seededRandom } from "./utils";
+import { formatCompact, formatNgn, formatNumber } from "./utils";
 
 const DATE_RANGES = [
   { value: "7d", label: "7d" },
@@ -15,65 +24,66 @@ const DATE_RANGES = [
   { value: "1y", label: "1y" },
 ];
 
+function rangeToDays(r: string): number {
+  if (r === "7d") return 7;
+  if (r === "30d") return 30;
+  if (r === "90d") return 90;
+  return 365;
+}
+
 export function AnalyticsPage() {
   const [range, setRange] = React.useState("30d");
 
-  const viewsSeries = React.useMemo(() => {
-    const rng = seededRandom(51);
-    const days = range === "7d" ? 7 : range === "30d" ? 30 : range === "90d" ? 90 : 365;
-    const now = Date.now();
-    return Array.from({ length: Math.min(days, 60) }, (_, i) => {
-      const d = new Date(now - (Math.min(days, 60) - 1 - i) * 86_400_000);
-      const base = 100_000 + i * (days > 30 ? 1200 : 4000);
-      const views = Math.round(base + rng() * 80_000);
-      return {
-        day: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
-        views,
-      };
-    });
-  }, [range]);
+  const overviewQ = useQuery({
+    queryKey: ["admin-analytics-overview"],
+    queryFn: getOverviewMetrics,
+    staleTime: 60_000,
+  });
 
-  const retention = React.useMemo(() => {
-    const rng = seededRandom(7);
-    return Array.from({ length: 8 }, (_, r) =>
-      Array.from({ length: 8 }, (_, c) => {
-        if (c > 7 - r) return null;
-        const base = Math.max(12, 100 - c * 13 - r * 2);
-        return Math.min(100, Math.round(base + rng() * 6));
-      }),
-    );
-  }, []);
+  const viewsQ = useQuery({
+    queryKey: ["admin-analytics-views", range],
+    queryFn: () => getViewsOverTime(rangeToDays(range)),
+    staleTime: 60_000,
+  });
 
-  const revenueByMonth = React.useMemo(() => {
-    const rng = seededRandom(19);
-    const labels = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"];
-    return labels.map((m, i) => ({
-      month: m,
-      revenue: Math.round(3_200_000 + i * 480_000 + rng() * 600_000),
-    }));
-  }, []);
+  const retentionQ = useQuery({
+    queryKey: ["admin-analytics-retention"],
+    queryFn: () => getRetention(8),
+    staleTime: 5 * 60_000,
+  });
 
-  const topTitles = React.useMemo(() => {
-    const titles = [
-      "EVO Finals — Highlights",
-      "PUBGM Casablanca Day 1",
-      "Evo Talk Ep 12",
-      "CoD Mobile Cairo",
-      "Free Fire Lagos Semis",
-      "EA FC Continental",
-      "Retrospective: Alpha",
-      "Scrim Night: Titan",
-      "Accra Showdown Recap",
-      "Bracket Reveal — EVO Cup",
-    ];
-    const rng = seededRandom(5);
-    return titles
-      .map((t) => ({ title: t, views: Math.round(12_000 + rng() * 240_000) }))
-      .sort((a, b) => b.views - a.views);
-  }, []);
+  const revenueQ = useQuery({
+    queryKey: ["admin-analytics-revenue"],
+    queryFn: () => getRevenueByMonth(6),
+    staleTime: 5 * 60_000,
+  });
 
-  const maxViews = Math.max(...viewsSeries.map((v) => v.views));
-  const maxRevenue = Math.max(...revenueByMonth.map((r) => r.revenue));
+  const topVodsQ = useQuery({
+    queryKey: ["admin-analytics-top-vods"],
+    queryFn: () => getTopVods(10),
+    staleTime: 5 * 60_000,
+  });
+
+  const conversionQ = useQuery({
+    queryKey: ["admin-analytics-conversion"],
+    queryFn: getFreeToPremiumConversion,
+    staleTime: 5 * 60_000,
+  });
+
+  const viewsSeries = viewsQ.data ?? [];
+  const retention = retentionQ.data?.matrix ?? [];
+  const revenue = revenueQ.data ?? [];
+  const topVods = topVodsQ.data ?? [];
+  const overview = overviewQ.data;
+  const conversion = conversionQ.data;
+
+  const maxViews = viewsSeries.length > 0
+    ? Math.max(1, ...viewsSeries.map((v) => v.views))
+    : 1;
+  const maxRevenue = revenue.length > 0
+    ? Math.max(1, ...revenue.map((r) => r.ngn))
+    : 1;
+  const topMax = topVods.length > 0 ? Math.max(1, topVods[0].viewCount) : 1;
 
   return (
     <ScrollView
@@ -98,38 +108,38 @@ export function AnalyticsPage() {
       <View className="flex-row flex-wrap gap-3">
         <View className="min-w-[46%] flex-1">
           <MetricCard
-            title="Unique viewers"
-            value={formatNumber(284_120)}
-            delta={11.2}
-            deltaLabel="MoM"
+            title="Total viewers"
+            value={overview ? formatNumber(overview.totalViewers) : "—"}
+            delta={undefined}
+            deltaLabel={overviewQ.isLoading ? "Loading…" : "Real-time"}
             icon={Users}
           />
         </View>
         <View className="min-w-[46%] flex-1">
           <MetricCard
-            title="Avg watch"
-            value="32m 14s"
-            delta={4.5}
-            deltaLabel="vs last"
-            icon={Clock}
+            title="Live streams"
+            value={overview ? formatNumber(overview.liveStreams) : "—"}
+            delta={undefined}
+            deltaLabel={overviewQ.isLoading ? "Loading…" : "Right now"}
+            icon={Radio}
           />
         </View>
         <View className="min-w-[46%] flex-1">
           <MetricCard
             title="Conversion"
-            value="2.4%"
-            delta={0.3}
+            value={conversion ? `${conversion.pct.toFixed(2)}%` : "—"}
+            delta={undefined}
             deltaLabel="free → premium"
             icon={PercentCircle}
           />
         </View>
         <View className="min-w-[46%] flex-1">
           <MetricCard
-            title="Premium churn"
-            value="3.1%"
-            delta={-0.6}
-            deltaLabel="vs last"
-            icon={TrendingDown}
+            title="Signups today"
+            value={overview ? formatNumber(overview.signupsToday) : "—"}
+            delta={undefined}
+            deltaLabel="Last 24h"
+            icon={Clock}
           />
         </View>
       </View>
@@ -142,25 +152,33 @@ export function AnalyticsPage() {
           {DATE_RANGES.find((r) => r.value === range)?.label}
         </Text>
         <View className="mt-3 flex-row items-end gap-0.5" style={{ height: 120 }}>
-          {viewsSeries.map((d, i) => {
-            const h = Math.max(8, (d.views / maxViews) * 110);
-            return (
-              <View
-                key={i}
-                style={{ height: h }}
-                className="flex-1 rounded-sm bg-cyan-500/60"
-              />
-            );
-          })}
+          {viewsSeries.length === 0 ? (
+            <Text className="text-xs text-muted-foreground">
+              {viewsQ.isLoading ? "Loading…" : "No views recorded yet."}
+            </Text>
+          ) : (
+            viewsSeries.map((d, i) => {
+              const h = Math.max(8, (d.views / maxViews) * 110);
+              return (
+                <View
+                  key={i}
+                  style={{ height: h }}
+                  className="flex-1 rounded-sm bg-cyan-500/60"
+                />
+              );
+            })
+          )}
         </View>
-        <View className="mt-1 flex-row justify-between">
-          <Text className="text-[10px] text-muted-foreground">
-            {viewsSeries[0]?.day}
-          </Text>
-          <Text className="text-[10px] text-muted-foreground">
-            {viewsSeries[viewsSeries.length - 1]?.day}
-          </Text>
-        </View>
+        {viewsSeries.length > 0 ? (
+          <View className="mt-1 flex-row justify-between">
+            <Text className="text-[10px] text-muted-foreground">
+              {viewsSeries[0]?.date}
+            </Text>
+            <Text className="text-[10px] text-muted-foreground">
+              {viewsSeries[viewsSeries.length - 1]?.date}
+            </Text>
+          </View>
+        ) : null}
       </View>
 
       <View className="mt-6 rounded-xl border border-border bg-card/40 p-4">
@@ -168,37 +186,45 @@ export function AnalyticsPage() {
           Revenue by month
         </Text>
         <Text className="text-xs text-muted-foreground">
-          Last 6 months, premium subs
+          Last 6 months — subs + orders combined
         </Text>
         <View
           className="mt-3 flex-row items-end gap-2"
           style={{ height: 130 }}
         >
-          {revenueByMonth.map((r, i) => {
-            const h = Math.max(8, (r.revenue / maxRevenue) * 110);
-            return (
-              <View key={i} className="flex-1 items-center">
-                <Text
-                  className="text-[10px] text-muted-foreground"
-                  style={{ fontVariant: ["tabular-nums"] }}
-                >
-                  {formatCompact(r.revenue)}
-                </Text>
-                <View
-                  style={{ height: h }}
-                  className="my-1 w-full rounded-sm bg-cyan-500"
-                />
-                <Text className="text-[10px] text-muted-foreground">
-                  {r.month}
-                </Text>
-              </View>
-            );
-          })}
+          {revenue.length === 0 ? (
+            <Text className="text-xs text-muted-foreground">
+              {revenueQ.isLoading ? "Loading…" : "No revenue yet."}
+            </Text>
+          ) : (
+            revenue.map((r) => {
+              const h = Math.max(8, (r.ngn / maxRevenue) * 110);
+              return (
+                <View key={r.month} className="flex-1 items-center">
+                  <Text
+                    className="text-[10px] text-muted-foreground"
+                    style={{ fontVariant: ["tabular-nums"] }}
+                  >
+                    {formatCompact(r.ngn)}
+                  </Text>
+                  <View
+                    style={{ height: h }}
+                    className="my-1 w-full rounded-sm bg-cyan-500"
+                  />
+                  <Text className="text-[10px] text-muted-foreground">
+                    {r.month.slice(5)}
+                  </Text>
+                </View>
+              );
+            })
+          )}
         </View>
-        <Text className="mt-2 text-xs text-muted-foreground">
-          Total:{" "}
-          {formatNgn(revenueByMonth.reduce((s, r) => s + r.revenue, 0))}
-        </Text>
+        {revenue.length > 0 ? (
+          <Text className="mt-2 text-xs text-muted-foreground">
+            Total:{" "}
+            {formatNgn(revenue.reduce((s, r) => s + r.ngn, 0))}
+          </Text>
+        ) : null}
       </View>
 
       <View className="mt-6 rounded-xl border border-border bg-card/40 p-4">
@@ -206,69 +232,78 @@ export function AnalyticsPage() {
           Retention cohort
         </Text>
         <Text className="text-xs text-muted-foreground">
-          Week retention over 8 cohorts
+          Week retention over 8 signup cohorts
         </Text>
-        <ScrollView horizontal className="mt-3" showsHorizontalScrollIndicator={false}>
-          <View>
-            <View className="flex-row">
-              <View style={{ width: 50 }} />
-              {Array.from({ length: 8 }, (_, i) => (
-                <View
-                  key={i}
-                  style={{ width: 38 }}
-                  className="items-center"
-                >
-                  <Text className="text-[10px] text-muted-foreground">
-                    W{i}
-                  </Text>
+        {retention.length === 0 ? (
+          <Text className="mt-3 text-xs text-muted-foreground">
+            {retentionQ.isLoading ? "Loading…" : "Not enough data yet."}
+          </Text>
+        ) : (
+          <ScrollView
+            horizontal
+            className="mt-3"
+            showsHorizontalScrollIndicator={false}
+          >
+            <View>
+              <View className="flex-row">
+                <View style={{ width: 60 }} />
+                {Array.from(
+                  { length: retention[0]?.length ?? 0 },
+                  (_, i) => (
+                    <View key={i} style={{ width: 38 }} className="items-center">
+                      <Text className="text-[10px] text-muted-foreground">
+                        W{i}
+                      </Text>
+                    </View>
+                  ),
+                )}
+              </View>
+              {retention.map((row, r) => (
+                <View key={r} className="flex-row">
+                  <View
+                    style={{ width: 60 }}
+                    className="items-start justify-center"
+                  >
+                    <Text className="text-[10px] text-muted-foreground">
+                      {retentionQ.data?.cohorts[r]?.weekStart.slice(5) ?? "?"}
+                    </Text>
+                  </View>
+                  {row.map((v, c) => (
+                    <View
+                      key={c}
+                      style={{
+                        width: 36,
+                        height: 24,
+                        margin: 1,
+                        backgroundColor:
+                          v == null
+                            ? "transparent"
+                            : `rgba(44,215,227,${(v / 100) * 0.7 + 0.05})`,
+                        borderRadius: 4,
+                      }}
+                      className="items-center justify-center"
+                    >
+                      <Text
+                        className="text-[10px]"
+                        style={{
+                          color:
+                            v == null
+                              ? "#3f3f46"
+                              : v > 55
+                                ? "#052e30"
+                                : "#A7E5F3",
+                          fontVariant: ["tabular-nums"],
+                        }}
+                      >
+                        {v == null ? "—" : `${v}%`}
+                      </Text>
+                    </View>
+                  ))}
                 </View>
               ))}
             </View>
-            {retention.map((row, r) => (
-              <View key={r} className="flex-row">
-                <View
-                  style={{ width: 50 }}
-                  className="items-start justify-center"
-                >
-                  <Text className="text-[10px] text-muted-foreground">
-                    W{r + 1}
-                  </Text>
-                </View>
-                {row.map((v, c) => (
-                  <View
-                    key={c}
-                    style={{
-                      width: 36,
-                      height: 24,
-                      margin: 1,
-                      backgroundColor:
-                        v == null
-                          ? "transparent"
-                          : `rgba(44,215,227,${(v / 100) * 0.7 + 0.05})`,
-                      borderRadius: 4,
-                    }}
-                    className="items-center justify-center"
-                  >
-                    <Text
-                      className="text-[10px]"
-                      style={{
-                        color:
-                          v == null
-                            ? "#3f3f46"
-                            : v > 55
-                              ? "#052e30"
-                              : "#A7E5F3",
-                        fontVariant: ["tabular-nums"],
-                      }}
-                    >
-                      {v == null ? "—" : `${v}%`}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            ))}
-          </View>
-        </ScrollView>
+          </ScrollView>
+        )}
       </View>
 
       <View className="mt-6 rounded-xl border border-border bg-card/40 p-4">
@@ -276,36 +311,42 @@ export function AnalyticsPage() {
           Top 10 VODs
         </Text>
         <Text className="text-xs text-muted-foreground">
-          By views in current range
+          By total views
         </Text>
         <View className="mt-3 gap-2.5">
-          {topTitles.map((t) => {
-            const pct = Math.round((t.views / topTitles[0]!.views) * 100);
-            return (
-              <View key={t.title}>
-                <View className="flex-row items-center justify-between">
-                  <Text
-                    numberOfLines={1}
-                    className="flex-1 pr-2 text-xs text-foreground"
-                  >
-                    {t.title}
-                  </Text>
-                  <Text
-                    className="text-xs text-muted-foreground"
-                    style={{ fontVariant: ["tabular-nums"] }}
-                  >
-                    {formatNumber(t.views)}
-                  </Text>
+          {topVods.length === 0 ? (
+            <Text className="text-xs text-muted-foreground">
+              {topVodsQ.isLoading ? "Loading…" : "No VODs yet."}
+            </Text>
+          ) : (
+            topVods.map((t) => {
+              const pct = Math.round((t.viewCount / topMax) * 100);
+              return (
+                <View key={t.id}>
+                  <View className="flex-row items-center justify-between">
+                    <Text
+                      numberOfLines={1}
+                      className="flex-1 pr-2 text-xs text-foreground"
+                    >
+                      {t.title}
+                    </Text>
+                    <Text
+                      className="text-xs text-muted-foreground"
+                      style={{ fontVariant: ["tabular-nums"] }}
+                    >
+                      {formatNumber(t.viewCount)}
+                    </Text>
+                  </View>
+                  <View className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
+                    <View
+                      className="h-full rounded-full bg-cyan-500"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </View>
                 </View>
-                <View className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
-                  <View
-                    className="h-full rounded-full bg-cyan-500"
-                    style={{ width: `${pct}%` }}
-                  />
-                </View>
-              </View>
-            );
-          })}
+              );
+            })
+          )}
         </View>
       </View>
     </ScrollView>

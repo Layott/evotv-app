@@ -3,16 +3,11 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { toast } from "sonner-native";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Globe, Loader2, Lock, Sparkles, Tv2, Users } from "lucide-react-native";
 
-import {
-  PARTY_LANGUAGE_OPTIONS,
-  createWatchParty,
-  type WatchPartyLanguage,
-  type WatchPartyVisibility,
-} from "@/lib/mock/watch-parties";
+import { createWatchParty } from "@/lib/api/watch-parties";
 import { listLiveStreams } from "@/lib/api/streams";
-import type { Stream } from "@/lib/types";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,36 +19,50 @@ export default function NewWatchPartyScreen() {
   const router = useRouter();
   const { user } = useMockAuth();
 
-  const [streams, setStreams] = React.useState<Stream[]>([]);
-  const [streamsLoading, setStreamsLoading] = React.useState(true);
+  const streamsQuery = useQuery({
+    queryKey: ["live-streams"],
+    queryFn: () => listLiveStreams(),
+    staleTime: 30_000,
+  });
+  const streams = streamsQuery.data ?? [];
 
   const [name, setName] = React.useState("");
-  const [topic, setTopic] = React.useState("");
   const [streamId, setStreamId] = React.useState("");
-  const [maxGuests, setMaxGuests] = React.useState(20);
-  const [visibility, setVisibility] = React.useState<WatchPartyVisibility>("public");
-  const [language, setLanguage] = React.useState<WatchPartyLanguage>("en");
-  const [submitting, setSubmitting] = React.useState(false);
+  const [maxMembers, setMaxMembers] = React.useState(20);
+  const [isPrivate, setIsPrivate] = React.useState(false);
 
   React.useEffect(() => {
-    let cancelled = false;
-    setStreamsLoading(true);
-    listLiveStreams().then((s) => {
-      if (cancelled) return;
-      setStreams(s);
-      setStreamId((prev) => prev || s[0]?.id || "");
-      setStreamsLoading(false);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    if (!streamId && streams.length > 0) {
+      setStreamId(streams[0]?.id ?? "");
+    }
+  }, [streams, streamId]);
 
   const selectedStream = streams.find((s) => s.id === streamId) ?? null;
   const nameValid = name.trim().length >= 3;
+
+  const createMutation = useMutation({
+    mutationFn: createWatchParty,
+    onSuccess: (result) => {
+      if (result.inviteCode) {
+        toast.success("Party created!", {
+          description: `Invite code: ${result.inviteCode}`,
+        });
+      } else {
+        toast.success("Party created!");
+      }
+      router.replace(`/watch-parties/${result.id}` as never);
+    },
+    onError: (err) => {
+      toast.error("Couldn't create party", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+  });
+
+  const submitting = createMutation.isPending;
   const canSubmit = !!user && nameValid && !!selectedStream && !submitting;
 
-  async function handleSubmit() {
+  function handleSubmit() {
     if (!user) {
       toast.error("Sign in to host a party");
       return;
@@ -66,30 +75,12 @@ export default function NewWatchPartyScreen() {
       toast.error("Pick a live stream first");
       return;
     }
-    setSubmitting(true);
-    try {
-      const created = await createWatchParty({
-        name,
-        streamId: selectedStream.id,
-        streamTitle: selectedStream.title,
-        streamThumbnailUrl: selectedStream.thumbnailUrl,
-        visibility,
-        language,
-        maxGuests,
-        topic,
-        host: {
-          id: user.id,
-          handle: user.handle,
-          displayName: user.displayName,
-          avatarUrl: user.avatarUrl,
-        },
-      });
-      toast.success("Party created!");
-      router.replace(`/watch-parties/${created.id}`);
-    } catch {
-      toast.error("Could not create party");
-      setSubmitting(false);
-    }
+    createMutation.mutate({
+      name: name.trim(),
+      streamId: selectedStream.id,
+      maxMembers,
+      isPrivate,
+    });
   }
 
   if (!user) {
@@ -100,9 +91,6 @@ export default function NewWatchPartyScreen() {
           <Sparkles size={36} color="#525252" />
           <Text className="mt-3 text-base font-semibold text-neutral-200">
             Sign in to host a party
-          </Text>
-          <Text className="mt-1 text-xs text-neutral-500">
-            Use the role switcher to choose a role.
           </Text>
         </View>
       </>
@@ -121,11 +109,8 @@ export default function NewWatchPartyScreen() {
             Pick a live stream, set the vibe, invite friends.
           </Text>
 
-          {/* Basics */}
           <View className="mt-5 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
-            <Text className="text-base font-semibold text-neutral-50">
-              Basics
-            </Text>
+            <Text className="text-base font-semibold text-neutral-50">Basics</Text>
 
             <Text className="mt-4 text-xs font-medium text-neutral-300">
               Party name
@@ -134,62 +119,14 @@ export default function NewWatchPartyScreen() {
               className="mt-1 border-neutral-800 bg-neutral-950"
               placeholder="Lagos Squad — Semis Watch"
               value={name}
-              maxLength={60}
+              maxLength={120}
               onChangeText={setName}
             />
             <Text className="mt-1 text-[10px] text-neutral-500">
-              {name.length} / 60
+              {name.length} / 120
             </Text>
-
-            <Text className="mt-4 text-xs font-medium text-neutral-300">
-              Vibe / topic (optional)
-            </Text>
-            <Input
-              className="mt-1 h-20 border-neutral-800 bg-neutral-950"
-              placeholder="What's the energy? Predictions?"
-              value={topic}
-              maxLength={140}
-              onChangeText={setTopic}
-              multiline
-              style={{ textAlignVertical: "top" }}
-            />
-            <Text className="mt-1 text-[10px] text-neutral-500">
-              {topic.length} / 140
-            </Text>
-
-            <Text className="mt-4 text-xs font-medium text-neutral-300">
-              Language
-            </Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              className="mt-2"
-            >
-              {PARTY_LANGUAGE_OPTIONS.map((opt) => (
-                <Pressable
-                  key={opt.value}
-                  onPress={() => setLanguage(opt.value)}
-                  className={cn(
-                    "mr-2 rounded-full border px-3 py-1.5",
-                    language === opt.value
-                      ? "border-brand/50 bg-brand/10"
-                      : "border-neutral-800 bg-neutral-900",
-                  )}
-                >
-                  <Text
-                    className={cn(
-                      "text-xs font-medium",
-                      language === opt.value ? "text-brand" : "text-neutral-400",
-                    )}
-                  >
-                    {opt.label}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
           </View>
 
-          {/* Pick stream */}
           <View className="mt-4 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
             <Text className="text-base font-semibold text-neutral-50">
               Pick a live stream
@@ -197,7 +134,7 @@ export default function NewWatchPartyScreen() {
             <Text className="mt-0.5 text-xs text-neutral-500">
               The party will play this stream side-by-side with chat.
             </Text>
-            {streamsLoading ? (
+            {streamsQuery.isLoading ? (
               <View className="mt-3 gap-2">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <Skeleton key={i} className="h-20 rounded-lg" />
@@ -254,7 +191,6 @@ export default function NewWatchPartyScreen() {
             )}
           </View>
 
-          {/* Room settings */}
           <View className="mt-4 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
             <Text className="text-base font-semibold text-neutral-50">
               Room settings
@@ -263,7 +199,7 @@ export default function NewWatchPartyScreen() {
             <View className="mt-4 flex-row items-center justify-between">
               <Text className="text-sm text-neutral-300">
                 Max guests:{" "}
-                <Text className="font-bold text-brand">{maxGuests}</Text>
+                <Text className="font-bold text-brand">{maxMembers}</Text>
               </Text>
             </View>
             <Slider
@@ -271,8 +207,8 @@ export default function NewWatchPartyScreen() {
               min={2}
               max={100}
               step={1}
-              value={[maxGuests]}
-              onValueChange={(v) => setMaxGuests(v[0] ?? 20)}
+              value={[maxMembers]}
+              onValueChange={(v) => setMaxMembers(v[0] ?? 20)}
             />
             <Text className="mt-1 text-[10px] text-neutral-500">
               Cap how big the room can grow. Includes you.
@@ -283,10 +219,10 @@ export default function NewWatchPartyScreen() {
             </Text>
             <View className="mt-2 gap-2">
               <Pressable
-                onPress={() => setVisibility("public")}
+                onPress={() => setIsPrivate(false)}
                 className={cn(
                   "flex-row items-start gap-3 rounded-lg border p-3",
-                  visibility === "public"
+                  !isPrivate
                     ? "border-brand/60 bg-brand/10"
                     : "border-neutral-800 bg-neutral-950",
                 )}
@@ -302,10 +238,10 @@ export default function NewWatchPartyScreen() {
                 </View>
               </Pressable>
               <Pressable
-                onPress={() => setVisibility("invite")}
+                onPress={() => setIsPrivate(true)}
                 className={cn(
                   "flex-row items-start gap-3 rounded-lg border p-3",
-                  visibility === "invite"
+                  isPrivate
                     ? "border-brand/60 bg-brand/10"
                     : "border-neutral-800 bg-neutral-950",
                 )}
@@ -313,17 +249,16 @@ export default function NewWatchPartyScreen() {
                 <Lock size={16} color="#FCD34D" />
                 <View className="flex-1">
                   <Text className="text-sm font-semibold text-neutral-100">
-                    Invite-only
+                    Private (invite code)
                   </Text>
                   <Text className="text-[11px] text-neutral-400">
-                    Only people with the link can join.
+                    Only people with the invite code can join.
                   </Text>
                 </View>
               </Pressable>
             </View>
           </View>
 
-          {/* Preview */}
           <View className="mt-4 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
             <Text className="text-base font-semibold text-neutral-50">
               Preview

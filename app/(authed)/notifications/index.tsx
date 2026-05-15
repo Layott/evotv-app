@@ -28,7 +28,7 @@ import {
   listNotifications,
   markAllAsRead,
   markAsRead,
-} from "@/lib/mock";
+} from "@/lib/api/notifications";
 import type { NotificationItem, NotificationType } from "@/lib/types";
 import { relativeTime } from "@/components/profile/ngn";
 import { cn } from "@/lib/utils";
@@ -201,7 +201,7 @@ export default function NotificationsScreen() {
     if (!user) return;
     let cancelled = false;
     void (async () => {
-      const list = await listNotifications(user.id);
+      const list = await listNotifications();
       if (cancelled) return;
       setItems(list);
       setLoading(false);
@@ -236,7 +236,7 @@ export default function NotificationsScreen() {
 
   const handleMarkAll = React.useCallback(async () => {
     if (!user) return;
-    await markAllAsRead(user.id);
+    await markAllAsRead();
     const ts = new Date().toISOString();
     setItems((prev) =>
       prev.map((p) => (p.readAt === null ? { ...p, readAt: ts } : p)),

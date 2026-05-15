@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { ChevronRight, Key, Radio, ShieldCheck } from "lucide-react-native";
+import { ChevronRight, Key, MessageSquare, Radio, ShieldCheck } from "lucide-react-native";
 
 import { useMockAuth } from "@/components/providers";
 
@@ -55,16 +55,12 @@ export default function ChannelHomeScreen() {
               title="Analytics"
               subtitle="Daily rollup — views, watch time, tips"
             />
-          </View>
-
-          <View className="mt-6 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
-            <Text className="text-xs uppercase tracking-wider text-muted-foreground">
-              Coming next
-            </Text>
-            <View className="mt-2 gap-1.5">
-              <Text className="text-xs text-muted-foreground">· Chat moderation (Phase 3.11)</Text>
-              <Text className="text-xs text-muted-foreground">· Payouts (Phase 3.9)</Text>
-            </View>
+            <NavRow
+              href={`/(partner)/channels/${id}/mod` as never}
+              icon={<MessageSquare size={16} color="#FAFAFA" />}
+              title="Chat moderation"
+              subtitle="Pin, delete, timeout — live during broadcasts"
+            />
           </View>
         </View>
       </ScrollView>

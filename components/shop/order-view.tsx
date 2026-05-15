@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { readLocalOrders } from "@/components/shop/cart-store";
-import { getOrderById } from "@/lib/mock";
+import { getOrderById } from "@/lib/api/orders";
 import { formatNgn } from "@/components/profile/ngn";
 import type { Order, OrderStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";

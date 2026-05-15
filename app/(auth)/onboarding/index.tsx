@@ -28,7 +28,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { listGames, listTeams } from "@/lib/mock";
+import { listGames } from "@/lib/api/games";
+import { listTeams } from "@/lib/api/teams";
 import type { Game, Team, UserPrefs } from "@/lib/types";
 import { useMockAuth } from "@/components/providers";
 

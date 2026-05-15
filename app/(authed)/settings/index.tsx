@@ -45,7 +45,8 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
 import { SectionCard, SettingRow } from "@/components/settings/section-card";
-import { getUserPrefs, requestDataExport } from "@/lib/mock";
+import { requestDataExport } from "@/lib/mock";
+import { getMyPrefs, patchMyPrefs } from "@/lib/api/prefs";
 import { deleteOwnAccount } from "@/lib/api/profile";
 import type { UserPrefs } from "@/lib/types";
 
@@ -115,10 +116,10 @@ export default function SettingsScreen() {
     if (!user) return;
     let cancelled = false;
     void (async () => {
-      const p = await getUserPrefs(user.id);
-      if (cancelled) return;
-      setPrefs(p);
-      if (p) {
+      try {
+        const p = await getMyPrefs();
+        if (cancelled) return;
+        setPrefs(p);
         setNotifGoLive(p.notifOptIn.goLive);
         setNotifEvent(p.notifOptIn.eventReminder);
         setNotifNewVod(p.notifOptIn.newVod);
@@ -127,13 +128,26 @@ export default function SettingsScreen() {
         setCaptions(p.playback.captions);
         setAutoplay(p.playback.autoplay);
         setLanguage(p.language);
+      } catch {
+        // Fall back silently — preserves screen usability if backend is down.
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setLoading(false);
     })();
     return () => {
       cancelled = true;
     };
   }, [user]);
+
+  // Helper to fire-and-forget patch on any change.
+  const savePref = React.useCallback(
+    (patch: Partial<typeof prefs extends infer P ? P : never>) => {
+      void patchMyPrefs(patch as Partial<UserPrefs>).catch(() => {
+        toast.error("Couldn't save preference");
+      });
+    },
+    [],
+  );
 
   const email =
     accountEmail ?? (user ? `${user.handle}@evo.tv` : "guest@evo.tv");
@@ -442,7 +456,14 @@ export default function SettingsScreen() {
                   checked={notifGoLive}
                   onCheckedChange={(v) => {
                     setNotifGoLive(v);
-                    toast.success(`Go-live alerts ${v ? "on" : "off"}`);
+                    savePref({
+                      notifOptIn: {
+                        goLive: v,
+                        eventReminder: notifEvent,
+                        newVod: notifNewVod,
+                        weeklyDigest: notifDigest,
+                      },
+                    });
                   }}
                 />
               </SettingRow>
@@ -455,7 +476,14 @@ export default function SettingsScreen() {
                   checked={notifEvent}
                   onCheckedChange={(v) => {
                     setNotifEvent(v);
-                    toast.success(`Event reminders ${v ? "on" : "off"}`);
+                    savePref({
+                      notifOptIn: {
+                        goLive: notifGoLive,
+                        eventReminder: v,
+                        newVod: notifNewVod,
+                        weeklyDigest: notifDigest,
+                      },
+                    });
                   }}
                 />
               </SettingRow>
@@ -468,7 +496,14 @@ export default function SettingsScreen() {
                   checked={notifNewVod}
                   onCheckedChange={(v) => {
                     setNotifNewVod(v);
-                    toast.success(`New-VOD alerts ${v ? "on" : "off"}`);
+                    savePref({
+                      notifOptIn: {
+                        goLive: notifGoLive,
+                        eventReminder: notifEvent,
+                        newVod: v,
+                        weeklyDigest: notifDigest,
+                      },
+                    });
                   }}
                 />
               </SettingRow>
@@ -481,7 +516,14 @@ export default function SettingsScreen() {
                   checked={notifDigest}
                   onCheckedChange={(v) => {
                     setNotifDigest(v);
-                    toast.success(`Weekly digest ${v ? "on" : "off"}`);
+                    savePref({
+                      notifOptIn: {
+                        goLive: notifGoLive,
+                        eventReminder: notifEvent,
+                        newVod: notifNewVod,
+                        weeklyDigest: v,
+                      },
+                    });
                   }}
                 />
               </SettingRow>
@@ -512,7 +554,18 @@ export default function SettingsScreen() {
                     value={quality}
                     onValueChange={(v) => {
                       setQuality(v);
-                      toast.success(`Default quality ${v}`);
+                      savePref({
+                        playback: {
+                          defaultQuality: v as
+                            | "auto"
+                            | "1080p"
+                            | "720p"
+                            | "480p"
+                            | "360p",
+                          captions,
+                          autoplay,
+                        },
+                      });
                     }}
                   >
                     <SelectTrigger>
@@ -537,7 +590,18 @@ export default function SettingsScreen() {
                   checked={captions}
                   onCheckedChange={(v) => {
                     setCaptions(v);
-                    toast.success(`Captions ${v ? "enabled" : "disabled"}`);
+                    savePref({
+                      playback: {
+                        defaultQuality: quality as
+                          | "auto"
+                          | "1080p"
+                          | "720p"
+                          | "480p"
+                          | "360p",
+                        captions: v,
+                        autoplay,
+                      },
+                    });
                   }}
                 />
               </SettingRow>
@@ -550,7 +614,18 @@ export default function SettingsScreen() {
                   checked={autoplay}
                   onCheckedChange={(v) => {
                     setAutoplay(v);
-                    toast.success(`Autoplay ${v ? "on" : "off"}`);
+                    savePref({
+                      playback: {
+                        defaultQuality: quality as
+                          | "auto"
+                          | "1080p"
+                          | "720p"
+                          | "480p"
+                          | "360p",
+                        captions,
+                        autoplay: v,
+                      },
+                    });
                   }}
                 />
               </SettingRow>
@@ -634,6 +709,16 @@ export default function SettingsScreen() {
                 value={language}
                 onValueChange={(v) => {
                   setLanguage(v);
+                  savePref({
+                    language: v as
+                      | "en"
+                      | "fr"
+                      | "pt"
+                      | "ha"
+                      | "yo"
+                      | "ig"
+                      | "sw",
+                  });
                   const found = LANGS.find((l) => l.v === v);
                   toast.success(`Language set to ${found?.label ?? v}`);
                 }}

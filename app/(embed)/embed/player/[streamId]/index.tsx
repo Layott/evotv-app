@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { HLSPlayer } from "@/components/stream/hls-player";
 import { getStreamById } from "@/lib/api/streams";
 import { getVodById } from "@/lib/api/vods";
+import { useStreamHeartbeat } from "@/hooks/useStreamHeartbeat";
 
 const SAMPLE_HLS = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
@@ -33,6 +34,7 @@ export default function EmbedPlayerScreen() {
     queryFn: () => getStreamById(id),
     enabled: !!id,
   });
+  useStreamHeartbeat(streamQ.data?.id, !!streamQ.data?.isLive);
   const vodQ = useQuery({
     queryKey: ["vods", "byId", id],
     queryFn: () => getVodById(id),

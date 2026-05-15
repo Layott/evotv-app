@@ -11,6 +11,9 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 | Date | Label | Update group ID | Commit | Highlights |
 |---|---|---|---|---|
 | 2026-05-15 | oauth-landing-stub | `0f7aca0f-f73f-473c-ac7e-5da508bafa32` | `329ddb5` | Absorb evotv://oauth deep link on Android so the user lands on /home, not +not-found |
+| 2026-05-15 | admin-force-end-delete | `08f345c1-ac0a-4598-8aee-65b6ec5069d5` | `0be7d59` | RN streams-manager modal gets Force-end + Delete buttons with confirm dialogs |
+| 2026-05-15 | audit-log-viewer | `57725394-0d31-43fb-ae0c-00e770afe424` | `51be13b` | Admin audit-log RN screen + quick link from overview |
+| 2026-05-15 | avatar-upload | `3d16e1b6-4ba5-4269-b04d-2d378c650f67` | `4897c73` | Profile picture upload via Vercel Blob (tap avatar → image picker) |
 | 2026-05-15 | google-oauth-buttons | `7090d253-62d5-455d-8f19-58bb0bb82dc9` | `cd96a8b` | Login + signup "Continue with Google" buttons wired to real OAuth via mobile-auth bridge |
 | 2026-05-15 | heartbeat-wired | `1a0746ba-a9e1-4765-827e-69e65116317a` | `58cb479` | RN heartbeat hook wired into stream + embed → closes viewer-count loop |
 | 2026-05-15 | party-chat-real | `a48caa29-114e-4c1a-b9bd-740e9b1543f4` | `58cb479` | Party chat persisted via backend + SSE deltas |
@@ -34,6 +37,9 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 
 | Date | Label | Commit | Highlights |
 |---|---|---|---|
+| 2026-05-15 | oembed | `d75657d` | /api/oembed for streams/VODs/clips — third-party embed cards (Twitter, Reddit, Discord). |
+| 2026-05-15 | admin-foundation-A.4 | `21fc6a9` | Role grant API enforces canGrantRole. Audit every change. User.role enum expanded to full ladder. |
+| 2026-05-15 | admin-foundation-A.2 | `ddb6fe0` | User sanctions table (suspend/ban/chat_banned) + session revocation + Better-Auth sign-in block hook. |
 | 2026-05-15 | admin-foundation-A.1 | `80a90cf` | Soft-delete on streams/vods/clips + force-end live stream + audit log capture for each. Public lists filter deleted rows. |
 | 2026-05-15 | admin-foundation-A | `03d6f84` | Role ladder (head_admin>admin>finance_admin>moderator>support_admin>premium>user>guest), admin_audit_log table, requireMinRole helper, canGrantRole policy. |
 | 2026-05-15 | sentry-source-maps | `54db2f2` | withSentryConfig wired — readable stack traces in Sentry |

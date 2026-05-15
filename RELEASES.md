@@ -11,6 +11,7 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 | Date | Label | Update group ID | Commit | Highlights |
 |---|---|---|---|---|
 | 2026-05-15 | oauth-landing-stub | `0f7aca0f-f73f-473c-ac7e-5da508bafa32` | `329ddb5` | Absorb evotv://oauth deep link on Android so the user lands on /home, not +not-found |
+| 2026-05-15 | api-keys-screen | `31ec325a-7ec0-4089-bd4d-9bf068a1a848` | `9d9f606` | /(authed)/settings/api-keys — create, copy-once, list, revoke personal API keys. |
 | 2026-05-15 | admin-sanction-ui | `5f02173b-1317-4371-a4b5-183582630b12` | `77fa804` | Sanctions card on users-roles user modal: list + revert active sanctions, issue Chat-ban/Suspend/Permaban with reason input. Role pills widened to full ladder. |
 | 2026-05-15 | admin-force-end-delete | `08f345c1-ac0a-4598-8aee-65b6ec5069d5` | `0be7d59` | RN streams-manager modal gets Force-end + Delete buttons with confirm dialogs |
 | 2026-05-15 | audit-log-viewer | `57725394-0d31-43fb-ae0c-00e770afe424` | `51be13b` | Admin audit-log RN screen + quick link from overview |
@@ -38,6 +39,7 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 
 | Date | Label | Commit | Highlights |
 |---|---|---|---|
+| 2026-05-15 | api-key-middleware | `509fe15` | X-API-Key header auth. lib/auth/api-key.ts hashes + matches active keys, updates last_used_at, surfaces user via getCurrentUser. |
 | 2026-05-15 | restore-endpoints + chat-banned enforcement | `b9757de` | POST /api/admin/{streams,vods,clips}/[id]/restore + chat-banned check on chat POST + party-messages POST. |
 | 2026-05-15 | oembed | `d75657d` | /api/oembed for streams/VODs/clips — third-party embed cards (Twitter, Reddit, Discord). |
 | 2026-05-15 | admin-foundation-A.4 | `21fc6a9` | Role grant API enforces canGrantRole. Audit every change. User.role enum expanded to full ladder. |

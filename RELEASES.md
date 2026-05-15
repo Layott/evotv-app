@@ -11,6 +11,7 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 | Date | Label | Update group ID | Commit | Highlights |
 |---|---|---|---|---|
 | 2026-05-15 | oauth-landing-stub | `0f7aca0f-f73f-473c-ac7e-5da508bafa32` | `329ddb5` | Absorb evotv://oauth deep link on Android so the user lands on /home, not +not-found |
+| 2026-05-15 | report-buttons-vod-clip-profile | `402a6ea7-697c-4c8f-be3f-df2a9bd7d5a1` | `3028192` | Report button extended to VOD detail, clip detail (TikTok-style flag in action stack), profile detail. |
 | 2026-05-15 | report-button-stream | `0c100dcd-d854-4c6e-bd87-890a82e8586f` | `f938850` | User-facing Report button on stream pages — modal with 7 category chips + details + submits to /api/reports. |
 | 2026-05-15 | moderation-forensic-real | `f00263a1-9cef-4bdb-a146-d544687f0d7e` | `bf913de` | ModerationPage = reports queue (Open/Resolved/Dismissed). ForensicPage = audit-log preview + Phase 4 placeholder. |
 | 2026-05-15 | avatar-size-fix | `5adc7d79-a67d-4f34-93af-a2400b52f30f` | `5ee0833` | Picker quality 0.5 + exif:false + pre-flight 3.5MB check → no more 413 on phone photos. |
@@ -42,6 +43,7 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 
 | Date | Label | Commit | Highlights |
 |---|---|---|---|
+| 2026-05-15 | gdpr-purge-cron | `3dbee70` | Vercel Cron Sunday 04:00 UTC: anonymizes user rows 30+ days post self-delete + hard-deletes personal data (watch_events, picks, pickem, vod_progress, party_*, api_keys, chat_messages). |
 | 2026-05-15 | content-reports | `3993f8c` | content_reports table (migration 0013) + POST /api/reports + admin queue list + resolve/dismiss endpoint. 20 open-report cap per reporter. |
 | 2026-05-15 | api-key-middleware | `509fe15` | X-API-Key header auth. lib/auth/api-key.ts hashes + matches active keys, updates last_used_at, surfaces user via getCurrentUser. |
 | 2026-05-15 | restore-endpoints + chat-banned enforcement | `b9757de` | POST /api/admin/{streams,vods,clips}/[id]/restore + chat-banned check on chat POST + party-messages POST. |

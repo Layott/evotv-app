@@ -1,87 +1,164 @@
 import * as React from "react";
-import { Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { ExternalLink, Search, X } from "lucide-react-native";
+import { ExternalLink, Search, Shield, ShieldOff, X } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { toast } from "sonner-native";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { profiles } from "@/lib/mock/users";
-import type { Profile, Role } from "@/lib/types";
+import {
+  listAdminUsers,
+  patchUserRole,
+  listUserSanctions,
+  sanctionUser,
+  revertSanction,
+  type AdminAssignableRole,
+  type AdminUserRow,
+  type SanctionKind,
+  type UserSanction,
+} from "@/lib/api/admin";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 
 import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
-import { formatDate, seededRandom, timeAgo } from "./utils";
+import { formatDate, timeAgo } from "./utils";
 
-interface AdminProfile extends Profile {
-  lastActive: string;
-  suspended: boolean;
-}
-
-function roleTone(role: Role): "emerald" | "amber" | "blue" | "neutral" {
-  if (role === "admin") return "emerald";
+function roleTone(
+  role: AdminAssignableRole,
+): "emerald" | "amber" | "blue" | "neutral" {
+  if (role === "admin" || role === "head_admin") return "emerald";
   if (role === "premium") return "amber";
-  if (role === "user") return "blue";
+  if (role === "moderator" || role === "finance_admin" || role === "support_admin")
+    return "blue";
   return "neutral";
 }
 
-function buildInitial(): AdminProfile[] {
-  const rng = seededRandom(11);
-  return profiles.map((p) => ({
-    ...p,
-    suspended: false,
-    lastActive: new Date(
-      Date.now() - Math.floor(rng() * 48) * 3_600_000,
-    ).toISOString(),
-  }));
-}
+const ROLE_FILTERS: Array<"all" | AdminAssignableRole> = [
+  "all",
+  "user",
+  "premium",
+  "moderator",
+  "admin",
+];
+
+const ALL_ROLES: AdminAssignableRole[] = [
+  "user",
+  "premium",
+  "support_admin",
+  "moderator",
+  "finance_admin",
+  "admin",
+  "head_admin",
+];
+
+const SANCTION_OPTIONS: { kind: SanctionKind; label: string; desc: string }[] = [
+  { kind: "chat_banned", label: "Chat ban", desc: "Block from chat in all streams + parties" },
+  { kind: "suspended", label: "Suspend", desc: "Disable account + revoke all sessions" },
+  { kind: "banned", label: "Permaban", desc: "Permanent — hardest action" },
+];
 
 export function UsersRolesPage() {
   const router = useRouter();
-  const [all, setAll] = React.useState<AdminProfile[]>(() => buildInitial());
+  const queryClient = useQueryClient();
   const [search, setSearch] = React.useState("");
-  const [roleFilter, setRoleFilter] = React.useState<string>("all");
-  const [selected, setSelected] = React.useState<AdminProfile | null>(null);
+  const [debouncedSearch, setDebouncedSearch] = React.useState("");
+  const [roleFilter, setRoleFilter] = React.useState<"all" | AdminAssignableRole>(
+    "all",
+  );
+  const [selected, setSelected] = React.useState<AdminUserRow | null>(null);
 
-  const filtered = React.useMemo(() => {
-    let rows = all;
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      rows = rows.filter(
-        (p) =>
-          p.handle.toLowerCase().includes(q) ||
-          p.displayName.toLowerCase().includes(q),
-      );
-    }
-    if (roleFilter !== "all") rows = rows.filter((p) => p.role === roleFilter);
-    return rows;
-  }, [all, search, roleFilter]);
+  React.useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(t);
+  }, [search]);
 
-  function handleRoleChange(id: string, role: Role) {
-    setAll((prev) => prev.map((p) => (p.id === id ? { ...p, role } : p)));
-    setSelected((prev) => (prev && prev.id === id ? { ...prev, role } : prev));
-    toast.success(`Role changed to ${role}`);
-  }
+  const usersQuery = useQuery({
+    queryKey: ["admin-users", roleFilter, debouncedSearch],
+    queryFn: () =>
+      listAdminUsers({
+        role: roleFilter === "all" ? undefined : roleFilter,
+        search: debouncedSearch || undefined,
+        limit: 100,
+      }),
+    staleTime: 30_000,
+  });
 
-  function handleSuspendToggle(id: string, suspended: boolean) {
-    setAll((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, suspended } : p)),
+  const roleMutation = useMutation({
+    mutationFn: ({
+      userId,
+      role,
+    }: {
+      userId: string;
+      role: AdminAssignableRole;
+    }) => patchUserRole(userId, role),
+    onSuccess: ({ id, role }) => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setSelected((prev) => (prev && prev.id === id ? { ...prev, role } : prev));
+      toast.success(`Role changed to ${role}`);
+    },
+    onError: (err) => {
+      toast.error("Role change failed", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+  });
+
+  const sanctionsQuery = useQuery({
+    queryKey: ["admin-user-sanctions", selected?.id],
+    queryFn: () => (selected ? listUserSanctions(selected.id) : Promise.resolve({ sanctions: [] })),
+    enabled: !!selected,
+    staleTime: 30_000,
+  });
+
+  const [sanctionReason, setSanctionReason] = React.useState("");
+  const sanctionMutation = useMutation({
+    mutationFn: ({ userId, kind }: { userId: string; kind: SanctionKind }) =>
+      sanctionUser(userId, {
+        kind,
+        reason: sanctionReason.trim() || "No reason provided",
+      }),
+    onSuccess: (_res, { kind }) => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-user-sanctions"] });
+      setSanctionReason("");
+      toast.success(`${kind.replace("_", " ")} issued`);
+    },
+    onError: (err) =>
+      toast.error("Couldn't issue sanction", {
+        description: err instanceof Error ? err.message : String(err),
+      }),
+  });
+
+  const revertMutation = useMutation({
+    mutationFn: ({ userId, sanctionId }: { userId: string; sanctionId: string }) =>
+      revertSanction(userId, sanctionId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-user-sanctions"] });
+      toast.success("Sanction reverted");
+    },
+    onError: (err) =>
+      toast.error("Couldn't revert sanction", {
+        description: err instanceof Error ? err.message : String(err),
+      }),
+  });
+
+  const activeSanctions = React.useMemo<UserSanction[]>(() => {
+    const all = sanctionsQuery.data?.sanctions ?? [];
+    const nowIso = new Date().toISOString();
+    return all.filter(
+      (s) => !s.revertedAt && (!s.expiresAt || s.expiresAt > nowIso),
     );
-    setSelected((prev) =>
-      prev && prev.id === id ? { ...prev, suspended } : prev,
-    );
-    toast.success(suspended ? "User suspended" : "Suspension lifted");
-  }
+  }, [sanctionsQuery.data]);
+
+  const rows = usersQuery.data?.users ?? [];
 
   return (
     <View className="flex-1 bg-background">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 24 }}>
         <PageHeader
           title="Users & roles"
-          description="Search accounts, manage roles and suspensions."
+          description="Search accounts, manage roles."
         />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
@@ -89,13 +166,13 @@ export function UsersRolesPage() {
           <Input
             value={search}
             onChangeText={setSearch}
-            placeholder="Search handle or name"
+            placeholder="Search email or handle"
             className="h-9 flex-1 border-0 bg-transparent px-0"
           />
         </View>
 
         <View className="mb-3 flex-row items-center gap-1.5">
-          {(["all", "user", "premium", "admin"] as const).map((r) => (
+          {ROLE_FILTERS.map((r) => (
             <Pressable
               key={r}
               onPress={() => setRoleFilter(r)}
@@ -115,48 +192,64 @@ export function UsersRolesPage() {
             </Pressable>
           ))}
           <Text className="ml-auto text-xs text-muted-foreground">
-            {filtered.length}
+            {usersQuery.data?.total ?? 0}
           </Text>
         </View>
 
-        {filtered.map((row) => (
-          <Pressable
-            key={row.id}
-            onPress={() => setSelected(row)}
-            className="mb-2 flex-row items-center gap-3 rounded-xl border border-border bg-card/40 p-3"
-          >
-            <View className="h-10 w-10 overflow-hidden rounded-full bg-muted">
-              <Image
-                source={row.avatarUrl}
-                style={{ width: "100%", height: "100%" }}
-                contentFit="cover"
-              />
-            </View>
-            <View className="flex-1">
-              <Text className="text-sm font-medium text-foreground">
-                {row.displayName}
-              </Text>
-              <Text className="text-xs text-muted-foreground">
-                @{row.handle}
-              </Text>
-              <View className="mt-1 flex-row gap-1.5">
-                <StatusBadge tone={roleTone(row.role)}>
-                  {row.role}
-                </StatusBadge>
-                <StatusBadge tone="neutral">{row.country}</StatusBadge>
-                {row.suspended ? (
-                  <StatusBadge tone="red">Suspended</StatusBadge>
+        {usersQuery.isLoading ? (
+          <View className="items-center py-12">
+            <ActivityIndicator color="#2CD7E3" />
+          </View>
+        ) : usersQuery.isError ? (
+          <Text className="py-6 text-center text-sm text-red-400">
+            Failed to load users.{" "}
+            {usersQuery.error instanceof Error ? usersQuery.error.message : ""}
+          </Text>
+        ) : rows.length === 0 ? (
+          <Text className="py-6 text-center text-sm text-muted-foreground">
+            No users match this filter.
+          </Text>
+        ) : (
+          rows.map((row) => (
+            <Pressable
+              key={row.id}
+              onPress={() => setSelected(row)}
+              className="mb-2 flex-row items-center gap-3 rounded-xl border border-border bg-card/40 p-3"
+            >
+              <View className="h-10 w-10 overflow-hidden rounded-full bg-muted">
+                {row.image ? (
+                  <Image
+                    source={row.image}
+                    style={{ width: "100%", height: "100%" }}
+                    contentFit="cover"
+                  />
                 ) : null}
               </View>
-            </View>
-            <View className="items-end">
-              <Text className="text-[10px] text-muted-foreground">Active</Text>
-              <Text className="text-xs text-foreground">
-                {timeAgo(row.lastActive)}
-              </Text>
-            </View>
-          </Pressable>
-        ))}
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-foreground">
+                  {row.name || row.email}
+                </Text>
+                <Text className="text-xs text-muted-foreground">
+                  {row.handle ? `@${row.handle}` : row.email}
+                </Text>
+                <View className="mt-1 flex-row gap-1.5">
+                  <StatusBadge tone={roleTone(row.role)}>{row.role}</StatusBadge>
+                  {row.deletedAt ? (
+                    <StatusBadge tone="red">Deleted</StatusBadge>
+                  ) : !row.emailVerified ? (
+                    <StatusBadge tone="amber">Unverified</StatusBadge>
+                  ) : null}
+                </View>
+              </View>
+              <View className="items-end">
+                <Text className="text-[10px] text-muted-foreground">Joined</Text>
+                <Text className="text-xs text-foreground">
+                  {timeAgo(row.createdAt)}
+                </Text>
+              </View>
+            </Pressable>
+          ))
+        )}
       </ScrollView>
 
       <Modal
@@ -178,10 +271,10 @@ export function UsersRolesPage() {
                 <View className="mb-4 flex-row items-start justify-between">
                   <View className="flex-1 pr-3">
                     <Text className="text-base font-semibold text-foreground">
-                      {selected.displayName}
+                      {selected.name || selected.email}
                     </Text>
                     <Text className="text-xs text-muted-foreground">
-                      @{selected.handle}
+                      {selected.handle ? `@${selected.handle}` : selected.email}
                     </Text>
                   </View>
                   <Pressable onPress={() => setSelected(null)} hitSlop={8}>
@@ -190,48 +283,56 @@ export function UsersRolesPage() {
                 </View>
                 <View className="flex-row items-center gap-3">
                   <View className="h-16 w-16 overflow-hidden rounded-full bg-muted">
-                    <Image
-                      source={selected.avatarUrl}
-                      style={{ width: "100%", height: "100%" }}
-                      contentFit="cover"
-                    />
+                    {selected.image ? (
+                      <Image
+                        source={selected.image}
+                        style={{ width: "100%", height: "100%" }}
+                        contentFit="cover"
+                      />
+                    ) : null}
                   </View>
                   <View className="flex-1">
-                    <Text className="text-sm text-foreground">
-                      {selected.bio || "No bio yet."}
+                    <Text className="text-sm text-foreground">{selected.email}</Text>
+                    <Text className="text-xs text-muted-foreground">
+                      {selected.emailVerified ? "Verified" : "Email not verified"}
                     </Text>
                   </View>
                 </View>
 
                 <View className="mt-4 flex-row flex-wrap gap-3">
-                  <InfoCell label="Country" value={selected.country} />
                   <InfoCell
                     label="Member since"
                     value={formatDate(selected.createdAt)}
                   />
                   <InfoCell
-                    label="Last active"
-                    value={timeAgo(selected.lastActive)}
+                    label="User ID"
+                    value={selected.id}
                   />
-                  <InfoCell
-                    label="Onboarded"
-                    value={selected.onboardedAt ? "Yes" : "No"}
-                  />
+                  {selected.deletedAt ? (
+                    <InfoCell
+                      label="Deleted"
+                      value={formatDate(selected.deletedAt)}
+                    />
+                  ) : null}
                 </View>
 
                 <Text className="mt-4 mb-1.5 text-xs text-muted-foreground">
                   Role
                 </Text>
-                <View className="flex-row gap-1.5">
-                  {(["user", "premium", "admin"] as Role[]).map((r) => (
+                <View className="flex-row flex-wrap gap-1.5">
+                  {ALL_ROLES.map((r) => (
                     <Pressable
                       key={r}
-                      onPress={() => handleRoleChange(selected.id, r)}
+                      disabled={roleMutation.isPending}
+                      onPress={() =>
+                        roleMutation.mutate({ userId: selected.id, role: r })
+                      }
                       className={`rounded-md border px-3 py-1.5 ${
                         selected.role === r
                           ? "border-cyan-500 bg-cyan-500/10"
                           : "border-border bg-card"
                       }`}
+                      style={{ opacity: roleMutation.isPending ? 0.5 : 1 }}
                     >
                       <Text
                         className={`text-xs ${
@@ -246,33 +347,117 @@ export function UsersRolesPage() {
                   ))}
                 </View>
 
-                <View className="mt-4 flex-row items-center justify-between rounded-lg border border-border bg-card/40 p-3">
-                  <View className="flex-1">
-                    <Text className="text-sm font-medium text-foreground">
-                      Suspend account
-                    </Text>
-                    <Text className="text-xs text-muted-foreground">
-                      Prevents login and posting.
+                <View className="mt-5 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                  <View className="mb-2 flex-row items-center gap-2">
+                    <Shield size={14} color="#F59E0B" />
+                    <Text className="text-sm font-semibold text-foreground">
+                      Sanctions
                     </Text>
                   </View>
-                  <Switch
-                    checked={selected.suspended}
-                    onCheckedChange={(v) =>
-                      handleSuspendToggle(selected.id, v)
-                    }
+                  {sanctionsQuery.isLoading ? (
+                    <ActivityIndicator color="#2CD7E3" />
+                  ) : activeSanctions.length > 0 ? (
+                    <View className="gap-2">
+                      {activeSanctions.map((s) => (
+                        <View
+                          key={s.id}
+                          className="rounded-md border border-border bg-card p-2.5"
+                        >
+                          <View className="flex-row items-start justify-between gap-2">
+                            <View className="flex-1">
+                              <Text className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                                {s.kind.replace("_", " ")}
+                              </Text>
+                              <Text className="text-xs text-foreground mt-0.5">
+                                {s.reason}
+                              </Text>
+                              <Text className="text-[10px] text-muted-foreground mt-0.5">
+                                Issued {timeAgo(s.createdAt)}
+                                {s.expiresAt
+                                  ? ` · Expires ${formatDate(s.expiresAt)}`
+                                  : " · Permanent"}
+                              </Text>
+                            </View>
+                            <Pressable
+                              disabled={revertMutation.isPending}
+                              onPress={() =>
+                                revertMutation.mutate({
+                                  userId: selected.id,
+                                  sanctionId: s.id,
+                                })
+                              }
+                              className="rounded-md border border-border bg-background px-2.5 py-1"
+                            >
+                              <View className="flex-row items-center gap-1">
+                                <ShieldOff size={11} color="#FAFAFA" />
+                                <Text className="text-[11px] text-foreground">
+                                  Revert
+                                </Text>
+                              </View>
+                            </Pressable>
+                          </View>
+                        </View>
+                      ))}
+                    </View>
+                  ) : (
+                    <Text className="text-xs text-muted-foreground">
+                      No active sanctions.
+                    </Text>
+                  )}
+
+                  <Text className="mt-3 mb-1 text-[11px] text-muted-foreground">
+                    Issue new sanction
+                  </Text>
+                  <Input
+                    value={sanctionReason}
+                    onChangeText={setSanctionReason}
+                    placeholder="Reason (required)"
+                    className="h-9"
                   />
+                  <View className="mt-2 flex-row flex-wrap gap-1.5">
+                    {SANCTION_OPTIONS.map((opt) => (
+                      <Pressable
+                        key={opt.kind}
+                        disabled={
+                          sanctionMutation.isPending ||
+                          !sanctionReason.trim() ||
+                          activeSanctions.some((s) => s.kind === opt.kind)
+                        }
+                        onPress={() =>
+                          sanctionMutation.mutate({
+                            userId: selected.id,
+                            kind: opt.kind,
+                          })
+                        }
+                        className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5"
+                        style={{
+                          opacity:
+                            !sanctionReason.trim() ||
+                            activeSanctions.some((s) => s.kind === opt.kind)
+                              ? 0.4
+                              : 1,
+                        }}
+                      >
+                        <Text className="text-xs font-medium text-destructive">
+                          {opt.label}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
                 </View>
 
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onPress={() =>
-                    router.push(`/profile/${selected.handle}` as never)
-                  }
-                >
-                  <ExternalLink size={14} color="#FAFAFA" />
-                  <Text className="text-sm text-foreground">View profile</Text>
-                </Button>
+                {selected.handle ? (
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onPress={() =>
+                      router.push(`/profile/${selected.handle}` as never)
+                    }
+                  >
+                    <ExternalLink size={14} color="#FAFAFA" />
+                    <Text className="text-sm text-foreground">View profile</Text>
+                  </Button>
+                ) : null}
               </ScrollView>
             ) : null}
           </Pressable>
@@ -288,7 +473,9 @@ function InfoCell({ label, value }: { label: string; value: string }) {
       <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
         {label}
       </Text>
-      <Text className="text-sm text-foreground">{value}</Text>
+      <Text className="text-sm text-foreground" numberOfLines={1}>
+        {value}
+      </Text>
     </View>
   );
 }

@@ -1,18 +1,21 @@
 /**
  * Admin-side API.
  *
- * Phase 2C scope:
- *   - Email templates: backend has no route yet — passthrough to mock.
- *   - Overview metrics: backend has /api/admin/analytics/overview.
- *   - Audit log: backend has /api/admin/audit-log.
+ * Phase 2C + 2C.5 scope (backend real):
+ *   - Overview metrics: /api/admin/analytics/overview
+ *   - Audit log: /api/admin/audit-log
+ *   - Orders list: /api/admin/orders
+ *   - Polls list: /api/admin/polls
+ *   - Users list + role PATCH: /api/admin/users
  *
- * Other admin operations live on their respective lib/api modules (ads,
- * events, games, players, teams, streams, polls, orders, flags).
- * Forensic, moderation, users-roles, billing remain on mock until backend
- * adds /api/admin/{forensic,users,...} routes — tracked in Phase 2C.5.
+ * Still mock (no backend table yet, tracked in Phase 5+):
+ *   - Email templates
+ *   - Forensic marks (piracy/leak tracking)
+ *   - Chat moderation log (banned users, chat reports)
  */
 
 import { api } from "./_client";
+import type { Order, OrderStatus, Poll, Role } from "@/lib/types";
 import {
   saveEmailTemplate as mockSaveEmailTemplate,
   getEmailTemplate as mockGetEmailTemplate,
@@ -36,6 +39,15 @@ export async function getOverviewMetrics(): Promise<OverviewMetrics> {
   return api<OverviewMetrics>("/api/admin/analytics/overview");
 }
 
+export interface ViewsPoint {
+  date: string;
+  views: number;
+}
+
+export async function getViewsOverTime(days = 30): Promise<ViewsPoint[]> {
+  return api<ViewsPoint[]>(`/api/admin/analytics/views?days=${days}`);
+}
+
 export interface AuditLogEntry {
   id: string;
   actorId: string | null;
@@ -48,4 +60,159 @@ export interface AuditLogEntry {
 
 export async function listAuditLog(limit = 50): Promise<AuditLogEntry[]> {
   return api<AuditLogEntry[]>(`/api/admin/audit-log?limit=${limit}`);
+}
+
+export interface PaginatedListResult<T> {
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface ListOrdersOptions {
+  status?: OrderStatus;
+  from?: string;
+  to?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface ListOrdersResult extends PaginatedListResult<Order> {
+  orders: Order[];
+}
+
+export async function listAdminOrders(
+  opts: ListOrdersOptions = {},
+): Promise<ListOrdersResult> {
+  const q = new URLSearchParams();
+  if (opts.status) q.set("status", opts.status);
+  if (opts.from) q.set("from", opts.from);
+  if (opts.to) q.set("to", opts.to);
+  if (opts.limit) q.set("limit", String(opts.limit));
+  if (opts.offset) q.set("offset", String(opts.offset));
+  const qs = q.toString();
+  return api<ListOrdersResult>(`/api/admin/orders${qs ? `?${qs}` : ""}`);
+}
+
+export interface ListPollsOptions {
+  streamId?: string;
+  isClosed?: boolean;
+  limit?: number;
+  offset?: number;
+}
+
+export interface ListPollsResult extends PaginatedListResult<Poll> {
+  polls: Poll[];
+}
+
+export async function listAdminPolls(
+  opts: ListPollsOptions = {},
+): Promise<ListPollsResult> {
+  const q = new URLSearchParams();
+  if (opts.streamId) q.set("streamId", opts.streamId);
+  if (typeof opts.isClosed === "boolean")
+    q.set("isClosed", String(opts.isClosed));
+  if (opts.limit) q.set("limit", String(opts.limit));
+  if (opts.offset) q.set("offset", String(opts.offset));
+  const qs = q.toString();
+  return api<ListPollsResult>(`/api/admin/polls${qs ? `?${qs}` : ""}`);
+}
+
+export type AdminAssignableRole = Exclude<Role, "guest">;
+
+export interface AdminUserRow {
+  id: string;
+  email: string;
+  name: string;
+  handle: string | null;
+  role: AdminAssignableRole;
+  emailVerified: boolean;
+  image: string | null;
+  createdAt: string;
+  deletedAt: string | null;
+}
+
+export interface ListUsersOptions {
+  role?: AdminAssignableRole;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface ListUsersResult extends PaginatedListResult<AdminUserRow> {
+  users: AdminUserRow[];
+}
+
+export async function listAdminUsers(
+  opts: ListUsersOptions = {},
+): Promise<ListUsersResult> {
+  const q = new URLSearchParams();
+  if (opts.role) q.set("role", opts.role);
+  if (opts.search) q.set("search", opts.search);
+  if (opts.limit) q.set("limit", String(opts.limit));
+  if (opts.offset) q.set("offset", String(opts.offset));
+  const qs = q.toString();
+  return api<ListUsersResult>(`/api/admin/users${qs ? `?${qs}` : ""}`);
+}
+
+export async function patchUserRole(
+  userId: string,
+  role: AdminAssignableRole,
+): Promise<{ ok: true; id: string; role: AdminAssignableRole }> {
+  return api(`/api/admin/users`, {
+    method: "PATCH",
+    body: { userId, role },
+  });
+}
+
+export type SanctionKind = "suspended" | "banned" | "chat_banned";
+
+export interface UserSanction {
+  id: string;
+  userId: string;
+  kind: SanctionKind;
+  reason: string;
+  issuedBy: string;
+  expiresAt: string | null;
+  revertedAt: string | null;
+  revertedBy: string | null;
+  createdAt: string;
+}
+
+export async function listUserSanctions(
+  userId: string,
+): Promise<{ sanctions: UserSanction[] }> {
+  return api(`/api/admin/users/${encodeURIComponent(userId)}/sanction`);
+}
+
+export interface IssueSanctionInput {
+  kind: SanctionKind;
+  reason: string;
+  /** Seconds until expiry. Omit for permanent. */
+  expiresInSec?: number;
+}
+
+export async function sanctionUser(
+  userId: string,
+  input: IssueSanctionInput,
+): Promise<{
+  ok: true;
+  sanctionId: string;
+  kind: SanctionKind;
+  expiresAt: string | null;
+  sessionsRevoked: number;
+}> {
+  return api(`/api/admin/users/${encodeURIComponent(userId)}/sanction`, {
+    method: "POST",
+    body: input,
+  });
+}
+
+export async function revertSanction(
+  userId: string,
+  sanctionId: string,
+): Promise<{ ok: true; sanctionId: string; revertedAt: string }> {
+  return api(
+    `/api/admin/users/${encodeURIComponent(userId)}/sanction/${encodeURIComponent(sanctionId)}`,
+    { method: "DELETE" },
+  );
 }

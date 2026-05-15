@@ -1,7 +1,23 @@
 export type UUID = string;
 export type ISODate = string;
 
-export type Role = "guest" | "user" | "premium" | "admin";
+export type Role =
+  | "guest"
+  | "user"
+  | "premium"
+  | "support_admin"
+  | "moderator"
+  | "finance_admin"
+  | "admin"
+  | "head_admin";
+
+export const ADMIN_TIER_ROLES: ReadonlyArray<Role> = [
+  "support_admin",
+  "moderator",
+  "finance_admin",
+  "admin",
+  "head_admin",
+];
 
 export interface Profile {
   id: UUID;

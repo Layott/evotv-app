@@ -58,8 +58,52 @@ export interface AuditLogEntry {
   createdAt: string;
 }
 
-export async function listAuditLog(limit = 50): Promise<AuditLogEntry[]> {
-  return api<AuditLogEntry[]>(`/api/admin/audit-log?limit=${limit}`);
+export interface AuditLogFilters {
+  actorId?: string;
+  /** Action prefix (e.g. "stream." matches "stream.delete", "stream.force_end"). */
+  action?: string;
+  targetType?: string;
+  targetId?: string;
+  /** ISO date inclusive lower bound. */
+  fromDate?: string;
+  /** ISO date inclusive upper bound. */
+  toDate?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export async function listAuditLog(
+  filters: AuditLogFilters = {},
+): Promise<AuditLogEntry[]> {
+  const q = new URLSearchParams();
+  if (filters.actorId) q.set("actorId", filters.actorId);
+  if (filters.action) q.set("action", filters.action);
+  if (filters.targetType) q.set("targetType", filters.targetType);
+  if (filters.targetId) q.set("targetId", filters.targetId);
+  if (filters.fromDate) q.set("fromDate", filters.fromDate);
+  if (filters.toDate) q.set("toDate", filters.toDate);
+  q.set("limit", String(filters.limit ?? 200));
+  if (filters.offset) q.set("offset", String(filters.offset));
+  return api<AuditLogEntry[]>(`/api/admin/audit-log?${q.toString()}`);
+}
+
+/**
+ * Build the URL for the CSV export endpoint. Caller can pass this to
+ * expo-sharing or window.open. Bearer token is NOT in the URL — the caller
+ * must fetch with Authorization header + write the response to disk.
+ */
+export function auditLogExportUrl(filters: AuditLogFilters = {}): string {
+  const base = process.env.EXPO_PUBLIC_API_BASE_URL ?? "http://localhost:3060";
+  const q = new URLSearchParams();
+  if (filters.actorId) q.set("actorId", filters.actorId);
+  if (filters.action) q.set("action", filters.action);
+  if (filters.targetType) q.set("targetType", filters.targetType);
+  if (filters.targetId) q.set("targetId", filters.targetId);
+  if (filters.fromDate) q.set("fromDate", filters.fromDate);
+  if (filters.toDate) q.set("toDate", filters.toDate);
+  if (filters.limit) q.set("limit", String(filters.limit));
+  const qs = q.toString();
+  return `${base}/api/admin/audit-log/export${qs ? `?${qs}` : ""}`;
 }
 
 export interface PaginatedListResult<T> {
@@ -215,4 +259,38 @@ export async function revertSanction(
     `/api/admin/users/${encodeURIComponent(userId)}/sanction/${encodeURIComponent(sanctionId)}`,
     { method: "DELETE" },
   );
+}
+
+export interface SanctionListRow extends UserSanction {
+  userHandle: string | null;
+  userEmail: string;
+  userName: string;
+  userImage: string | null;
+}
+
+export interface ListSanctionsOptions {
+  kind?: SanctionKind;
+  status?: "active" | "all";
+  limit?: number;
+  offset?: number;
+}
+
+export interface ListSanctionsResult {
+  sanctions: SanctionListRow[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export async function listAllSanctions(
+  opts: ListSanctionsOptions = {},
+): Promise<ListSanctionsResult> {
+  return api(`/api/admin/sanctions`, {
+    query: {
+      kind: opts.kind,
+      status: opts.status,
+      limit: opts.limit,
+      offset: opts.offset,
+    },
+  });
 }

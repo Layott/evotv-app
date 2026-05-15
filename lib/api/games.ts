@@ -20,3 +20,29 @@ export async function getGameBySlug(slug: string): Promise<Game | null> {
   const games = await listGames();
   return games.find((g) => g.slug === slug) ?? null;
 }
+
+export type CreateGamePayload = Omit<Game, "id">;
+export type UpdateGamePayload = Partial<CreateGamePayload>;
+
+/** POST /api/admin/games — admin only. */
+export async function createGame(payload: CreateGamePayload): Promise<Game> {
+  return api<Game>("/api/admin/games", { method: "POST", body: payload });
+}
+
+/** PATCH /api/admin/games/[id] — admin only. */
+export async function updateGame(
+  id: string,
+  payload: UpdateGamePayload,
+): Promise<Game> {
+  return api<Game>(`/api/admin/games/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+/** DELETE /api/admin/games/[id] — admin only. */
+export async function deleteGame(id: string): Promise<{ ok: true }> {
+  return api<{ ok: true }>(`/api/admin/games/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+}

@@ -297,11 +297,14 @@ export function OverviewPage() {
         </View>
         <View className="mt-3 flex-row flex-wrap gap-2">
           {[
-            { label: "New stream", to: "/admin/streams" },
-            { label: "New poll", to: "/admin/polls" },
-            { label: "New ad", to: "/admin/ads" },
-            { label: "New event", to: "/admin/content" },
+            { label: "Streams", to: "/admin/streams" },
+            { label: "VODs", to: "/admin/vods" },
+            { label: "Clips", to: "/admin/clips" },
+            { label: "Polls", to: "/admin/polls" },
+            { label: "Ads", to: "/admin/ads" },
+            { label: "Content", to: "/admin/content" },
             { label: "Audit log", to: "/admin/audit-log" },
+            { label: "Sanctions", to: "/admin/sanctions" },
           ].map((q) => (
             <Text
               key={q.to}

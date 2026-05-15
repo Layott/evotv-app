@@ -67,6 +67,34 @@ export async function pickAndUploadAvatar(): Promise<UploadAvatarResult> {
   return (await res.json()) as UploadAvatarResult;
 }
 
+/**
+ * DELETE /api/users/me
+ *
+ * Self-delete account. Backend sets user.deletedAt + revokes all sessions.
+ * After 30 days the gdpr-purge cron anonymizes the row and hard-deletes the
+ * user's personal data (watch_events, chats, etc).
+ */
+export async function deleteOwnAccount(): Promise<{ ok: true; scheduledForIso: string }> {
+  const token = await getToken();
+  const res = await fetch(`${BASE_URL}/api/users/me`, {
+    method: "DELETE",
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new ApiError(res.status, body, `Account deletion failed (${res.status})`);
+  }
+  const data = (await res.json().catch(() => ({}))) as {
+    scheduledForIso?: string;
+  };
+  // Backend may or may not return a scheduled-for date — synthesize one
+  // matching the cron's 30-day purge window.
+  const scheduledForIso =
+    data.scheduledForIso ??
+    new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+  return { ok: true, scheduledForIso };
+}
+
 /** DELETE /api/users/me/avatar — revert to default. */
 export async function removeAvatar(): Promise<void> {
   const token = await getToken();

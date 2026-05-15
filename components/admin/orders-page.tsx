@@ -1,11 +1,11 @@
 import * as React from "react";
-import { Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Search, X } from "lucide-react-native";
 import { toast } from "sonner-native";
+import { useQuery } from "@tanstack/react-query";
 
-import { orders as ordersSource } from "@/lib/mock/orders";
-import { profiles } from "@/lib/mock/users";
+import { listAdminOrders } from "@/lib/api/admin";
 import type { Order, OrderStatus } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
@@ -21,11 +21,7 @@ import {
 
 import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
-import { formatDateTime, formatNgn, seededRandom } from "./utils";
-
-function handleForUser(id: string): string {
-  return profiles.find((p) => p.id === id)?.handle ?? id;
-}
+import { formatDateTime, formatNgn } from "./utils";
 
 function orderTone(
   status: OrderStatus,
@@ -35,85 +31,6 @@ function orderTone(
   if (status === "shipped" || status === "delivered") return "emerald";
   if (status === "cancelled" || status === "refunded") return "red";
   return "neutral";
-}
-
-function buildExtraOrders(): Order[] {
-  const rng = seededRandom(23);
-  const statuses: OrderStatus[] = [
-    "pending",
-    "paid",
-    "processing",
-    "shipped",
-    "delivered",
-    "cancelled",
-    "refunded",
-  ];
-  const items = [
-    {
-      id: "prod_alpha_jersey",
-      name: "Team Alpha Jersey 2026",
-      price: 38_000,
-      thumb: "/team-alpha-jersey.jpg",
-    },
-    {
-      id: "prod_evo_hoodie",
-      name: "EVO TV Hoodie",
-      price: 28_500,
-      thumb: "/evo-hoodie.jpg",
-    },
-    {
-      id: "prod_champs_cap",
-      name: "Championship Snapback",
-      price: 12_000,
-      thumb: "/championship-cap.jpg",
-    },
-  ];
-  const people = profiles.slice(0, 12);
-  return Array.from({ length: 14 }, (_, i) => {
-    const item = items[Math.floor(rng() * items.length)]!;
-    const qty = 1 + Math.floor(rng() * 2);
-    const subtotal = item.price * qty;
-    const shipping = 2_500;
-    const status = statuses[Math.floor(rng() * statuses.length)]!;
-    const buyer = people[i % people.length]!;
-    return {
-      id: `order_mock_${i + 1}`,
-      userId: buyer.id,
-      status,
-      items: [
-        {
-          productId: item.id,
-          productName: item.name,
-          variantId: "m",
-          variantLabel: "M",
-          qty,
-          unitPriceNgn: item.price,
-          thumbnailUrl: item.thumb,
-        },
-      ],
-      subtotalNgn: subtotal,
-      shippingNgn: shipping,
-      totalNgn: subtotal + shipping,
-      shipping: {
-        fullName: buyer.displayName,
-        phone: "+234 800 000 0000",
-        address1: "12 Example Way",
-        address2: "",
-        city: "Lagos",
-        state: "Lagos",
-        country: "Nigeria",
-      },
-      paymentProvider: "paystack",
-      paymentRef: `PS_MOCK_${(i + 100).toString().padStart(4, "0")}`,
-      createdAt: new Date(
-        Date.now() - Math.floor(rng() * 40) * 86_400_000,
-      ).toISOString(),
-      trackingNumber:
-        status === "shipped" || status === "delivered"
-          ? `NIPOST-${Math.floor(rng() * 99999)}`
-          : null,
-    } satisfies Order;
-  });
 }
 
 const STATUSES: OrderStatus[] = [
@@ -127,45 +44,35 @@ const STATUSES: OrderStatus[] = [
 ];
 
 export function OrdersPage() {
-  const [all, setAll] = React.useState<Order[]>(() => [
-    ...ordersSource,
-    ...buildExtraOrders(),
-  ]);
   const [search, setSearch] = React.useState("");
-  const [statusFilter, setStatusFilter] = React.useState<string>("all");
+  const [statusFilter, setStatusFilter] = React.useState<OrderStatus | "all">("all");
   const [selected, setSelected] = React.useState<Order | null>(null);
   const [refundConfirm, setRefundConfirm] = React.useState<Order | null>(null);
 
+  const ordersQuery = useQuery({
+    queryKey: ["admin-orders", statusFilter],
+    queryFn: () =>
+      listAdminOrders({
+        status: statusFilter === "all" ? undefined : statusFilter,
+        limit: 200,
+      }),
+    staleTime: 30_000,
+  });
+
   const filtered = React.useMemo(() => {
-    let rows = all;
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      rows = rows.filter((o) =>
-        [o.id, handleForUser(o.userId), o.paymentRef].some((v) =>
-          v.toLowerCase().includes(q),
-        ),
-      );
-    }
-    if (statusFilter !== "all")
-      rows = rows.filter((o) => o.status === statusFilter);
-    return rows;
-  }, [all, search, statusFilter]);
+    const rows = ordersQuery.data?.orders ?? [];
+    if (!search.trim()) return rows;
+    const q = search.toLowerCase();
+    return rows.filter((o) =>
+      [o.id, o.userId, o.paymentRef].some((v) => v.toLowerCase().includes(q)),
+    );
+  }, [ordersQuery.data, search]);
 
   function handleRefund() {
     if (!refundConfirm) return;
-    setAll((prev) =>
-      prev.map((o) =>
-        o.id === refundConfirm.id
-          ? { ...o, status: "refunded" as OrderStatus }
-          : o,
-      ),
-    );
-    setSelected((prev) =>
-      prev && prev.id === refundConfirm.id
-        ? { ...prev, status: "refunded" }
-        : prev,
-    );
-    toast.success(`Refunded ${refundConfirm.id}`);
+    toast.info("Refund flow pending backend wire", {
+      description: `Order ${refundConfirm.id}`,
+    });
     setRefundConfirm(null);
   }
 
@@ -235,46 +142,64 @@ export function OrdersPage() {
           </View>
         </ScrollView>
 
-        <Text className="mb-2 text-xs text-muted-foreground">
-          {filtered.length} orders
-        </Text>
-
-        {filtered.map((row) => (
-          <Pressable
-            key={row.id}
-            onPress={() => setSelected(row)}
-            className="mb-2 rounded-xl border border-border bg-card/40 p-3"
-          >
-            <View className="flex-row items-center justify-between">
-              <Text className="font-mono text-xs text-foreground">
-                {row.id}
-              </Text>
-              <StatusBadge tone={orderTone(row.status)}>
-                {row.status}
-              </StatusBadge>
-            </View>
-            <Text className="text-[10px] text-muted-foreground">
-              {row.paymentRef}
+        {ordersQuery.isLoading ? (
+          <View className="items-center py-12">
+            <ActivityIndicator color="#2CD7E3" />
+          </View>
+        ) : ordersQuery.isError ? (
+          <Text className="py-6 text-center text-sm text-red-400">
+            Failed to load orders.{" "}
+            {ordersQuery.error instanceof Error
+              ? ordersQuery.error.message
+              : ""}
+          </Text>
+        ) : filtered.length === 0 ? (
+          <Text className="py-6 text-center text-sm text-muted-foreground">
+            No orders match this filter.
+          </Text>
+        ) : (
+          <>
+            <Text className="mb-2 text-xs text-muted-foreground">
+              {filtered.length} orders (of {ordersQuery.data?.total ?? filtered.length})
             </Text>
-            <View className="mt-2 flex-row items-center justify-between">
-              <View>
-                <Text className="text-sm text-foreground">
-                  @{handleForUser(row.userId)}
-                </Text>
-                <Text className="text-xs text-muted-foreground">
-                  {row.items.reduce((acc, i) => acc + i.qty, 0)} item(s) ·{" "}
-                  {formatDateTime(row.createdAt)}
-                </Text>
-              </View>
-              <Text
-                className="text-sm font-semibold text-foreground"
-                style={{ fontVariant: ["tabular-nums"] }}
+            {filtered.map((row) => (
+              <Pressable
+                key={row.id}
+                onPress={() => setSelected(row)}
+                className="mb-2 rounded-xl border border-border bg-card/40 p-3"
               >
-                {formatNgn(row.totalNgn)}
-              </Text>
-            </View>
-          </Pressable>
-        ))}
+                <View className="flex-row items-center justify-between">
+                  <Text className="font-mono text-xs text-foreground">
+                    {row.id}
+                  </Text>
+                  <StatusBadge tone={orderTone(row.status)}>
+                    {row.status}
+                  </StatusBadge>
+                </View>
+                <Text className="text-[10px] text-muted-foreground">
+                  {row.paymentRef}
+                </Text>
+                <View className="mt-2 flex-row items-center justify-between">
+                  <View>
+                    <Text className="text-sm text-foreground">
+                      {row.userId}
+                    </Text>
+                    <Text className="text-xs text-muted-foreground">
+                      {row.items.reduce((acc, i) => acc + i.qty, 0)} item(s) ·{" "}
+                      {formatDateTime(row.createdAt)}
+                    </Text>
+                  </View>
+                  <Text
+                    className="text-sm font-semibold text-foreground"
+                    style={{ fontVariant: ["tabular-nums"] }}
+                  >
+                    {formatNgn(row.totalNgn)}
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
+          </>
+        )}
       </ScrollView>
 
       <Modal
@@ -299,8 +224,7 @@ export function OrdersPage() {
                       {selected.id}
                     </Text>
                     <Text className="mt-0.5 text-xs text-muted-foreground">
-                      {formatDateTime(selected.createdAt)} · @
-                      {handleForUser(selected.userId)}
+                      {formatDateTime(selected.createdAt)} · {selected.userId}
                     </Text>
                   </View>
                   <Pressable onPress={() => setSelected(null)} hitSlop={8}>

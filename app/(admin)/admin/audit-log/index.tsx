@@ -1,9 +1,25 @@
 import * as React from "react";
-import { FlatList, Pressable, RefreshControl, Text, View } from "react-native";
-import { Stack } from "expo-router";
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import { toast } from "sonner-native";
+import { Download, SlidersHorizontal } from "lucide-react-native";
 
-import { listAuditLog, type AuditLogEntry } from "@/lib/api/admin";
+import {
+  auditLogExportUrl,
+  listAuditLog,
+  type AuditLogEntry,
+} from "@/lib/api/admin";
+import { BASE_URL, getToken } from "@/lib/api/_client";
 
 const ACTION_FILTERS: { label: string; value: string | null }[] = [
   { label: "All", value: null },
@@ -70,27 +86,82 @@ function AuditRow({ row }: { row: AuditLogEntry }) {
 }
 
 export default function AuditLogScreen() {
+  const searchParams = useLocalSearchParams<{ actorId?: string }>();
+  const presetActorId = typeof searchParams.actorId === "string" ? searchParams.actorId : undefined;
+
   const [filter, setFilter] = React.useState<string | null>(null);
+  const [showAdvanced, setShowAdvanced] = React.useState(!!presetActorId);
+  const [actorId, setActorId] = React.useState<string>(presetActorId ?? "");
+  const [targetType, setTargetType] = React.useState<string>("");
+  const [targetId, setTargetId] = React.useState<string>("");
+  const [fromDate, setFromDate] = React.useState<string>("");
+  const [toDate, setToDate] = React.useState<string>("");
+  const [exporting, setExporting] = React.useState(false);
+
+  const effectiveFilters = React.useMemo(
+    () => ({
+      action: filter ?? undefined,
+      actorId: actorId.trim() || undefined,
+      targetType: targetType.trim() || undefined,
+      targetId: targetId.trim() || undefined,
+      fromDate: fromDate.trim() || undefined,
+      toDate: toDate.trim() || undefined,
+      limit: 200,
+    }),
+    [filter, actorId, targetType, targetId, fromDate, toDate],
+  );
 
   const { data, isLoading, isFetching, refetch, error } = useQuery<
     AuditLogEntry[],
     Error
   >({
-    queryKey: ["admin", "audit-log"],
-    queryFn: () => listAuditLog(200),
+    queryKey: ["admin", "audit-log", effectiveFilters],
+    queryFn: () => listAuditLog(effectiveFilters),
   });
 
-  const filtered = React.useMemo(() => {
-    if (!data) return [];
-    if (!filter) return data;
-    return data.filter((r) => r.action.startsWith(filter));
-  }, [data, filter]);
+  const filtered = data ?? [];
+
+  const handleExport = React.useCallback(async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const token = await getToken();
+      const url = auditLogExportUrl({ ...effectiveFilters, limit: 10_000 });
+      const target = `${FileSystem.cacheDirectory}audit-log-${Date.now()}.csv`;
+      const dl = FileSystem.createDownloadResumable(url, target, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      const res = await dl.downloadAsync();
+      if (!res || res.status !== 200) {
+        toast.error("Export failed", {
+          description: res ? `HTTP ${res.status}` : "no response",
+        });
+        return;
+      }
+      const sharingAvailable = await Sharing.isAvailableAsync();
+      if (sharingAvailable) {
+        await Sharing.shareAsync(res.uri, {
+          mimeType: "text/csv",
+          dialogTitle: "Export audit log",
+          UTI: "public.comma-separated-values-text",
+        });
+      } else {
+        toast.success("Saved to cache", { description: res.uri });
+      }
+    } catch (e) {
+      toast.error("Export failed", {
+        description: e instanceof Error ? e.message : String(e),
+      });
+    } finally {
+      setExporting(false);
+    }
+  }, [effectiveFilters, exporting]);
 
   return (
     <>
       <Stack.Screen options={{ title: "Audit log" }} />
       <View className="flex-1 bg-background">
-        <View className="px-4 pt-4 pb-2 flex-row flex-wrap gap-2">
+        <View className="px-4 pt-4 pb-2 flex-row flex-wrap items-center gap-2">
           {ACTION_FILTERS.map((f) => (
             <Pressable
               key={f.label}
@@ -110,7 +181,81 @@ export default function AuditLogScreen() {
               </Text>
             </Pressable>
           ))}
+          <Pressable
+            onPress={() => setShowAdvanced((v) => !v)}
+            className={`px-3 py-1.5 rounded-full border flex-row items-center gap-1.5 ${
+              showAdvanced
+                ? "border-brand bg-brand/15"
+                : "border-border bg-card"
+            }`}
+          >
+            <SlidersHorizontal size={11} color={showAdvanced ? "#2CD7E3" : "#FAFAFA"} />
+            <Text
+              className={`text-xs font-semibold ${
+                showAdvanced ? "text-brand" : "text-foreground"
+              }`}
+            >
+              Filters
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={handleExport}
+            disabled={exporting}
+            className="px-3 py-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 flex-row items-center gap-1.5"
+          >
+            <Download size={11} color="#10B981" />
+            <Text className="text-xs font-semibold text-emerald-400">
+              {exporting ? "Exporting…" : "CSV"}
+            </Text>
+          </Pressable>
         </View>
+
+        {showAdvanced ? (
+          <View className="px-4 pb-2 gap-2">
+            <TextInput
+              value={actorId}
+              onChangeText={setActorId}
+              placeholder="actorId (admin user ID)"
+              placeholderTextColor="#737373"
+              className="h-9 rounded-md border border-border bg-card px-3 text-xs text-foreground"
+            />
+            <TextInput
+              value={targetType}
+              onChangeText={setTargetType}
+              placeholder="targetType (stream, user, vod, …)"
+              placeholderTextColor="#737373"
+              className="h-9 rounded-md border border-border bg-card px-3 text-xs text-foreground"
+            />
+            <TextInput
+              value={targetId}
+              onChangeText={setTargetId}
+              placeholder="targetId"
+              placeholderTextColor="#737373"
+              className="h-9 rounded-md border border-border bg-card px-3 text-xs text-foreground"
+            />
+            <View className="flex-row gap-2">
+              <TextInput
+                value={fromDate}
+                onChangeText={setFromDate}
+                placeholder="from (YYYY-MM-DD)"
+                placeholderTextColor="#737373"
+                className="h-9 flex-1 rounded-md border border-border bg-card px-3 text-xs text-foreground"
+              />
+              <TextInput
+                value={toDate}
+                onChangeText={setToDate}
+                placeholder="to (YYYY-MM-DD)"
+                placeholderTextColor="#737373"
+                className="h-9 flex-1 rounded-md border border-border bg-card px-3 text-xs text-foreground"
+              />
+            </View>
+            {presetActorId ? (
+              <Text className="text-[10px] text-muted-foreground">
+                Pre-filtered to actor {presetActorId.slice(0, 12)}…
+              </Text>
+            ) : null}
+          </View>
+        ) : null}
 
         {error ? (
           <View className="px-4 pt-4">

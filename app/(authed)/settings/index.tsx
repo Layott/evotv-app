@@ -43,11 +43,8 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
 import { SectionCard, SettingRow } from "@/components/settings/section-card";
-import {
-  getUserPrefs,
-  requestAccountDeletion,
-  requestDataExport,
-} from "@/lib/mock";
+import { getUserPrefs, requestDataExport } from "@/lib/mock";
+import { deleteOwnAccount } from "@/lib/api/profile";
 import type { UserPrefs } from "@/lib/types";
 
 const LANGS = [
@@ -164,17 +161,20 @@ export default function SettingsScreen() {
     if (deleting) return;
     setDeleting(true);
     try {
-      const { scheduledForIso } = await requestAccountDeletion(
-        user?.id ?? "user_current",
-      );
+      const { scheduledForIso } = await deleteOwnAccount();
       const niceDate = new Date(scheduledForIso).toLocaleDateString();
-      toast.error(`Account queued for deletion. Removal: ${niceDate}.`);
-    } catch {
-      toast.error("Could not queue deletion. Try again later.");
+      toast.error(`Account queued for deletion. Final purge: ${niceDate}.`);
+      // Backend has revoked sessions. Sign out + bounce to login.
+      await signOut();
+      router.replace("/(auth)/login");
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Could not queue deletion. Try again later.",
+      );
     } finally {
       setDeleting(false);
     }
-  }, [deleting, user]);
+  }, [deleting, signOut, router]);
 
   const handleExport = React.useCallback(async () => {
     if (exporting) return;
@@ -341,8 +341,8 @@ export default function SettingsScreen() {
                   Danger zone
                 </Text>
                 <Text className="mt-1 text-xs text-muted-foreground">
-                  Permanently removes your EVO TV account, watch history, and
-                  subscriptions.
+                  Marks your account for deletion. Sessions sign out instantly;
+                  your data is purged after a 30-day grace window.
                 </Text>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -361,8 +361,10 @@ export default function SettingsScreen() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete your account?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. Your data will be removed
-                        within 14 days.
+                        Sessions revoke immediately. Watch history, chats,
+                        clips and personal data are permanently purged after 30
+                        days. The account row is anonymized so referenced
+                        comments and tips stay intact.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

@@ -30,7 +30,7 @@ export function ForensicPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "audit-log", "preview"],
-    queryFn: () => listAuditLog(20),
+    queryFn: () => listAuditLog({ limit: 20 }),
     staleTime: 30_000,
   });
 

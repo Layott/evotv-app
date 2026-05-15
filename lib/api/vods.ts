@@ -38,3 +38,86 @@ export function listTrendingClips(limit = 10): Promise<Clip[]> {
 export function getClipById(id: string): Promise<Clip | null> {
   return api<Clip | null>(`/api/vods/clips/${id}`);
 }
+
+export interface ListAdminVodsOpts {
+  gameId?: string;
+  channelId?: string;
+  /** 'only' = deleted only; 'include' = active + deleted; undefined = active only. */
+  deleted?: "only" | "include";
+  limit?: number;
+  offset?: number;
+}
+
+export interface AdminVod extends Vod {
+  deletedAt?: string | null;
+  channelId?: string | null;
+}
+
+export interface AdminClip extends Clip {
+  deletedAt?: string | null;
+  channelId?: string | null;
+}
+
+export async function listAdminVods(opts: ListAdminVodsOpts = {}): Promise<{
+  vods: AdminVod[];
+  total: number;
+  limit: number;
+  offset: number;
+}> {
+  return api(`/api/admin/vods`, {
+    query: {
+      gameId: opts.gameId,
+      channelId: opts.channelId,
+      deleted: opts.deleted,
+      limit: opts.limit,
+      offset: opts.offset,
+    },
+  });
+}
+
+export async function listAdminClips(opts: ListAdminVodsOpts = {}): Promise<{
+  clips: AdminClip[];
+  total: number;
+  limit: number;
+  offset: number;
+}> {
+  return api(`/api/admin/clips`, {
+    query: {
+      gameId: opts.gameId,
+      channelId: opts.channelId,
+      deleted: opts.deleted,
+      limit: opts.limit,
+      offset: opts.offset,
+    },
+  });
+}
+
+export async function adminDeleteVod(id: string): Promise<{
+  ok: true;
+  vodId: string;
+  deletedAt: string;
+}> {
+  return api(`/api/admin/vods/${id}`, { method: "DELETE" });
+}
+
+export async function adminRestoreVod(id: string): Promise<{
+  ok: true;
+  vodId: string;
+}> {
+  return api(`/api/admin/vods/${id}/restore`, { method: "POST", body: {} });
+}
+
+export async function adminDeleteClip(id: string): Promise<{
+  ok: true;
+  clipId: string;
+  deletedAt: string;
+}> {
+  return api(`/api/admin/clips/${id}`, { method: "DELETE" });
+}
+
+export async function adminRestoreClip(id: string): Promise<{
+  ok: true;
+  clipId: string;
+}> {
+  return api(`/api/admin/clips/${id}/restore`, { method: "POST", body: {} });
+}

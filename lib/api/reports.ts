@@ -31,6 +31,12 @@ export interface ContentReport {
   resolvedAt: string | null;
   resolutionNotes: string | null;
   createdAt: string;
+  /** Server-enriched: present when targetType=chat_message. */
+  targetPreview?: {
+    body: string;
+    streamId: string;
+    userId: string;
+  } | null;
 }
 
 export interface SubmitReportInput {

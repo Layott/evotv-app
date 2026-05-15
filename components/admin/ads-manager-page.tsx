@@ -1,10 +1,17 @@
 import * as React from "react";
-import { Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Plus, Search, Trash2, X } from "lucide-react-native";
 import { toast } from "sonner-native";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { ads as adsSource } from "@/lib/mock/ads";
+import {
+  listAdminAds,
+  createAd,
+  updateAd,
+  deleteAd,
+  type CreateAdPayload,
+} from "@/lib/api/ads";
 import type { Ad, AdPlacement } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
@@ -35,46 +42,86 @@ function placementLabel(p: AdPlacement) {
 }
 
 export function AdsManagerPage() {
-  const [all, setAll] = React.useState<Ad[]>(() => [...adsSource]);
+  const queryClient = useQueryClient();
   const [search, setSearch] = React.useState("");
-  const [placementFilter, setPlacementFilter] =
-    React.useState<string>("all");
+  const [placementFilter, setPlacementFilter] = React.useState<
+    AdPlacement | "all"
+  >("all");
   const [editing, setEditing] = React.useState<Ad | null>(null);
   const [createOpen, setCreateOpen] = React.useState(false);
   const [confirmDelete, setConfirmDelete] = React.useState<Ad | null>(null);
 
+  const adsQuery = useQuery({
+    queryKey: ["admin-ads", placementFilter],
+    queryFn: () =>
+      listAdminAds({
+        placement: placementFilter === "all" ? undefined : placementFilter,
+        limit: 200,
+      }),
+    staleTime: 30_000,
+  });
+
   const filtered = React.useMemo(() => {
-    let rows = all;
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      rows = rows.filter((a) => a.advertiser.toLowerCase().includes(q));
-    }
-    if (placementFilter !== "all")
-      rows = rows.filter((a) => a.placement === placementFilter);
-    return rows;
-  }, [all, search, placementFilter]);
+    const rows = adsQuery.data?.ads ?? [];
+    if (!search.trim()) return rows;
+    const q = search.toLowerCase();
+    return rows.filter((a) => a.advertiser.toLowerCase().includes(q));
+  }, [adsQuery.data, search]);
 
-  function handleToggleActive(id: string, active: boolean) {
-    setAll((prev) => prev.map((a) => (a.id === id ? { ...a, active } : a)));
-    toast.success(active ? "Ad activated" : "Ad paused");
-  }
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: ["admin-ads"] });
 
-  function handleSave(ad: Ad) {
-    setAll((prev) => {
-      const exists = prev.some((a) => a.id === ad.id);
-      return exists ? prev.map((a) => (a.id === ad.id ? ad : a)) : [ad, ...prev];
-    });
-    toast.success(editing ? "Ad updated" : "Ad created");
-    setEditing(null);
-    setCreateOpen(false);
-  }
+  const toggleMutation = useMutation({
+    mutationFn: ({ id, active }: { id: string; active: boolean }) =>
+      updateAd(id, { active }),
+    onSuccess: (ad) => {
+      void invalidate();
+      toast.success(ad.active ? "Ad activated" : "Ad paused");
+    },
+    onError: (err) => {
+      toast.error("Toggle failed", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+  });
 
-  function handleDelete() {
-    if (!confirmDelete) return;
-    setAll((prev) => prev.filter((a) => a.id !== confirmDelete.id));
-    toast.success(`Deleted ${confirmDelete.advertiser}`);
-    setConfirmDelete(null);
-  }
+  const saveMutation = useMutation({
+    mutationFn: async ({
+      payload,
+      editingId,
+    }: {
+      payload: CreateAdPayload;
+      editingId: string | null;
+    }) => {
+      if (editingId) return updateAd(editingId, payload);
+      return createAd(payload);
+    },
+    onSuccess: (_ad, vars) => {
+      void invalidate();
+      toast.success(vars.editingId ? "Ad updated" : "Ad created");
+      setEditing(null);
+      setCreateOpen(false);
+    },
+    onError: (err) => {
+      toast.error("Save failed", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteAd(id),
+    onSuccess: () => {
+      void invalidate();
+      toast.success(confirmDelete ? `Deleted ${confirmDelete.advertiser}` : "Deleted");
+      setConfirmDelete(null);
+    },
+    onError: (err) => {
+      toast.error("Delete failed", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+  });
 
   return (
     <View className="flex-1 bg-background">
@@ -151,84 +198,106 @@ export function AdsManagerPage() {
           </View>
         </ScrollView>
 
-        <Text className="mb-2 text-xs text-muted-foreground">
-          {filtered.length} campaigns
-        </Text>
-
-        {filtered.map((row) => {
-          const ctr =
-            row.impressions > 0 ? (row.clicks / row.impressions) * 100 : 0;
-          return (
-            <Pressable
-              key={row.id}
-              onPress={() => setEditing(row)}
-              className="mb-2 rounded-xl border border-border bg-card/40 p-3"
-            >
-              <View className="flex-row items-center gap-3">
-                <View className="h-12 w-20 overflow-hidden rounded bg-muted">
-                  <Image
-                    source={row.mediaUrl}
-                    style={{ width: "100%", height: "100%" }}
-                    contentFit="cover"
-                  />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-foreground">
-                    {row.advertiser}
-                  </Text>
-                  <Text
-                    numberOfLines={1}
-                    className="text-xs text-muted-foreground"
-                  >
-                    {row.clickUrl}
-                  </Text>
-                  <View className="mt-1 flex-row gap-1.5">
-                    <StatusBadge tone="violet">
-                      {placementLabel(row.placement)}
-                    </StatusBadge>
-                    {row.active ? (
-                      <StatusBadge tone="emerald" dot>
-                        Active
-                      </StatusBadge>
-                    ) : (
-                      <StatusBadge tone="neutral">Paused</StatusBadge>
-                    )}
+        {adsQuery.isLoading ? (
+          <View className="items-center py-12">
+            <ActivityIndicator color="#2CD7E3" />
+          </View>
+        ) : adsQuery.isError ? (
+          <Text className="py-6 text-center text-sm text-red-400">
+            Failed to load ads.{" "}
+            {adsQuery.error instanceof Error ? adsQuery.error.message : ""}
+          </Text>
+        ) : filtered.length === 0 ? (
+          <Text className="py-6 text-center text-sm text-muted-foreground">
+            No campaigns match this filter.
+          </Text>
+        ) : (
+          <>
+            <Text className="mb-2 text-xs text-muted-foreground">
+              {filtered.length} campaigns
+            </Text>
+            {filtered.map((row) => {
+              const ctr =
+                row.impressions > 0 ? (row.clicks / row.impressions) * 100 : 0;
+              return (
+                <Pressable
+                  key={row.id}
+                  onPress={() => setEditing(row)}
+                  className="mb-2 rounded-xl border border-border bg-card/40 p-3"
+                >
+                  <View className="flex-row items-center gap-3">
+                    <View className="h-12 w-20 overflow-hidden rounded bg-muted">
+                      <Image
+                        source={row.mediaUrl}
+                        style={{ width: "100%", height: "100%" }}
+                        contentFit="cover"
+                      />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-sm font-medium text-foreground">
+                        {row.advertiser}
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="text-xs text-muted-foreground"
+                      >
+                        {row.clickUrl}
+                      </Text>
+                      <View className="mt-1 flex-row gap-1.5">
+                        <StatusBadge tone="violet">
+                          {placementLabel(row.placement)}
+                        </StatusBadge>
+                        {row.active ? (
+                          <StatusBadge tone="emerald" dot>
+                            Active
+                          </StatusBadge>
+                        ) : (
+                          <StatusBadge tone="neutral">Paused</StatusBadge>
+                        )}
+                      </View>
+                    </View>
                   </View>
-                </View>
-              </View>
-              <View className="mt-2 flex-row items-center gap-3">
-                <Stat label="Impr" value={formatNumber(row.impressions)} />
-                <Stat label="Clicks" value={formatNumber(row.clicks)} />
-                <Stat label="CTR" value={`${ctr.toFixed(1)}%`} />
-                <View className="ml-auto flex-row items-center gap-2">
-                  <Switch
-                    checked={row.active}
-                    onCheckedChange={(v) => handleToggleActive(row.id, v)}
-                  />
-                  <Pressable
-                    onPress={() => setConfirmDelete(row)}
-                    hitSlop={8}
-                  >
-                    <Trash2 size={16} color="#A3A3A3" />
-                  </Pressable>
-                </View>
-              </View>
-              <Text className="mt-1 text-[10px] text-muted-foreground">
-                {formatDate(row.startAt)} — {formatDate(row.endAt)}
-              </Text>
-            </Pressable>
-          );
-        })}
+                  <View className="mt-2 flex-row items-center gap-3">
+                    <Stat label="Impr" value={formatNumber(row.impressions)} />
+                    <Stat label="Clicks" value={formatNumber(row.clicks)} />
+                    <Stat label="CTR" value={`${ctr.toFixed(1)}%`} />
+                    <View className="ml-auto flex-row items-center gap-2">
+                      <Switch
+                        checked={row.active}
+                        disabled={toggleMutation.isPending}
+                        onCheckedChange={(v) =>
+                          toggleMutation.mutate({ id: row.id, active: v })
+                        }
+                      />
+                      <Pressable
+                        onPress={() => setConfirmDelete(row)}
+                        hitSlop={8}
+                      >
+                        <Trash2 size={16} color="#A3A3A3" />
+                      </Pressable>
+                    </View>
+                  </View>
+                  <Text className="mt-1 text-[10px] text-muted-foreground">
+                    {formatDate(row.startAt)} — {formatDate(row.endAt)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </>
+        )}
       </ScrollView>
 
       {(editing || createOpen) && (
         <AdForm
           initial={editing}
+          submitting={saveMutation.isPending}
           onClose={() => {
             setEditing(null);
             setCreateOpen(false);
           }}
-          onSave={handleSave}
+          onSave={(payload) =>
+            saveMutation.mutate({ payload, editingId: editing?.id ?? null })
+          }
         />
       )}
 
@@ -247,8 +316,16 @@ export function AdsManagerPage() {
             <Button variant="outline" onPress={() => setConfirmDelete(null)}>
               <Text className="text-sm text-foreground">Cancel</Text>
             </Button>
-            <Button variant="destructive" onPress={handleDelete}>
-              <Text className="text-sm text-white">Delete</Text>
+            <Button
+              variant="destructive"
+              disabled={deleteMutation.isPending}
+              onPress={() =>
+                confirmDelete && deleteMutation.mutate(confirmDelete.id)
+              }
+            >
+              <Text className="text-sm text-white">
+                {deleteMutation.isPending ? "Deleting…" : "Delete"}
+              </Text>
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -273,30 +350,41 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function AdForm({
   initial,
+  submitting,
   onClose,
   onSave,
 }: {
   initial: Ad | null;
+  submitting: boolean;
   onClose: () => void;
-  onSave: (ad: Ad) => void;
+  onSave: (payload: CreateAdPayload) => void;
 }) {
-  const [form, setForm] = React.useState<Ad>(
-    initial ?? {
-      id: `ad_new_${Date.now()}`,
-      placement: "home_banner",
-      mediaUrl: "/placeholder.svg?height=200&width=1200&text=New+Creative",
-      clickUrl: "https://example.com",
-      advertiser: "",
-      active: true,
-      startAt: new Date().toISOString(),
-      endAt: new Date(Date.now() + 30 * 86_400_000).toISOString(),
-      weight: 100,
-      impressions: 0,
-      clicks: 0,
-    },
+  const [form, setForm] = React.useState<CreateAdPayload>(
+    initial
+      ? {
+          placement: initial.placement,
+          mediaUrl: initial.mediaUrl,
+          clickUrl: initial.clickUrl,
+          advertiser: initial.advertiser,
+          active: initial.active,
+          startAt: initial.startAt,
+          endAt: initial.endAt,
+          weight: initial.weight,
+        }
+      : {
+          placement: "home_banner",
+          mediaUrl: "/placeholder.svg?height=200&width=1200&text=New+Creative",
+          clickUrl: "https://example.com",
+          advertiser: "",
+          active: true,
+          startAt: new Date().toISOString(),
+          endAt: new Date(Date.now() + 30 * 86_400_000).toISOString(),
+          weight: 100,
+        },
   );
 
-  const disabled = !form.advertiser.trim() || !form.clickUrl.trim();
+  const disabled =
+    submitting || !form.advertiser.trim() || !form.clickUrl.trim();
 
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose}>
@@ -428,7 +516,9 @@ function AdForm({
                 className="flex-1 bg-cyan-500"
                 onPress={() => onSave(form)}
               >
-                <Text className="text-sm font-medium text-black">Save ad</Text>
+                <Text className="text-sm font-medium text-black">
+                  {submitting ? "Saving…" : "Save ad"}
+                </Text>
               </Button>
             </View>
           </ScrollView>

@@ -28,3 +28,34 @@ export function getEventBySlug(slug: string): Promise<EsportsEvent | null> {
 export function listMatchesForEvent(eventId: string): Promise<Match[]> {
   return api<Match[]>(`/api/events/${eventId}/matches`);
 }
+
+export type CreateEventPayload = Omit<EsportsEvent, "id">;
+export type UpdateEventPayload = Partial<CreateEventPayload>;
+
+/** POST /api/admin/events — admin only. */
+export async function createEvent(
+  payload: CreateEventPayload,
+): Promise<EsportsEvent> {
+  return api<EsportsEvent>("/api/admin/events", {
+    method: "POST",
+    body: payload,
+  });
+}
+
+/** PATCH /api/admin/events/[id] — admin only. */
+export async function updateEvent(
+  id: string,
+  payload: UpdateEventPayload,
+): Promise<EsportsEvent> {
+  return api<EsportsEvent>(`/api/admin/events/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+/** DELETE /api/admin/events/[id] — admin only. */
+export async function deleteEvent(id: string): Promise<{ ok: true }> {
+  return api<{ ok: true }>(`/api/admin/events/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+}

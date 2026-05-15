@@ -1,11 +1,13 @@
 import * as React from "react";
-import { Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Plus, X } from "lucide-react-native";
 import { toast } from "sonner-native";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { polls as pollsSource } from "@/lib/mock/polls";
-import { streams as streamsSource } from "@/lib/mock/streams";
-import type { Poll } from "@/lib/types";
+import { listAdminPolls } from "@/lib/api/admin";
+import { createPoll, closePollById } from "@/lib/api/polls";
+import { listLiveStreams } from "@/lib/api/streams";
+import type { Poll, Stream } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,51 +16,77 @@ import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
 import { formatNumber, timeAgo } from "./utils";
 
-function streamTitle(id: string) {
-  return streamsSource.find((s) => s.id === id)?.title ?? id;
-}
-
 export function PollsManagerPage() {
-  const [all, setAll] = React.useState<Poll[]>(() => [...pollsSource]);
+  const queryClient = useQueryClient();
   const [openCreate, setOpenCreate] = React.useState(false);
   const [selected, setSelected] = React.useState<Poll | null>(null);
 
-  function handleCreate(payload: {
-    streamId: string;
-    question: string;
-    options: string[];
-    durationMinutes: number;
-  }) {
-    const poll: Poll = {
-      id: `poll_new_${Date.now()}`,
-      streamId: payload.streamId,
-      question: payload.question,
-      options: payload.options.map((label, i) => ({
-        id: `opt_${i}`,
-        label,
-        votes: 0,
-      })),
-      createdAt: new Date().toISOString(),
-      closesAt: new Date(
-        Date.now() + payload.durationMinutes * 60_000,
-      ).toISOString(),
-      isClosed: false,
-      totalVotes: 0,
-    };
-    setAll((prev) => [poll, ...prev]);
-    toast.success("Poll created");
-    setOpenCreate(false);
+  const pollsQuery = useQuery({
+    queryKey: ["admin-polls"],
+    queryFn: () => listAdminPolls({ limit: 200 }),
+    staleTime: 30_000,
+  });
+
+  const streamsQuery = useQuery({
+    queryKey: ["admin-live-streams"],
+    queryFn: () => listLiveStreams(),
+    staleTime: 60_000,
+  });
+
+  const polls = pollsQuery.data?.polls ?? [];
+  const streamMap = React.useMemo(() => {
+    const map = new Map<string, Stream>();
+    for (const s of streamsQuery.data ?? []) map.set(s.id, s);
+    return map;
+  }, [streamsQuery.data]);
+
+  function streamTitle(id: string) {
+    return streamMap.get(id)?.title ?? id;
   }
 
-  function handleClose(id: string) {
-    setAll((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, isClosed: true } : p)),
-    );
-    setSelected((prev) =>
-      prev && prev.id === id ? { ...prev, isClosed: true } : prev,
-    );
-    toast.success("Poll closed");
-  }
+  const createMutation = useMutation({
+    mutationFn: (payload: {
+      streamId: string;
+      question: string;
+      options: string[];
+      durationMinutes: number;
+    }) =>
+      createPoll({
+        streamId: payload.streamId,
+        question: payload.question,
+        options: payload.options.map((label, i) => ({
+          id: `opt_${i}`,
+          label,
+        })),
+        closesAt: new Date(
+          Date.now() + payload.durationMinutes * 60_000,
+        ).toISOString(),
+      }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-polls"] });
+      toast.success("Poll created");
+      setOpenCreate(false);
+    },
+    onError: (err) => {
+      toast.error("Failed to create poll", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+  });
+
+  const closeMutation = useMutation({
+    mutationFn: (pollId: string) => closePollById(pollId),
+    onSuccess: (poll) => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-polls"] });
+      setSelected((prev) => (prev && prev.id === poll.id ? poll : prev));
+      toast.success("Poll closed");
+    },
+    onError: (err) => {
+      toast.error("Failed to close poll", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    },
+  });
 
   return (
     <View className="flex-1 bg-background">
@@ -70,6 +98,7 @@ export function PollsManagerPage() {
             <Button
               className="bg-cyan-500"
               onPress={() => setOpenCreate(true)}
+              disabled={streamsQuery.data?.length === 0}
             >
               <Plus size={14} color="#000" />
               <Text className="text-sm font-medium text-black">New</Text>
@@ -77,47 +106,56 @@ export function PollsManagerPage() {
           }
         />
 
-        {all.map((p) => (
-          <Pressable
-            key={p.id}
-            onPress={() => setSelected(p)}
-            className="mb-2 rounded-xl border border-border bg-card/40 p-3"
-          >
-            <View className="flex-row items-start justify-between gap-2">
-              <View className="flex-1">
-                <Text className="text-sm font-medium text-foreground">
-                  {p.question}
-                </Text>
-                <Text className="mt-0.5 text-xs text-muted-foreground">
-                  {p.options.length} options · {streamTitle(p.streamId)}
-                </Text>
-              </View>
-              {p.isClosed ? (
-                <StatusBadge tone="neutral">Closed</StatusBadge>
-              ) : (
-                <StatusBadge tone="emerald" dot>
-                  Active
-                </StatusBadge>
-              )}
-            </View>
-            <View className="mt-2 flex-row items-center justify-between">
-              <Text className="text-xs text-muted-foreground">
-                {formatNumber(p.totalVotes)} votes
-              </Text>
-              <Text className="text-xs text-muted-foreground">
-                Closes {timeAgo(p.closesAt)}
-              </Text>
-            </View>
-          </Pressable>
-        ))}
-
-        {all.length === 0 ? (
+        {pollsQuery.isLoading ? (
+          <View className="items-center py-12">
+            <ActivityIndicator color="#2CD7E3" />
+          </View>
+        ) : pollsQuery.isError ? (
+          <Text className="py-6 text-center text-sm text-red-400">
+            Failed to load polls.{" "}
+            {pollsQuery.error instanceof Error ? pollsQuery.error.message : ""}
+          </Text>
+        ) : polls.length === 0 ? (
           <View className="rounded-xl border border-dashed border-border p-6">
             <Text className="text-center text-sm text-muted-foreground">
               No polls yet. Tap "New" to create one.
             </Text>
           </View>
-        ) : null}
+        ) : (
+          polls.map((p) => (
+            <Pressable
+              key={p.id}
+              onPress={() => setSelected(p)}
+              className="mb-2 rounded-xl border border-border bg-card/40 p-3"
+            >
+              <View className="flex-row items-start justify-between gap-2">
+                <View className="flex-1">
+                  <Text className="text-sm font-medium text-foreground">
+                    {p.question}
+                  </Text>
+                  <Text className="mt-0.5 text-xs text-muted-foreground">
+                    {p.options.length} options · {streamTitle(p.streamId)}
+                  </Text>
+                </View>
+                {p.isClosed ? (
+                  <StatusBadge tone="neutral">Closed</StatusBadge>
+                ) : (
+                  <StatusBadge tone="emerald" dot>
+                    Active
+                  </StatusBadge>
+                )}
+              </View>
+              <View className="mt-2 flex-row items-center justify-between">
+                <Text className="text-xs text-muted-foreground">
+                  {formatNumber(p.totalVotes)} votes
+                </Text>
+                <Text className="text-xs text-muted-foreground">
+                  Closes {timeAgo(p.closesAt)}
+                </Text>
+              </View>
+            </Pressable>
+          ))
+        )}
       </ScrollView>
 
       {/* Detail Modal */}
@@ -192,9 +230,12 @@ export function PollsManagerPage() {
                   ) : (
                     <Button
                       variant="destructive"
-                      onPress={() => handleClose(selected.id)}
+                      disabled={closeMutation.isPending}
+                      onPress={() => closeMutation.mutate(selected.id)}
                     >
-                      <Text className="text-sm text-white">Close poll</Text>
+                      <Text className="text-sm text-white">
+                        {closeMutation.isPending ? "Closing…" : "Close poll"}
+                      </Text>
                     </Button>
                   )}
                 </View>
@@ -207,7 +248,10 @@ export function PollsManagerPage() {
       <CreatePollDrawer
         open={openCreate}
         onClose={() => setOpenCreate(false)}
-        onSubmit={handleCreate}
+        liveStreams={streamsQuery.data ?? []}
+        loading={streamsQuery.isLoading}
+        submitting={createMutation.isPending}
+        onSubmit={(payload) => createMutation.mutate(payload)}
       />
     </View>
   );
@@ -216,10 +260,16 @@ export function PollsManagerPage() {
 function CreatePollDrawer({
   open,
   onClose,
+  liveStreams,
+  loading,
+  submitting,
   onSubmit,
 }: {
   open: boolean;
   onClose: () => void;
+  liveStreams: Stream[];
+  loading: boolean;
+  submitting: boolean;
   onSubmit: (payload: {
     streamId: string;
     question: string;
@@ -227,23 +277,23 @@ function CreatePollDrawer({
     durationMinutes: number;
   }) => void;
 }) {
-  const [streamId, setStreamId] = React.useState(streamsSource[0]?.id ?? "");
+  const [streamId, setStreamId] = React.useState(liveStreams[0]?.id ?? "");
   const [question, setQuestion] = React.useState("");
   const [options, setOptions] = React.useState<string[]>(["", ""]);
   const [duration, setDuration] = React.useState(5);
 
   React.useEffect(() => {
     if (open) {
-      setStreamId(streamsSource[0]?.id ?? "");
+      setStreamId(liveStreams[0]?.id ?? "");
       setQuestion("");
       setOptions(["", ""]);
       setDuration(5);
     }
-  }, [open]);
+  }, [open, liveStreams]);
 
   const validOptions = options.map((o) => o.trim()).filter(Boolean);
   const disabled =
-    !streamId || !question.trim() || validOptions.length < 2;
+    submitting || !streamId || !question.trim() || validOptions.length < 2;
 
   return (
     <Modal
@@ -268,32 +318,40 @@ function CreatePollDrawer({
             </View>
 
             <Text className="mb-1.5 text-xs text-muted-foreground">Stream</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View className="mb-3 flex-row gap-2">
-                {streamsSource.map((s) => (
-                  <Pressable
-                    key={s.id}
-                    onPress={() => setStreamId(s.id)}
-                    className={`rounded-full border px-3 py-1.5 ${
-                      streamId === s.id
-                        ? "border-cyan-500 bg-cyan-500/10"
-                        : "border-border bg-card"
-                    }`}
-                  >
-                    <Text
-                      numberOfLines={1}
-                      className={`text-xs ${
+            {loading ? (
+              <ActivityIndicator color="#2CD7E3" />
+            ) : liveStreams.length === 0 ? (
+              <Text className="mb-3 text-xs text-amber-400">
+                No live streams. Start a stream before creating a poll.
+              </Text>
+            ) : (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View className="mb-3 flex-row gap-2">
+                  {liveStreams.map((s) => (
+                    <Pressable
+                      key={s.id}
+                      onPress={() => setStreamId(s.id)}
+                      className={`rounded-full border px-3 py-1.5 ${
                         streamId === s.id
-                          ? "text-cyan-300"
-                          : "text-muted-foreground"
+                          ? "border-cyan-500 bg-cyan-500/10"
+                          : "border-border bg-card"
                       }`}
                     >
-                      {s.title}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </ScrollView>
+                      <Text
+                        numberOfLines={1}
+                        className={`text-xs ${
+                          streamId === s.id
+                            ? "text-cyan-300"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        {s.title}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </ScrollView>
+            )}
 
             <Text className="mb-1.5 text-xs text-muted-foreground">
               Question
@@ -384,7 +442,7 @@ function CreatePollDrawer({
                 }
               >
                 <Text className="text-sm font-medium text-black">
-                  Launch poll
+                  {submitting ? "Launching…" : "Launch poll"}
                 </Text>
               </Button>
             </View>

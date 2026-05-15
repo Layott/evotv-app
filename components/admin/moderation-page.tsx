@@ -80,6 +80,17 @@ function ReportCard({
         </Text>
       </Text>
 
+      {report.targetPreview ? (
+        <View className="mt-2 rounded-md border border-amber-500/30 bg-amber-500/5 p-2">
+          <Text className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
+            Reported message
+          </Text>
+          <Text className="mt-1 text-sm italic text-foreground">
+            &ldquo;{report.targetPreview.body}&rdquo;
+          </Text>
+        </View>
+      ) : null}
+
       {report.details ? (
         <View className="mt-2 rounded-md border border-border bg-background p-2">
           <Text className="text-sm text-foreground">{report.details}</Text>

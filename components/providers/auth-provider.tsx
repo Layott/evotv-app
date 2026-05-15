@@ -1,9 +1,15 @@
 import * as React from "react";
+import { Platform } from "react-native";
+import * as WebBrowser from "expo-web-browser";
 
 import type { Profile, Role } from "@/lib/types";
 import { api, ApiError, setToken } from "@/lib/api/_client";
 import { getMyMemberships, type PublisherMembership } from "@/lib/api/partner";
 import { persist } from "@/lib/storage/persist";
+
+const BASE_URL =
+  process.env.EXPO_PUBLIC_API_BASE_URL ?? "http://localhost:3060";
+const OAUTH_REDIRECT = "evotv://oauth";
 
 /**
  * Real auth provider — Better-Auth bearer flow against the EVO TV backend.
@@ -56,6 +62,7 @@ interface AuthContextValue {
   refreshMemberships: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (input: SignUpInput) => Promise<void>;
+  signInWithSocial: (provider: "google" | "apple") => Promise<void>;
   signOut: () => Promise<void>;
   toggleFollow: (targetType: FollowTarget, targetId: string) => void;
   isFollowing: (targetType: FollowTarget, targetId: string) => boolean;
@@ -181,6 +188,47 @@ export function AuthProvider({ children }: AuthProviderProps) {
     await refreshMemberships();
   }, [refreshMemberships]);
 
+  /**
+   * Open the backend's mobile-auth start endpoint in an in-app browser, wait for
+   * the provider to redirect to `evotv://oauth#token=<bearer>`, then hydrate
+   * the bearer + session. Web target is unsupported (cookie-based session flow
+   * for browsers can be added later).
+   */
+  const signInWithSocial = React.useCallback(
+    async (provider: "google" | "apple") => {
+      if (Platform.OS === "web") {
+        throw new Error("social_unsupported_web");
+      }
+      const startURL = `${BASE_URL}/api/mobile-auth/start?provider=${provider}`;
+      const result = await WebBrowser.openAuthSessionAsync(
+        startURL,
+        OAUTH_REDIRECT,
+      );
+      if (result.type !== "success") {
+        if (result.type === "cancel" || result.type === "dismiss") {
+          throw new Error("oauth_cancelled");
+        }
+        throw new Error("oauth_failed");
+      }
+      const url = result.url;
+      const fragment = url.includes("#") ? url.split("#")[1] : "";
+      const params = new URLSearchParams(fragment);
+      const token = params.get("token");
+      const error = params.get("error");
+      if (error || !token) throw new Error(error ?? "oauth_no_token");
+      await setToken(decodeURIComponent(token));
+      const session = await api<SessionResponse>("/api/auth/get-session");
+      if (!session?.user) {
+        await setToken(null);
+        throw new Error("session_load_failed");
+      }
+      setUser(toProfile(session.user));
+      setAccountEmail(session.user.email);
+      await refreshMemberships();
+    },
+    [refreshMemberships],
+  );
+
   const signOut = React.useCallback(async () => {
     try {
       await api("/api/auth/sign-out", { method: "POST" });
@@ -261,6 +309,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       refreshMemberships,
       signIn,
       signUp,
+      signInWithSocial,
       signOut,
       toggleFollow,
       isFollowing,
@@ -282,6 +331,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       refreshMemberships,
       signIn,
       signUp,
+      signInWithSocial,
       signOut,
       toggleFollow,
       isFollowing,

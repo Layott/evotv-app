@@ -56,8 +56,11 @@ type SignupValues = z.infer<typeof signupSchema>;
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { signUp } = useMockAuth();
+  const { signUp, signInWithSocial } = useMockAuth();
   const [submitting, setSubmitting] = React.useState(false);
+  const [socialBusy, setSocialBusy] = React.useState<"google" | "apple" | null>(
+    null,
+  );
 
   const {
     control,
@@ -102,10 +105,23 @@ export default function SignupScreen() {
     }
   };
 
-  const handleSocial = (provider: "google" | "apple") => {
-    toast.info(
-      `${provider === "google" ? "Google" : "Apple"} sign-up coming soon`,
-    );
+  const handleSocial = async (provider: "google" | "apple") => {
+    if (provider === "apple") {
+      toast.info("Apple sign-up coming soon");
+      return;
+    }
+    setSocialBusy(provider);
+    try {
+      await signInWithSocial(provider);
+      toast.success("Welcome to EVO TV");
+      router.replace("/(auth)/onboarding");
+    } catch (err) {
+      const code = err instanceof Error ? err.message : "oauth_failed";
+      if (code === "oauth_cancelled") return;
+      toast.error("Couldn't sign up with Google", { description: code });
+    } finally {
+      setSocialBusy(null);
+    }
   };
 
   return (
@@ -301,18 +317,22 @@ export default function SignupScreen() {
               <Button
                 variant="outline"
                 onPress={() => handleSocial("google")}
-                disabled={submitting}
+                disabled={submitting || socialBusy !== null}
                 className="h-11 w-full"
               >
-                <ChromeIcon color="#FAFAFA" size={18} />
+                {socialBusy === "google" ? (
+                  <Spinner color="#FAFAFA" />
+                ) : (
+                  <ChromeIcon color="#FAFAFA" size={18} />
+                )}
                 <Text className="text-sm font-medium text-foreground">
-                  Continue with Google
+                  {socialBusy === "google" ? "Opening Google…" : "Continue with Google"}
                 </Text>
               </Button>
               <Button
                 variant="outline"
                 onPress={() => handleSocial("apple")}
-                disabled={submitting}
+                disabled={submitting || socialBusy !== null}
                 className="h-11 w-full"
               >
                 <Apple color="#FAFAFA" size={18} />

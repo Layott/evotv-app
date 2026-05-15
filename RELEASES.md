@@ -30,6 +30,16 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 | 2026-05-12 | tips-real | `32db6dfc-…` | `26fe81b` | Tips screen wired to real /api/tips backend |
 | 2026-05-12 (later batches) | various splash + tab fixes | several | several | Splash animation rewrites, tab-tap fixes, SecureStore key fix |
 
+## Backend-only deploys (no OTA)
+
+| Date | Label | Commit | Highlights |
+|---|---|---|---|
+| 2026-05-15 | admin-foundation-A.1 | `80a90cf` | Soft-delete on streams/vods/clips + force-end live stream + audit log capture for each. Public lists filter deleted rows. |
+| 2026-05-15 | admin-foundation-A | `03d6f84` | Role ladder (head_admin>admin>finance_admin>moderator>support_admin>premium>user>guest), admin_audit_log table, requireMinRole helper, canGrantRole policy. |
+| 2026-05-15 | sentry-source-maps | `54db2f2` | withSentryConfig wired — readable stack traces in Sentry |
+| 2026-05-15 | mobile-auth-bridge | `3c4c852` | /api/mobile-auth/{start,finish} for RN OAuth |
+| 2026-05-15 | viewer-count-read-time | `24dc7f5` | Per-minute cron stripped (Hobby limit) → liveViewerCounts() reads from watch_events at query time |
+
 ## APKs (cloud + local)
 
 | Date | Build # | File | Source | Highlights |

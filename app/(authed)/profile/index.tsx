@@ -2,6 +2,7 @@ import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { LogOut, Settings } from "lucide-react-native";
+import { toast } from "sonner-native";
 
 import { TopNavbar } from "@/components/home/top-navbar";
 import { ProfileHeader } from "@/components/profile/profile-header";
@@ -9,15 +10,39 @@ import { ProfileTabs } from "@/components/profile/profile-tabs";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useMockAuth } from "@/components/providers";
+import { pickAndUploadAvatar } from "@/lib/api/profile";
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user, signOut } = useMockAuth();
+  const { user, signOut, updateProfile } = useMockAuth();
+  const [avatarUploading, setAvatarUploading] = React.useState(false);
 
   const handleLogout = React.useCallback(() => {
     signOut();
     router.replace("/(auth)/login");
   }, [signOut, router]);
+
+  const handleAvatarPress = React.useCallback(async () => {
+    if (avatarUploading) return;
+    setAvatarUploading(true);
+    try {
+      const { url } = await pickAndUploadAvatar();
+      updateProfile({ avatarUrl: url });
+      toast.success("Profile photo updated");
+    } catch (err) {
+      const code = err instanceof Error ? err.message : "upload_failed";
+      if (code === "cancelled") return;
+      if (code === "permission_denied") {
+        toast.error("Photo permission required", {
+          description: "Allow EVO TV to access your photos in Settings.",
+        });
+        return;
+      }
+      toast.error("Couldn't update photo", { description: code });
+    } finally {
+      setAvatarUploading(false);
+    }
+  }, [avatarUploading, updateProfile]);
 
   if (!user) {
     return (
@@ -54,7 +79,12 @@ export default function ProfileScreen() {
           </View>
 
           <View className="px-4 pt-2">
-            <ProfileHeader profile={user} />
+            <ProfileHeader
+              profile={user}
+              canEdit
+              onAvatarPress={handleAvatarPress}
+              avatarUploading={avatarUploading}
+            />
           </View>
 
           <View className="mt-6 px-4">

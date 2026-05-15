@@ -19,6 +19,10 @@ interface ProfileHeaderProps {
   stats?: ProfileStats;
   canEdit?: boolean;
   onEdit?: () => void;
+  /** Tapping the avatar (when canEdit) — typically opens the image picker. */
+  onAvatarPress?: () => void;
+  /** True while an avatar upload is in flight (shows overlay spinner). */
+  avatarUploading?: boolean;
   isFollowing?: boolean;
   onFollowToggle?: () => void;
 }
@@ -53,6 +57,8 @@ export function ProfileHeader({
   stats,
   canEdit = false,
   onEdit,
+  onAvatarPress,
+  avatarUploading = false,
   isFollowing,
   onFollowToggle,
 }: ProfileHeaderProps) {
@@ -74,8 +80,8 @@ export function ProfileHeader({
       <View className="px-5 pb-5">
         <View className="-mt-10 mb-3 flex-row items-end justify-between">
           <Pressable
-            onPress={canEdit ? onEdit : undefined}
-            disabled={!canEdit}
+            onPress={canEdit ? (onAvatarPress ?? onEdit) : undefined}
+            disabled={!canEdit || avatarUploading}
             accessibilityLabel={canEdit ? "Edit avatar" : "Avatar"}
             className="relative"
           >
@@ -95,6 +101,21 @@ export function ProfileHeader({
                 style={{ width: "100%", height: "100%" }}
                 contentFit="cover"
               />
+              {avatarUploading ? (
+                <View
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    backgroundColor: "rgba(0,0,0,0.55)",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text className="text-[10px] font-semibold text-foreground">
+                    Uploading…
+                  </Text>
+                </View>
+              ) : null}
             </View>
             {canEdit ? (
               <View

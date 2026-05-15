@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
-const BASE_URL =
+export const BASE_URL =
   process.env.EXPO_PUBLIC_API_BASE_URL ?? "http://localhost:3060";
 
 /**
@@ -21,7 +21,7 @@ const LEGACY_TOKEN_KEY = "evotv:session-token"; // web localStorage migration
  * cookies via fetch credentials: "include" + a separate auth flow that does
  * not round-trip a bearer through JS.
  */
-async function getToken(): Promise<string | null> {
+export async function getToken(): Promise<string | null> {
   if (Platform.OS === "web") {
     try {
       const fresh = globalThis.localStorage?.getItem(TOKEN_KEY) ?? null;

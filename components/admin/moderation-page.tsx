@@ -6,11 +6,13 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Check, Flag, X } from "lucide-react-native";
+import { Check, ExternalLink, Flag, X } from "lucide-react-native";
+import { useRouter } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
 import {
+  bulkResolveReports,
   listAdminReports,
   resolveReport,
   type ContentReport,
@@ -40,10 +42,12 @@ function ReportCard({
   report,
   onResolve,
   onDismiss,
+  onOpenTarget,
 }: {
   report: ContentReport;
   onResolve: (notes: string) => void;
   onDismiss: (notes: string) => void;
+  onOpenTarget: () => void;
 }) {
   const [notes, setNotes] = React.useState("");
   const isOpen = report.status === "open";
@@ -67,10 +71,16 @@ function ReportCard({
         ) : null}
       </View>
 
-      <Text className="mt-2 text-xs text-muted-foreground">
-        Target:{" "}
-        <Text className="font-mono text-foreground">{report.targetId}</Text>
-      </Text>
+      <Pressable
+        onPress={onOpenTarget}
+        className="mt-2 flex-row items-center gap-1.5"
+      >
+        <Text className="text-xs text-muted-foreground">
+          Target:{" "}
+          <Text className="font-mono text-foreground">{report.targetId}</Text>
+        </Text>
+        <ExternalLink size={11} color="#2CD7E3" />
+      </Pressable>
       <Text className="mt-1 text-xs text-muted-foreground">
         Reporter:{" "}
         <Text className="font-mono text-foreground">
@@ -144,9 +154,64 @@ function ReportCard({
   );
 }
 
+function targetHref(r: ContentReport): string | null {
+  switch (r.targetType) {
+    case "stream":
+      return `/stream/${r.targetId}`;
+    case "vod":
+      return `/vod/${r.targetId}`;
+    case "clip":
+      return `/clips/${r.targetId}`;
+    case "user":
+      return `/profile/${r.targetId}`;
+    case "chat_message":
+      return r.targetPreview?.streamId
+        ? `/stream/${r.targetPreview.streamId}`
+        : null;
+    case "party":
+      return `/watch-parties/${r.targetId}`;
+    default:
+      return null;
+  }
+}
+
 export function ModerationPage() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [status, setStatus] = React.useState<ReportStatus>("open");
+  const [selectMode, setSelectMode] = React.useState(false);
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
+
+  const bulkMut = useMutation({
+    mutationFn: ({
+      ids,
+      action,
+    }: {
+      ids: string[];
+      action: "resolved" | "dismissed";
+    }) => bulkResolveReports(ids, action),
+    onSuccess: (res, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-reports"] });
+      setSelectedIds(new Set());
+      setSelectMode(false);
+      toast.success(
+        `${res.updated} ${vars.action} · ${res.skipped} skipped`,
+      );
+    },
+    onError: (err) =>
+      toast.error("Bulk action failed", {
+        description: err instanceof Error ? err.message : String(err),
+      }),
+  });
+
+  function toggleSelect(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-reports", status],
@@ -208,6 +273,61 @@ export function ModerationPage() {
           ))}
         </View>
 
+        {status === "open" ? (
+          <View className="mb-3 flex-row items-center gap-2">
+            <Pressable
+              onPress={() => {
+                setSelectMode((v) => !v);
+                setSelectedIds(new Set());
+              }}
+              className={`rounded-md border px-3 py-1.5 ${
+                selectMode ? "border-brand bg-brand/15" : "border-border bg-card"
+              }`}
+            >
+              <Text
+                className={`text-xs font-semibold ${
+                  selectMode ? "text-brand" : "text-foreground"
+                }`}
+              >
+                {selectMode ? "Cancel" : "Select multiple"}
+              </Text>
+            </Pressable>
+            {selectMode && selectedIds.size > 0 ? (
+              <>
+                <Text className="text-xs text-muted-foreground">
+                  {selectedIds.size} selected
+                </Text>
+                <Pressable
+                  onPress={() =>
+                    bulkMut.mutate({
+                      ids: [...selectedIds],
+                      action: "resolved",
+                    })
+                  }
+                  disabled={bulkMut.isPending}
+                  className="ml-auto rounded-md border border-emerald-500/40 bg-emerald-500/15 px-3 py-1.5"
+                >
+                  <Text className="text-xs font-semibold text-emerald-400">
+                    Resolve all
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() =>
+                    bulkMut.mutate({
+                      ids: [...selectedIds],
+                      action: "dismissed",
+                    })
+                  }
+                  disabled={bulkMut.isPending}
+                  className="rounded-md border border-border bg-card px-3 py-1.5"
+                >
+                  <Text className="text-xs text-foreground">Dismiss</Text>
+                </Pressable>
+              </>
+            ) : null}
+          </View>
+        ) : null}
+
         {error ? (
           <Text className="text-sm text-destructive">
             Couldn&apos;t load reports: {error.message}
@@ -225,16 +345,38 @@ export function ModerationPage() {
           </View>
         ) : (
           reports.map((r) => (
-            <ReportCard
-              key={r.id}
-              report={r}
-              onResolve={(notes) =>
-                mutation.mutate({ id: r.id, status: "resolved", notes })
-              }
-              onDismiss={(notes) =>
-                mutation.mutate({ id: r.id, status: "dismissed", notes })
-              }
-            />
+            <View key={r.id} className="flex-row items-start gap-2">
+              {selectMode && r.status === "open" ? (
+                <Pressable
+                  onPress={() => toggleSelect(r.id)}
+                  className={`mt-4 h-5 w-5 items-center justify-center rounded border ${
+                    selectedIds.has(r.id)
+                      ? "border-brand bg-brand"
+                      : "border-border bg-card"
+                  }`}
+                >
+                  {selectedIds.has(r.id) ? (
+                    <Text className="text-[11px] font-bold text-black">✓</Text>
+                  ) : null}
+                </Pressable>
+              ) : null}
+              <View className="flex-1">
+                <ReportCard
+                  report={r}
+                  onResolve={(notes) =>
+                    mutation.mutate({ id: r.id, status: "resolved", notes })
+                  }
+                  onDismiss={(notes) =>
+                    mutation.mutate({ id: r.id, status: "dismissed", notes })
+                  }
+                  onOpenTarget={() => {
+                    const href = targetHref(r);
+                    if (href) router.push(href as never);
+                    else toast.info("No deep link for this target type");
+                  }}
+                />
+              </View>
+            </View>
           ))
         )}
       </ScrollView>

@@ -95,3 +95,14 @@ export function resolveReport(
     body: { status, notes },
   });
 }
+
+export function bulkResolveReports(
+  ids: string[],
+  status: "resolved" | "dismissed",
+  notes?: string,
+): Promise<{ ok: true; updated: number; skipped: number }> {
+  return api(`/api/admin/reports/bulk`, {
+    method: "POST",
+    body: { ids, status, notes },
+  });
+}

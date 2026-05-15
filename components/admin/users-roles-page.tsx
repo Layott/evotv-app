@@ -446,18 +446,32 @@ export function UsersRolesPage() {
                   </View>
                 </View>
 
-                {selected.handle ? (
+                <View className="mt-4 gap-2">
+                  {selected.handle ? (
+                    <Button
+                      variant="outline"
+                      onPress={() =>
+                        router.push(`/profile/${selected.handle}` as never)
+                      }
+                    >
+                      <ExternalLink size={14} color="#FAFAFA" />
+                      <Text className="text-sm text-foreground">View profile</Text>
+                    </Button>
+                  ) : null}
                   <Button
                     variant="outline"
-                    className="mt-4"
                     onPress={() =>
-                      router.push(`/profile/${selected.handle}` as never)
+                      router.push(
+                        `/admin/audit-log?actorId=${selected.id}` as never,
+                      )
                     }
                   >
-                    <ExternalLink size={14} color="#FAFAFA" />
-                    <Text className="text-sm text-foreground">View profile</Text>
+                    <ExternalLink size={14} color="#A855F7" />
+                    <Text className="text-sm text-foreground">
+                      View this admin&apos;s audit history
+                    </Text>
                   </Button>
-                ) : null}
+                </View>
               </ScrollView>
             ) : null}
           </Pressable>

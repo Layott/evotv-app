@@ -11,6 +11,7 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 | Date | Label | Update group ID | Commit | Highlights |
 |---|---|---|---|---|
 | 2026-05-15 | oauth-landing-stub | `0f7aca0f-f73f-473c-ac7e-5da508bafa32` | `329ddb5` | Absorb evotv://oauth deep link on Android so the user lands on /home, not +not-found |
+| 2026-05-15 | phase-b-punchlist-p1-complete | `95c53cd0-3700-4aad-adb6-bd6b4342aa9a` | `2d68e12` | All P1 punch-list items: settings prefs persist, email templates real, sanctions filter (already there), forensic login-events panel, channels admin + suspend, onboarding flip, notifications flip, cart/checkout/orders flip, ad-banner real serving, admin analytics real. |
 | 2026-05-15 | launch-prep-legal-pages | `4944d263-d761-4ebf-9104-21c704bf0733` | `261b043` | In-app Privacy + Terms screens, signup link to legal, lint error fix, LAUNCH_READINESS.md, STORE_ASSETS.md, docs/{PRIVACY,TERMS}.md |
 | 2026-05-15 | phase-b-admin-complete | `d4cb7faf-c381-4466-a198-34a0f0784bac` | `3142806` | Phase B end-to-end: VOD/clip admin pages, sanctions list, audit filters+CSV, global banner, bulk reports, deep links, per-admin history, self-delete UI. |
 | 2026-05-15 | admin-restore-deleted-streams | `bb9264f7-7d4f-44ba-8b93-9216568d743f` | `b707dac` | Streams-manager gets Deleted filter pill + Restore button on deleted streams. |
@@ -46,6 +47,7 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 
 | Date | Label | Commit | Highlights |
 |---|---|---|---|
+| 2026-05-15 | phase-b-punchlist-backend | `4d99578` | Admin channels list, ads/serve weighted picker, login-events admin list, orders list (GET), user-prefs CRUD. |
 | 2026-05-15 | phase-b-backend | `9cc3381` | Channels suspend + login_events forensic + email_templates + bulk reports/users + maintenance flag endpoint + chat_message report enrichment + sanctions list + audit filters/CSV. Migrations 0014/0015/0016. |
 | 2026-05-15 | admin-streams-deleted-filter | `6a208b8` | GET /api/admin/streams accepts ?deleted=only / ?deleted=include + returns deletedAt. |
 | 2026-05-15 | gdpr-purge-cron | `3dbee70` | Vercel Cron Sunday 04:00 UTC: anonymizes user rows 30+ days post self-delete + hard-deletes personal data (watch_events, picks, pickem, vod_progress, party_*, api_keys, chat_messages). |

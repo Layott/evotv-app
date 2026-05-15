@@ -19,7 +19,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HLSPlayer } from "@/components/stream/hls-player";
 import { LiveChat } from "@/components/stream/live-chat";
+import { ReportButton } from "@/components/common/report-button";
 import { useMockAuth } from "@/components/providers";
+import { useStreamHeartbeat } from "@/hooks/useStreamHeartbeat";
 
 function formatViewers(count: number): string {
   if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
@@ -45,6 +47,8 @@ export default function StreamScreen() {
   }, [stream]);
 
   const followed = stream ? isFollowing("streamer", stream.id) : false;
+
+  useStreamHeartbeat(stream?.id, !!stream?.isLive);
 
   if (isLoading) {
     return (
@@ -150,15 +154,18 @@ export default function StreamScreen() {
                 </Text>
               </View>
             </View>
-            <Button
-              variant={followed ? "outline" : "default"}
-              size="sm"
-              onPress={() => toggleFollow("streamer", stream.id)}
-              className={followed ? "" : "bg-brand"}
-              textClassName={followed ? "" : "text-black font-semibold"}
-            >
-              {followed ? "Following" : "Follow"}
-            </Button>
+            <View className="flex-row items-center gap-2">
+              <ReportButton targetType="stream" targetId={stream.id} />
+              <Button
+                variant={followed ? "outline" : "default"}
+                size="sm"
+                onPress={() => toggleFollow("streamer", stream.id)}
+                className={followed ? "" : "bg-brand"}
+                textClassName={followed ? "" : "text-black font-semibold"}
+              >
+                {followed ? "Following" : "Follow"}
+              </Button>
+            </View>
           </View>
         </View>
 

@@ -10,6 +10,7 @@ App `version` field in `app.json` stays pinned at `0.1.0` until v1 launch — DO
 
 | Date | Label | Update group ID | Commit | Highlights |
 |---|---|---|---|---|
+| 2026-05-15 | google-oauth-buttons | `7090d253-62d5-455d-8f19-58bb0bb82dc9` | `cd96a8b` | Login + signup "Continue with Google" buttons wired to real OAuth via mobile-auth bridge |
 | 2026-05-15 | heartbeat-wired | `1a0746ba-a9e1-4765-827e-69e65116317a` | `58cb479` | RN heartbeat hook wired into stream + embed → closes viewer-count loop |
 | 2026-05-15 | party-chat-real | `a48caa29-114e-4c1a-b9bd-740e9b1543f4` | `58cb479` | Party chat persisted via backend + SSE deltas |
 | 2026-05-15 | parties-detail-flip | `8edbf5d0-cf12-4e24-9279-8ec6d269fdd3` | `58cb479` | Watch-parties new + detail screens flipped to real backend |

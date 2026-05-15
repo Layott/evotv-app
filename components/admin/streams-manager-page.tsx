@@ -9,13 +9,14 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { Search, X, Square, Trash2 } from "lucide-react-native";
+import { RotateCcw, Search, X, Square, Trash2 } from "lucide-react-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
 import {
   adminDeleteStream,
   adminForceEndStream,
+  adminRestoreStream,
   listAdminStreams,
 } from "@/lib/api/streams";
 import { listGames } from "@/lib/api/games";
@@ -33,7 +34,7 @@ export function StreamsManagerPage() {
   const [search, setSearch] = React.useState("");
   const [gameFilter, setGameFilter] = React.useState<string>("all");
   const [statusFilter, setStatusFilter] = React.useState<
-    "all" | "live" | "offline"
+    "all" | "live" | "offline" | "deleted"
   >("all");
   const [selected, setSelected] = React.useState<Stream | null>(null);
 
@@ -60,6 +61,19 @@ export function StreamsManagerPage() {
     },
     onError: (err) =>
       toast.error("Couldn't delete stream", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const restoreMut = useMutation({
+    mutationFn: (stream: Stream) => adminRestoreStream(stream.id),
+    onSuccess: () => {
+      toast.success("Stream restored");
+      queryClient.invalidateQueries({ queryKey: ["admin-streams"] });
+      setSelected(null);
+    },
+    onError: (err) =>
+      toast.error("Couldn't restore stream", {
         description: err instanceof Error ? err.message : "Unknown error",
       }),
   });
@@ -115,6 +129,7 @@ export function StreamsManagerPage() {
             : statusFilter === "offline"
               ? false
               : undefined,
+        deleted: statusFilter === "deleted" ? "only" : undefined,
         limit: 200,
       }),
     staleTime: 30_000,
@@ -177,6 +192,11 @@ export function StreamsManagerPage() {
             label="Offline"
             active={statusFilter === "offline"}
             onPress={() => setStatusFilter("offline")}
+          />
+          <FilterPill
+            label="Deleted"
+            active={statusFilter === "deleted"}
+            onPress={() => setStatusFilter("deleted")}
           />
           <Text className="ml-auto text-xs text-muted-foreground">
             {filtered.length}
@@ -346,28 +366,43 @@ export function StreamsManagerPage() {
                 ) : null}
 
                 <View className="mt-5 flex-row gap-2">
-                  {selected.isLive ? (
+                  {selected.deletedAt ? (
                     <Pressable
-                      onPress={() => handleForceEnd(selected)}
-                      disabled={forceEndMut.isPending}
-                      className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/15 px-3 py-3"
+                      onPress={() => restoreMut.mutate(selected)}
+                      disabled={restoreMut.isPending}
+                      className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-3 py-3"
                     >
-                      <Square size={14} color="#F59E0B" />
-                      <Text className="text-sm font-semibold text-amber-400">
-                        {forceEndMut.isPending ? "Ending…" : "Force-end"}
+                      <RotateCcw size={14} color="#10B981" />
+                      <Text className="text-sm font-semibold text-emerald-400">
+                        {restoreMut.isPending ? "Restoring…" : "Restore"}
                       </Text>
                     </Pressable>
-                  ) : null}
-                  <Pressable
-                    onPress={() => handleDelete(selected)}
-                    disabled={deleteMut.isPending}
-                    className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-destructive/40 bg-destructive/15 px-3 py-3"
-                  >
-                    <Trash2 size={14} color="#EF4444" />
-                    <Text className="text-sm font-semibold text-destructive">
-                      {deleteMut.isPending ? "Deleting…" : "Delete"}
-                    </Text>
-                  </Pressable>
+                  ) : (
+                    <>
+                      {selected.isLive ? (
+                        <Pressable
+                          onPress={() => handleForceEnd(selected)}
+                          disabled={forceEndMut.isPending}
+                          className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/15 px-3 py-3"
+                        >
+                          <Square size={14} color="#F59E0B" />
+                          <Text className="text-sm font-semibold text-amber-400">
+                            {forceEndMut.isPending ? "Ending…" : "Force-end"}
+                          </Text>
+                        </Pressable>
+                      ) : null}
+                      <Pressable
+                        onPress={() => handleDelete(selected)}
+                        disabled={deleteMut.isPending}
+                        className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-destructive/40 bg-destructive/15 px-3 py-3"
+                      >
+                        <Trash2 size={14} color="#EF4444" />
+                        <Text className="text-sm font-semibold text-destructive">
+                          {deleteMut.isPending ? "Deleting…" : "Delete"}
+                        </Text>
+                      </Pressable>
+                    </>
+                  )}
                 </View>
 
                 {selected.tags?.length ? (

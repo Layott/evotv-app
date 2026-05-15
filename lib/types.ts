@@ -149,6 +149,8 @@ export interface Stream {
   language: string;
   tags: string[];
   isPremium: boolean;
+  /** Only present on admin endpoints. Public list endpoints filter out deleted rows. */
+  deletedAt?: ISODate | null;
 }
 
 export interface VodChapter {

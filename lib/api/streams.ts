@@ -47,6 +47,8 @@ export async function sendStreamHeartbeat(
 export interface ListAdminStreamsOpts {
   gameId?: string;
   isLive?: boolean;
+  /** 'only' = deleted only; 'include' = active + deleted; undefined = active only. */
+  deleted?: "only" | "include";
   limit?: number;
   offset?: number;
 }
@@ -76,6 +78,13 @@ export async function adminDeleteStream(
   return api(`/api/admin/streams/${id}`, { method: "DELETE" });
 }
 
+/** POST /api/admin/streams/[id]/restore — admin+. Un-soft-deletes. */
+export async function adminRestoreStream(
+  id: string,
+): Promise<{ ok: true; streamId: string }> {
+  return api(`/api/admin/streams/${id}/restore`, { method: "POST", body: {} });
+}
+
 /** GET /api/admin/streams — admin only. All streams (live + offline). */
 export async function listAdminStreams(
   opts: ListAdminStreamsOpts = {},
@@ -83,6 +92,7 @@ export async function listAdminStreams(
   const q = new URLSearchParams();
   if (opts.gameId) q.set("gameId", opts.gameId);
   if (typeof opts.isLive === "boolean") q.set("isLive", String(opts.isLive));
+  if (opts.deleted) q.set("deleted", opts.deleted);
   if (opts.limit) q.set("limit", String(opts.limit));
   if (opts.offset) q.set("offset", String(opts.offset));
   const qs = q.toString();

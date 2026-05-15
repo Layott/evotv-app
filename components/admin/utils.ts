@@ -15,7 +15,10 @@ export function formatCompact(value: number): string {
   }).format(value);
 }
 
-export function formatNumber(value: number): string {
+export function formatNumber(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return "0";
+  }
   return new Intl.NumberFormat("en-US").format(value);
 }
 

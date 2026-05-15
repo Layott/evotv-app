@@ -108,10 +108,10 @@ export function AnalyticsPage() {
       <View className="flex-row flex-wrap gap-3">
         <View className="min-w-[46%] flex-1">
           <MetricCard
-            title="Total viewers"
-            value={overview ? formatNumber(overview.totalViewers) : "—"}
+            title="Active premium"
+            value={overview ? formatNumber(overview.activePremiumSubs) : "—"}
             delta={undefined}
-            deltaLabel={overviewQ.isLoading ? "Loading…" : "Real-time"}
+            deltaLabel={overviewQ.isLoading ? "Loading…" : "Subscribers"}
             icon={Users}
           />
         </View>
@@ -136,7 +136,7 @@ export function AnalyticsPage() {
         <View className="min-w-[46%] flex-1">
           <MetricCard
             title="Signups today"
-            value={overview ? formatNumber(overview.signupsToday) : "—"}
+            value={overview ? formatNumber(overview.todaySignups) : "—"}
             delta={undefined}
             deltaLabel="Last 24h"
             icon={Clock}

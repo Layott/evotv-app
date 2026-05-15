@@ -73,11 +73,11 @@ export async function saveEmailTemplate(
 
 export interface OverviewMetrics {
   liveStreams: number;
-  totalViewers: number;
-  signupsToday: number;
-  revenueNgnToday: number;
-  flaggedItems: number;
-  topGames: Array<{ id: string; name: string; viewers: number }>;
+  /** Daily new sign-ups (matches backend field `todaySignups`). */
+  todaySignups: number;
+  activePremiumSubs: number;
+  /** Monthly recurring revenue in NGN. */
+  mrrNgn: number;
 }
 
 export async function getOverviewMetrics(): Promise<OverviewMetrics> {

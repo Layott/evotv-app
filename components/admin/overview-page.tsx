@@ -58,9 +58,10 @@ export function OverviewPage() {
 
   const metrics = metricsQ.data;
   const liveCount = metrics?.liveStreams ?? streamsQ.data?.length ?? 0;
-  const totalViewers =
-    metrics?.totalViewers ??
-    (streamsQ.data ?? []).reduce((acc, s) => acc + s.viewerCount, 0);
+  const totalViewers = (streamsQ.data ?? []).reduce(
+    (acc, s) => acc + s.viewerCount,
+    0,
+  );
   const topStreams = (streamsQ.data ?? []).slice(0, 5);
   const recentSignups = signupsQ.data?.users ?? [];
 
@@ -92,7 +93,7 @@ export function OverviewPage() {
         <View className="min-w-[46%] flex-1">
           <MetricCard
             title="Signups today"
-            value={metrics?.signupsToday ?? 0}
+            value={metrics?.todaySignups ?? 0}
             delta={undefined}
             deltaLabel={metricsQ.isLoading ? "Loading…" : "Since 00:00 UTC"}
             icon={UserPlus}
@@ -109,10 +110,10 @@ export function OverviewPage() {
         </View>
         <View className="min-w-[46%] flex-1">
           <MetricCard
-            title="Revenue today"
-            value={formatNgn(metrics?.revenueNgnToday ?? 0)}
+            title="Active premium"
+            value={formatNumber(metrics?.activePremiumSubs ?? 0)}
             delta={undefined}
-            deltaLabel={metricsQ.isLoading ? "Loading…" : "Since 00:00 UTC"}
+            deltaLabel={metricsQ.isLoading ? "Loading…" : "Subscribers"}
             icon={CircleDollarSign}
           />
         </View>

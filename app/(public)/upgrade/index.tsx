@@ -258,12 +258,12 @@ export default function UpgradeScreen() {
             <Sparkles size={11} color="#fbbf24" /> EVO TV Premium
           </Badge>
           <Text className="text-2xl font-bold text-foreground text-center">
-            Never miss a play. No ads. 1080p.
+            Watch deeper. No ads. 1080p.
           </Text>
           <Text className="text-sm text-muted-foreground text-center">
-            Upgrade once, watch every tournament across Africa in full fidelity
-            — and grab exclusive film-room analysis from the casters you
-            already trust.
+            Upgrade once, watch every tournament, anime show, and podcast
+            episode across Africa in full fidelity — plus early access to EVO
+            Originals and exclusive analysis from the creators you trust.
           </Text>
         </View>
 

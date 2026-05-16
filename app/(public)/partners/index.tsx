@@ -158,7 +158,7 @@ export default function PartnersScreen() {
             <Handshake size={11} color="#2CD7E3" /> Partner showcase
           </Badge>
           <Text className="text-2xl font-bold text-foreground">
-            The brands behind African esports.
+            The brands behind African entertainment.
           </Text>
           <Text className="text-sm text-muted-foreground">
             Meet the partners powering EVO TV. Visit their sites to learn more

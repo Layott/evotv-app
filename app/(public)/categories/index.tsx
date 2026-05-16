@@ -47,7 +47,8 @@ export default function CategoriesScreen() {
             Categories
           </Text>
           <Text className="mt-1 text-sm text-muted-foreground">
-            Browse by game. Dive into live streams, upcoming events, teams, and players.
+            Browse by category. Esports tournaments, anime reactions, lifestyle
+            podcasts — find what you love.
           </Text>
         </View>
 

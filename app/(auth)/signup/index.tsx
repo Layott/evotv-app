@@ -151,7 +151,7 @@ export default function SignupScreen() {
               Join EVO TV
             </Text>
             <Text className="mt-2 text-center text-sm text-muted-foreground">
-              Create your account and start watching African esports live.
+              Create your account. Esports, anime, and lifestyle creators — all in one place.
             </Text>
           </View>
 

@@ -277,7 +277,7 @@ export default function EventsScreen() {
             Events
           </Text>
           <Text className="text-sm text-muted-foreground">
-            Tournaments and invitationals across African esports.
+            Tournaments, invitationals, premieres, and live tapings across Africa.
           </Text>
         </View>
 

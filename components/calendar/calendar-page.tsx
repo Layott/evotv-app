@@ -236,7 +236,7 @@ export function MatchCalendarPage() {
           Match calendar
         </Text>
         <Text className="mt-1 text-sm text-muted-foreground">
-          Every match across African esports. Times shown in your local zone (
+          Matches, premieres, and live tapings across Africa. Times shown in your local zone (
           <Text className="font-medium text-foreground">{tz}</Text>).
         </Text>
       </View>

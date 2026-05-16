@@ -158,7 +158,7 @@ export default function ChannelScreen() {
                   {channel?.title ?? "EVO TV Channel"}
                 </Text>
                 <Text className="text-sm text-muted-foreground">
-                  {channel?.description ?? "Non-stop African esports."}
+                  {channel?.description ?? "Non-stop esports, anime, and lifestyle programming."}
                 </Text>
               </View>
             </View>

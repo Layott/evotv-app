@@ -113,8 +113,8 @@ export default function AppsScreen() {
             Watch EVO TV on every screen.
           </Text>
           <Text className="text-sm text-muted-foreground text-center">
-            Mobile, desktop, and the big screen. The same African esports,
-            exactly where you want them.
+            Mobile, desktop, and the big screen. The same EVO TV — esports,
+            anime, and lifestyle — exactly where you want it.
           </Text>
         </View>
 

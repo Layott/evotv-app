@@ -112,7 +112,7 @@ export default function TeamsScreen() {
             Teams
           </Text>
           <Text className="mt-1 text-sm text-muted-foreground">
-            African esports organizations across every supported game.
+            Esports organizations across every supported game on EVO TV.
           </Text>
         </View>
 

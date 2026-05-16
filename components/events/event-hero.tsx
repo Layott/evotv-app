@@ -11,7 +11,8 @@ export interface EventHeroProps {
   game?: Game | null;
 }
 
-function formatNgn(n: number): string {
+function formatNgn(n: number | null | undefined): string {
+  if (n == null || !Number.isFinite(n)) return "₦—";
   if (n >= 1_000_000) {
     const m = n / 1_000_000;
     return `₦${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M`;
@@ -48,11 +49,17 @@ function tierStyle(t: string): {
   }
 }
 
+function safeDateLabel(iso: string | null | undefined): string {
+  if (!iso) return "TBA";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "TBA" : d.toLocaleDateString();
+}
+
 export function EventHero({ event, game }: EventHeroProps) {
   const router = useRouter();
   const tier = tierStyle(event.tier);
-  const start = new Date(event.startsAt);
-  const end = new Date(event.endsAt);
+  const startLabel = safeDateLabel(event.startsAt);
+  const endLabel = safeDateLabel(event.endsAt);
   return (
     <View className="mb-6 overflow-hidden rounded-xl border border-border">
       <View style={{ aspectRatio: 16 / 9, position: "relative" }}>
@@ -95,7 +102,7 @@ export function EventHero({ event, game }: EventHeroProps) {
                   color: tier.color,
                 }}
               >
-                TIER {event.tier.toUpperCase()}
+                TIER {(event.tier ?? "").toUpperCase()}
               </Text>
             </View>
             {event.status === "live" ? (
@@ -159,7 +166,7 @@ export function EventHero({ event, game }: EventHeroProps) {
             <View className="flex-row items-center gap-1">
               <Calendar size={12} color="#d4d4d4" />
               <Text style={{ fontSize: 11, color: "#d4d4d4" }}>
-                {start.toLocaleDateString()} — {end.toLocaleDateString()}
+                {startLabel} — {endLabel}
               </Text>
             </View>
             <View className="flex-row items-center gap-1">

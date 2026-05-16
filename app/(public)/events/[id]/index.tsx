@@ -59,12 +59,11 @@ export default function EventDetailScreen() {
   });
 
   const teamsQ = useQuery({
-    queryKey: ["event-teams", eventId, event?.teamIds.join(",")],
+    queryKey: ["event-teams", eventId, event?.teamIds?.join(",") ?? ""],
     queryFn: async () => {
       if (!event) return [] as Team[];
-      const arr = await Promise.all(
-        event.teamIds.map((tid) => getTeamById(tid)),
-      );
+      const ids = event.teamIds ?? [];
+      const arr = await Promise.all(ids.map((tid) => getTeamById(tid)));
       return arr.filter((t): t is Team => t !== null);
     },
     enabled: !!event,
@@ -230,7 +229,7 @@ export default function EventDetailScreen() {
               <View style={{ width: "48%" }}>
                 <Text style={{ fontSize: 11, color: "#737373" }}>Teams</Text>
                 <Text className="mt-0.5 text-sm font-medium text-foreground">
-                  {event.teamIds.length}
+                  {event.teamIds?.length ?? 0}
                 </Text>
               </View>
               <View style={{ width: "48%" }}>

@@ -18,9 +18,11 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { FormField, FieldWrapper } from "@/components/auth/form-field";
 import { PasswordStrengthMeter } from "@/components/auth/password-strength";
+import { BASE_URL } from "@/lib/api/_client";
 
 const schema = z
   .object({
+    otp: z.string().length(6, "Enter the 6-digit code"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(8, "Please confirm your password"),
   })
@@ -33,10 +35,11 @@ type Values = z.infer<typeof schema>;
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
-  // Token may arrive via deep link query (e.g. evotv://reset-password?token=…).
-  // We don't validate it locally — Phase F mock just accepts the new password.
-  const params = useLocalSearchParams<{ token?: string }>();
+  // `email` arrives from the forgot-password redirect. Legacy `token` deep
+  // links still parse cleanly but the OTP flow ignores them.
+  const params = useLocalSearchParams<{ email?: string; token?: string }>();
   const [submitting, setSubmitting] = React.useState(false);
+  const [serverError, setServerError] = React.useState<string | null>(null);
 
   const {
     control,
@@ -45,19 +48,48 @@ export default function ResetPasswordScreen() {
     formState: { errors },
   } = useForm<Values>({
     resolver: zodResolver(schema),
-    defaultValues: { password: "", confirmPassword: "" },
+    defaultValues: { otp: "", password: "", confirmPassword: "" },
   });
 
   const password = watch("password");
 
-  const onSubmit = async (_values: Values) => {
+  const onSubmit = async (values: Values) => {
+    if (!params.email) {
+      setServerError("Missing email. Restart the reset flow.");
+      return;
+    }
     setSubmitting(true);
+    setServerError(null);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      const res = await fetch(
+        `${BASE_URL}/api/auth/email-otp/reset-password`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: params.email,
+            otp: values.otp,
+            password: values.password,
+          }),
+        },
+      );
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        const msg =
+          (body as { message?: string } | null)?.message ??
+          "Invalid or expired code";
+        setServerError(msg);
+        toast.error("Reset failed", { description: msg });
+        return;
+      }
       toast.success("Password updated", {
         description: "Sign in with your new password.",
       });
       router.replace("/(auth)/login");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Network error";
+      setServerError(msg);
+      toast.error("Reset failed", { description: msg });
     } finally {
       setSubmitting(false);
     }
@@ -91,16 +123,34 @@ export default function ResetPasswordScreen() {
               Set a new password
             </Text>
             <Text className="text-center text-sm text-muted-foreground">
-              Pick something strong. You'll use it for every sign-in.
-            </Text>
-            {params.token ? (
-              <Text className="text-[10px] text-muted-foreground">
-                Reset token applied.
+              Enter the 6-digit code we sent to{" "}
+              <Text className="font-mono font-semibold text-foreground">
+                {params.email ?? "your inbox"}
               </Text>
-            ) : null}
+              , then pick a new password.
+            </Text>
           </View>
 
           <View className="gap-4 rounded-2xl border border-border bg-card/40 p-5">
+            <Controller
+              control={control}
+              name="otp"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <FormField
+                  label="6-digit code"
+                  placeholder="123456"
+                  keyboardType="number-pad"
+                  maxLength={6}
+                  autoComplete="one-time-code"
+                  textContentType="oneTimeCode"
+                  value={value}
+                  onChangeText={(t) => onChange(t.replace(/\D/g, "").slice(0, 6))}
+                  onBlur={onBlur}
+                  error={errors.otp?.message}
+                />
+              )}
+            />
+
             <FieldWrapper
               id="password"
               label="New password"
@@ -163,6 +213,12 @@ export default function ResetPasswordScreen() {
                 "Update password"
               )}
             </Button>
+
+            {serverError ? (
+              <Text className="text-center text-xs" style={{ color: "#f87171" }}>
+                {serverError}
+              </Text>
+            ) : null}
           </View>
 
           <View className="mt-6 items-center">

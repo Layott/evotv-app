@@ -17,6 +17,7 @@ import { toast } from "sonner-native";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { FormField } from "@/components/auth/form-field";
+import { BASE_URL } from "@/lib/api/_client";
 
 const schema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -38,15 +39,43 @@ export default function ForgotPasswordScreen() {
     defaultValues: { email: "" },
   });
 
-  const onSubmit = async (_values: Values) => {
+  const onSubmit = async (values: Values) => {
     setSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      const res = await fetch(
+        `${BASE_URL}/api/auth/email-otp/send-verification-otp`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: values.email,
+            type: "forget-password",
+          }),
+        },
+      );
+      if (!res.ok) {
+        // Better-Auth returns 200 even when the email doesn't exist to avoid
+        // enumeration; treat any non-2xx as transient/network for the user.
+        toast.error("Couldn't send reset code", {
+          description: "Try again in a moment.",
+        });
+        return;
+      }
       setSent(true);
-      toast.success("Reset link sent", {
-        description: "Check your inbox for instructions.",
+      toast.success("Reset code sent", {
+        description: `Check ${values.email} for a 6-digit code.`,
       });
-      setTimeout(() => router.replace("/(auth)/login"), 1500);
+      setTimeout(
+        () =>
+          router.replace({
+            pathname: "/(auth)/reset-password",
+            params: { email: values.email },
+          }),
+        1200,
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Network error";
+      toast.error("Couldn't send reset code", { description: msg });
     } finally {
       setSubmitting(false);
     }

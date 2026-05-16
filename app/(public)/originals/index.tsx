@@ -7,7 +7,7 @@ import { Crown, Sparkles, Star } from "lucide-react-native";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
-import { listShows, listContinueWatching } from "@/lib/mock/shows";
+import { listShows, listContinueWatching } from "@/lib/api/shows";
 import type { ContentPillar, Show } from "@/lib/types";
 import { PILLAR_LABELS } from "@/lib/types";
 
@@ -279,7 +279,7 @@ export default function OriginalsScreen() {
                     <View
                       style={{
                         height: "100%",
-                        width: `${Math.min(100, Math.round((row.progress.positionSec / row.episode.runtimeSec) * 100))}%`,
+                        width: `${Math.min(100, Math.round((row.positionSec / row.episode.runtimeSec) * 100))}%`,
                         backgroundColor: BRAND,
                       }}
                     />

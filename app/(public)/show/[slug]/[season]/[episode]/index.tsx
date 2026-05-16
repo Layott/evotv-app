@@ -7,12 +7,10 @@ import { ArrowLeft, ChevronRight, Forward } from "lucide-react-native";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HLSPlayer } from "@/components/stream/hls-player";
 import {
-  episodes as allEpisodes,
-  getEpisodeById,
-  getShowBySlug,
+  getShowWithSeasonsBySlug,
   listEpisodesForSeason,
   setEpisodeProgress,
-} from "@/lib/mock/shows";
+} from "@/lib/api/shows";
 
 const BRAND = "#2CD7E3";
 const BRAND_RGBA = (a: number) => `rgba(44,215,227,${a})`;
@@ -36,29 +34,28 @@ export default function EpisodePlayerScreen() {
 
   const showQ = useQuery({
     queryKey: ["show", params.slug],
-    queryFn: () => getShowBySlug(params.slug ?? ""),
+    queryFn: () => getShowWithSeasonsBySlug(params.slug ?? ""),
     enabled: !!params.slug,
   });
 
-  // Resolve the episode by show + season + episode number — mocked locally
-  // to avoid an extra round-trip.
-  const episode = React.useMemo(() => {
-    if (!showQ.data) return null;
-    return (
-      allEpisodes.find(
-        (e) =>
-          e.showId === showQ.data!.id &&
-          e.seasonNumber === seasonNum &&
-          e.episodeNumber === epNum,
-      ) ?? null
-    );
-  }, [showQ.data, seasonNum, epNum]);
+  // Resolve season by number, then load + cache its episodes once.
+  const targetSeasonId = React.useMemo(() => {
+    const seasons = showQ.data?.seasons ?? [];
+    return seasons.find((s) => s.seasonNumber === seasonNum)?.id ?? null;
+  }, [showQ.data, seasonNum]);
 
   const seasonEpisodesQ = useQuery({
-    queryKey: ["show", params.slug, "season-episodes", episode?.seasonId],
-    queryFn: () => listEpisodesForSeason(episode!.seasonId),
-    enabled: !!episode,
+    queryKey: ["show", params.slug, "season-episodes", targetSeasonId],
+    queryFn: () => listEpisodesForSeason(targetSeasonId!),
+    enabled: !!targetSeasonId,
   });
+
+  const episode = React.useMemo(() => {
+    if (!seasonEpisodesQ.data) return null;
+    return (
+      seasonEpisodesQ.data.find((e) => e.episodeNumber === epNum) ?? null
+    );
+  }, [seasonEpisodesQ.data, epNum]);
 
   const nextEpisode = React.useMemo(() => {
     if (!seasonEpisodesQ.data || !episode) return null;
@@ -88,7 +85,7 @@ export default function EpisodePlayerScreen() {
     );
   }
 
-  if (!showQ.data || !episode) {
+  if (!showQ.data?.show || !episode) {
     return (
       <View className="flex-1 items-center justify-center bg-background px-6">
         <Text className="text-lg font-bold text-foreground">
@@ -110,7 +107,7 @@ export default function EpisodePlayerScreen() {
     );
   }
 
-  const show = showQ.data;
+  const show = showQ.data.show;
 
   return (
     <>

@@ -9,12 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import {
-  getShowBySlug,
+  getShowWithSeasonsBySlug,
   getWatchlistEntry,
   listEpisodesForSeason,
-  listSeasonsForShow,
   setWatchlistStatus,
-} from "@/lib/mock/shows";
+} from "@/lib/api/shows";
 import type { Episode, Season, Show, WatchlistStatus } from "@/lib/types";
 import { PILLAR_LABELS } from "@/lib/types";
 import { formatDateOnly } from "@/lib/utils";
@@ -97,17 +96,16 @@ export default function ShowLandingScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const qc = useQueryClient();
 
+  // Backend returns show + seasons in a single payload to avoid round-trips.
   const showQ = useQuery({
     queryKey: ["show", slug],
-    queryFn: () => getShowBySlug(slug ?? ""),
+    queryFn: () => getShowWithSeasonsBySlug(slug ?? ""),
     enabled: !!slug,
   });
-
-  const seasonsQ = useQuery({
-    queryKey: ["show", slug, "seasons"],
-    queryFn: () => listSeasonsForShow(showQ.data!.id),
-    enabled: !!showQ.data,
-  });
+  const seasonsQ = {
+    data: showQ.data?.seasons,
+    isLoading: showQ.isLoading,
+  };
 
   const [activeSeasonId, setActiveSeasonId] = React.useState<string | null>(null);
 
@@ -124,19 +122,19 @@ export default function ShowLandingScreen() {
   });
 
   const watchlistQ = useQuery({
-    queryKey: ["watchlist", showQ.data?.id],
-    queryFn: () => getWatchlistEntry(showQ.data!.id),
+    queryKey: ["watchlist", showQ.data?.show.id],
+    queryFn: () => getWatchlistEntry(showQ.data!.show.id),
     enabled: !!showQ.data,
   });
 
   const watchlistMutation = useMutation({
     mutationFn: async (next: WatchlistStatus | null) => {
       if (!showQ.data) return;
-      await setWatchlistStatus(showQ.data.id, next);
+      await setWatchlistStatus(showQ.data.show.id, next);
       return next;
     },
     onSuccess: (next) => {
-      qc.invalidateQueries({ queryKey: ["watchlist", showQ.data?.id] });
+      qc.invalidateQueries({ queryKey: ["watchlist", showQ.data?.show.id] });
       toast.success(
         next == null
           ? "Removed from watchlist"
@@ -160,7 +158,7 @@ export default function ShowLandingScreen() {
     );
   }
 
-  const show = showQ.data;
+  const show = showQ.data?.show;
   if (!show) {
     return (
       <View className="flex-1 items-center justify-center bg-background px-6">

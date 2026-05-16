@@ -1,11 +1,11 @@
 import * as React from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { Eye, Play } from "lucide-react-native";
 
 import type { Clip } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 
 interface TrendingClipsProps {
   clips: Clip[];
@@ -80,10 +80,13 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
               className="overflow-hidden rounded-xl border border-border bg-card active:opacity-80"
             >
               <View className="relative h-full w-full">
-                <Image
+                <ImageWithFallback
                   source={c.thumbnailUrl}
                   style={{ width: "100%", height: "100%" }}
                   contentFit="cover"
+                  fallbackLabel={c.title}
+                  tintSeed={c.id}
+                  fallbackChildren={<Play size={28} color="rgba(255,255,255,0.35)" />}
                 />
                 {/* Bottom shadow */}
                 <View
@@ -102,10 +105,12 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
                       borderColor: "rgba(255,255,255,0.4)",
                     }}
                   >
-                    <Image
+                    <ImageWithFallback
                       source={c.creatorAvatarUrl}
                       style={{ width: "100%", height: "100%" }}
                       contentFit="cover"
+                      fallbackLabel={c.creatorHandle}
+                      tintSeed={c.creatorHandle}
                     />
                   </View>
                 ) : null}

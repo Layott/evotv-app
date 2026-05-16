@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
+
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { Clock, Eye, Search, UserRound, Users, X } from "lucide-react-native";
@@ -289,10 +291,12 @@ export default function DiscoverScreen() {
                             position: "relative",
                           }}
                         >
-                          <Image
+                          <ImageWithFallback
                             source={s.thumbnailUrl}
                             style={{ width: "100%", height: "100%" }}
                             contentFit="cover"
+                            fallbackLabel={s.title}
+                            tintSeed={s.id}
                           />
                           {s.isLive ? (
                             <View className="absolute left-2 top-2">
@@ -362,10 +366,12 @@ export default function DiscoverScreen() {
                             position: "relative",
                           }}
                         >
-                          <Image
+                          <ImageWithFallback
                             source={v.thumbnailUrl}
                             style={{ width: "100%", height: "100%" }}
                             contentFit="cover"
+                            fallbackLabel={v.title}
+                            tintSeed={v.id}
                           />
                           <View
                             className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"

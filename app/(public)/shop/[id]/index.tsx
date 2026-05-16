@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
+
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Check, ShoppingCart } from "lucide-react-native";
@@ -132,12 +134,12 @@ export default function ShopProductScreen() {
           className="overflow-hidden rounded-2xl border border-border bg-card"
           style={{ aspectRatio: 1 }}
         >
-          <Image
-            source={
-              product.images[activeImage] ?? product.images[0] ?? undefined
-            }
+          <ImageWithFallback
+            source={product.images[activeImage] ?? product.images[0]}
             style={{ width: "100%", height: "100%" }}
             contentFit="cover"
+            fallbackLabel={product.name}
+            tintSeed={product.id}
           />
         </View>
         {product.images.length > 1 ? (

@@ -1,11 +1,11 @@
 import * as React from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { Eye } from "lucide-react-native";
 
 import type { Game, Stream } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 
 interface LiveNowProps {
   streams: Stream[];
@@ -118,10 +118,12 @@ export function LiveNow({ streams, games, loading }: LiveNowProps) {
                   style={{ aspectRatio: 16 / 9 }}
                   className="relative overflow-hidden"
                 >
-                  <Image
+                  <ImageWithFallback
                     source={s.thumbnailUrl}
                     style={{ width: "100%", height: "100%" }}
                     contentFit="cover"
+                    fallbackLabel={s.title}
+                    tintSeed={s.id}
                   />
                   <View className="absolute left-2 top-2">
                     <LiveBadge />

@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Pressable, Text, View } from "react-native";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { Clock, Sparkles } from "lucide-react-native";
 
 import type { Game, Vod } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 
 interface RecommendationsProps {
   vods: Vod[];
@@ -56,10 +56,12 @@ export function Recommendations({
               style={{ aspectRatio: 16 / 9 }}
               className="relative overflow-hidden"
             >
-              <Image
+              <ImageWithFallback
                 source={v.thumbnailUrl}
                 style={{ width: "100%", height: "100%" }}
                 contentFit="cover"
+                fallbackLabel={v.title}
+                tintSeed={v.id}
               />
               <View
                 className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"

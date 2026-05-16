@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Pressable, Text, View } from "react-native";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 
 import type { Product } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 
 export function formatNgn(n: number): string {
   if (n >= 1_000_000) {
@@ -31,13 +31,13 @@ export function ProductCard({ product }: { product: Product }) {
           position: "relative",
         }}
       >
-        {image ? (
-          <Image
-            source={image}
-            style={{ width: "100%", height: "100%" }}
-            contentFit="cover"
-          />
-        ) : null}
+        <ImageWithFallback
+          source={image}
+          style={{ width: "100%", height: "100%" }}
+          contentFit="cover"
+          fallbackLabel={product.name}
+          tintSeed={product.id}
+        />
         <View className="absolute left-2 top-2">
           <Badge
             className="border-border bg-background"

@@ -7,7 +7,7 @@ import {
   View,
   type ViewToken,
 } from "react-native";
-import { Image } from "expo-image";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { useRouter } from "expo-router";
 import { Eye, Play } from "lucide-react-native";
 
@@ -95,10 +95,12 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
             style={{ width, aspectRatio: 16 / 9 }}
             className="relative"
           >
-            <Image
+            <ImageWithFallback
               source={s.thumbnailUrl}
               style={{ width: "100%", height: "100%" }}
               contentFit="cover"
+              fallbackLabel={s.title}
+              tintSeed={s.id}
             />
             {/* Bottom-fade overlay (no gradient dep — solid view with opacity stacks) */}
             <View

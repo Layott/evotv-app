@@ -11,6 +11,17 @@ Followup walkthrough after Phase 2 leftovers shipped. Driven by Claude-in-Chrome
 | 3 | P1 | Discover/Home cards missing thumbnails (black squares) | OPEN |
 | 4 | P1 | Stale VOD IDs in discover list cause 404 on click | OPEN |
 | 5 | INFO | Stream player shows black video — expected (no RTMP ingest) | N/A |
+| 6 | P1 | Product detail blank image area (thumbnail gap spreads) | OPEN |
+| 7 | P1 | Esports-only copy on signup/onboarding/upgrade/channel/events | OPEN |
+| 8 | P0 | EventDetail crashes — 5 patterns on nullable backend fields | FIXED (commit 0936c58) |
+| 9 | P0 | EventHero "Invalid Date" + empty banner + null fields | FIXED (commit 0936c58) |
+| 10 | P1 | `/c/[slug]` 404 state too bare (just plain text) | OPEN |
+| 11 | P1 | Multi-stream + watch-parties hardcode SAMPLE_HLS | OPEN |
+| 12 | P0 | Pickem round-grouping crashes on unknown round value | OPEN |
+| 13 | P1 | Engagement screens have date-format crashes (same pattern as #8) | OPEN |
+| 14 | P1 | Pickem leaderboard always shows "0 of 0 correct" | OPEN |
+| 15 | P2 | Fantasy is 100% mock — Phase 1A gap | LOGGED |
+| 16 | P1 | Email verification flow is UI-only (no backend wire) | LOGGED (task #16) |
 
 ## Detail
 
@@ -53,6 +64,33 @@ Followup walkthrough after Phase 2 leftovers shipped. Driven by Claude-in-Chrome
 ## Next bug-bash zones
 
 Per outstanding plan:
-- P1: Auth funnel (signup/forgot/reset/verify/onboarding)
-- P1: Commerce (cart/checkout/orders/upgrade)
-- P1: Engagement (pickem/predictions/watch-parties/multi-stream/tips/rewards)
+- P1: Auth funnel (signup/forgot/reset/verify/onboarding) — DONE (most clean; pillar copy bug logged)
+- P1: Commerce (cart/checkout/orders/upgrade) — gated by auth; upgrade copy reviewed
+- P1: Engagement (pickem/predictions/watch-parties/multi-stream/tips/rewards) — DONE (static review)
+
+## Engagement bug-bash details (static review)
+
+Authentication gate prevented E2E walkthrough. Static code review (commit f039979a-era code) found:
+
+### P0 — runtime crash risks
+- `app/(authed)/watch-parties/[id]/index.tsx:134` — `party.members.some(...)` without `?? []` guard; same pattern as event.teamIds crash.
+- `app/(authed)/pickem/[eventId]/index.tsx:235` — `grouped[m.round].push(m)` crashes when backend returns a round value outside the hardcoded 3 keys (e.g. `"ro16"`).
+
+### P1 — silent bugs / feature-broken-by-design
+- `app/(authed)/multi-stream/index.tsx:99` — every tile renders `SAMPLE_HLS` instead of `stream.hlsUrl`. Defeats multi-stream entirely.
+- `app/(authed)/watch-parties/[id]/index.tsx:244` — same SAMPLE_HLS hardcode, ignores party.stream.
+- `app/(authed)/pickem/[eventId]/leaderboard/index.tsx:138-140` — `entry.correctPicks/totalPicks` always 0 (backend stubs). Every leaderboard row shows "0 of 0 correct".
+- Date-format crash pattern across pickem/predictions/fantasy: `new Date(x).toLocaleString()` on nullable fields. Already-fixed in events; needs `safeDate()` helper applied broadly.
+
+### Status flags
+- `app/(authed)/fantasy/*` — 100% mock-backed. Phase 1A swap gap.
+- `lib/api/tips.ts` — listFns still mock-backed despite real `sendTip`.
+
+### Top fixes by impact
+1. Multi-stream + watch-parties: replace SAMPLE_HLS with `stream.hlsUrl` (feature broken-by-design today).
+2. Pickem round-group guard (P0 crash on round-drift).
+3. Single `formatDate(iso?)` helper applied to all engagement `.toLocaleString()` sites.
+4. Pickem leaderboard: hide "correct" line until backend exposes counts (currently misleading).
+5. Fantasy needs Phase 1A scope decision — defer or wire mock-shaped backend endpoints.
+
+Recommend addressing #1 + #2 + #3 together as a single PR (~2 hours).

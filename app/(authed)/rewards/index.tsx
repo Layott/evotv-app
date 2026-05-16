@@ -13,17 +13,16 @@ import {
 } from "lucide-react-native";
 
 import {
+  claimDailyQuest,
   getXpAndTier,
+  listDailyQuests,
   listDrops,
+  QuestClaimError,
   redeemDrop,
+  type DailyQuest,
   type Drop,
   type XpTierInfo,
 } from "@/lib/api/rewards";
-import {
-  claimQuest,
-  listDailyQuests,
-  type DailyQuest,
-} from "@/lib/mock/rewards";
 import { ApiError } from "@/lib/api/_client";
 import { useMockAuth } from "@/components/providers";
 import {
@@ -85,11 +84,9 @@ function RewardsHero({ info }: { info: XpTierInfo }) {
 
 function QuestRow({
   quest,
-  userId,
   onChange,
 }: {
   quest: DailyQuest;
-  userId: string;
   onChange: (next: DailyQuest, delta: { coins: number; xp: number }) => void;
 }) {
   const [busy, setBusy] = React.useState(false);
@@ -101,16 +98,27 @@ function QuestRow({
 
   async function onClaim() {
     setBusy(true);
-    const res = await claimQuest(quest.id, userId);
-    setBusy(false);
-    if (res.success) {
-      toast.success(`+${res.rewardCoins} coins, +${res.rewardXp} XP`);
-      onChange({ ...quest, claimed: true }, {
-        coins: res.rewardCoins,
-        xp: res.rewardXp,
-      });
-    } else {
-      toast.error(res.reason ?? "Could not claim");
+    try {
+      const res = await claimDailyQuest(quest.id);
+      toast.success(`+${res.coinsAwarded} coins, +${res.xpAwarded} XP`);
+      onChange(
+        { ...quest, claimed: true },
+        { coins: res.coinsAwarded, xp: res.xpAwarded },
+      );
+    } catch (err) {
+      if (err instanceof QuestClaimError) {
+        const msg =
+          err.code === "already_claimed"
+            ? "Already claimed today"
+            : err.code === "incomplete"
+              ? "Quest not yet complete"
+              : "Unknown quest";
+        toast.error(msg);
+      } else {
+        toast.error("Could not claim quest");
+      }
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -181,7 +189,7 @@ export default function RewardsScreen() {
       setLoading(true);
       const [tierInfo, q, d] = await Promise.all([
         getXpAndTier(user.id),
-        listDailyQuests(user.id),
+        listDailyQuests(),
         listDrops(),
       ]);
       if (cancelled) return;
@@ -323,7 +331,6 @@ export default function RewardsScreen() {
                     <QuestRow
                       key={q.id}
                       quest={q}
-                      userId={user.id}
                       onChange={(next, delta) => {
                         setQuests((prev) =>
                           prev.map((x) => (x.id === next.id ? next : x)),

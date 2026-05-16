@@ -1,5 +1,66 @@
 import * as ImagePicker from "expo-image-picker";
-import { BASE_URL, getToken, ApiError } from "./_client";
+import { api, BASE_URL, getToken, ApiError } from "./_client";
+
+export interface PublicProfileClip {
+  id: string;
+  title: string;
+  thumbnailUrl: string;
+  durationSec: number;
+  viewCount: number;
+  createdAt: string;
+}
+
+export interface PublicProfileVod {
+  id: string;
+  title: string;
+  thumbnailUrl: string;
+  durationSec: number;
+  viewCount: number;
+  publishedAt: string;
+}
+
+export interface PublicProfileChannel {
+  id: string;
+  slug: string;
+  name: string;
+  logoUrl: string;
+  category: string;
+  isVerified: boolean;
+  followerCount: number;
+}
+
+export interface PublicProfile {
+  id: string;
+  handle: string;
+  displayName: string;
+  avatarUrl: string;
+  bio: string;
+  country: string;
+  joinedAt: string;
+  role: string;
+  followerCount: number;
+  isFollowing: boolean;
+  channels: PublicProfileChannel[];
+  recentClips: PublicProfileClip[];
+  recentVods: PublicProfileVod[];
+}
+
+/**
+ * Fetch a public profile by handle. Returns null on 404 (handle not found
+ * or soft-deleted user). Other failures throw `ApiError`.
+ */
+export async function getPublicProfileByHandle(
+  handle: string,
+): Promise<PublicProfile | null> {
+  try {
+    return await api<PublicProfile>(
+      `/api/users/${encodeURIComponent(handle)}`,
+    );
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) return null;
+    throw err;
+  }
+}
 
 export interface UploadAvatarResult {
   ok: true;

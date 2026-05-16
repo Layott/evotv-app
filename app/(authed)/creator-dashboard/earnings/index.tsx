@@ -4,13 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Coins, Download, FileSpreadsheet } from "lucide-react-native";
 import { toast } from "sonner-native";
 
-import { useMockAuth } from "@/components/providers";
-import { listPayouts, type PayoutStatus } from "@/lib/mock/creators";
+import { listPayouts, type Payout } from "@/lib/api/partner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardShell } from "@/components/creators/dashboard-shell";
 import { MetricCard } from "@/components/creators/metric-card";
+
+type PayoutStatus = Payout["status"];
 
 const STATUS_BADGE: Record<
   PayoutStatus,
@@ -21,50 +22,55 @@ const STATUS_BADGE: Record<
     textClassName: "text-emerald-300",
     label: "Paid",
   },
-  processing: {
+  approved: {
     className: "border-sky-500/40 bg-sky-500/15",
     textClassName: "text-sky-300",
-    label: "Processing",
+    label: "Approved",
   },
-  scheduled: {
+  pending: {
     className: "border-amber-500/40 bg-amber-500/15",
     textClassName: "text-amber-300",
-    label: "Scheduled",
+    label: "Pending",
   },
-  held: {
+  failed: {
     className: "border-rose-500/40 bg-rose-500/15",
     textClassName: "text-rose-300",
-    label: "Held",
+    label: "Failed",
   },
 };
 
-export default function CreatorEarningsScreen() {
-  const { user } = useMockAuth();
-  const userId = user?.id ?? "user_current";
+function formatNgn(n: number): string {
+  return `₦${Math.round(n).toLocaleString("en-NG")}`;
+}
 
+function monthLabel(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleString("en-US", { month: "short", year: "numeric" });
+}
+
+export default function CreatorEarningsScreen() {
   const payoutsQ = useQuery({
-    queryKey: ["creator-earnings", userId],
-    queryFn: () => listPayouts(userId),
+    queryKey: ["creator-earnings"],
+    queryFn: () => listPayouts(),
   });
 
   const loading = payoutsQ.isLoading || !payoutsQ.data;
   const payouts = payoutsQ.data ?? [];
-  const totalNet = payouts.reduce((s, p) => s + p.netCoins, 0);
-  const totalGross = payouts.reduce((s, p) => s + p.grossCoins, 0);
-  const totalFee = payouts.reduce((s, p) => s + p.platformFeeCoins, 0);
+  const totalNet = payouts.reduce((s, p) => s + p.netNgn, 0);
+  const totalGross = payouts.reduce((s, p) => s + p.grossNgn, 0);
+  const totalFee = payouts.reduce((s, p) => s + p.feeNgn, 0);
   const lastPaid = payouts.find((p) => p.status === "paid");
   const pending = payouts
-    .filter((p) => p.status !== "paid")
-    .reduce((s, p) => s + p.netCoins, 0);
+    .filter((p) => p.status !== "paid" && p.status !== "failed")
+    .reduce((s, p) => s + p.netNgn, 0);
 
-  // Mini bar chart data — net per month, normalized.
-  const chartMax = Math.max(1, ...payouts.map((p) => p.netCoins + p.platformFeeCoins));
+  const chartMax = Math.max(1, ...payouts.map((p) => p.netNgn + p.feeNgn));
 
   return (
     <DashboardShell
       title="Earnings"
       screenTitle="Earnings"
-      description="Monthly payouts, fees, and totals — all in EVO Coins."
+      description="Monthly payouts, fees, and totals — paid in Naira (NGN)."
       actions={
         <Button
           variant="outline"
@@ -92,31 +98,31 @@ export default function CreatorEarningsScreen() {
           <View className="gap-3">
             <MetricCard
               label="Lifetime net"
-              value={totalNet.toLocaleString()}
-              hint="EVO Coins delivered"
+              value={formatNgn(totalNet)}
+              hint="NGN delivered"
               icon={Coins}
               accent="emerald"
             />
             <MetricCard
               label="Lifetime gross"
-              value={totalGross.toLocaleString()}
+              value={formatNgn(totalGross)}
               hint="before platform fee"
               icon={Coins}
               accent="amber"
             />
             <MetricCard
               label="Pending"
-              value={pending.toLocaleString()}
-              hint="processing or scheduled"
+              value={formatNgn(pending)}
+              hint="approved or pending payout"
               icon={FileSpreadsheet}
               accent="sky"
             />
             <MetricCard
               label="Last payout"
-              value={lastPaid ? lastPaid.monthLabel : "—"}
+              value={lastPaid ? monthLabel(lastPaid.paidAt ?? lastPaid.periodEnd) : "—"}
               hint={
                 lastPaid
-                  ? `${lastPaid.netCoins.toLocaleString()} coins`
+                  ? formatNgn(lastPaid.netNgn)
                   : "No payouts yet"
               }
               icon={Coins}
@@ -130,13 +136,13 @@ export default function CreatorEarningsScreen() {
               Net vs platform fee · 12 months
             </Text>
             <Text className="mt-0.5 text-[11px] text-muted-foreground">
-              Total platform fee paid: {totalFee.toLocaleString()} coins
+              Total platform fee paid: {formatNgn(totalFee)}
             </Text>
             <View className="mt-4 h-48 flex-row items-end gap-1.5">
               {payouts.map((p) => {
-                const total = p.netCoins + p.platformFeeCoins;
+                const total = p.netNgn + p.feeNgn;
                 const totalH = (total / chartMax) * 100;
-                const netH = (p.netCoins / chartMax) * 100;
+                const netH = (p.netNgn / chartMax) * 100;
                 return (
                   <View key={p.id} className="flex-1 items-center gap-1">
                     <View
@@ -153,7 +159,7 @@ export default function CreatorEarningsScreen() {
                       />
                     </View>
                     <Text className="text-[9px] text-muted-foreground">
-                      {p.monthLabel.split(" ")[0]}
+                      {monthLabel(p.periodStart).split(" ")[0]}
                     </Text>
                   </View>
                 );
@@ -178,55 +184,65 @@ export default function CreatorEarningsScreen() {
               </Text>
             </View>
             <View>
-              {payouts
-                .slice()
-                .reverse()
-                .map((p, idx, arr) => {
-                  const status = STATUS_BADGE[p.status];
-                  return (
-                    <View
-                      key={p.id}
-                      className={
-                        "p-4 " +
-                        (idx === arr.length - 1 ? "" : "border-b border-border")
-                      }
-                    >
-                      <View className="flex-row items-center justify-between">
-                        <Text className="text-sm font-semibold text-foreground">
-                          {p.monthLabel}
-                        </Text>
-                        <Badge
-                          variant="outline"
-                          className={status.className}
-                          textClassName={status.textClassName}
-                        >
-                          {status.label}
-                        </Badge>
+              {payouts.length === 0 ? (
+                <View className="p-6">
+                  <Text className="text-center text-sm text-muted-foreground">
+                    No payouts yet. Earnings appear here after your first payout cycle clears.
+                  </Text>
+                </View>
+              ) : (
+                payouts
+                  .slice()
+                  .reverse()
+                  .map((p, idx, arr) => {
+                    const status = STATUS_BADGE[p.status];
+                    return (
+                      <View
+                        key={p.id}
+                        className={
+                          "p-4 " +
+                          (idx === arr.length - 1 ? "" : "border-b border-border")
+                        }
+                      >
+                        <View className="flex-row items-center justify-between">
+                          <Text className="text-sm font-semibold text-foreground">
+                            {monthLabel(p.periodStart)}
+                          </Text>
+                          <Badge
+                            variant="outline"
+                            className={status.className}
+                            textClassName={status.textClassName}
+                          >
+                            {status.label}
+                          </Badge>
+                        </View>
+                        <View className="mt-2 flex-row items-center justify-between">
+                          <Text className="text-xs text-muted-foreground">Gross</Text>
+                          <Text className="text-xs text-foreground">
+                            {formatNgn(p.grossNgn)}
+                          </Text>
+                        </View>
+                        <View className="mt-1 flex-row items-center justify-between">
+                          <Text className="text-xs text-muted-foreground">Fee</Text>
+                          <Text className="text-xs text-muted-foreground">
+                            -{formatNgn(p.feeNgn)}
+                          </Text>
+                        </View>
+                        <View className="mt-1 flex-row items-center justify-between">
+                          <Text className="text-sm text-foreground">Net</Text>
+                          <Text className="text-sm font-bold text-emerald-300">
+                            {formatNgn(p.netNgn)}
+                          </Text>
+                        </View>
+                        {p.paystackTransferRef ? (
+                          <Text className="mt-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+                            ref · {p.paystackTransferRef}
+                          </Text>
+                        ) : null}
                       </View>
-                      <View className="mt-2 flex-row items-center justify-between">
-                        <Text className="text-xs text-muted-foreground">Gross</Text>
-                        <Text className="text-xs text-foreground">
-                          {p.grossCoins.toLocaleString()}
-                        </Text>
-                      </View>
-                      <View className="mt-1 flex-row items-center justify-between">
-                        <Text className="text-xs text-muted-foreground">Fee</Text>
-                        <Text className="text-xs text-muted-foreground">
-                          -{p.platformFeeCoins.toLocaleString()}
-                        </Text>
-                      </View>
-                      <View className="mt-1 flex-row items-center justify-between">
-                        <Text className="text-sm text-foreground">Net</Text>
-                        <Text className="text-sm font-bold text-emerald-300">
-                          {p.netCoins.toLocaleString()}
-                        </Text>
-                      </View>
-                      <Text className="mt-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-                        via {p.payoutMethod.replace(/_/g, " ")}
-                      </Text>
-                    </View>
-                  );
-                })}
+                    );
+                  })
+              )}
             </View>
           </View>
         </View>

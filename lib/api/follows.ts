@@ -36,3 +36,17 @@ export function isFollowing(targetType: FollowTarget, targetId: string): Promise
     query: { type: targetType, id: targetId },
   }).then((r) => r.following);
 }
+
+/**
+ * POST /api/follows — toggle helper that mirrors backend's actual response
+ * shape `{ following: boolean }`. Returns the *new* follow state.
+ */
+export function toggleFollow(
+  targetType: FollowTarget,
+  targetId: string,
+): Promise<boolean> {
+  return api<{ following: boolean }>("/api/follows", {
+    method: "POST",
+    body: { targetType, targetId },
+  }).then((r) => r.following);
+}

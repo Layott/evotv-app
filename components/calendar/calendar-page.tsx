@@ -34,6 +34,7 @@ import { useMockAuth } from "@/components/providers";
 import {
   CALENDAR_REGIONS,
   buildIcsFile,
+  downloadIcs,
   isReminderSet,
   listMatchCalendarEntries,
   toggleReminder,
@@ -186,16 +187,26 @@ export function MatchCalendarPage() {
     ? matchesByDay[format(selectedDay, "yyyy-MM-dd")] ?? []
     : [];
 
-  function handleAddToCalendar(matchesForExport: CalendarMatch[]) {
+  async function handleAddToCalendar(matchesForExport: CalendarMatch[]) {
     if (matchesForExport.length === 0) return;
-    // Build the .ics string but do not download — RN can't write a Blob.
-    buildIcsFile(matchesForExport);
-    toast.success(
-      `Generated ${matchesForExport.length} event${
-        matchesForExport.length === 1 ? "" : "s"
-      } (.ics)`,
-      { description: "Use share sheet to export." },
-    );
+    const ics = buildIcsFile(matchesForExport);
+    const now = new Date();
+    const filename = `evotv-calendar-${now
+      .toISOString()
+      .slice(0, 10)}.ics`;
+    try {
+      await downloadIcs(filename, ics);
+      toast.success(
+        `${matchesForExport.length} event${
+          matchesForExport.length === 1 ? "" : "s"
+        } ready`,
+        { description: "Save or share via the system sheet." },
+      );
+    } catch (err) {
+      toast.error("Calendar export failed", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    }
   }
 
   function handleReminder(match: CalendarMatch) {

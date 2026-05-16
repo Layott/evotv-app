@@ -1,4 +1,4 @@
-import { api } from "./_client";
+import { api, ApiError } from "./_client";
 
 export type DropKind = "cosmetic" | "premium-trial" | "merch-voucher";
 export type Rarity = "common" | "rare" | "epic" | "legendary";
@@ -79,4 +79,84 @@ export function redeemDrop(
 /** GET /api/rewards/redemptions — auth required. User redemption history. */
 export function listMyRedemptions(_userId?: string): Promise<Redemption[]> {
   return api<Redemption[]>("/api/rewards/redemptions");
+}
+
+/* ── Daily quests ───────────────────────────────────────────────────── */
+
+export interface DailyQuest {
+  id: string;
+  label: string;
+  description: string;
+  unit: string;
+  target: number;
+  rewardCoins: number;
+  rewardXp: number;
+  progress: number;
+  claimed: boolean;
+  expiresAt: string;
+}
+
+export interface XpEvent {
+  id: string;
+  userId: string;
+  source: string;
+  points: number;
+  at: string;
+}
+
+export interface QuestClaimResult {
+  coinsAwarded: number;
+  xpAwarded: number;
+  newBalance: number;
+  newXp: number;
+}
+
+export type QuestClaimErrorCode =
+  | "not_found"
+  | "incomplete"
+  | "already_claimed";
+
+export class QuestClaimError extends Error {
+  code: QuestClaimErrorCode;
+  constructor(code: QuestClaimErrorCode, msg: string) {
+    super(msg);
+    this.code = code;
+  }
+}
+
+/** GET /api/rewards/quests — auth required. Today's daily quests + progress. */
+export function listDailyQuests(): Promise<DailyQuest[]> {
+  return api<DailyQuest[]>("/api/rewards/quests");
+}
+
+/**
+ * POST /api/rewards/quests/{id}/claim — claim a completed daily quest. Throws
+ * `QuestClaimError` for incomplete / already-claimed / unknown-quest cases so
+ * call sites can show a precise toast.
+ */
+export async function claimDailyQuest(
+  questId: string,
+): Promise<QuestClaimResult> {
+  try {
+    return await api<QuestClaimResult>(
+      `/api/rewards/quests/${encodeURIComponent(questId)}/claim`,
+      { method: "POST" },
+    );
+  } catch (err) {
+    if (err instanceof ApiError) {
+      const body = err.body as { error?: string } | null;
+      const code = body?.error;
+      if (code === "not_found" || code === "incomplete" || code === "already_claimed") {
+        throw new QuestClaimError(code, err.message);
+      }
+    }
+    throw err;
+  }
+}
+
+/** GET /api/rewards/xp-events?limit=20 — recent XP grants. */
+export function listRecentXpEvents(limit = 20): Promise<XpEvent[]> {
+  return api<XpEvent[]>("/api/rewards/xp-events", {
+    query: { limit },
+  });
 }

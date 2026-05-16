@@ -24,6 +24,75 @@ export const PILLAR_LABELS: Record<ContentPillar, string> = {
   lifestyle: "Lifestyle",
 };
 
+/* ── Phase 9b — Shows / Seasons / Episodes ───────────────────────────── */
+
+export type ShowStatus = "airing" | "completed" | "upcoming" | "hiatus";
+export type ShowOriginType = "evo_original" | "licensed" | "syndicated";
+
+export interface Show {
+  id: UUID;
+  slug: string;
+  title: string;
+  synopsis: string;
+  heroUrl: string;
+  posterUrl: string;
+  pillar: ContentPillar;
+  originType: ShowOriginType;
+  status: ShowStatus;
+  primaryCreatorHandle: string;
+  totalSeasons: number;
+  totalEpisodes: number;
+  rating: number; // 0-10
+  releasedAt: ISODate;
+  /** Optional tags surfaced on show landing chips: "Action", "Talk show", etc. */
+  tags: string[];
+}
+
+export interface Season {
+  id: UUID;
+  showId: UUID;
+  seasonNumber: number;
+  title: string;
+  episodeCount: number;
+  releasedAt: ISODate;
+}
+
+export interface Episode {
+  id: UUID;
+  showId: UUID;
+  seasonId: UUID;
+  seasonNumber: number;
+  episodeNumber: number;
+  title: string;
+  synopsis: string;
+  thumbnailUrl: string;
+  runtimeSec: number;
+  hlsUrl: string;
+  /** Skip-intro markers. Both seconds-since-start. Optional. */
+  introStartSec?: number;
+  introEndSec?: number;
+  /** Premiere drop time (used for countdown UI on upcoming episodes). */
+  premiereAt: ISODate;
+  releasedAt: ISODate;
+}
+
+export interface EpisodeProgress {
+  userId: UUID;
+  episodeId: UUID;
+  positionSec: number;
+  completedAt: ISODate | null;
+  updatedAt: ISODate;
+}
+
+export type WatchlistStatus = "watching" | "completed" | "on_hold" | "dropped" | "plan_to_watch";
+
+export interface ShowWatchlist {
+  userId: UUID;
+  showId: UUID;
+  status: WatchlistStatus;
+  addedAt: ISODate;
+}
+
 export type Role =
   | "guest"
   | "user"

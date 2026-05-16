@@ -119,6 +119,12 @@ export default function PublicLayout() {
       <Tabs.Screen name="partners/index" options={{ href: null }} />
       <Tabs.Screen name="embed-marketing/index" options={{ href: null }} />
       <Tabs.Screen name="u/[handle]/index" options={{ href: null }} />
+      <Tabs.Screen name="originals/index" options={{ href: null }} />
+      <Tabs.Screen name="show/[slug]/index" options={{ href: null }} />
+      <Tabs.Screen
+        name="show/[slug]/[season]/[episode]/index"
+        options={{ href: null }}
+      />
     </Tabs>
   );
 }

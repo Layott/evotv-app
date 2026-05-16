@@ -94,9 +94,15 @@ export default function SignupScreen() {
         handle: values.handle,
       });
       toast.success("Account created", {
-        description: "Welcome to EVO TV.",
+        description: "Check your inbox for a 6-digit code.",
       });
-      router.replace("/(auth)/onboarding");
+      // Better-Auth's emailOTP plugin auto-sends a verification OTP on
+      // sign-up when `sendVerificationOnSignUp: true`. Route the user
+      // straight to the OTP screen with their email prefilled.
+      router.replace({
+        pathname: "/(auth)/verify-email",
+        params: { email: values.email },
+      });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Sign-up failed";
       toast.error("Couldn't create account", { description: msg });

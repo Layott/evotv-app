@@ -14,6 +14,7 @@ import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { BASE_URL } from "@/lib/api/_client";
 
 const DEFAULT_EMAIL = "ade***@gmail.com";
 const RESEND_COOLDOWN = 30;
@@ -130,20 +131,53 @@ export default function VerifyEmailScreen() {
     }
     setSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      const res = await fetch(`${BASE_URL}/api/auth/email-otp/verify-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp: code }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        const msg =
+          (body as { message?: string } | null)?.message ??
+          "Invalid or expired code";
+        setError(msg);
+        toast.error("Verification failed", { description: msg });
+        return;
+      }
       toast.success("Email verified");
       router.replace("/(auth)/onboarding");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Network error";
+      setError(msg);
+      toast.error("Could not verify", { description: msg });
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (cooldown > 0) return;
     setCooldown(RESEND_COOLDOWN);
-    toast.success("Verification code resent", {
-      description: `Sent to ${email}`,
-    });
+    try {
+      const res = await fetch(
+        `${BASE_URL}/api/auth/email-otp/send-verification-otp`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, type: "email-verification" }),
+        },
+      );
+      if (!res.ok) {
+        toast.error("Couldn't resend code");
+        return;
+      }
+      toast.success("Verification code resent", {
+        description: `Sent to ${email}`,
+      });
+    } catch {
+      toast.error("Couldn't resend code");
+    }
   };
 
   return (
@@ -237,7 +271,7 @@ export default function VerifyEmailScreen() {
           </View>
 
           <Text className="mt-4 text-center text-xs text-muted-foreground">
-            Tip: in local mode any 6-digit code will verify.
+            Code expires in 10 minutes. Check spam if you don't see it.
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>

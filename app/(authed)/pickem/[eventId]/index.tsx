@@ -232,7 +232,12 @@ export default function PickemEventScreen() {
     semifinal: [],
     final: [],
   };
-  for (const m of filled) grouped[m.round].push(m);
+  for (const m of filled) {
+    // Backend may emit rounds outside the 3-key hardcoded set (`ro16`, etc.).
+    // Skip rather than crash on `grouped[m.round].push` when the key is
+    // missing — the brackets-renderer below only knows these three.
+    if (grouped[m.round]) grouped[m.round].push(m);
+  }
 
   return (
     <>

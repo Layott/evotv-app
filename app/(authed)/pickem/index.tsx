@@ -12,6 +12,7 @@ import {
 
 import { listEvents } from "@/lib/api/events";
 import { listGames } from "@/lib/api/games";
+import { formatDate } from "@/lib/utils";
 import { listMyEntries } from "@/lib/api/pickem";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";
@@ -156,16 +157,16 @@ export default function PickemScreen() {
                           <View className="flex-row items-center gap-1">
                             <Calendar size={11} color="#A3A3A3" />
                             <Text className="text-[11px] text-neutral-400">
-                              {new Date(ev.startsAt).toLocaleDateString(
-                                undefined,
-                                { month: "short", day: "numeric" },
-                              )}
+                              {formatDate(ev.startsAt, {
+                                month: "short",
+                                day: "numeric",
+                              })}
                             </Text>
                           </View>
                           <View className="flex-row items-center gap-1">
                             <MapPin size={11} color="#A3A3A3" />
                             <Text className="text-[11px] text-neutral-400">
-                              {ev.region}
+                              {ev.region ?? "—"}
                             </Text>
                           </View>
                         </View>

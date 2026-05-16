@@ -21,6 +21,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 const MAX_STREAMS = 4;
+/**
+ * Fallback HLS used when a `Stream` row has no `hlsUrl` populated yet
+ * (Phase 4 RTMP ingest still landing). Keeps the multi-grid tiles playable
+ * during dev + smoke tests so the layout can be exercised. Replace with
+ * stream.hlsUrl as soon as the real path is non-empty.
+ */
 const SAMPLE_HLS = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
 
 function SelectableCard({
@@ -96,7 +102,7 @@ function StreamTile({
   return (
     <View className="overflow-hidden rounded-xl border border-neutral-800 bg-black">
       <HlsPlayer
-        src={SAMPLE_HLS}
+        src={stream.hlsUrl || SAMPLE_HLS}
         poster={stream.thumbnailUrl}
         muted={!isAudioActive}
         controls={false}
@@ -220,7 +226,7 @@ export default function MultiStreamScreen() {
   const games = React.useMemo(() => {
     const map = new Map<string, string>();
     for (const s of streams) {
-      if (!map.has(s.gameId)) map.set(s.gameId, s.tags[0] ?? s.gameId);
+      if (!map.has(s.gameId)) map.set(s.gameId, (s.tags ?? [])[0] ?? s.gameId);
     }
     return Array.from(map.entries());
   }, [streams]);

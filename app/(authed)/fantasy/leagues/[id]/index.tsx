@@ -25,6 +25,7 @@ import {
   type FantasyActivityItem,
 } from "@/lib/mock/fantasy";
 import { listGames } from "@/lib/api/games";
+import { formatDate } from "@/lib/utils";
 import { eventBanner } from "@/lib/mock/_media";
 import { useMockAuth } from "@/components/providers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -172,7 +173,7 @@ export default function FantasyLeagueScreen() {
             <StatRow
               icon={<Calendar size={13} color="#A3A3A3" />}
               label="Ends"
-              value={new Date(lg.endsAt).toLocaleDateString(undefined, {
+              value={formatDate(lg.endsAt, {
                 month: "short",
                 day: "numeric",
               })}
@@ -334,7 +335,7 @@ export default function FantasyLeagueScreen() {
                       {a.message}
                     </Text>
                     <Text className="text-[10px] text-neutral-500">
-                      {new Date(a.createdAt).toLocaleString(undefined, {
+                      {formatDate(a.createdAt, {
                         month: "short",
                         day: "numeric",
                         hour: "2-digit",

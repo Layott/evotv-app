@@ -135,9 +135,11 @@ export default function PickemLeaderboardScreen() {
                                 </Text>
                               ) : null}
                             </View>
-                            <Text className="text-[10px] text-neutral-500">
-                              {entry.correctPicks} of {entry.totalPicks} correct
-                            </Text>
+                            {entry.totalPicks > 0 ? (
+                              <Text className="text-[10px] text-neutral-500">
+                                {entry.correctPicks} of {entry.totalPicks} correct
+                              </Text>
+                            ) : null}
                           </View>
                         </View>
                         <Text

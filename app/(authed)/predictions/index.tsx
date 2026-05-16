@@ -5,6 +5,8 @@ import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, Crown, Trophy } from "lucide-react-native";
 
+import { formatDate } from "@/lib/utils";
+
 import {
   getCoinBalance,
   listMyPredictions,
@@ -105,7 +107,7 @@ function EventCard({
           <View className="flex-row items-center gap-1">
             <Calendar size={11} color="#A3A3A3" />
             <Text className="text-[11px] text-neutral-400">
-              {new Date(event.startsAt).toLocaleDateString(undefined, {
+              {formatDate(event.startsAt, {
                 month: "short",
                 day: "numeric",
                 hour: "2-digit",

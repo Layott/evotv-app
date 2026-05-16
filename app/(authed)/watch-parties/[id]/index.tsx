@@ -131,7 +131,9 @@ export default function WatchPartyRoomScreen() {
   const [text, setText] = React.useState("");
 
   const joined =
-    !!user && !!party && party.members.some((m) => m.userId === user.id);
+    !!user &&
+    !!party &&
+    (party.members ?? []).some((m) => m.userId === user.id);
   const isHost = !!user && !!party && party.hostUserId === user.id;
 
   const chat = usePartyChat(partyId, joined);
@@ -240,7 +242,7 @@ export default function WatchPartyRoomScreen() {
       <Stack.Screen options={{ title: party.name, headerBackTitle: "Back" }} />
       <ScrollView className="flex-1 bg-background">
         <HlsPlayer
-          src={SAMPLE_HLS}
+          src={party.stream?.hlsUrl || SAMPLE_HLS}
           poster={party.stream?.thumbnailUrl ?? ""}
         />
 
@@ -355,7 +357,7 @@ export default function WatchPartyRoomScreen() {
               <TabsTrigger value="members">
                 <Users size={13} color="#A3A3A3" />
                 <Text className="text-sm font-medium text-neutral-300">
-                  Members ({party.members.length})
+                  Members ({(party.members ?? []).length})
                 </Text>
               </TabsTrigger>
             </TabsList>
@@ -415,12 +417,12 @@ export default function WatchPartyRoomScreen() {
 
             <TabsContent value="members">
               <View className="rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2">
-                {party.members.length === 0 ? (
+                {(party.members ?? []).length === 0 ? (
                   <Text className="py-6 text-center text-xs text-neutral-500">
                     No active members.
                   </Text>
                 ) : (
-                  party.members.map((m) => (
+                  (party.members ?? []).map((m) => (
                     <MemberRow
                       key={m.userId}
                       member={m}

@@ -48,6 +48,7 @@ export interface PartyDetail extends PartyListItem {
     title: string;
     thumbnailUrl: string;
     streamerName: string;
+    hlsUrl?: string;
   } | null;
   members: PartyMemberRow[];
 }

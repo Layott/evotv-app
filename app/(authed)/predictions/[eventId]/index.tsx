@@ -6,6 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 import { Calendar, Coins, Lock, Trophy } from "lucide-react-native";
 
+import { formatDate } from "@/lib/utils";
+
 import {
   getCoinBalance,
   getTeamOdds,
@@ -307,7 +309,7 @@ export default function PredictionsEventScreen() {
                 <View className="flex-row items-center gap-1">
                   <Calendar size={11} color="#A3A3A3" />
                   <Text className="text-[11px] text-neutral-400">
-                    {new Date(ev.startsAt).toLocaleString(undefined, {
+                    {formatDate(ev.startsAt, {
                       month: "short",
                       day: "numeric",
                       hour: "2-digit",

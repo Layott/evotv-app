@@ -4,6 +4,8 @@ import { Stack } from "expo-router";
 import { toast } from "sonner-native";
 import { Coins, Heart, Send, Trophy } from "lucide-react-native";
 
+import { formatDate } from "@/lib/utils";
+
 import {
   SAMPLE_STREAMERS,
   getCoinBalance,
@@ -78,7 +80,7 @@ function TipRow({
           </Text>
         ) : null}
         <Text className="mt-1 text-[10px] text-neutral-500">
-          {new Date(tip.atIso).toLocaleString(undefined, {
+          {formatDate(tip.atIso, {
             month: "short",
             day: "numeric",
             hour: "2-digit",

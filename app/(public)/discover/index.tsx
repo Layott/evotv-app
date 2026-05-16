@@ -112,6 +112,9 @@ export default function DiscoverScreen() {
   const debounced = useDebounced(query, 200);
   const [gameFilter, setGameFilter] = React.useState<string | null>(null);
   const [contentFilter, setContentFilter] = React.useState<ContentType>("all");
+  const [pillarFilter, setPillarFilter] = React.useState<
+    "all" | "esports" | "anime" | "lifestyle"
+  >("all");
 
   const games = useQuery({ queryKey: ["games"], queryFn: () => listGames() });
   const suggestionsQ = useQuery({
@@ -153,14 +156,24 @@ export default function DiscoverScreen() {
 
   const gameMap = new Map((games.data ?? []).map((g) => [g.id, g]));
 
-  const streams = debounced
+  const rawStreams = debounced
     ? resultsQ.data?.streams ?? []
     : liveQ.data ?? [];
-  const vods = debounced ? resultsQ.data?.vods ?? [] : vodsQ.data ?? [];
+  const rawVods = debounced ? resultsQ.data?.vods ?? [] : vodsQ.data ?? [];
   const teams = debounced ? resultsQ.data?.teams ?? [] : teamsQ.data ?? [];
   const players = debounced
     ? resultsQ.data?.players ?? []
     : playersQ.data ?? [];
+
+  // Apply pillar filter — rows without an explicit pillar default to esports.
+  const streams =
+    pillarFilter === "all"
+      ? rawStreams
+      : rawStreams.filter((s) => (s.pillar ?? "esports") === pillarFilter);
+  const vods =
+    pillarFilter === "all"
+      ? rawVods
+      : rawVods.filter((v) => (v.pillar ?? "esports") === pillarFilter);
 
   const totalResults =
     streams.length + vods.length + teams.length + players.length;
@@ -257,6 +270,27 @@ export default function DiscoverScreen() {
               />
             ),
           )}
+        </ScrollView>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            gap: 8,
+            marginTop: 8,
+          }}
+        >
+          {(
+            ["all", "esports", "anime", "lifestyle"] as const
+          ).map((p) => (
+            <Chip
+              key={p}
+              active={pillarFilter === p}
+              onPress={() => setPillarFilter(p)}
+              label={p}
+            />
+          ))}
         </ScrollView>
 
         {debounced && totalResults === 0 && !resultsQ.isPending ? (

@@ -1,6 +1,29 @@
 export type UUID = string;
 export type ISODate = string;
 
+/**
+ * Top-level content pillar. EVO TV spans three editorial verticals; every
+ * stream / VOD / clip / channel rolls up under one of these so Discover,
+ * Home rails, and user pillar prefs can filter coherently.
+ *
+ * - `esports` — gaming streams, tournaments, match VODs, clips
+ * - `anime` — anime reaction streams, watch-alongs, otaku podcasts, cosplay
+ * - `lifestyle` — lifestyle podcasts, talk shows, news, creator-led shows
+ */
+export type ContentPillar = "esports" | "anime" | "lifestyle";
+
+export const CONTENT_PILLARS: ReadonlyArray<ContentPillar> = [
+  "esports",
+  "anime",
+  "lifestyle",
+];
+
+export const PILLAR_LABELS: Record<ContentPillar, string> = {
+  esports: "Esports",
+  anime: "Anime",
+  lifestyle: "Lifestyle",
+};
+
 export type Role =
   | "guest"
   | "user"
@@ -149,6 +172,12 @@ export interface Stream {
   language: string;
   tags: string[];
   isPremium: boolean;
+  /**
+   * Top-level pillar. Optional during the Phase 9a migration — defaults to
+   * `esports` for rows that pre-date the column. Once the backend backfills
+   * every row, this should be required.
+   */
+  pillar?: ContentPillar;
   /** Only present on admin endpoints. Public list endpoints filter out deleted rows. */
   deletedAt?: ISODate | null;
 }
@@ -173,6 +202,7 @@ export interface Vod {
   viewCount: number;
   likeCount: number;
   isPremium: boolean;
+  pillar?: ContentPillar;
 }
 
 export interface Clip {
@@ -189,6 +219,7 @@ export interface Clip {
   likeCount: number;
   createdAt: ISODate;
   gameId: UUID;
+  pillar?: ContentPillar;
 }
 
 export interface ChatMessage {

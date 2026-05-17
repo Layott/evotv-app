@@ -159,13 +159,23 @@ export default function MultiStreamScreen() {
   React.useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    listLiveStreams().then((s) => {
-      if (cancelled) return;
-      setStreams(s);
-      setLoading(false);
-    });
+
+    const refresh = () =>
+      listLiveStreams().then((s) => {
+        if (cancelled) return;
+        setStreams(s);
+        setLoading(false);
+      });
+    void refresh();
+
+    // Refresh every 60s so the grid reflects newly-live channels + drops
+    // anything that's ended without forcing a screen re-mount. The user
+    // may be parked here picking tiles for a while.
+    const timer = setInterval(refresh, 60_000);
+
     return () => {
       cancelled = true;
+      clearInterval(timer);
     };
   }, []);
 

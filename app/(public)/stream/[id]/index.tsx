@@ -57,6 +57,12 @@ export default function StreamScreen() {
     queryKey: ["stream", streamId],
     queryFn: () => getStreamById(streamId),
     enabled: streamId.length > 0,
+    // viewerCount is computed read-time on the backend from watch_events
+    // heartbeats over the last 90s. The detail page must refetch on a
+    // cadence or the count is frozen at first-mount. 30s matches what
+    // viewers expect ("see the number tick up while watching") without
+    // hammering the API.
+    refetchInterval: (query) => (query.state.data?.isLive ? 30_000 : false),
   });
 
   const channelHandle = React.useMemo(() => {

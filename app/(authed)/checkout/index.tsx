@@ -27,10 +27,11 @@ import {
 import { syncRemove } from "@/lib/storage/persist";
 import { getProductById } from "@/lib/api/products";
 import { createOrder } from "@/lib/api/orders";
+import { initPlanCheckout } from "@/lib/api/payments";
 import { ApiError } from "@/lib/api/_client";
 import * as WebBrowser from "expo-web-browser";
 import { formatNgn } from "@/components/profile/ngn";
-import type { Order, OrderItem, Product } from "@/lib/types";
+import type { Product } from "@/lib/types";
 
 const NG_STATES = [
   "Abia",
@@ -90,10 +91,6 @@ interface ShippingFields {
   city: string;
   state: string;
   country: string;
-}
-
-function newId() {
-  return `order_${Math.random().toString(36).slice(2, 10)}_${Date.now().toString(36)}`;
 }
 
 const PHONE_REGEX = /^\+234[0-9\s-]{7,}$/;
@@ -190,48 +187,41 @@ export default function CheckoutScreen() {
     }
     setProcessing(true);
 
-    // Subscription path still uses the legacy local-shaped flow — the real
-    // backend route for premium is /api/payments/init (different schema).
-    // Treat the subscription branch as a Phase-2 follow-up; for now keep
-    // the optimistic local record so /upgrade UX doesn't regress.
+    // Subscription path → POST /api/payments/init. Backend records the
+    // plan upgrade attempt + initialises Paystack/mock. Returns the
+    // hosted-page redirect URL; opening it confirms the upgrade and
+    // bumps the user's role to `premium` once the provider callback
+    // lands.
     if (isSubscription) {
-      const id = newId();
-      const order: Order = {
-        id,
-        userId: user?.id ?? "user_current",
-        status: "paid",
-        items: [
-          {
-            productId: "sub_premium",
-            productName: "Premium Subscription — Monthly",
-            variantId: null,
-            variantLabel: "Monthly",
-            qty: 1,
-            unitPriceNgn: 4_500,
-            thumbnailUrl: "/premium-sub.jpg",
-          },
-        ],
-        subtotalNgn: subtotal,
-        shippingNgn: shipping,
-        totalNgn: total,
-        shipping: {
-          fullName: fields.fullName || user?.displayName || "Customer",
-          phone: fields.phone,
-          address1: fields.address1,
-          address2: fields.address2,
-          city: fields.city,
-          state: fields.state,
-          country: fields.country || "Nigeria",
-        },
-        paymentProvider: "paystack",
-        paymentRef: `PS_${id.slice(-8).toUpperCase()}`,
-        createdAt: new Date().toISOString(),
-        trackingNumber: null,
-      };
-      pushLocalOrder(order);
-      setProcessing(false);
-      toast.success("Premium activated");
-      router.replace(`/(authed)/order/${id}`);
+      try {
+        const res = await initPlanCheckout({ plan: "premium" });
+        if (res.redirectUrl) {
+          try {
+            await WebBrowser.openBrowserAsync(res.redirectUrl);
+          } catch {
+            /* user dismissed — payment stays pending; they can retry */
+          }
+        }
+        setProcessing(false);
+        toast.success("Premium upgrade started");
+        router.replace("/(public)/home");
+      } catch (err) {
+        setProcessing(false);
+        if (err instanceof ApiError) {
+          const body = err.body as { error?: string } | null;
+          if (err.status === 401) {
+            toast.error("Sign in again to upgrade");
+          } else if (err.status === 409) {
+            toast.error("You already have an active subscription");
+          } else if (err.status === 422) {
+            toast.error(body?.error ?? "Invalid plan");
+          } else {
+            toast.error("Upgrade failed — please try again");
+          }
+          return;
+        }
+        toast.error("Network error — please try again");
+      }
       return;
     }
 

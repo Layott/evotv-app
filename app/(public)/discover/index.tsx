@@ -132,6 +132,7 @@ export default function DiscoverScreen() {
     queryFn: () =>
       listLiveStreams(gameFilter ? { gameId: gameFilter } : undefined),
     enabled: debounced.length === 0,
+    refetchInterval: debounced.length === 0 ? 60_000 : false,
   });
   const vodsQ = useQuery({
     queryKey: ["vods", "all", gameFilter],

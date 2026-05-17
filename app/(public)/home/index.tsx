@@ -25,8 +25,20 @@ export default function HomeScreen() {
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const featured = useQuery({ queryKey: ["home", "featured"], queryFn: () => listFeaturedStreams() });
-  const live = useQuery({ queryKey: ["home", "live"], queryFn: () => listLiveStreams() });
+  // Live rails refetch every 60s so viewer counts + live-status flips
+  // surface without a manual pull-to-refresh. 60s is conservative — the
+  // backend viewer-count window is 90s, so users see motion before rows
+  // visually "die".
+  const featured = useQuery({
+    queryKey: ["home", "featured"],
+    queryFn: () => listFeaturedStreams(),
+    refetchInterval: 60_000,
+  });
+  const live = useQuery({
+    queryKey: ["home", "live"],
+    queryFn: () => listLiveStreams(),
+    refetchInterval: 60_000,
+  });
   const events = useQuery({ queryKey: ["home", "events"], queryFn: () => listEvents({ status: "scheduled" }) });
   const clips = useQuery({ queryKey: ["home", "clips"], queryFn: () => listTrendingClips() });
   const vods = useQuery({ queryKey: ["home", "vods"], queryFn: () => listVods({ limit: 12 }) });

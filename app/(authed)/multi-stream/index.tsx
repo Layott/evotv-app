@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { Image } from "expo-image";
 import { Stack } from "expo-router";
 import { toast } from "sonner-native";
 import {
@@ -17,6 +16,7 @@ import { listLiveStreams } from "@/lib/api/streams";
 import type { Stream } from "@/lib/types";
 import { HlsPlayer } from "@/components/stream/hls-player";
 import { Button } from "@/components/ui/button";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -56,10 +56,12 @@ function SelectableCard({
         style={{ aspectRatio: 16 / 9, backgroundColor: "#171717" }}
         className="overflow-hidden"
       >
-        <Image
+        <ImageWithFallback
           source={stream.thumbnailUrl}
           style={{ width: "100%", height: "100%" }}
           contentFit="cover"
+          fallbackLabel={stream.streamerName}
+          tintSeed={stream.id}
         />
         <View className="absolute left-2 top-2 flex-row items-center gap-1 rounded bg-red-600/90 px-1.5 py-0.5">
           <View

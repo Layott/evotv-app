@@ -66,6 +66,8 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
   toggleFollow: (targetType: FollowTarget, targetId: string) => void;
   isFollowing: (targetType: FollowTarget, targetId: string) => boolean;
+  /** All current follow keys as `{type, id}` pairs (read-only snapshot). */
+  followsList: { type: FollowTarget; id: string }[];
   updateProfile: (patch: Partial<Profile>) => void;
   onboardingComplete: boolean;
   completeOnboarding: () => void;
@@ -260,6 +262,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [follows],
   );
 
+  const followsList = React.useMemo<{ type: FollowTarget; id: string }[]>(
+    () =>
+      Array.from(follows).flatMap((key) => {
+        const [type, id] = key.split(":");
+        if (!type || !id) return [];
+        if (type !== "team" && type !== "player" && type !== "streamer")
+          return [];
+        return [{ type: type as FollowTarget, id }];
+      }),
+    [follows],
+  );
+
   const updateProfile = React.useCallback((patch: Partial<Profile>) => {
     setUser((prev) => (prev ? { ...prev, ...patch } : prev));
   }, []);
@@ -313,6 +327,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       signOut,
       toggleFollow,
       isFollowing,
+      followsList,
       updateProfile,
       onboardingComplete,
       completeOnboarding,
@@ -335,6 +350,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       signOut,
       toggleFollow,
       isFollowing,
+      followsList,
       updateProfile,
       onboardingComplete,
       completeOnboarding,

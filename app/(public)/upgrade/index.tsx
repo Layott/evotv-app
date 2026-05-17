@@ -2,7 +2,6 @@ import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner-native";
 import {
   ArrowLeft,
   Check,
@@ -229,7 +228,7 @@ export default function UpgradeScreen() {
   );
 
   const onUpgrade = () => {
-    toast.success("Opening Paystack checkout (mock)");
+    router.push("/(authed)/checkout?plan=premium" as never);
   };
 
   return (

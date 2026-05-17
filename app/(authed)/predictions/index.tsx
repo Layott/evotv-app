@@ -167,7 +167,7 @@ export default function PredictionsScreen() {
                 Predictions
               </Text>
               <Text className="mt-1 text-sm text-neutral-400">
-                Stake EVO Coins on match winners. Picks lock at game start.
+                Stake EVO Coins on outcomes across esports, anime, and lifestyle events. Picks lock when the event starts.
               </Text>
             </View>
             <Button

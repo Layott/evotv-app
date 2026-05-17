@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
-import { Heart, Radio, ShieldCheck, Users } from "lucide-react-native";
+import { ArrowLeft, Compass, Heart, Radio, ShieldCheck, Users } from "lucide-react-native";
 
 import {
   getChannelPage,
@@ -13,6 +13,12 @@ import {
 } from "@/lib/api/channels";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +26,7 @@ export default function ChannelPublicPage() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useMockAuth();
   const qc = useQueryClient();
+  const router = useRouter();
 
   const channelQ = useQuery({
     queryKey: ["channel", slug],
@@ -73,10 +80,30 @@ export default function ChannelPublicPage() {
     return (
       <>
         <Stack.Screen options={{ title: "Channel" }} />
-        <View className="flex-1 items-center justify-center bg-background p-5">
-          <Text className="text-sm text-rose-300">
-            {(channelQ.error as Error)?.message ?? "Channel not found"}
-          </Text>
+        <View className="flex-1 items-center justify-center bg-background px-6">
+          <Empty className="border-0">
+            <EmptyHeader>
+              <Radio size={28} color="#A3A3A3" />
+              <EmptyTitle>Channel not found</EmptyTitle>
+              <EmptyDescription>
+                @{slug} doesn't exist or has been removed. The handle may have changed.
+              </EmptyDescription>
+            </EmptyHeader>
+            <View className="flex-row items-center gap-2">
+              <Button variant="outline" onPress={() => router.back()}>
+                <ArrowLeft color="#FAFAFA" size={16} />
+                <Text className="text-foreground text-sm font-medium">Go back</Text>
+              </Button>
+              <Button
+                className="bg-brand"
+                onPress={() => router.push("/discover" as never)}
+                textClassName="text-black font-semibold"
+              >
+                <Compass color="#000" size={16} />
+                Browse channels
+              </Button>
+            </View>
+          </Empty>
         </View>
       </>
     );

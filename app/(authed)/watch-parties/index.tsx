@@ -264,7 +264,7 @@ export default function WatchPartiesScreen() {
             Watch Parties
           </Text>
           <Text className="mt-1 text-sm text-neutral-400">
-            Co-watch live esports with friends. Side-by-side player + chat.
+            Co-watch live streams, originals, and shows with your friends. Side-by-side player + chat.
           </Text>
 
           <Button

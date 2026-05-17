@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { Image } from "expo-image";
 
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -154,10 +153,12 @@ export default function ShopProductScreen() {
                 )}
                 style={{ width: 80, aspectRatio: 1 }}
               >
-                <Image
+                <ImageWithFallback
                   source={img}
                   style={{ width: "100%", height: "100%" }}
                   contentFit="cover"
+                  fallbackLabel={product.name}
+                  tintSeed={`${product.id}-${i}`}
                 />
               </Pressable>
             ))}

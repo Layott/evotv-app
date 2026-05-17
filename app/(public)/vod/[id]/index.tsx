@@ -2,7 +2,7 @@ import * as React from "react";
 import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 import {
   ArrowLeft,
@@ -17,6 +17,11 @@ import {
 } from "lucide-react-native";
 
 import { getVodById, listRelatedVods } from "@/lib/api/vods";
+import {
+  addBookmark as addBookmarkApi,
+  getBookmark,
+  removeBookmark as removeBookmarkApi,
+} from "@/lib/api/watch-later";
 import type { Vod } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -169,11 +174,41 @@ export default function VodScreen() {
   const [disliked, setDisliked] = React.useState(false);
   const [likes, setLikes] = React.useState(0);
   const [dislikes, setDislikes] = React.useState(0);
-  const [saved, setSaved] = React.useState(false);
 
   React.useEffect(() => {
     if (vod) setLikes(vod.likeCount);
   }, [vod]);
+
+  const { isAuthenticated } = useMockAuth();
+  const qc = useQueryClient();
+  const bookmarkQ = useQuery({
+    queryKey: ["vod-bookmark", vodId],
+    queryFn: () => getBookmark(vodId),
+    enabled: isAuthenticated && vodId.length > 0,
+  });
+  const saved = bookmarkQ.data?.bookmarked ?? false;
+
+  const bookmarkMut = useMutation({
+    mutationFn: () =>
+      saved ? removeBookmarkApi(vodId) : addBookmarkApi(vodId),
+    onMutate: () => {
+      qc.setQueryData<{ bookmarked: boolean }>(["vod-bookmark", vodId], {
+        bookmarked: !saved,
+      });
+    },
+    onSuccess: (res) => {
+      qc.setQueryData(["vod-bookmark", vodId], res);
+      qc.invalidateQueries({ queryKey: ["library", "watch-later"] });
+      toast.success(res.bookmarked ? "Saved to library" : "Removed from library");
+    },
+    onError: (_err, _vars) => {
+      // Roll back optimistic flip.
+      qc.setQueryData<{ bookmarked: boolean }>(["vod-bookmark", vodId], {
+        bookmarked: saved,
+      });
+      toast.error("Couldn't update bookmark");
+    },
+  });
 
   if (isLoading) {
     return (
@@ -252,10 +287,11 @@ export default function VodScreen() {
     }
   };
   const onSave = () => {
-    setSaved((v) => {
-      toast.success(v ? "Removed from library" : "Saved to library");
-      return !v;
-    });
+    if (!isAuthenticated) {
+      toast.error("Sign in to save VODs");
+      return;
+    }
+    bookmarkMut.mutate();
   };
 
   return (

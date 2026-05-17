@@ -16,6 +16,10 @@ import {
   listMyVodProgress,
   type VodProgressEntry,
 } from "@/lib/api/library";
+import {
+  listWatchLater,
+  type WatchLaterEntry,
+} from "@/lib/api/watch-later";
 import type { Vod } from "@/lib/types";
 
 export default function LibraryScreen() {
@@ -41,6 +45,16 @@ export default function LibraryScreen() {
     [historyQ.data],
   );
 
+  const watchLaterQ = useQuery({
+    queryKey: ["library", "watch-later"],
+    enabled: isAuthenticated,
+    queryFn: () => listWatchLater(50),
+  });
+  const watchLater = React.useMemo<Vod[]>(
+    () => (watchLaterQ.data ?? []).map(watchLaterEntryToVod),
+    [watchLaterQ.data],
+  );
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -56,7 +70,14 @@ export default function LibraryScreen() {
           <LibraryTabs
             following={followingQ.data ?? []}
             history={history}
-            defaultValue={history.length > 0 ? "history" : "downloads"}
+            watchLater={watchLater}
+            defaultValue={
+              watchLater.length > 0
+                ? "watch-later"
+                : history.length > 0
+                  ? "history"
+                  : "downloads"
+            }
           />
         </View>
       </View>
@@ -82,6 +103,29 @@ function progressEntryToVod(row: VodProgressEntry): Vod {
     mp4Url: "",
     thumbnailUrl: row.thumbnailUrl,
     publishedAt: row.updatedAt,
+    chapters: [],
+    viewCount: 0,
+    likeCount: 0,
+    isPremium: row.isPremium,
+    pillar: row.pillar ?? undefined,
+  };
+}
+
+/** Same lossy adapter as `progressEntryToVod` but using `createdAt` as the
+ *  fake `publishedAt`. VodRow only renders id/title/thumbnail/duration so
+ *  the other fields are stubbed. */
+function watchLaterEntryToVod(row: WatchLaterEntry): Vod {
+  return {
+    id: row.vodId,
+    streamId: null,
+    title: row.title,
+    description: "",
+    gameId: row.gameId,
+    durationSec: row.durationSec,
+    hlsUrl: "",
+    mp4Url: "",
+    thumbnailUrl: row.thumbnailUrl,
+    publishedAt: row.createdAt,
     chapters: [],
     viewCount: 0,
     likeCount: 0,

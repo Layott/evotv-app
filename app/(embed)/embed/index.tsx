@@ -11,6 +11,7 @@ import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { Check, Code2, Copy, Lock, Sparkles } from "lucide-react-native";
 import { toast } from "sonner-native";
+import * as Clipboard from "expo-clipboard";
 
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";
@@ -256,23 +257,13 @@ function EmbedGenerator() {
   }
 
   function copyCode() {
-    // RN has no built-in clipboard; web target supports navigator.clipboard.
-    const w = (globalThis as { navigator?: Navigator }).navigator;
-    if (Platform.OS === "web" && w?.clipboard?.writeText) {
-      w.clipboard
-        .writeText(snippet)
-        .then(() => {
-          toast.success("Embed code copied");
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        })
-        .catch(() => toast.error("Could not copy"));
-      return;
-    }
-    // Native: surface the snippet so users can long-press to copy.
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    toast.success("Embed code ready — long press to copy");
+    void Clipboard.setStringAsync(snippet)
+      .then(() => {
+        toast.success("Embed code copied");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => toast.error("Could not copy"));
   }
 
   function applyManualId() {

@@ -3,6 +3,7 @@ import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Stack } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
+import * as Clipboard from "expo-clipboard";
 import { Copy, KeyRound, LoaderCircle, Plus, Trash2 } from "lucide-react-native";
 
 import {
@@ -149,10 +150,10 @@ export default function ApiKeysScreen() {
     revokeMut.mutate(id);
   };
 
-  const copyText = (_text: string, label = "Copied") => {
-    // expo-clipboard is not installed in this app; surface a toast confirmation
-    // so the flow still feels complete in the mock UI.
-    toast.success(label);
+  const copyText = (text: string, label = "Copied") => {
+    void Clipboard.setStringAsync(text)
+      .then(() => toast.success(label))
+      .catch(() => toast.error("Couldn't copy"));
   };
 
   if (!isPremium) {

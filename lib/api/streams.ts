@@ -1,5 +1,5 @@
 import type { Stream } from "@/lib/types";
-import { api } from "./_client";
+import { api, ApiError } from "./_client";
 
 export interface ListStreamsOpts {
   gameId?: string;
@@ -18,14 +18,26 @@ export function listFeaturedStreams(): Promise<Stream[]> {
   return api<Stream[]>("/api/streams", { query: { featured: "1" } });
 }
 
-/** GET /api/streams/[id] */
-export function getStreamById(id: string): Promise<Stream | null> {
-  return api<Stream | null>(`/api/streams/${id}`);
+/** GET /api/streams/[id]. Returns null on 404 so callers (stream detail,
+ *  embed player, multi-stream resolves) can render an empty state without
+ *  catching ApiError themselves. */
+export async function getStreamById(id: string): Promise<Stream | null> {
+  try {
+    return await api<Stream>(`/api/streams/${id}`);
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) return null;
+    throw err;
+  }
 }
 
 /** Convenience: the main 24/7 channel stream. */
-export function getMainChannel(): Promise<Stream | null> {
-  return api<Stream | null>("/api/streams/channel_main");
+export async function getMainChannel(): Promise<Stream | null> {
+  try {
+    return await api<Stream>("/api/streams/channel_main");
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) return null;
+    throw err;
+  }
 }
 
 /**

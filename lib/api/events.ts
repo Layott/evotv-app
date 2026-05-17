@@ -1,5 +1,5 @@
 import type { EsportsEvent, Match } from "@/lib/types";
-import { api } from "./_client";
+import { api, ApiError } from "./_client";
 
 /**
  * Signatures mirror lib/mock/events.ts so call sites flip with one import swap.
@@ -17,12 +17,26 @@ export function listEvents(opts: ListEventsOpts = {}): Promise<EsportsEvent[]> {
   });
 }
 
-export function getEventById(id: string): Promise<EsportsEvent | null> {
-  return api<EsportsEvent | null>(`/api/events/${id}`);
+export async function getEventById(
+  id: string,
+): Promise<EsportsEvent | null> {
+  try {
+    return await api<EsportsEvent>(`/api/events/${id}`);
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) return null;
+    throw err;
+  }
 }
 
-export function getEventBySlug(slug: string): Promise<EsportsEvent | null> {
-  return api<EsportsEvent | null>(`/api/events`, { query: { slug } });
+export async function getEventBySlug(
+  slug: string,
+): Promise<EsportsEvent | null> {
+  try {
+    return await api<EsportsEvent>(`/api/events`, { query: { slug } });
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) return null;
+    throw err;
+  }
 }
 
 export function listMatchesForEvent(eventId: string): Promise<Match[]> {

@@ -1,5 +1,5 @@
 import type { Order } from "@/lib/types";
-import { api } from "./_client";
+import { api, ApiError } from "./_client";
 
 export interface CreateOrderItem {
   productId: string;
@@ -35,9 +35,17 @@ export function createOrder(input: CreateOrderInput): Promise<CreateOrderResult>
   });
 }
 
-/** GET /api/orders/[id] — auth required, owner or admin. */
-export function getOrderById(id: string): Promise<Order | null> {
-  return api<Order | null>(`/api/orders/${encodeURIComponent(id)}`);
+/** GET /api/orders/[id] — auth required, owner or admin. Returns null on
+ *  404 so the caller can render a "not found" state without a try/catch. */
+export async function getOrderById(id: string): Promise<Order | null> {
+  try {
+    return await api<Order>(`/api/orders/${encodeURIComponent(id)}`);
+  } catch (err) {
+    if (err instanceof ApiError && (err.status === 404 || err.status === 401)) {
+      return null;
+    }
+    throw err;
+  }
 }
 
 /**

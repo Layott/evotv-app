@@ -58,12 +58,13 @@ export default function ApiAccessScreen() {
         <View className="px-4 gap-4">
           <View className="rounded-2xl border border-border bg-card p-5 gap-4">
             <Text className="text-xl font-bold text-foreground">
-              Build on Africa's biggest esports dataset.
+              Build on Africa's biggest streaming dataset.
             </Text>
             <Text className="text-sm text-muted-foreground">
               The same data feeding the EVO TV app, exposed as a clean REST + SSE
-              API. Track 50+ teams across Free Fire, CoD Mobile, PUBG Mobile, and
-              EA FC Mobile.
+              API. Streams, VODs, clips, shows, and esports events across Free
+              Fire, CoD Mobile, PUBG Mobile, EA FC Mobile, plus anime and
+              lifestyle pillars.
             </Text>
             <View className="flex-row flex-wrap gap-2">
               {isPremium ? (

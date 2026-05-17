@@ -15,6 +15,11 @@ export interface HlsPlayerProps {
   className?: string;
   onLoad?: () => void;
   onError?: (error: unknown) => void;
+  /** Fires every `progressIntervalMs` while playing with the player's current
+   *  position in seconds. Used to persist VOD watch progress. */
+  onProgress?: (positionSec: number) => void;
+  /** Defaults to 15000ms. Cap on how often onProgress fires. */
+  progressIntervalMs?: number;
 }
 
 export function HlsPlayer({
@@ -26,6 +31,8 @@ export function HlsPlayer({
   className,
   onLoad,
   onError,
+  onProgress,
+  progressIntervalMs = 15_000,
 }: HlsPlayerProps) {
   const [hasStarted, setHasStarted] = React.useState(autoPlay);
   const [errored, setErrored] = React.useState(false);
@@ -56,6 +63,23 @@ export function HlsPlayer({
   React.useEffect(() => {
     player.muted = muted;
   }, [player, muted]);
+
+  // Progress beacon — fires `onProgress(positionSec)` on a fixed cadence
+  // while the player is mounted. We intentionally poll instead of listening
+  // to a high-frequency event so the parent can write to a remote endpoint
+  // without throttling.
+  React.useEffect(() => {
+    if (!onProgress) return;
+    const id = setInterval(() => {
+      const t = player.currentTime;
+      if (typeof t === "number" && Number.isFinite(t) && t > 0) {
+        onProgress(Math.floor(t));
+      }
+    }, progressIntervalMs);
+    return () => {
+      clearInterval(id);
+    };
+  }, [player, onProgress, progressIntervalMs]);
 
   const handleTap = React.useCallback(() => {
     if (!hasStarted) {

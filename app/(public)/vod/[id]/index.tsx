@@ -17,6 +17,7 @@ import {
 } from "lucide-react-native";
 
 import { getVodById, listRelatedVods } from "@/lib/api/vods";
+import { upsertProgress } from "@/lib/api/vod-progress";
 import {
   addBookmark as addBookmarkApi,
   getBookmark,
@@ -210,6 +211,22 @@ export default function VodScreen() {
     },
   });
 
+  // Persist player position every 15s (driven by HLSPlayer's onProgress).
+  // Silent on failure — losing one progress update is no big deal. Bumps
+  // both the watch-history (library tab) + future continue-watching seek.
+  // Hooks declared here (above the conditional early returns) so React's
+  // rules-of-hooks stay satisfied.
+  const lastWrittenRef = React.useRef<number>(-1);
+  const onPlayerProgress = React.useCallback(
+    (positionSec: number) => {
+      if (!isAuthenticated || !vodId) return;
+      if (Math.abs(positionSec - lastWrittenRef.current) < 10) return;
+      lastWrittenRef.current = positionSec;
+      void upsertProgress(vodId, positionSec).catch(() => {});
+    },
+    [isAuthenticated, vodId],
+  );
+
   if (isLoading) {
     return (
       <>
@@ -308,7 +325,11 @@ export default function VodScreen() {
               onUpgrade={() => router.push("/upgrade")}
             />
           ) : (
-            <HLSPlayer src={vod.hlsUrl} poster={vod.thumbnailUrl} />
+            <HLSPlayer
+              src={vod.hlsUrl}
+              poster={vod.thumbnailUrl}
+              onProgress={onPlayerProgress}
+            />
           )}
           <Pressable
             onPress={() => router.back()}

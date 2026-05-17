@@ -15,6 +15,11 @@ export interface HlsPlayerProps {
   className?: string;
   onLoad?: () => void;
   onError?: (error: unknown) => void;
+  /** Fires every `progressIntervalMs` while playing with the player's current
+   *  position in seconds. Used to persist VOD watch progress. */
+  onProgress?: (positionSec: number) => void;
+  /** Defaults to 15000ms. Cap on how often onProgress fires. */
+  progressIntervalMs?: number;
 }
 
 export function HlsPlayer({
@@ -26,6 +31,8 @@ export function HlsPlayer({
   className,
   onLoad,
   onError,
+  onProgress,
+  progressIntervalMs = 15_000,
 }: HlsPlayerProps) {
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const [hasStarted, setHasStarted] = React.useState(autoPlay);
@@ -92,6 +99,24 @@ export function HlsPlayer({
     const video = videoRef.current;
     if (video) video.muted = muted;
   }, [muted]);
+
+  // Progress beacon — polls video.currentTime on a fixed cadence. We avoid
+  // 'timeupdate' here because it fires multiple times per second and would
+  // hammer the network if the parent persists every emit.
+  React.useEffect(() => {
+    if (!onProgress) return;
+    const id = setInterval(() => {
+      const video = videoRef.current;
+      if (!video || video.paused) return;
+      const t = video.currentTime;
+      if (typeof t === "number" && Number.isFinite(t) && t > 0) {
+        onProgress(Math.floor(t));
+      }
+    }, progressIntervalMs);
+    return () => {
+      clearInterval(id);
+    };
+  }, [onProgress, progressIntervalMs]);
 
   const handleTap = React.useCallback(() => {
     const video = videoRef.current;

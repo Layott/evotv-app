@@ -44,25 +44,33 @@ Match the Privacy Policy:
 ### Drafts to write
 
 **Short description (80 chars):**
-> African esports streams, chat, predictions, fantasy — all in one app.
+> African esports, anime, and lifestyle — streams, shows, predictions, chat.
 
 **Full description draft (~1500 chars):**
-> EVO TV is the home of African esports. Watch live tournaments, follow your favorite teams and creators, drop tips, predict match outcomes, and build your fantasy roster — all in one app.
+> EVO TV is Africa's home for esports, anime reactions, and lifestyle streaming. Watch live tournaments, anime debate shows, podcasts, and original series — follow your favorite creators, drop tips, predict outcomes, and build your fantasy roster — all in one app.
 >
 > WATCH LIVE
-> • Free Fire, PUBG Mobile, EA FC, CoD Mobile, Tekken, and more
+> • Esports: Free Fire, PUBG Mobile, EA FC, CoD Mobile, Tekken, and more
+> • Anime: reaction streams, debate shows, fan content
+> • Lifestyle: podcasts, talk shows, after-hours
 > • Top African tournaments + 24/7 EVO TV channel
 > • Multi-quality HLS playback
+>
+> EVO ORIGINALS
+> • Documentaries on African esports
+> • Anime debate podcasts (Otaku Court, Sukuna Armor Diaries)
+> • Lifestyle shows (Lagos After Dark, Continent Tech)
+> • Skip-intro, auto-advance, continue-watching across episodes
 >
 > CONNECT
 > • Real-time chat with viewers worldwide
 > • Watch parties — sync up with friends
-> • Follow streamers + channels
+> • Follow streamers, channels, shows, and teams
 > • Tip your favorites with EVO coins
 >
 > PLAY ALONG
-> • Predict match winners + earn payouts
-> • Pickem brackets for the biggest events
+> • Predict outcomes on matches AND non-esports events
+> • Pickem brackets for the biggest tournaments
 > • Build your fantasy team
 > • Climb the leaderboards
 >
@@ -72,7 +80,7 @@ Match the Privacy Policy:
 > • Stream key rotation + chat moderation
 > • Weekly payouts via Paystack
 >
-> EVO TV is built in Lagos for African gamers, with global reach.
+> EVO TV is built in Lagos for African audiences, with global reach.
 
 ---
 
@@ -106,7 +114,7 @@ Already on `evotv-app.vercel.app`. Pre-launch:
 - [✗] Marketing landing page — currently the home screen serves; consider a marketing-specific route
 - [✗] OG / Twitter card metadata
 - [✓] Privacy + Terms screens (in-app)
-- [✗] Privacy + Terms publicly accessible at predictable URLs (e.g. `/privacy`, `/terms`) — needs route shims on the web build that render the same legal docs
+- [✓] Privacy + Terms publicly accessible at `/privacy` + `/terms` (public route shims serving the same LegalDoc body — 2026-05-17)
 
 ---
 

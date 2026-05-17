@@ -32,6 +32,12 @@ export default function ChannelPublicPage() {
     queryKey: ["channel", slug],
     queryFn: () => getChannelPage(slug!),
     enabled: !!slug,
+    // liveStream.viewerCount on the channel page comes from the same
+    // read-time count as /stream/[id]. Refresh on a 60s cadence so a
+    // newly-live channel + viewer-count ticks reflect without a manual
+    // reload. Falls back to false when liveStream is null.
+    refetchInterval: (query) =>
+      query.state.data?.liveStream ? 60_000 : false,
   });
 
   const followMut = useMutation({

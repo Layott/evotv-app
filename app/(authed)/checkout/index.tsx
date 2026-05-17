@@ -26,6 +26,9 @@ import {
 } from "@/components/shop/cart-store";
 import { syncRemove } from "@/lib/storage/persist";
 import { getProductById } from "@/lib/api/products";
+import { createOrder } from "@/lib/api/orders";
+import { ApiError } from "@/lib/api/_client";
+import * as WebBrowser from "expo-web-browser";
 import { formatNgn } from "@/components/profile/ngn";
 import type { Order, OrderItem, Product } from "@/lib/types";
 
@@ -186,11 +189,18 @@ export default function CheckoutScreen() {
       return;
     }
     setProcessing(true);
-    await new Promise((r) => setTimeout(r, 1_200));
 
-    const id = newId();
-    const items: OrderItem[] = isSubscription
-      ? [
+    // Subscription path still uses the legacy local-shaped flow — the real
+    // backend route for premium is /api/payments/init (different schema).
+    // Treat the subscription branch as a Phase-2 follow-up; for now keep
+    // the optimistic local record so /upgrade UX doesn't regress.
+    if (isSubscription) {
+      const id = newId();
+      const order: Order = {
+        id,
+        userId: user?.id ?? "user_current",
+        status: "paid",
+        items: [
           {
             productId: "sub_premium",
             productName: "Premium Subscription — Monthly",
@@ -200,49 +210,88 @@ export default function CheckoutScreen() {
             unitPriceNgn: 4_500,
             thumbnailUrl: "/premium-sub.jpg",
           },
-        ]
-      : resolved.map<OrderItem>((r) => ({
-          productId: r.product.id,
-          productName: r.product.name,
-          variantId: r.variantId,
-          variantLabel: r.variantLabel,
-          qty: r.qty,
-          unitPriceNgn: r.unit,
-          thumbnailUrl: r.product.images[0] ?? "/placeholder.svg",
-        }));
-
-    const order: Order = {
-      id,
-      userId: user?.id ?? "user_current",
-      status: "paid",
-      items,
-      subtotalNgn: subtotal,
-      shippingNgn: shipping,
-      totalNgn: total,
-      shipping: {
-        fullName: fields.fullName || user?.displayName || "Customer",
-        phone: fields.phone,
-        address1: fields.address1,
-        address2: fields.address2,
-        city: fields.city,
-        state: fields.state,
-        country: fields.country || "Nigeria",
-      },
-      paymentProvider: "paystack",
-      paymentRef: `PS_${id.slice(-8).toUpperCase()}`,
-      createdAt: new Date().toISOString(),
-      trackingNumber: null,
-    };
-
-    pushLocalOrder(order);
-    if (!isSubscription) {
-      clearCart();
-      syncRemove(CART_KEY);
+        ],
+        subtotalNgn: subtotal,
+        shippingNgn: shipping,
+        totalNgn: total,
+        shipping: {
+          fullName: fields.fullName || user?.displayName || "Customer",
+          phone: fields.phone,
+          address1: fields.address1,
+          address2: fields.address2,
+          city: fields.city,
+          state: fields.state,
+          country: fields.country || "Nigeria",
+        },
+        paymentProvider: "paystack",
+        paymentRef: `PS_${id.slice(-8).toUpperCase()}`,
+        createdAt: new Date().toISOString(),
+        trackingNumber: null,
+      };
+      pushLocalOrder(order);
+      setProcessing(false);
+      toast.success("Premium activated");
+      router.replace(`/(authed)/order/${id}`);
+      return;
     }
 
-    setProcessing(false);
-    toast.success(isSubscription ? "Premium activated" : "Payment successful");
-    router.replace(`/(authed)/order/${id}`);
+    // Real /api/orders flow for product cart.
+    try {
+      const res = await createOrder({
+        items: resolved.map((r) => ({
+          productId: r.product.id,
+          variantId: r.variantId,
+          qty: r.qty,
+        })),
+        shipping: {
+          fullName: fields.fullName || user?.displayName || "Customer",
+          phone: fields.phone,
+          address1: fields.address1,
+          address2: fields.address2 || undefined,
+          city: fields.city,
+          state: fields.state,
+          country: fields.country || "Nigeria",
+        },
+      });
+
+      // Cart is consumed once the order row is created, regardless of
+      // payment outcome. If payment fails the user can pay from
+      // /(authed)/order/[id] later.
+      clearCart();
+      syncRemove(CART_KEY);
+      pushLocalOrder(res.order);
+
+      if (res.redirectUrl) {
+        // Mock provider: confirm-payment URL with `mock=1` — opening it
+        // auto-completes the order. Paystack: redirects to their hosted
+        // page. Both paths converge on /(authed)/order/[id] after.
+        try {
+          await WebBrowser.openBrowserAsync(res.redirectUrl);
+        } catch {
+          /* user dismissed the browser — order stays pending */
+        }
+      }
+
+      setProcessing(false);
+      toast.success("Order placed");
+      router.replace(`/(authed)/order/${res.order.id}`);
+    } catch (err) {
+      setProcessing(false);
+      if (err instanceof ApiError) {
+        const body = err.body as { error?: string; code?: string } | null;
+        if (err.status === 409 && body?.code === "out_of_stock") {
+          toast.error("One of your items just sold out");
+        } else if (err.status === 422) {
+          toast.error(body?.error ?? "Invalid order");
+        } else if (err.status === 401) {
+          toast.error("Sign in again to place the order");
+        } else {
+          toast.error("Order failed — please try again");
+        }
+        return;
+      }
+      toast.error("Network error — please try again");
+    }
   }
 
   if (loading) {

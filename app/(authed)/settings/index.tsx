@@ -45,7 +45,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
 import { SectionCard, SettingRow } from "@/components/settings/section-card";
-import { requestDataExport } from "@/lib/mock";
+import { exportOwnData } from "@/lib/api/profile";
 import { getMyPrefs, patchMyPrefs } from "@/lib/api/prefs";
 import { deleteOwnAccount } from "@/lib/api/profile";
 import type { UserPrefs } from "@/lib/types";
@@ -196,14 +196,15 @@ export default function SettingsScreen() {
     if (exporting) return;
     setExporting(true);
     try {
-      const { ticketId } = await requestDataExport(user?.id ?? "user_current");
-      toast.success(`Export queued. Ticket: ${ticketId}.`);
+      const { bytes } = await exportOwnData();
+      const kb = (bytes / 1024).toFixed(1);
+      toast.success(`Data export ready (${kb} KB)`);
     } catch {
-      toast.error("Could not queue export. Try again later.");
+      toast.error("Couldn't generate export. Try again later.");
     } finally {
       setExporting(false);
     }
-  }, [exporting, user]);
+  }, [exporting]);
 
   const handleSignOut = React.useCallback(() => {
     signOut();

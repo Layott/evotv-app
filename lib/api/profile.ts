@@ -167,3 +167,68 @@ export async function removeAvatar(): Promise<void> {
     throw new ApiError(res.status, null, `Avatar delete failed (${res.status})`);
   }
 }
+
+/**
+ * GET /api/users/me/export — GDPR data export.
+ *
+ * Fetches the JSON dump + delivers it cross-platform:
+ *  - web: Blob + anchor download, same pattern as ICS.
+ *  - native: writes to cache directory + opens the system share sheet so
+ *    the user can save to Files / mail it / send to Drive.
+ *
+ * Returns the filename + byte size so the UI can confirm.
+ */
+export async function exportOwnData(): Promise<{
+  filename: string;
+  bytes: number;
+}> {
+  const token = await getToken();
+  const res = await fetch(`${BASE_URL}/api/users/me/export`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => null);
+    throw new ApiError(res.status, body, `Export failed (${res.status})`);
+  }
+
+  const text = await res.text();
+  const bytes = new TextEncoder().encode(text).length;
+  const filename = parseFilename(res.headers.get("content-disposition"));
+
+  if (typeof window !== "undefined" && typeof Blob !== "undefined") {
+    const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    return { filename, bytes };
+  }
+
+  /* eslint-disable @typescript-eslint/no-require-imports */
+  const FileSystem = require(
+    "expo-file-system",
+  ) as typeof import("expo-file-system");
+  const Sharing = require("expo-sharing") as typeof import("expo-sharing");
+  /* eslint-enable @typescript-eslint/no-require-imports */
+  const uri = `${FileSystem.cacheDirectory ?? FileSystem.documentDirectory}${filename}`;
+  await FileSystem.writeAsStringAsync(uri, text, {
+    encoding: FileSystem.EncodingType.UTF8,
+  });
+  if (await Sharing.isAvailableAsync()) {
+    await Sharing.shareAsync(uri, {
+      mimeType: "application/json",
+      dialogTitle: "Save EVO TV data export",
+    });
+  }
+  return { filename, bytes };
+}
+
+function parseFilename(header: string | null): string {
+  if (!header) return `evotv-export-${Date.now()}.json`;
+  const m = /filename="([^"]+)"/.exec(header);
+  return m?.[1] ?? `evotv-export-${Date.now()}.json`;
+}

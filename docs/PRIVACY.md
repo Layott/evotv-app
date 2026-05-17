@@ -108,7 +108,7 @@ GDPR + NDPR (Nigeria Data Protection Regulation) apply.
 - Rate limits on auth endpoints (sign-in 10/min, sign-up 5/min).
 - No raw payment card / bank data ever touches our servers — handled by Paystack.
 
-Despite our efforts, no system is 100% secure. If you believe your account has been compromised, email security@evotv.app immediately.
+Despite our efforts, no system is 100% secure. If you believe your account has been compromised, email privacy@evotv.app immediately.
 
 ---
 

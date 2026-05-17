@@ -5,11 +5,11 @@ import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Sparkles, Trophy, Users } from "lucide-react-native";
 
+import { scoringLabel } from "@/lib/mock/fantasy";
 import {
   listLeagues,
-  scoringLabel,
-  type FantasyLeague,
-} from "@/lib/mock/fantasy";
+  type FantasyLeagueRow as FantasyLeague,
+} from "@/lib/api/fantasy";
 import { listGames } from "@/lib/api/games";
 import { eventBanner } from "@/lib/mock/_media";
 import { useMockAuth } from "@/components/providers";

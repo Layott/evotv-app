@@ -23,6 +23,8 @@ export interface HlsPlayerProps {
   /** Resume playback at this position (seconds) once the video is loaded.
    *  Pass `null` / undefined / 0 to start from the beginning. */
   startAtSec?: number | null;
+  /** Fires once when playback reaches the end of media. */
+  onEnded?: () => void;
 }
 
 export function HlsPlayer({
@@ -37,6 +39,7 @@ export function HlsPlayer({
   onProgress,
   progressIntervalMs = 15_000,
   startAtSec,
+  onEnded,
 }: HlsPlayerProps) {
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const [hasStarted, setHasStarted] = React.useState(autoPlay);
@@ -95,6 +98,14 @@ export function HlsPlayer({
     video.addEventListener("loadeddata", handleLoaded);
     video.addEventListener("error", handleError);
 
+    let endedFired = false;
+    const handleEnded = () => {
+      if (endedFired) return;
+      endedFired = true;
+      onEnded?.();
+    };
+    video.addEventListener("ended", handleEnded);
+
     if (autoPlay) {
       video.muted = muted;
       void video.play().catch(() => {
@@ -104,6 +115,7 @@ export function HlsPlayer({
 
     return () => {
       cancelled = true;
+      video.removeEventListener("ended", handleEnded);
       video.removeEventListener("loadeddata", handleLoaded);
       video.removeEventListener("error", handleError);
       if (hls) {
@@ -113,7 +125,7 @@ export function HlsPlayer({
       video.removeAttribute("src");
       video.load();
     };
-  }, [src, autoPlay, muted, onLoad, onError, startAtSec]);
+  }, [src, autoPlay, muted, onLoad, onError, startAtSec, onEnded]);
 
   React.useEffect(() => {
     const video = videoRef.current;

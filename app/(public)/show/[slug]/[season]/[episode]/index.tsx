@@ -97,6 +97,14 @@ export default function EpisodePlayerScreen() {
     [episode],
   );
 
+  // Mark complete when playback reaches end → episode falls off Continue
+  // Watching rail + landing page shows checkmark.
+  const onPlayerEnded = React.useCallback(() => {
+    if (!episode) return;
+    lastWrittenRef.current = episode.runtimeSec;
+    void setEpisodeProgress(episode.id, episode.runtimeSec, true).catch(() => {});
+  }, [episode]);
+
   const [skipDismissed, setSkipDismissed] = React.useState(false);
   const showSkipIntro =
     !!episode?.introStartSec &&
@@ -146,6 +154,7 @@ export default function EpisodePlayerScreen() {
             poster={episode.thumbnailUrl}
             onProgress={onPlayerProgress}
             startAtSec={startAtSec}
+            onEnded={onPlayerEnded}
           />
           <Pressable
             onPress={() => router.back()}

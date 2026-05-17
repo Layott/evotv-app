@@ -23,6 +23,9 @@ export interface HlsPlayerProps {
   /** Resume playback at this position (seconds) once the player is ready.
    *  Pass `null` / undefined / 0 to start from the beginning. */
   startAtSec?: number | null;
+  /** Fires once when playback reaches the end of media. Used to mark a
+   *  VOD/episode as completed in watch progress. */
+  onEnded?: () => void;
 }
 
 export function HlsPlayer({
@@ -37,6 +40,7 @@ export function HlsPlayer({
   onProgress,
   progressIntervalMs = 15_000,
   startAtSec,
+  onEnded,
 }: HlsPlayerProps) {
   const [hasStarted, setHasStarted] = React.useState(autoPlay);
   const [errored, setErrored] = React.useState(false);
@@ -99,6 +103,20 @@ export function HlsPlayer({
       clearInterval(id);
     };
   }, [player, onProgress, progressIntervalMs]);
+
+  // playbackStatusChange / playToEnd → fire onEnded once per mount.
+  const endedFiredRef = React.useRef(false);
+  React.useEffect(() => {
+    if (!onEnded) return;
+    const sub = player.addListener("playToEnd", () => {
+      if (endedFiredRef.current) return;
+      endedFiredRef.current = true;
+      onEnded();
+    });
+    return () => {
+      sub.remove();
+    };
+  }, [player, onEnded]);
 
   const handleTap = React.useCallback(() => {
     if (!hasStarted) {

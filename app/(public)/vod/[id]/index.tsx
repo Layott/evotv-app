@@ -246,6 +246,17 @@ export default function VodScreen() {
     [isAuthenticated, vodId],
   );
 
+  // When the player reaches end, snap progress to the full duration so the
+  // History tab marks the VOD as watched-through and continue-watching drops
+  // it. Backend has no completed flag on vod_progress, just position.
+  const onPlayerEnded = React.useCallback(() => {
+    if (!isAuthenticated || !vodId) return;
+    const dur = (vod as Vod | undefined)?.durationSec;
+    if (typeof dur !== "number" || dur <= 0) return;
+    lastWrittenRef.current = dur;
+    void upsertProgress(vodId, dur).catch(() => {});
+  }, [isAuthenticated, vodId, vod]);
+
   if (isLoading) {
     return (
       <>
@@ -349,6 +360,7 @@ export default function VodScreen() {
               poster={vod.thumbnailUrl}
               onProgress={onPlayerProgress}
               startAtSec={startAtSec}
+              onEnded={onPlayerEnded}
             />
           )}
           <Pressable

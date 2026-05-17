@@ -20,6 +20,9 @@ export interface HlsPlayerProps {
   onProgress?: (positionSec: number) => void;
   /** Defaults to 15000ms. Cap on how often onProgress fires. */
   progressIntervalMs?: number;
+  /** Resume playback at this position (seconds) once the player is ready.
+   *  Pass `null` / undefined / 0 to start from the beginning. */
+  startAtSec?: number | null;
 }
 
 export function HlsPlayer({
@@ -33,6 +36,7 @@ export function HlsPlayer({
   onError,
   onProgress,
   progressIntervalMs = 15_000,
+  startAtSec,
 }: HlsPlayerProps) {
   const [hasStarted, setHasStarted] = React.useState(autoPlay);
   const [errored, setErrored] = React.useState(false);
@@ -45,10 +49,25 @@ export function HlsPlayer({
     if (autoPlay) p.play();
   });
 
-  // Listen for status changes to surface load/error.
+  // Listen for status changes to surface load/error. On readyToPlay we
+  // also apply the optional startAtSec seek (one-shot per mount via the
+  // seekedRef latch — never re-seek if the user has manually scrubbed).
+  const seekedRef = React.useRef(false);
   React.useEffect(() => {
     const sub = player.addListener("statusChange", (event) => {
       if (event.status === "readyToPlay") {
+        if (
+          !seekedRef.current &&
+          typeof startAtSec === "number" &&
+          startAtSec > 0
+        ) {
+          seekedRef.current = true;
+          try {
+            player.currentTime = startAtSec;
+          } catch {
+            /* ignore */
+          }
+        }
         onLoad?.();
       } else if (event.status === "error") {
         setErrored(true);
@@ -58,7 +77,7 @@ export function HlsPlayer({
     return () => {
       sub.remove();
     };
-  }, [player, onLoad, onError]);
+  }, [player, onLoad, onError, startAtSec]);
 
   React.useEffect(() => {
     player.muted = muted;

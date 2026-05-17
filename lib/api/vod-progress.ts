@@ -6,9 +6,12 @@ export interface VodProgress {
   updatedAt: string | null;
 }
 
-/** GET /api/vod-progress/[vodId] — auth required. */
-export function getProgress(vodId: string): Promise<VodProgress> {
-  return api<VodProgress>(`/api/vod-progress/${encodeURIComponent(vodId)}`);
+/** GET /api/vod-progress/[vodId] — auth required. Returns null if the user
+ *  has never watched this VOD. */
+export function getProgress(vodId: string): Promise<VodProgress | null> {
+  return api<VodProgress | null>(
+    `/api/vod-progress/${encodeURIComponent(vodId)}`,
+  );
 }
 
 /** POST /api/vod-progress/[vodId] — auth required. */

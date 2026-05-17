@@ -17,7 +17,7 @@ import {
 } from "lucide-react-native";
 
 import { getVodById, listRelatedVods } from "@/lib/api/vods";
-import { upsertProgress } from "@/lib/api/vod-progress";
+import { getProgress, upsertProgress } from "@/lib/api/vod-progress";
 import {
   addBookmark as addBookmarkApi,
   getBookmark,
@@ -211,11 +211,30 @@ export default function VodScreen() {
     },
   });
 
+  // Continue-watching seek — fetch the user's last saved position so the
+  // player can resume on mount. Silent null when unwatched or unauthed.
+  const progressQ = useQuery({
+    queryKey: ["vod-progress", vodId],
+    enabled: isAuthenticated && vodId.length > 0,
+    queryFn: () => getProgress(vodId),
+  });
+  // If the user is >=95% through, seek to 0 instead of stranding them on
+  // the end-card. Otherwise resume at the saved position.
+  const startAtSec = React.useMemo(() => {
+    const pos = progressQ.data?.positionSec;
+    if (typeof pos !== "number" || pos <= 0) return undefined;
+    const dur = (progressQ.data as { durationSec?: number } | null)?.durationSec;
+    if (typeof dur === "number" && dur > 0 && pos / dur >= 0.95) {
+      return undefined;
+    }
+    return pos;
+  }, [progressQ.data]);
+
   // Persist player position every 15s (driven by HLSPlayer's onProgress).
   // Silent on failure — losing one progress update is no big deal. Bumps
-  // both the watch-history (library tab) + future continue-watching seek.
-  // Hooks declared here (above the conditional early returns) so React's
-  // rules-of-hooks stay satisfied.
+  // both the watch-history (library tab) + the continue-watching seek
+  // path above. Hooks declared above the conditional early returns so
+  // React's rules-of-hooks stay satisfied.
   const lastWrittenRef = React.useRef<number>(-1);
   const onPlayerProgress = React.useCallback(
     (positionSec: number) => {
@@ -329,6 +348,7 @@ export default function VodScreen() {
               src={vod.hlsUrl}
               poster={vod.thumbnailUrl}
               onProgress={onPlayerProgress}
+              startAtSec={startAtSec}
             />
           )}
           <Pressable

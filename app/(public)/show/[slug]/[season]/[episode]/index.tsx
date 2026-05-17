@@ -7,10 +7,12 @@ import { ArrowLeft, ChevronRight, Forward } from "lucide-react-native";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HLSPlayer } from "@/components/stream/hls-player";
 import {
+  getEpisodeProgress,
   getShowWithSeasonsBySlug,
   listEpisodesForSeason,
   setEpisodeProgress,
 } from "@/lib/api/shows";
+import { useAuth } from "@/components/providers";
 
 const BRAND = "#2CD7E3";
 const BRAND_RGBA = (a: number) => `rgba(44,215,227,${a})`;
@@ -63,6 +65,23 @@ export default function EpisodePlayerScreen() {
     if (idx < 0 || idx === seasonEpisodesQ.data.length - 1) return null;
     return seasonEpisodesQ.data[idx + 1]!;
   }, [seasonEpisodesQ.data, episode]);
+
+  const { isAuthenticated } = useAuth();
+  // Continue-watching seek — fetch saved position so the player resumes
+  // where the user left off.
+  const progressQ = useQuery({
+    queryKey: ["episode-progress", episode?.id],
+    enabled: isAuthenticated && !!episode?.id,
+    queryFn: () => getEpisodeProgress(episode!.id),
+  });
+  const startAtSec = React.useMemo(() => {
+    const pos = progressQ.data?.positionSec;
+    if (typeof pos !== "number" || pos <= 0) return undefined;
+    if (progressQ.data?.completed) return undefined;
+    if (!episode) return undefined;
+    if (pos / episode.runtimeSec >= 0.95) return undefined;
+    return pos;
+  }, [progressQ.data, episode]);
 
   // Real progress beacon — HLSPlayer fires onProgress(positionSec) every 15s
   // and we POST to /api/episodes/[id]/progress. Dedup so we don't write the
@@ -126,6 +145,7 @@ export default function EpisodePlayerScreen() {
             src={episode.hlsUrl}
             poster={episode.thumbnailUrl}
             onProgress={onPlayerProgress}
+            startAtSec={startAtSec}
           />
           <Pressable
             onPress={() => router.back()}

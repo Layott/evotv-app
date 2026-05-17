@@ -20,6 +20,9 @@ export interface HlsPlayerProps {
   onProgress?: (positionSec: number) => void;
   /** Defaults to 15000ms. Cap on how often onProgress fires. */
   progressIntervalMs?: number;
+  /** Resume playback at this position (seconds) once the video is loaded.
+   *  Pass `null` / undefined / 0 to start from the beginning. */
+  startAtSec?: number | null;
 }
 
 export function HlsPlayer({
@@ -33,10 +36,13 @@ export function HlsPlayer({
   onError,
   onProgress,
   progressIntervalMs = 15_000,
+  startAtSec,
 }: HlsPlayerProps) {
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const [hasStarted, setHasStarted] = React.useState(autoPlay);
   const [errored, setErrored] = React.useState(false);
+  // One-shot seek latch — never re-seek if user has manually scrubbed.
+  const seekedRef = React.useRef(false);
 
   React.useEffect(() => {
     const video = videoRef.current;
@@ -45,7 +51,21 @@ export function HlsPlayer({
     let hls: Hls | null = null;
     let cancelled = false;
 
-    const handleLoaded = () => onLoad?.();
+    const handleLoaded = () => {
+      if (
+        !seekedRef.current &&
+        typeof startAtSec === "number" &&
+        startAtSec > 0
+      ) {
+        seekedRef.current = true;
+        try {
+          video.currentTime = startAtSec;
+        } catch {
+          /* ignore */
+        }
+      }
+      onLoad?.();
+    };
     const handleError = (event: Event) => {
       if (cancelled) return;
       setErrored(true);
@@ -93,7 +113,7 @@ export function HlsPlayer({
       video.removeAttribute("src");
       video.load();
     };
-  }, [src, autoPlay, muted, onLoad, onError]);
+  }, [src, autoPlay, muted, onLoad, onError, startAtSec]);
 
   React.useEffect(() => {
     const video = videoRef.current;

@@ -80,6 +80,21 @@ export async function setEpisodeProgress(
   });
 }
 
+export interface EpisodeProgressEntry {
+  positionSec: number;
+  updatedAt: string;
+  completed: boolean;
+}
+
+/** GET /api/episodes/[id]/progress — saved position or null if unwatched. */
+export function getEpisodeProgress(
+  episodeId: string,
+): Promise<EpisodeProgressEntry | null> {
+  return api<EpisodeProgressEntry | null>(
+    `/api/episodes/${encodeURIComponent(episodeId)}/progress`,
+  );
+}
+
 export interface ContinueWatchingRow {
   episode: Episode;
   show: Show;

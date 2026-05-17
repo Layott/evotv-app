@@ -64,12 +64,19 @@ export default function EpisodePlayerScreen() {
     return seasonEpisodesQ.data[idx + 1]!;
   }, [seasonEpisodesQ.data, episode]);
 
-  // Save progress at mount + periodically while watching. For the mock player,
-  // simulate a mid-episode position so the Continue-Watching rail has data.
-  React.useEffect(() => {
-    if (!episode) return;
-    void setEpisodeProgress(episode.id, Math.round(episode.runtimeSec * 0.35));
-  }, [episode]);
+  // Real progress beacon — HLSPlayer fires onProgress(positionSec) every 15s
+  // and we POST to /api/episodes/[id]/progress. Dedup so we don't write the
+  // same second repeatedly when paused.
+  const lastWrittenRef = React.useRef<number>(-1);
+  const onPlayerProgress = React.useCallback(
+    (positionSec: number) => {
+      if (!episode) return;
+      if (Math.abs(positionSec - lastWrittenRef.current) < 10) return;
+      lastWrittenRef.current = positionSec;
+      void setEpisodeProgress(episode.id, positionSec).catch(() => {});
+    },
+    [episode],
+  );
 
   const [skipDismissed, setSkipDismissed] = React.useState(false);
   const showSkipIntro =
@@ -115,7 +122,11 @@ export default function EpisodePlayerScreen() {
       <View className="flex-1 bg-background">
         {/* PLAYER */}
         <View className="relative bg-black">
-          <HLSPlayer src={episode.hlsUrl} poster={episode.thumbnailUrl} />
+          <HLSPlayer
+            src={episode.hlsUrl}
+            poster={episode.thumbnailUrl}
+            onProgress={onPlayerProgress}
+          />
           <Pressable
             onPress={() => router.back()}
             className="absolute left-3 top-12 h-9 w-9 items-center justify-center rounded-full"

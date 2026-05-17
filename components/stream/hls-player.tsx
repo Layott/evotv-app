@@ -69,8 +69,7 @@ export function HlsPlayer({
 
   return (
     <View
-      className={cn("relative overflow-hidden bg-black", className)}
-      style={{ aspectRatio: 16 / 9 }}
+      className={cn("relative overflow-hidden bg-black aspect-video", className)}
     >
       <VideoView
         player={player}

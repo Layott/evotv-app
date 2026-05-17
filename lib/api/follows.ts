@@ -9,9 +9,11 @@ export interface Follow {
   createdAt: string;
 }
 
-/** GET /api/follows — current user's follows */
-export function listMyFollows(): Promise<Follow[]> {
-  return api<Follow[]>("/api/follows");
+/** GET /api/follows — current user's follows. Backend wraps in
+ *  `{ follows: Follow[] }` so unwrap on the client. */
+export async function listMyFollows(): Promise<Follow[]> {
+  const res = await api<{ follows: Follow[] }>("/api/follows");
+  return res.follows ?? [];
 }
 
 /** POST /api/follows — body { targetType, targetId } */

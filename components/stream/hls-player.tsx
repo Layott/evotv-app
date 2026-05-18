@@ -139,6 +139,7 @@ export function HlsPlayer({
         nativeControls={controls && hasStarted}
         allowsFullscreen
         allowsPictureInPicture
+        startsPictureInPictureAutomatically
       />
 
       {/* Poster overlay (covers until first play) */}

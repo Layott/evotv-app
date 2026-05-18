@@ -15,15 +15,15 @@ import {
   Users,
 } from "lucide-react-native";
 
+import { scoringLabel } from "@/lib/mock/fantasy";
 import {
   getLineup,
   getLeagueById,
   joinLeague,
-  listActivityForLeague,
-  listLeagueLeaderboard,
-  scoringLabel,
-  type FantasyActivityItem,
-} from "@/lib/mock/fantasy";
+  listActivity as listActivityForLeague,
+  listLeaderboard as listLeagueLeaderboard,
+  type ActivityRow as FantasyActivityItem,
+} from "@/lib/api/fantasy";
 import { listGames } from "@/lib/api/games";
 import { formatDate } from "@/lib/utils";
 import { eventBanner } from "@/lib/mock/_media";
@@ -96,7 +96,7 @@ export default function FantasyLeagueScreen() {
   });
   const myLineup = useQuery({
     queryKey: ["fantasy", "lineup", leagueId, userId, refreshKey],
-    queryFn: () => getLineup(leagueId, userId),
+    queryFn: () => getLineup(leagueId),
   });
 
   const lg = league.data;
@@ -104,12 +104,13 @@ export default function FantasyLeagueScreen() {
   const isMember = lg?.members.includes(userId) ?? false;
 
   async function onJoin() {
-    const res = await joinLeague(leagueId, userId);
-    if (res.ok) {
+    try {
+      await joinLeague(leagueId);
       toast.success("Joined the league!");
       setRefreshKey((k) => k + 1);
-    } else {
-      toast.error(res.error);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Could not join";
+      toast.error(msg);
     }
   }
 

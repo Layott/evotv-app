@@ -4,7 +4,10 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpDown, Crown } from "lucide-react-native";
 
-import { getLeagueById, listLeagueLeaderboard } from "@/lib/mock/fantasy";
+import {
+  getLeagueById,
+  listLeaderboard as listLeagueLeaderboard,
+} from "@/lib/api/fantasy";
 import { useMockAuth } from "@/components/providers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";

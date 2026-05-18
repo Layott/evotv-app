@@ -5,13 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 import { Plus, Trophy, X } from "lucide-react-native";
 
+import { listAvailablePlayers, playerCost } from "@/lib/mock/fantasy";
 import {
   getLeagueById,
   getLineup,
-  listAvailablePlayers,
-  playerCost,
   submitLineup,
-} from "@/lib/mock/fantasy";
+} from "@/lib/api/fantasy";
 import type { Player } from "@/lib/types";
 import { useMockAuth } from "@/components/providers";
 import {
@@ -104,7 +103,7 @@ export default function FantasyLineupScreen() {
   });
   const existing = useQuery({
     queryKey: ["fantasy", "lineup", leagueId, userId, refreshKey],
-    queryFn: () => getLineup(leagueId, userId),
+    queryFn: () => getLineup(leagueId),
   });
 
   const [search, setSearch] = React.useState("");
@@ -113,10 +112,10 @@ export default function FantasyLineupScreen() {
   const [pickerOpen, setPickerOpen] = React.useState(false);
 
   React.useEffect(() => {
-    if (existing.data?.players) {
-      setPicked(existing.data.players.map((p) => p.playerId));
+    if (existing.data?.picks) {
+      setPicked(existing.data.picks.map((p) => p.playerId));
     }
-  }, [existing.data?.id, existing.data?.players]);
+  }, [existing.data?.id, existing.data?.picks]);
 
   const lg = league.data;
   const allPlayers = playersQ.data ?? [];
@@ -165,13 +164,19 @@ export default function FantasyLineupScreen() {
   async function onSubmit() {
     if (!canSubmit) return;
     setSubmitting(true);
-    const res = await submitLineup(leagueId, picked, userId);
-    setSubmitting(false);
-    if (res.ok) {
-      toast.success(`Lineup locked! Projected: ${res.lineup.totalPoints} pts.`);
+    try {
+      const payload = picked.map((pid) => {
+        const p = playerById.get(pid);
+        return { playerId: pid, cost: p ? playerCost(p) : 0 };
+      });
+      const res = await submitLineup(leagueId, payload);
+      toast.success(`Lineup locked! Projected: ${res.totalPoints} pts.`);
       setRefreshKey((k) => k + 1);
-    } else {
-      toast.error(res.error);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Could not save lineup";
+      toast.error(msg);
+    } finally {
+      setSubmitting(false);
     }
   }
 

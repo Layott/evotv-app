@@ -5,7 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 import { Sparkles } from "lucide-react-native";
 
-import { createLeague, scoringLabel, type ScoringSystem } from "@/lib/mock/fantasy";
+import { scoringLabel } from "@/lib/mock/fantasy";
+import { createLeague, type ScoringSystem } from "@/lib/api/fantasy";
 import { listGames } from "@/lib/api/games";
 import { useMockAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";
@@ -56,20 +57,25 @@ export default function NewFantasyLeagueScreen() {
     const endsAt = new Date(
       Date.now() + endsInDaysN * 86_400_000,
     ).toISOString();
-    const lg = await createLeague({
-      name,
-      description,
-      gameId,
-      maxMembers: maxMembersN,
-      entryFee: entryFeeN,
-      salaryCap: salaryCapN,
-      scoringSystem,
-      endsAt,
-      ownerId: userId,
-    });
-    setSubmitting(false);
-    toast.success(`League "${lg.name}" created!`);
-    router.replace(`/fantasy/leagues/${lg.id}`);
+    try {
+      const lg = await createLeague({
+        name,
+        description,
+        gameId,
+        maxMembers: maxMembersN,
+        entryFee: entryFeeN,
+        salaryCap: salaryCapN,
+        scoringSystem,
+        endsAt,
+      });
+      toast.success(`League "${lg.name}" created!`);
+      router.replace(`/fantasy/leagues/${lg.id}`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Could not create league";
+      toast.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (

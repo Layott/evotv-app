@@ -32,6 +32,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ReportButton } from "@/components/common/report-button";
 import { useMockAuth } from "@/components/providers";
+import { toggleLike } from "@/lib/api/likes";
 
 function relTime(iso: string): string {
   const diff = Math.max(0, Date.now() - new Date(iso).getTime());
@@ -207,12 +208,20 @@ export default function ClipDetailScreen() {
     if (target) router.replace(`/clips/${target.id}`);
   };
 
-  const onLike = () => {
-    setLiked((prev) => {
-      setLikeCount((c) => (prev ? Math.max(0, c - 1) : c + 1));
-      toast.success(prev ? "Like removed" : "Liked");
-      return !prev;
-    });
+  const onLike = async () => {
+    if (!clip?.id) return;
+    const wasLiked = liked;
+    setLiked(!wasLiked);
+    setLikeCount((c) => Math.max(0, c + (wasLiked ? -1 : 1)));
+    try {
+      const res = await toggleLike("clip", clip.id);
+      setLiked(res.liked);
+      setLikeCount(res.count);
+    } catch {
+      setLiked(wasLiked);
+      setLikeCount((c) => Math.max(0, c + (wasLiked ? 1 : -1)));
+      toast.error("Couldn't like");
+    }
   };
 
   const onShare = async () => {

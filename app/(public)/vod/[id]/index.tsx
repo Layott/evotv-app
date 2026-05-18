@@ -18,6 +18,7 @@ import {
 
 import { getVodById, listRelatedVods } from "@/lib/api/vods";
 import { getProgress, upsertProgress } from "@/lib/api/vod-progress";
+import { toggleLike } from "@/lib/api/likes";
 import {
   addBookmark as addBookmarkApi,
   getBookmark,
@@ -298,21 +299,35 @@ export default function VodScreen() {
 
   const paywalled = vod.isPremium && role !== "premium" && role !== "admin";
 
-  const onLike = () => {
-    if (liked) {
-      setLiked(false);
-      setLikes((v) => Math.max(0, v - 1));
-    } else {
-      setLiked(true);
-      setLikes((v) => v + 1);
-      if (disliked) {
-        setDisliked(false);
-        setDislikes((v) => Math.max(0, v - 1));
-      }
-      toast.success("Liked");
+  const onLike = async () => {
+    if (!isAuthenticated) {
+      toast.error("Sign in to like");
+      return;
+    }
+    if (!vodId) return;
+    // Optimistic
+    const wasLiked = liked;
+    setLiked(!wasLiked);
+    setLikes((v) => v + (wasLiked ? -1 : 1));
+    if (!wasLiked && disliked) {
+      setDisliked(false);
+      setDislikes((v) => Math.max(0, v - 1));
+    }
+    try {
+      const res = await toggleLike("vod", vodId);
+      // Trust server count.
+      setLiked(res.liked);
+      setLikes(res.count);
+    } catch {
+      // Roll back optimistic flip on failure.
+      setLiked(wasLiked);
+      setLikes((v) => v + (wasLiked ? 1 : -1));
+      toast.error("Couldn't like");
     }
   };
   const onDislike = () => {
+    // Backend has no dislike endpoint — keep local-only feedback gesture
+    // (mirrored UX from YouTube). Doesn't persist.
     if (disliked) {
       setDisliked(false);
       setDislikes((v) => Math.max(0, v - 1));

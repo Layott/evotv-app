@@ -738,35 +738,60 @@ export default function SettingsScreen() {
             </View>
           </SectionCard>
 
-          {/* Appearance — dark mode only for v1. Light theme support is on
-              the roadmap (most UI tokens hardcode dark right now). */}
+          {/* Appearance — system / dark / light. Light theme is a work in
+              progress; many screens still hardcode dark hex values. NativeWind
+              flips the className tokens cleanly; raw hex won't until the audit
+              lands. */}
           <SectionCard
             title="Appearance"
-            description="Dark theme only for v1. Light mode coming."
+            description="System matches your device; light is in beta."
           >
-            <View className="flex-row items-center gap-3 rounded-xl border border-border bg-background p-4">
-              <View
-                className="h-8 w-8 items-center justify-center rounded-full"
-                style={{ backgroundColor: "#1f1f1f" }}
-              >
-                <Text style={{ color: "#2CD7E3", fontWeight: "700" }}>🌙</Text>
-              </View>
-              <View className="flex-1">
-                <Text className="text-sm font-semibold text-foreground">
-                  Dark
-                </Text>
-                <Text className="text-[11px] text-muted-foreground">
-                  Locked for v1 — light theme audit is queued.
-                </Text>
-              </View>
+            <View className="gap-2">
+              {THEMES.map((opt) => {
+                const Icon = opt.icon;
+                const selected = theme === opt.v;
+                return (
+                  <Pressable
+                    key={opt.v}
+                    onPress={() => setTheme(opt.v as typeof theme)}
+                    className={`flex-row items-center gap-3 rounded-xl border p-4 active:opacity-80 ${
+                      selected
+                        ? "border-brand/60 bg-brand/10"
+                        : "border-border bg-background"
+                    }`}
+                  >
+                    <View
+                      className="h-8 w-8 items-center justify-center rounded-full"
+                      style={{ backgroundColor: selected ? "#2CD7E322" : "#1f1f1f" }}
+                    >
+                      <Icon
+                        size={14}
+                        color={selected ? "#2CD7E3" : "#A3A3A3"}
+                      />
+                    </View>
+                    <View className="flex-1">
+                      <Text
+                        className={`text-sm font-semibold ${
+                          selected ? "text-brand" : "text-foreground"
+                        }`}
+                      >
+                        {opt.label}
+                      </Text>
+                      {opt.v === "light" ? (
+                        <Text className="text-[11px] text-muted-foreground">
+                          Beta — some screens still render dark colors.
+                        </Text>
+                      ) : null}
+                    </View>
+                    {selected ? (
+                      <Text className="text-[11px] font-bold text-brand">
+                        ACTIVE
+                      </Text>
+                    ) : null}
+                  </Pressable>
+                );
+              })}
             </View>
-            {/* Suppress unused-warning */}
-            {(() => {
-              void THEMES;
-              void theme;
-              void setTheme;
-              return null;
-            })()}
           </SectionCard>
 
           {/* Quick links */}

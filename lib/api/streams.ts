@@ -56,6 +56,22 @@ export async function sendStreamHeartbeat(
   );
 }
 
+/**
+ * DELETE /api/streams/[id]/heartbeat — viewer is leaving.
+ *
+ * Drops the caller's recent watch_events rows for this stream so the
+ * count drops immediately instead of decaying over the 90s read-window.
+ * Fire from useStreamHeartbeat cleanup.
+ */
+export async function stopStreamHeartbeat(
+  streamId: string,
+): Promise<{ ok: true }> {
+  return api<{ ok: true }>(
+    `/api/streams/${encodeURIComponent(streamId)}/heartbeat`,
+    { method: "DELETE" },
+  );
+}
+
 export interface ListAdminStreamsOpts {
   gameId?: string;
   isLive?: boolean;

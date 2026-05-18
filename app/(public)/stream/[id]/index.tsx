@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Eye, MessageSquare, Info } from "lucide-react-native";
 import { format } from "date-fns";
 
@@ -53,6 +53,7 @@ export default function StreamScreen() {
   const { width } = useWindowDimensions();
   const isWide = Platform.OS === "web" && width >= WIDE_BREAKPOINT;
 
+  const qc = useQueryClient();
   const { data: stream, isLoading, isError } = useQuery({
     queryKey: ["stream", streamId],
     queryFn: () => getStreamById(streamId),
@@ -72,7 +73,12 @@ export default function StreamScreen() {
 
   const followed = stream ? isFollowing("streamer", stream.id) : false;
 
-  useStreamHeartbeat(stream?.id, !!stream?.isLive);
+  // Bump the count immediately after the first heartbeat lands instead of
+  // waiting up to 30s for the next refetchInterval tick.
+  const onHeartbeatAck = React.useCallback(() => {
+    qc.invalidateQueries({ queryKey: ["stream", streamId] });
+  }, [qc, streamId]);
+  useStreamHeartbeat(stream?.id, !!stream?.isLive, onHeartbeatAck);
 
   if (isLoading) {
     return (

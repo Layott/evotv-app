@@ -88,7 +88,7 @@ export default function ProfileScreen() {
             <ProfileHeader
               profile={user}
               canEdit
-              onEdit={() => router.push("/(authed)/settings")}
+              onEdit={() => router.push("/(authed)/profile/edit" as never)}
               onAvatarPress={handleAvatarPress}
               avatarUploading={avatarUploading}
             />

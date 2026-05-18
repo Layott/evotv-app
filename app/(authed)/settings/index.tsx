@@ -150,7 +150,7 @@ export default function SettingsScreen() {
   );
 
   const email =
-    accountEmail ?? (user ? `${user.handle}@evo.tv` : "guest@evo.tv");
+    accountEmail ?? (user ? `${user.handle}@evotv.app` : "guest@evotv.app");
 
   const handleChangePwd = React.useCallback(async () => {
     setPwdError(null);

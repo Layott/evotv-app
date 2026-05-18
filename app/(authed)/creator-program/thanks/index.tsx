@@ -130,8 +130,8 @@ export default function CreatorProgramThanksScreen() {
             icon={Mail}
             iconColor="#FCD34D"
             title="Reach a manager"
-            desc="Email creators@evo.tv to fast-track or ask follow-up questions."
-            onPress={() => Linking.openURL("mailto:creators@evo.tv").catch(() => {})}
+            desc="Email creators@evotv.app to fast-track or ask follow-up questions."
+            onPress={() => Linking.openURL("mailto:creators@evotv.app").catch(() => {})}
           />
           <ActionTile
             icon={Sparkles}

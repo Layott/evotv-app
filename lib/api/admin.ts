@@ -397,3 +397,52 @@ export async function listAllSanctions(
     },
   });
 }
+
+// -------------------------------------------------------------------
+// Creator program review
+// -------------------------------------------------------------------
+export type CreatorAppStatus =
+  | "submitted"
+  | "in_review"
+  | "approved"
+  | "rejected";
+
+export interface AdminCreatorApplication {
+  id: string;
+  userId: string;
+  bio: string;
+  country: string;
+  primaryGameId: string;
+  socialPlatform: "youtube" | "twitch" | "tiktok" | "kick" | "other";
+  socialHandle: string;
+  followerCount: number;
+  agreementAccepted: boolean;
+  status: CreatorAppStatus;
+  submittedAt: string;
+  reviewedAt: string | null;
+  reviewerNote: string | null;
+}
+
+/** GET /api/admin/creator-program?status= — moderator+. */
+export function listCreatorApplications(
+  status?: CreatorAppStatus,
+): Promise<AdminCreatorApplication[]> {
+  return api<AdminCreatorApplication[]>("/api/admin/creator-program", {
+    query: status ? { status } : undefined,
+  });
+}
+
+/** PATCH /api/admin/creator-program/[id] — moderator+. */
+export function reviewCreatorApplication(
+  id: string,
+  status: "in_review" | "approved" | "rejected",
+  note?: string,
+): Promise<AdminCreatorApplication> {
+  return api<AdminCreatorApplication>(
+    `/api/admin/creator-program/${encodeURIComponent(id)}`,
+    {
+      method: "PATCH",
+      body: note ? { status, note } : { status },
+    },
+  );
+}

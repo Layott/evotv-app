@@ -11,7 +11,7 @@ import {
 } from "lucide-react-native";
 
 import { useMockAuth } from "@/components/providers";
-import { getMyApplication } from "@/lib/mock/creators";
+import { getMyApplication } from "@/lib/api/creator-program";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
@@ -30,7 +30,7 @@ export default function CreatorProgramScreen() {
 
   const appQ = useQuery({
     queryKey: ["creator-program", "application", user?.id ?? ""],
-    queryFn: () => getMyApplication(user!.id),
+    queryFn: () => getMyApplication(),
     enabled: !!user,
   });
 

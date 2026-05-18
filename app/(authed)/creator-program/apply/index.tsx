@@ -27,7 +27,7 @@ import {
   getMyApplication,
   submitApplication,
   type CreatorApplication,
-} from "@/lib/mock/creators";
+} from "@/lib/api/creator-program";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -134,7 +134,7 @@ export default function CreatorProgramApplyScreen() {
     if (!user) return;
     let cancelled = false;
     void (async () => {
-      const existing = await getMyApplication(user.id);
+      const existing = await getMyApplication();
       if (cancelled) return;
       if (existing) {
         toast("You've already applied — viewing status");
@@ -180,25 +180,26 @@ export default function CreatorProgramApplyScreen() {
   async function onSubmit(formValues: FormValues) {
     if (submitting) return;
     setSubmitting(true);
-    const result = await submitApplication({
-      userId: user!.id,
-      bio: formValues.bio,
-      country: formValues.country,
-      primaryGameId: formValues.primaryGameId,
-      socialPlatform: formValues.socialPlatform,
-      socialHandle: formValues.socialHandle,
-      followerCount: formValues.followerCount,
-      agreementAccepted: !!formValues.agreement,
-    });
-    if (!result.success) {
-      toast.error(result.reason ?? "Could not submit");
+    try {
+      await submitApplication({
+        bio: formValues.bio,
+        country: formValues.country,
+        primaryGameId: formValues.primaryGameId,
+        socialPlatform: formValues.socialPlatform,
+        socialHandle: formValues.socialHandle,
+        followerCount: formValues.followerCount,
+        agreementAccepted: !!formValues.agreement,
+      });
+      toast.success("Application submitted!", {
+        description: "We'll get back within 5 working days.",
+      });
+      router.push("/(authed)/creator-program/thanks");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Could not submit";
+      toast.error(msg);
+    } finally {
       setSubmitting(false);
-      return;
     }
-    toast.success("Application submitted!", {
-      description: "We'll get back within 5 working days.",
-    });
-    router.push("/(authed)/creator-program/thanks");
   }
 
   const step = STEPS[stepIdx]!;

@@ -13,7 +13,7 @@ import {
 
 import { useMockAuth } from "@/components/providers";
 import { listGames } from "@/lib/api/games";
-import { getMyApplication } from "@/lib/mock/creators";
+import { getMyApplication } from "@/lib/api/creator-program";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -24,7 +24,7 @@ export default function CreatorProgramThanksScreen() {
 
   const appQ = useQuery({
     queryKey: ["creator-program", "application", user?.id ?? ""],
-    queryFn: () => getMyApplication(user!.id),
+    queryFn: () => getMyApplication(),
     enabled: !!user,
   });
   const gamesQ = useQuery({ queryKey: ["games"], queryFn: () => listGames() });

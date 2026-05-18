@@ -21,7 +21,11 @@ export async function getEventById(
   id: string,
 ): Promise<EsportsEvent | null> {
   try {
-    return await api<EsportsEvent>(`/api/events/${id}`);
+    const res = await api<{ event: EsportsEvent } | EsportsEvent>(
+      `/api/events/${id}`,
+    );
+    if (res && typeof res === "object" && "event" in res) return res.event;
+    return res as EsportsEvent;
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) return null;
     throw err;

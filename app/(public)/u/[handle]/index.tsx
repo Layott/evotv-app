@@ -14,6 +14,7 @@ import {
   Eye,
   Flag,
   MapPin,
+  Pencil,
   Play,
   Tv2,
   UserPlus,
@@ -343,46 +344,59 @@ export default function PublicProfileScreen() {
 
             {/* Actions */}
             <View className="flex-row gap-2">
-              <Pressable
-                onPress={() => {
-                  if (!viewerId) {
-                    router.push("/login" as never);
-                    return;
-                  }
-                  if (!profileQ.data) return;
-                  if (viewerId === profileQ.data.id) {
-                    router.push("/profile" as never);
-                    return;
-                  }
-                  followMutation.mutate();
-                }}
-                className="flex-1 flex-row items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 active:opacity-80"
-                style={{
-                  backgroundColor:
-                    followingLocal && viewerId
-                      ? "transparent"
-                      : BRAND,
-                  borderWidth: followingLocal && viewerId ? 1 : 0,
-                  borderColor: BRAND_RGBA(0.4),
-                }}
-                disabled={followMutation.isPending}
-              >
-                {followingLocal && viewerId ? (
-                  <>
-                    <UserCheck size={14} color={BRAND} />
-                    <Text style={{ color: BRAND, fontWeight: "700", fontSize: 13 }}>
-                      Following
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <UserPlus size={14} color="#0a0a0a" />
-                    <Text style={{ color: "#0a0a0a", fontWeight: "700", fontSize: 13 }}>
-                      {viewerId ? "Follow" : "Sign in to follow"}
-                    </Text>
-                  </>
-                )}
-              </Pressable>
+              {viewerId && viewerId === profileQ.data.id ? (
+                <Pressable
+                  onPress={() => router.push("/profile" as never)}
+                  className="flex-1 flex-row items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 active:opacity-80"
+                  style={{
+                    backgroundColor: "transparent",
+                    borderWidth: 1,
+                    borderColor: BRAND_RGBA(0.4),
+                  }}
+                >
+                  <Pencil size={13} color={BRAND} />
+                  <Text style={{ color: BRAND, fontWeight: "700", fontSize: 13 }}>
+                    Edit profile
+                  </Text>
+                </Pressable>
+              ) : (
+                <Pressable
+                  onPress={() => {
+                    if (!viewerId) {
+                      router.push("/login" as never);
+                      return;
+                    }
+                    if (!profileQ.data) return;
+                    followMutation.mutate();
+                  }}
+                  className="flex-1 flex-row items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 active:opacity-80"
+                  style={{
+                    backgroundColor:
+                      followingLocal && viewerId
+                        ? "transparent"
+                        : BRAND,
+                    borderWidth: followingLocal && viewerId ? 1 : 0,
+                    borderColor: BRAND_RGBA(0.4),
+                  }}
+                  disabled={followMutation.isPending}
+                >
+                  {followingLocal && viewerId ? (
+                    <>
+                      <UserCheck size={14} color={BRAND} />
+                      <Text style={{ color: BRAND, fontWeight: "700", fontSize: 13 }}>
+                        Following
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus size={14} color="#0a0a0a" />
+                      <Text style={{ color: "#0a0a0a", fontWeight: "700", fontSize: 13 }}>
+                        {viewerId ? "Follow" : "Sign in to follow"}
+                      </Text>
+                    </>
+                  )}
+                </Pressable>
+              )}
               {viewerId && viewerId !== profileQ.data.id ? (
                 <Pressable
                   onPress={() =>

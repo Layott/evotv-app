@@ -34,10 +34,11 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
 import { HLSPlayer } from "@/components/stream/hls-player";
 import { VodRelated } from "@/components/vod/vod-related";
-import { VodComments } from "@/components/vod/vod-comments";
+// VodComments hidden — no backend comments endpoint yet. Re-enable when
+// /api/vods/[id]/comments lands.
+// import { VodComments } from "@/components/vod/vod-comments";
 import { ReportButton } from "@/components/common/report-button";
 import { useMockAuth } from "@/components/providers";
 
@@ -483,9 +484,6 @@ export default function VodScreen() {
 
           {related && related.length > 0 ? <VodRelated vods={related} /> : null}
 
-          <Separator />
-
-          <VodComments vodId={vod.id} />
         </View>
       </ScrollView>
     </>

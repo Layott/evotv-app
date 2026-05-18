@@ -5,7 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 import { Plus, Trophy, X } from "lucide-react-native";
 
-import { listAvailablePlayers, playerCost } from "@/lib/mock/fantasy";
+import { playerCost } from "@/lib/mock/fantasy";
+import { listPlayers } from "@/lib/api/players";
 import {
   getLeagueById,
   getLineup,
@@ -99,7 +100,7 @@ export default function FantasyLineupScreen() {
   const playersQ = useQuery({
     queryKey: ["fantasy", "available", league.data?.gameId],
     enabled: !!league.data?.gameId,
-    queryFn: () => listAvailablePlayers(league.data!.gameId),
+    queryFn: () => listPlayers({ gameId: league.data!.gameId }),
   });
   const existing = useQuery({
     queryKey: ["fantasy", "lineup", leagueId, userId, refreshKey],

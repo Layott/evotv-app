@@ -113,6 +113,25 @@ export async function adminRestoreStream(
   return api(`/api/admin/streams/${id}/restore`, { method: "POST", body: {} });
 }
 
+/**
+ * PATCH /api/admin/streams/[id] — support_admin+.
+ * Programs the EPG airtime. Pass null to clear.
+ */
+export async function adminUpdateStreamSchedule(
+  id: string,
+  body: {
+    scheduledStartAt?: string | null;
+    scheduledDurationMin?: number | null;
+  },
+): Promise<{
+  ok: true;
+  streamId: string;
+  scheduledStartAt?: string | null;
+  scheduledDurationMin?: number | null;
+}> {
+  return api(`/api/admin/streams/${id}`, { method: "PATCH", body });
+}
+
 /** GET /api/admin/streams — admin only. All streams (live + offline). */
 export async function listAdminStreams(
   opts: ListAdminStreamsOpts = {},

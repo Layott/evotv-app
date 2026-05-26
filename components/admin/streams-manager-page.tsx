@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { RotateCcw, Search, X, Square, Trash2 } from "lucide-react-native";
+import { CalendarClock, RotateCcw, Search, X, Square, Trash2 } from "lucide-react-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -17,6 +17,7 @@ import {
   adminDeleteStream,
   adminForceEndStream,
   adminRestoreStream,
+  adminUpdateStreamSchedule,
   listAdminStreams,
 } from "@/lib/api/streams";
 import { listGames } from "@/lib/api/games";
@@ -74,6 +75,26 @@ export function StreamsManagerPage() {
     },
     onError: (err) =>
       toast.error("Couldn't restore stream", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const scheduleMut = useMutation({
+    mutationFn: (args: {
+      id: string;
+      scheduledStartAt: string | null;
+      scheduledDurationMin: number | null;
+    }) =>
+      adminUpdateStreamSchedule(args.id, {
+        scheduledStartAt: args.scheduledStartAt,
+        scheduledDurationMin: args.scheduledDurationMin,
+      }),
+    onSuccess: () => {
+      toast.success("Schedule updated");
+      queryClient.invalidateQueries({ queryKey: ["admin-streams"] });
+    },
+    onError: (err) =>
+      toast.error("Couldn't update schedule", {
         description: err instanceof Error ? err.message : "Unknown error",
       }),
   });
@@ -365,6 +386,25 @@ export function StreamsManagerPage() {
                   </View>
                 ) : null}
 
+                <ScheduleEditor
+                  stream={selected}
+                  isPending={scheduleMut.isPending}
+                  onSave={(startAt, durationMin) =>
+                    scheduleMut.mutate({
+                      id: selected.id,
+                      scheduledStartAt: startAt,
+                      scheduledDurationMin: durationMin,
+                    })
+                  }
+                  onClear={() =>
+                    scheduleMut.mutate({
+                      id: selected.id,
+                      scheduledStartAt: null,
+                      scheduledDurationMin: null,
+                    })
+                  }
+                />
+
                 <View className="mt-5 flex-row gap-2">
                   {selected.deletedAt ? (
                     <Pressable
@@ -453,6 +493,123 @@ function FilterPill({
       </Text>
     </Pressable>
   );
+}
+
+function ScheduleEditor({
+  stream,
+  isPending,
+  onSave,
+  onClear,
+}: {
+  stream: Stream;
+  isPending: boolean;
+  onSave: (startAt: string, durationMin: number) => void;
+  onClear: () => void;
+}) {
+  const initial = stream.scheduledStartAt
+    ? toLocalDatetimeInputValue(stream.scheduledStartAt)
+    : "";
+  const initialDuration = stream.scheduledDurationMin ?? 60;
+  const [startAt, setStartAt] = React.useState(initial);
+  const [duration, setDuration] = React.useState(String(initialDuration));
+
+  React.useEffect(() => {
+    setStartAt(
+      stream.scheduledStartAt
+        ? toLocalDatetimeInputValue(stream.scheduledStartAt)
+        : "",
+    );
+    setDuration(String(stream.scheduledDurationMin ?? 60));
+  }, [stream.id, stream.scheduledStartAt, stream.scheduledDurationMin]);
+
+  const dirty =
+    startAt !== initial || duration !== String(initialDuration);
+  const canSave = startAt.trim().length > 0 && Number(duration) > 0;
+
+  return (
+    <View className="mt-4 rounded-lg border border-border bg-card/40 p-3">
+      <View className="mb-3 flex-row items-center gap-2">
+        <CalendarClock size={14} color="#67e8f9" />
+        <Text className="text-sm font-semibold text-foreground">
+          EPG schedule
+        </Text>
+        {stream.scheduledStartAt ? (
+          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+            Programmed
+          </Text>
+        ) : (
+          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+            Unscheduled
+          </Text>
+        )}
+      </View>
+
+      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+        Airs at (local time)
+      </Text>
+      <Input
+        value={startAt}
+        onChangeText={setStartAt}
+        placeholder="YYYY-MM-DDTHH:mm"
+        className="mb-3 h-9"
+      />
+
+      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+        Duration (minutes)
+      </Text>
+      <Input
+        value={duration}
+        onChangeText={setDuration}
+        placeholder="60"
+        keyboardType="numeric"
+        className="mb-3 h-9"
+      />
+
+      <View className="flex-row gap-2">
+        <Pressable
+          onPress={() => {
+            const parsed = new Date(startAt);
+            if (Number.isNaN(parsed.getTime())) {
+              toast.error("Invalid date — use YYYY-MM-DDTHH:mm");
+              return;
+            }
+            const d = Number(duration);
+            if (!Number.isFinite(d) || d <= 0 || d > 1440) {
+              toast.error("Duration must be 1-1440 minutes");
+              return;
+            }
+            onSave(parsed.toISOString(), Math.round(d));
+          }}
+          disabled={!canSave || !dirty || isPending}
+          className="flex-1 items-center rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+          style={{ opacity: !canSave || !dirty || isPending ? 0.5 : 1 }}
+        >
+          <Text className="text-xs font-semibold text-cyan-300">
+            {isPending ? "Saving…" : "Save schedule"}
+          </Text>
+        </Pressable>
+        {stream.scheduledStartAt ? (
+          <Pressable
+            onPress={onClear}
+            disabled={isPending}
+            className="items-center rounded-lg border border-border bg-card px-3 py-2"
+          >
+            <Text className="text-xs font-medium text-muted-foreground">
+              Clear
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
+    </View>
+  );
+}
+
+/** ISO string → "YYYY-MM-DDTHH:mm" in local time for the input. */
+function toLocalDatetimeInputValue(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 function InfoCell({ label, value }: { label: string; value: string }) {

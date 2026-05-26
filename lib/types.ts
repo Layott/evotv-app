@@ -247,6 +247,10 @@ export interface Stream {
    * every row, this should be required.
    */
   pillar?: ContentPillar;
+  /** Pre-announced airtime for EPG. NULL for unscheduled or live-only streams. */
+  scheduledStartAt?: ISODate | null;
+  /** Pre-announced duration in minutes. Pairs with scheduledStartAt. */
+  scheduledDurationMin?: number | null;
   /** Only present on admin endpoints. Public list endpoints filter out deleted rows. */
   deletedAt?: ISODate | null;
 }

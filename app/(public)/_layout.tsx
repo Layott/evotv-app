@@ -116,6 +116,7 @@ export default function PublicLayout() {
       <Tabs.Screen name="api-access/docs/index" options={{ href: null }} />
       <Tabs.Screen name="api-access/usage/index" options={{ href: null }} />
       <Tabs.Screen name="calendar/index" options={{ href: null }} />
+      <Tabs.Screen name="schedule/index" options={{ href: null }} />
       <Tabs.Screen name="partners/index" options={{ href: null }} />
       <Tabs.Screen name="embed-marketing/index" options={{ href: null }} />
       <Tabs.Screen name="privacy/index" options={{ href: null }} />

@@ -30,7 +30,7 @@ const TILES: QuickTile[] = [
   { label: "Watch parties", href: "/watch-parties", Icon: UsersIcon, tint: "#22C55E" },
   { label: "Multi-stream", href: "/multi-stream", Icon: Layers, tint: "#06B6D4" },
   { label: "Tips", href: "/tips", Icon: PiggyBank, tint: "#EC4899" },
-  { label: "Calendar", href: "/calendar", Icon: CalendarRange, tint: "#3B82F6" },
+  { label: "Schedule", href: "/schedule", Icon: CalendarRange, tint: "#3B82F6" },
   { label: "Apps", href: "/apps", Icon: Tv, tint: "#8B5CF6" },
   { label: "Upgrade", href: "/upgrade", Icon: Crown, tint: "#F59E0B" },
 ];

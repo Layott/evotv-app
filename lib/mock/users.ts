@@ -59,6 +59,7 @@ export const userPrefs: Record<string, UserPrefs> = {
     playback: { defaultQuality: "auto", captions: false, autoplay: true },
     language: "en",
     theme: "dark",
+    maturityPreference: "mature",
   },
   user_premium: {
     userId: "user_premium",
@@ -69,6 +70,7 @@ export const userPrefs: Record<string, UserPrefs> = {
     playback: { defaultQuality: "1080p", captions: true, autoplay: true },
     language: "en",
     theme: "dark",
+    maturityPreference: "mature",
   },
 };
 

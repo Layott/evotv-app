@@ -6,6 +6,7 @@ import { Eye, Play } from "lucide-react-native";
 import type { Clip } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { MaturityBadge } from "@/components/common/maturity-badge";
 import { PressableScale } from "@/components/common/pressable-scale";
 
 interface TrendingClipsProps {
@@ -94,6 +95,13 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
                   className="absolute inset-x-0 bottom-0 h-1/2"
                   style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
                 />
+
+                {/* Maturity pill top-left */}
+                {c.maturityRating ? (
+                  <View className="absolute left-2 top-2">
+                    <MaturityBadge rating={c.maturityRating} />
+                  </View>
+                ) : null}
 
                 {/* Creator avatar overlay top-right */}
                 {c.creatorAvatarUrl ? (

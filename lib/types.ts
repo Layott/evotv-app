@@ -24,6 +24,15 @@ export const PILLAR_LABELS: Record<ContentPillar, string> = {
   lifestyle: "Lifestyle",
 };
 
+/**
+ * Content maturity rating. Ranks low-to-high so a viewer's max-allowed level
+ * gates everything at or below it. "kids" doubles as kids-mode (only kids-rated
+ * content shows). Optional on content rows so legacy mocks stay typecheck-green.
+ */
+export type MaturityRating = "kids" | "pg" | "teen" | "mature";
+export const MATURITY_ORDER: Record<MaturityRating, number> = { kids: 0, pg: 1, teen: 2, mature: 3 };
+export const MATURITY_LABELS: Record<MaturityRating, string> = { kids: "Kids", pg: "PG", teen: "Teen", mature: "Mature" };
+
 /* ── Phase 9b - Shows / Seasons / Episodes ───────────────────────────── */
 
 export type ShowStatus = "airing" | "completed" | "upcoming" | "hiatus";
@@ -46,6 +55,10 @@ export interface Show {
   releasedAt: ISODate;
   /** Optional tags surfaced on show landing chips: "Action", "Talk show", etc. */
   tags: string[];
+  /** Content maturity rating. Optional during migration; unrated defaults to teen. */
+  maturityRating?: MaturityRating;
+  /** Free-form content descriptors ("violence", "language", ...). Optional. */
+  contentTags?: string[];
 }
 
 export interface Season {
@@ -142,6 +155,11 @@ export interface UserPrefs {
   };
   language: "en" | "fr" | "pt" | "ha" | "yo" | "ig" | "sw";
   theme: "system" | "light" | "dark";
+  /**
+   * Viewer's MAX allowed maturity level. Content above this rank is hidden
+   * across the app. "kids" == kids mode. Defaults to "mature".
+   */
+  maturityPreference: MaturityRating;
 }
 
 export interface Game {
@@ -258,6 +276,10 @@ export interface Stream {
   /** Admin-chosen media file the office playout engine should air for this
    *  scheduled program. Only present on admin endpoints. */
   playoutFilePath?: string | null;
+  /** Content maturity rating. Optional during migration; unrated defaults to teen. */
+  maturityRating?: MaturityRating;
+  /** Free-form content descriptors ("violence", "language", ...). Optional. */
+  contentTags?: string[];
   /** Only present on admin endpoints. Public list endpoints filter out deleted rows. */
   deletedAt?: ISODate | null;
 }
@@ -283,6 +305,10 @@ export interface Vod {
   likeCount: number;
   isPremium: boolean;
   pillar?: ContentPillar;
+  /** Content maturity rating. Optional during migration; unrated defaults to teen. */
+  maturityRating?: MaturityRating;
+  /** Free-form content descriptors ("violence", "language", ...). Optional. */
+  contentTags?: string[];
 }
 
 export interface Clip {
@@ -300,6 +326,10 @@ export interface Clip {
   createdAt: ISODate;
   gameId: UUID;
   pillar?: ContentPillar;
+  /** Content maturity rating. Optional during migration; unrated defaults to teen. */
+  maturityRating?: MaturityRating;
+  /** Free-form content descriptors ("violence", "language", ...). Optional. */
+  contentTags?: string[];
 }
 
 export interface ChatMessage {

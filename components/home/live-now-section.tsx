@@ -6,6 +6,7 @@ import { Eye } from "lucide-react-native";
 import type { Game, Stream } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { MaturityBadge } from "@/components/common/maturity-badge";
 import { PressableScale } from "@/components/common/pressable-scale";
 
 interface LiveNowProps {
@@ -126,8 +127,9 @@ export function LiveNow({ streams, games, loading }: LiveNowProps) {
                     fallbackLabel={s.title}
                     tintSeed={s.id}
                   />
-                  <View className="absolute left-2 top-2">
+                  <View className="absolute left-2 top-2 flex-row items-center gap-1.5">
                     <LiveBadge />
+                    <MaturityBadge rating={s.maturityRating} />
                   </View>
                   <View
                     className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"

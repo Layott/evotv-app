@@ -3,6 +3,7 @@ import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { MaturityBadge } from "@/components/common/maturity-badge";
 import { PressableScale } from "@/components/common/pressable-scale";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -16,6 +17,8 @@ import { listVods } from "@/lib/api/vods";
 import { listTeams } from "@/lib/api/teams";
 import { listPlayers } from "@/lib/api/players";
 import { globalSearch, searchSuggestions } from "@/lib/api/search";
+import { filterByMaturity } from "@/lib/content/maturity";
+import { useMaturityPreference } from "@/lib/content/use-maturity-preference";
 
 type ContentType = "all" | "streams" | "vods" | "teams" | "players";
 
@@ -158,10 +161,17 @@ export default function DiscoverScreen() {
 
   const gameMap = new Map((games.data ?? []).map((g) => [g.id, g]));
 
-  const rawStreams = debounced
-    ? resultsQ.data?.streams ?? []
-    : liveQ.data ?? [];
-  const rawVods = debounced ? resultsQ.data?.vods ?? [] : vodsQ.data ?? [];
+  const maturityPref = useMaturityPreference();
+
+  // Gate content to the viewer's max maturity level before any other filter.
+  const rawStreams = filterByMaturity(
+    debounced ? resultsQ.data?.streams ?? [] : liveQ.data ?? [],
+    maturityPref,
+  );
+  const rawVods = filterByMaturity(
+    debounced ? resultsQ.data?.vods ?? [] : vodsQ.data ?? [],
+    maturityPref,
+  );
   const teams = debounced ? resultsQ.data?.teams ?? [] : teamsQ.data ?? [];
   const players = debounced
     ? resultsQ.data?.players ?? []
@@ -334,11 +344,10 @@ export default function DiscoverScreen() {
                             fallbackLabel={s.title}
                             tintSeed={s.id}
                           />
-                          {s.isLive ? (
-                            <View className="absolute left-2 top-2">
-                              <LiveBadge />
-                            </View>
-                          ) : null}
+                          <View className="absolute left-2 top-2 flex-row items-center gap-1.5">
+                            {s.isLive ? <LiveBadge /> : null}
+                            <MaturityBadge rating={s.maturityRating} />
+                          </View>
                           <View
                             className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
                             style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
@@ -409,6 +418,11 @@ export default function DiscoverScreen() {
                             fallbackLabel={v.title}
                             tintSeed={v.id}
                           />
+                          {v.maturityRating ? (
+                            <View className="absolute left-2 top-2">
+                              <MaturityBadge rating={v.maturityRating} />
+                            </View>
+                          ) : null}
                           <View
                             className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
                             style={{ backgroundColor: "rgba(0,0,0,0.7)" }}

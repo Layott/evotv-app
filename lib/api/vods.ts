@@ -1,5 +1,11 @@
-import type { Clip, Vod } from "@/lib/types";
+import type { Clip, MaturityRating, Vod } from "@/lib/types";
 import { api } from "./_client";
+
+/** Editable content metadata shared by admin VOD + clip PATCH endpoints. */
+export interface AdminContentMetaPatch {
+  maturityRating?: MaturityRating | null;
+  contentTags?: string[] | null;
+}
 
 export interface ListVodsOpts {
   gameId?: string;
@@ -123,4 +129,30 @@ export async function adminRestoreClip(id: string): Promise<{
   clipId: string;
 }> {
   return api(`/api/admin/clips/${id}/restore`, { method: "POST", body: {} });
+}
+
+/** PATCH /api/admin/vods/[id] - update content maturity + descriptor tags. */
+export async function adminUpdateVod(
+  id: string,
+  patch: AdminContentMetaPatch,
+): Promise<{
+  ok: true;
+  vodId: string;
+  maturityRating?: MaturityRating | null;
+  contentTags?: string[] | null;
+}> {
+  return api(`/api/admin/vods/${id}`, { method: "PATCH", body: patch });
+}
+
+/** PATCH /api/admin/clips/[id] - update content maturity + descriptor tags. */
+export async function adminUpdateClip(
+  id: string,
+  patch: AdminContentMetaPatch,
+): Promise<{
+  ok: true;
+  clipId: string;
+  maturityRating?: MaturityRating | null;
+  contentTags?: string[] | null;
+}> {
+  return api(`/api/admin/clips/${id}`, { method: "PATCH", body: patch });
 }

@@ -6,6 +6,7 @@ import { Clock, Sparkles } from "lucide-react-native";
 import type { Game, Vod } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { MaturityBadge } from "@/components/common/maturity-badge";
 import { PressableScale } from "@/components/common/pressable-scale";
 
 interface RecommendationsProps {
@@ -64,6 +65,11 @@ export function Recommendations({
                 fallbackLabel={v.title}
                 tintSeed={v.id}
               />
+              {v.maturityRating ? (
+                <View className="absolute left-2 top-2">
+                  <MaturityBadge rating={v.maturityRating} />
+                </View>
+              ) : null}
               <View
                 className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
                 style={{ backgroundColor: "rgba(0,0,0,0.7)" }}

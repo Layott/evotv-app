@@ -8,6 +8,7 @@ import {
   type ViewToken,
 } from "react-native";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { MaturityBadge } from "@/components/common/maturity-badge";
 import { PressableScale } from "@/components/common/pressable-scale";
 import { useRouter } from "expo-router";
 import { Eye, Play } from "lucide-react-native";
@@ -137,6 +138,7 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
                     LIVE
                   </Text>
                 </View>
+                <MaturityBadge rating={s.maturityRating} />
                 <View className="flex-row items-center gap-1">
                   <Eye size={12} color="#d4d4d4" />
                   <Text className="text-xs text-neutral-300">

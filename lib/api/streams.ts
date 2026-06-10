@@ -1,4 +1,4 @@
-import type { Stream } from "@/lib/types";
+import type { MaturityRating, Stream } from "@/lib/types";
 import { api, ApiError } from "./_client";
 
 export interface ListStreamsOpts {
@@ -126,6 +126,8 @@ export async function adminUpdateStreamSchedule(
     scheduledDurationMin?: number | null;
     hlsUrl?: string | null;
     playoutFilePath?: string | null;
+    maturityRating?: MaturityRating | null;
+    contentTags?: string[] | null;
   },
 ): Promise<{
   ok: true;
@@ -134,6 +136,8 @@ export async function adminUpdateStreamSchedule(
   scheduledDurationMin?: number | null;
   hlsPath?: string;
   playoutFilePath?: string | null;
+  maturityRating?: MaturityRating | null;
+  contentTags?: string[] | null;
 }> {
   return api(`/api/admin/streams/${id}`, { method: "PATCH", body });
 }

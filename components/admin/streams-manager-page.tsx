@@ -27,8 +27,11 @@ import type { Stream } from "@/lib/types";
 
 import { Input } from "@/components/ui/input";
 
+import type { MaturityRating } from "@/lib/types";
+
 import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
+import { ContentTagsEditor, MaturityEditor } from "./content-meta-editors";
 import { formatCompact, timeAgo } from "./utils";
 
 export function StreamsManagerPage() {
@@ -124,6 +127,44 @@ export function StreamsManagerPage() {
     },
     onError: (err) =>
       toast.error("Couldn't set playout file", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const maturityMut = useMutation({
+    mutationFn: (args: { id: string; maturityRating: MaturityRating | null }) =>
+      adminUpdateStreamSchedule(args.id, {
+        maturityRating: args.maturityRating,
+      }),
+    onSuccess: (_res, args) => {
+      toast.success("Maturity rating updated");
+      queryClient.invalidateQueries({ queryKey: ["admin-streams"] });
+      setSelected((prev) =>
+        prev && prev.id === args.id
+          ? { ...prev, maturityRating: args.maturityRating ?? undefined }
+          : prev,
+      );
+    },
+    onError: (err) =>
+      toast.error("Couldn't set maturity rating", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const tagsMut = useMutation({
+    mutationFn: (args: { id: string; contentTags: string[] }) =>
+      adminUpdateStreamSchedule(args.id, { contentTags: args.contentTags }),
+    onSuccess: (_res, args) => {
+      toast.success("Content tags updated");
+      queryClient.invalidateQueries({ queryKey: ["admin-streams"] });
+      setSelected((prev) =>
+        prev && prev.id === args.id
+          ? { ...prev, contentTags: args.contentTags }
+          : prev,
+      );
+    },
+    onError: (err) =>
+      toast.error("Couldn't set content tags", {
         description: err instanceof Error ? err.message : "Unknown error",
       }),
   });
@@ -453,6 +494,25 @@ export function StreamsManagerPage() {
                   }
                   onClear={() =>
                     playoutMut.mutate({ id: selected.id, playoutFilePath: null })
+                  }
+                />
+
+                <MaturityEditor
+                  current={selected.maturityRating}
+                  isPending={maturityMut.isPending}
+                  onPick={(rating) =>
+                    maturityMut.mutate({ id: selected.id, maturityRating: rating })
+                  }
+                  onClear={() =>
+                    maturityMut.mutate({ id: selected.id, maturityRating: null })
+                  }
+                />
+
+                <ContentTagsEditor
+                  current={selected.contentTags}
+                  isPending={tagsMut.isPending}
+                  onSave={(contentTags) =>
+                    tagsMut.mutate({ id: selected.id, contentTags })
                   }
                 />
 

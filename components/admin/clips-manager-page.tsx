@@ -15,14 +15,17 @@ import { toast } from "sonner-native";
 import {
   adminDeleteClip,
   adminRestoreClip,
+  adminUpdateClip,
   listAdminClips,
   type AdminClip,
 } from "@/lib/api/vods";
+import type { MaturityRating } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 
 import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
+import { ContentTagsEditor, MaturityEditor } from "./content-meta-editors";
 import { formatCompact, timeAgo } from "./utils";
 
 type Filter = "active" | "deleted";
@@ -65,6 +68,42 @@ export function ClipsManagerPage() {
     },
     onError: (err) =>
       toast.error("Couldn't restore clip", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const maturityMut = useMutation({
+    mutationFn: (args: { id: string; maturityRating: MaturityRating | null }) =>
+      adminUpdateClip(args.id, { maturityRating: args.maturityRating }),
+    onSuccess: (_res, args) => {
+      toast.success("Maturity rating updated");
+      queryClient.invalidateQueries({ queryKey: ["admin-clips"] });
+      setSelected((prev) =>
+        prev && prev.id === args.id
+          ? { ...prev, maturityRating: args.maturityRating ?? undefined }
+          : prev,
+      );
+    },
+    onError: (err) =>
+      toast.error("Couldn't set maturity rating", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const tagsMut = useMutation({
+    mutationFn: (args: { id: string; contentTags: string[] }) =>
+      adminUpdateClip(args.id, { contentTags: args.contentTags }),
+    onSuccess: (_res, args) => {
+      toast.success("Content tags updated");
+      queryClient.invalidateQueries({ queryKey: ["admin-clips"] });
+      setSelected((prev) =>
+        prev && prev.id === args.id
+          ? { ...prev, contentTags: args.contentTags }
+          : prev,
+      );
+    },
+    onError: (err) =>
+      toast.error("Couldn't set content tags", {
         description: err instanceof Error ? err.message : "Unknown error",
       }),
   });
@@ -221,6 +260,25 @@ export function ClipsManagerPage() {
                     contentFit="cover"
                   />
                 </View>
+
+                <MaturityEditor
+                  current={selected.maturityRating}
+                  isPending={maturityMut.isPending}
+                  onPick={(rating) =>
+                    maturityMut.mutate({ id: selected.id, maturityRating: rating })
+                  }
+                  onClear={() =>
+                    maturityMut.mutate({ id: selected.id, maturityRating: null })
+                  }
+                />
+
+                <ContentTagsEditor
+                  current={selected.contentTags}
+                  isPending={tagsMut.isPending}
+                  onSave={(contentTags) =>
+                    tagsMut.mutate({ id: selected.id, contentTags })
+                  }
+                />
 
                 <View className="mt-3">
                   {selected.deletedAt ? (

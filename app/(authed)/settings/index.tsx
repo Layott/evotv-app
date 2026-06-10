@@ -48,7 +48,7 @@ import { SectionCard, SettingRow } from "@/components/settings/section-card";
 import { exportOwnData } from "@/lib/api/profile";
 import { getMyPrefs, patchMyPrefs } from "@/lib/api/prefs";
 import { deleteOwnAccount } from "@/lib/api/profile";
-import type { UserPrefs } from "@/lib/types";
+import type { MaturityRating, UserPrefs } from "@/lib/types";
 
 const LANGS = [
   { v: "en", label: "English" },
@@ -66,6 +66,13 @@ const QUALITIES = [
   { v: "720p", label: "720p" },
   { v: "480p", label: "480p" },
   { v: "360p", label: "360p" },
+];
+
+const MATURITY = [
+  { v: "kids", label: "Kids" },
+  { v: "pg", label: "PG" },
+  { v: "teen", label: "Teen" },
+  { v: "mature", label: "Mature" },
 ];
 
 const VISIBILITIES = [
@@ -98,6 +105,8 @@ export default function SettingsScreen() {
   const [captions, setCaptions] = React.useState(false);
   const [autoplay, setAutoplay] = React.useState(true);
 
+  const [maturity, setMaturity] = React.useState<MaturityRating>("mature");
+
   const [visibility, setVisibility] = React.useState<
     "public" | "followers" | "private"
   >("public");
@@ -128,6 +137,7 @@ export default function SettingsScreen() {
         setCaptions(p.playback.captions);
         setAutoplay(p.playback.autoplay);
         setLanguage(p.language);
+        setMaturity(p.maturityPreference ?? "mature");
       } catch {
         // Fall back silently - preserves screen usability if backend is down.
       } finally {
@@ -629,6 +639,55 @@ export default function SettingsScreen() {
                     });
                   }}
                 />
+              </SettingRow>
+            </View>
+          </SectionCard>
+
+          {/* Content and maturity */}
+          <SectionCard
+            title="Content and maturity"
+            description="Limit what content surfaces across the app."
+          >
+            <View>
+              <SettingRow
+                label="Kids mode"
+                description="Only Kids-rated content shows across the app."
+              >
+                <Switch
+                  checked={maturity === "kids"}
+                  onCheckedChange={(v) => {
+                    const next: MaturityRating = v ? "kids" : "mature";
+                    setMaturity(next);
+                    savePref({ maturityPreference: next });
+                  }}
+                />
+              </SettingRow>
+              <View className="h-px bg-border" />
+              <SettingRow
+                label="Maturity level"
+                description="Hides content rated above this level"
+              >
+                <View style={{ width: 130 }}>
+                  <Select
+                    value={maturity}
+                    onValueChange={(v) => {
+                      const next = v as MaturityRating;
+                      setMaturity(next);
+                      savePref({ maturityPreference: next });
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {MATURITY.map((m) => (
+                        <SelectItem key={m.v} value={m.v}>
+                          {m.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </View>
               </SettingRow>
             </View>
           </SectionCard>

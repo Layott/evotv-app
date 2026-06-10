@@ -14,6 +14,8 @@ import { listFeaturedStreams, listLiveStreams } from "@/lib/api/streams";
 import { listVods, listTrendingClips } from "@/lib/api/vods";
 import { listEvents } from "@/lib/api/events";
 import { listGames } from "@/lib/api/games";
+import { filterByMaturity } from "@/lib/content/maturity";
+import { useMaturityPreference } from "@/lib/content/use-maturity-preference";
 
 const SECTION_DURATION = 420;
 const SECTION_STEP = 90;
@@ -44,6 +46,13 @@ export default function HomeScreen() {
   const gamesQ = useQuery({ queryKey: ["games"], queryFn: () => listGames() });
   const games = gamesQ.data ?? [];
 
+  // Gate every rail to the viewer's max maturity level (kids mode == "kids").
+  const maturityPref = useMaturityPreference();
+  const featuredStreams = filterByMaturity(featured.data ?? [], maturityPref);
+  const liveStreams = filterByMaturity(live.data ?? [], maturityPref);
+  const trendingClips = filterByMaturity(clips.data ?? [], maturityPref);
+  const recommendedVods = filterByMaturity(vods.data ?? [], maturityPref);
+
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     try {
@@ -71,10 +80,10 @@ export default function HomeScreen() {
       >
         <View className="gap-6">
           <Animated.View entering={section(0)}>
-            <HeroCarousel streams={featured.data ?? []} />
+            <HeroCarousel streams={featuredStreams} />
           </Animated.View>
           <Animated.View entering={section(1)}>
-            <LiveNowSection streams={live.data ?? []} games={games} loading={live.isLoading} />
+            <LiveNowSection streams={liveStreams} games={games} loading={live.isLoading} />
           </Animated.View>
           <Animated.View entering={section(3)}>
             <AdBanner />
@@ -83,10 +92,10 @@ export default function HomeScreen() {
             <UpcomingEventsSection events={events.data ?? []} games={games} loading={events.isLoading} />
           </Animated.View>
           <Animated.View entering={section(5)}>
-            <TrendingClipsSection clips={clips.data ?? []} loading={clips.isLoading} />
+            <TrendingClipsSection clips={trendingClips} loading={clips.isLoading} />
           </Animated.View>
           <Animated.View entering={section(6)}>
-            <Recommendations vods={vods.data ?? []} games={games} loading={vods.isLoading} />
+            <Recommendations vods={recommendedVods} games={games} loading={vods.isLoading} />
           </Animated.View>
         </View>
       </ScrollView>

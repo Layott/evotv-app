@@ -25,7 +25,11 @@ export default function RootLayout() {
               behavior={Platform.OS === "ios" ? "padding" : undefined}
               style={{ flex: 1 }}
             >
-              <StatusBar style="light" />
+              {/* Opaque status bar: the OS reserves the status-bar area on
+                  every screen so app content never renders under the device
+                  clock/battery/network. iOS ignores these (handled by safe-area
+                  insets); Android gets a solid black bar. */}
+              <StatusBar style="light" backgroundColor="#000000" translucent={false} />
               <View style={{ flex: 1 }}>
                 <GlobalBanner />
                 <Stack

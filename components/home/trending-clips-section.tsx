@@ -6,6 +6,7 @@ import { Eye, Play } from "lucide-react-native";
 import type { Clip } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { PressableScale } from "@/components/common/pressable-scale";
 
 interface TrendingClipsProps {
   clips: Clip[];
@@ -74,10 +75,10 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
           keyExtractor={(c) => c.id}
           contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
           renderItem={({ item: c }) => (
-            <Pressable
+            <PressableScale
               onPress={() => router.push(`/clips/${c.id}`)}
               style={{ width: CARD_WIDTH, aspectRatio: 9 / 16 }}
-              className="overflow-hidden rounded-xl border border-border bg-card active:opacity-80"
+              className="overflow-hidden rounded-xl border border-border bg-card"
             >
               <View className="relative h-full w-full">
                 <ImageWithFallback
@@ -148,7 +149,7 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
                   </View>
                 </View>
               </View>
-            </Pressable>
+            </PressableScale>
           )}
         />
       )}

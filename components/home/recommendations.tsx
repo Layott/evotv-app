@@ -6,6 +6,7 @@ import { Clock, Sparkles } from "lucide-react-native";
 import type { Game, Vod } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { PressableScale } from "@/components/common/pressable-scale";
 
 interface RecommendationsProps {
   vods: Vod[];
@@ -47,10 +48,10 @@ export function Recommendations({
       {rowVods.map((v) => {
         const game = gameMap.get(v.gameId);
         return (
-          <Pressable
+          <PressableScale
             key={v.id}
             onPress={() => router.push(`/vod/${v.id}`)}
-            className="flex-1 overflow-hidden rounded-xl border border-border bg-card active:opacity-80"
+            className="flex-1 overflow-hidden rounded-xl border border-border bg-card"
           >
             <View
               style={{ aspectRatio: 16 / 9 }}
@@ -86,7 +87,7 @@ export function Recommendations({
                 </Text>
               ) : null}
             </View>
-          </Pressable>
+          </PressableScale>
         );
       })}
       {/* Fill empty slot if odd count */}

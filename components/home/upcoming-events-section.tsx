@@ -6,6 +6,7 @@ import { Calendar, Trophy } from "lucide-react-native";
 
 import type { EsportsEvent, Game } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PressableScale } from "@/components/common/pressable-scale";
 
 interface UpcomingEventsProps {
   events: EsportsEvent[];
@@ -115,10 +116,10 @@ export function UpcomingEvents({
             const game = gameMap.get(ev.gameId);
             const tier = tierStyle(ev.tier);
             return (
-              <Pressable
+              <PressableScale
                 key={ev.id}
                 onPress={() => router.push(`/events/${ev.id}`)}
-                className="overflow-hidden rounded-xl border border-border bg-card active:opacity-80"
+                className="overflow-hidden rounded-xl border border-border bg-card"
               >
                 <View
                   style={{ aspectRatio: 16 / 9 }}
@@ -201,7 +202,7 @@ export function UpcomingEvents({
                     </Text>
                   </View>
                 </View>
-              </Pressable>
+              </PressableScale>
             );
           })}
         </View>

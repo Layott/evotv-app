@@ -6,6 +6,7 @@ import { Eye } from "lucide-react-native";
 import type { Game, Stream } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { PressableScale } from "@/components/common/pressable-scale";
 
 interface LiveNowProps {
   streams: Stream[];
@@ -109,10 +110,10 @@ export function LiveNow({ streams, games, loading }: LiveNowProps) {
           renderItem={({ item: s }) => {
             const game = gameMap.get(s.gameId);
             return (
-              <Pressable
+              <PressableScale
                 onPress={() => router.push(`/stream/${s.id}`)}
                 style={{ width: CARD_WIDTH }}
-                className="overflow-hidden rounded-xl border border-border bg-card active:opacity-80"
+                className="overflow-hidden rounded-xl border border-border bg-card"
               >
                 <View
                   style={{ aspectRatio: 16 / 9 }}
@@ -154,7 +155,7 @@ export function LiveNow({ streams, games, loading }: LiveNowProps) {
                     </Text>
                   ) : null}
                 </View>
-              </Pressable>
+              </PressableScale>
             );
           }}
         />

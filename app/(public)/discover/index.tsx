@@ -3,6 +3,7 @@ import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { PressableScale } from "@/components/common/pressable-scale";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { Clock, Eye, Search, UserRound, Users, X } from "lucide-react-native";
@@ -315,10 +316,10 @@ export default function DiscoverScreen() {
                   {streams.map((s) => {
                     const game = gameMap.get(s.gameId);
                     return (
-                      <Pressable
+                      <PressableScale
                         key={s.id}
                         onPress={() => router.push(`/stream/${s.id}`)}
-                        className="overflow-hidden rounded-xl border border-border bg-card active:opacity-80"
+                        className="overflow-hidden rounded-xl border border-border bg-card"
                       >
                         <View
                           style={{
@@ -373,7 +374,7 @@ export default function DiscoverScreen() {
                             </Text>
                           ) : null}
                         </View>
-                      </Pressable>
+                      </PressableScale>
                     );
                   })}
                 </View>
@@ -390,10 +391,10 @@ export default function DiscoverScreen() {
                   {vods.map((v) => {
                     const game = gameMap.get(v.gameId);
                     return (
-                      <Pressable
+                      <PressableScale
                         key={v.id}
                         onPress={() => router.push(`/vod/${v.id}`)}
-                        className="overflow-hidden rounded-xl border border-border bg-card active:opacity-80"
+                        className="overflow-hidden rounded-xl border border-border bg-card"
                       >
                         <View
                           style={{
@@ -435,7 +436,7 @@ export default function DiscoverScreen() {
                             </Text>
                           ) : null}
                         </View>
-                      </Pressable>
+                      </PressableScale>
                     );
                   })}
                 </View>
@@ -452,10 +453,10 @@ export default function DiscoverScreen() {
                   {teams.map((t) => {
                     const game = gameMap.get(t.gameId);
                     return (
-                      <Pressable
+                      <PressableScale
                         key={t.id}
                         onPress={() => router.push(`/team/${t.slug}`)}
-                        className="flex-row items-center gap-3 rounded-xl border border-border bg-card p-3 active:opacity-80"
+                        className="flex-row items-center gap-3 rounded-xl border border-border bg-card p-3"
                       >
                         <Image
                           source={t.logoUrl}
@@ -489,7 +490,7 @@ export default function DiscoverScreen() {
                             </Text>
                           </View>
                         </View>
-                      </Pressable>
+                      </PressableScale>
                     );
                   })}
                 </View>

@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { Bell, BellOff, Calendar, Clock, Film, Radio, Trophy } from "lucide-react-native";
 
+import { PressableScale } from "@/components/common/pressable-scale";
 import { TopNavbar } from "@/components/home/top-navbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -180,9 +181,9 @@ function EpgCard({
   const showBell = row.state === "scheduled";
 
   return (
-    <Pressable
+    <PressableScale
       onPress={() => router.push(row.watchUrl as never)}
-      className="flex-row overflow-hidden rounded-xl border border-border bg-card active:opacity-80"
+      className="flex-row overflow-hidden rounded-xl border border-border bg-card"
       style={{ opacity: isCompleted ? 0.6 : 1 }}
     >
       <View
@@ -267,7 +268,7 @@ function EpgCard({
           </Text>
         </View>
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }
 

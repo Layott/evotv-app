@@ -8,6 +8,7 @@ import {
   type ViewToken,
 } from "react-native";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { PressableScale } from "@/components/common/pressable-scale";
 import { useRouter } from "expo-router";
 import { Eye, Play } from "lucide-react-native";
 
@@ -90,7 +91,7 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
           index: i,
         })}
         renderItem={({ item: s }) => (
-          <Pressable
+          <PressableScale
             onPress={() => router.push(`/stream/${s.id}`)}
             style={{ width, aspectRatio: 16 / 9 }}
             className="relative"
@@ -168,7 +169,7 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
                 </Text>
               </View>
             </View>
-          </Pressable>
+          </PressableScale>
         )}
       />
 

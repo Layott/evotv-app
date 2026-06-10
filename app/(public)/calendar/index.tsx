@@ -1,12 +1,5 @@
-import { Stack } from "expo-router";
+import { ComingSoon } from "@/components/common/coming-soon";
 
-import { MatchCalendarPage } from "@/components/calendar/calendar-page";
-
-export default function CalendarScreen() {
-  return (
-    <>
-      <Stack.Screen options={{ title: "Match calendar" }} />
-      <MatchCalendarPage />
-    </>
-  );
+export default function Screen() {
+  return <ComingSoon title="Calendar" />;
 }

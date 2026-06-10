@@ -1,9 +1,9 @@
 import { Tabs, useRouter } from "expo-router";
 import {
+  CalendarRange,
   Compass,
   Home,
   Library,
-  ShoppingBag,
   Trophy,
   User,
 } from "lucide-react-native";
@@ -52,11 +52,11 @@ export default function PublicLayout() {
         }}
       />
       <Tabs.Screen
-        name="shop/index"
+        name="schedule/index"
         options={{
-          title: "Shop",
+          title: "Schedule",
           tabBarIcon: ({ color, size }) => (
-            <ShoppingBag color={color} size={size} />
+            <CalendarRange color={color} size={size} />
           ),
         }}
       />
@@ -116,7 +116,7 @@ export default function PublicLayout() {
       <Tabs.Screen name="api-access/docs/index" options={{ href: null }} />
       <Tabs.Screen name="api-access/usage/index" options={{ href: null }} />
       <Tabs.Screen name="calendar/index" options={{ href: null }} />
-      <Tabs.Screen name="schedule/index" options={{ href: null }} />
+      <Tabs.Screen name="shop/index" options={{ href: null }} />
       <Tabs.Screen name="partners/index" options={{ href: null }} />
       <Tabs.Screen name="embed-marketing/index" options={{ href: null }} />
       <Tabs.Screen name="privacy/index" options={{ href: null }} />

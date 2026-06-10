@@ -10,7 +10,6 @@ import { Recommendations } from "@/components/home/recommendations";
 import { TrendingClipsSection } from "@/components/home/trending-clips-section";
 import { UpcomingEventsSection } from "@/components/home/upcoming-events-section";
 import { AdBanner } from "@/components/home/ad-banner";
-import { QuickAccess } from "@/components/home/quick-access";
 import { listFeaturedStreams, listLiveStreams } from "@/lib/api/streams";
 import { listVods, listTrendingClips } from "@/lib/api/vods";
 import { listEvents } from "@/lib/api/events";
@@ -75,9 +74,6 @@ export default function HomeScreen() {
             <HeroCarousel streams={featured.data ?? []} />
           </Animated.View>
           <Animated.View entering={section(1)}>
-            <QuickAccess />
-          </Animated.View>
-          <Animated.View entering={section(2)}>
             <LiveNowSection streams={live.data ?? []} games={games} loading={live.isLoading} />
           </Animated.View>
           <Animated.View entering={section(3)}>

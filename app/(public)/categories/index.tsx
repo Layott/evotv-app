@@ -48,7 +48,7 @@ export default function CategoriesScreen() {
           </Text>
           <Text className="mt-1 text-sm text-muted-foreground">
             Browse by category. Esports tournaments, anime reactions, lifestyle
-            podcasts — find what you love.
+            podcasts - find what you love.
           </Text>
         </View>
 

@@ -1,5 +1,5 @@
 /**
- * useStreamChat — web variant. Uses the native browser EventSource.
+ * useStreamChat - web variant. Uses the native browser EventSource.
  *
  * Same shape as the RN native variant in useStreamChat.ts. Metro picks this
  * file on web (web > native filename rule).

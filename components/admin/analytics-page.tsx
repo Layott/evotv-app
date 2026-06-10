@@ -109,7 +109,7 @@ export function AnalyticsPage() {
         <View className="min-w-[46%] flex-1">
           <MetricCard
             title="Active premium"
-            value={overview ? formatNumber(overview.activePremiumSubs) : "—"}
+            value={overview ? formatNumber(overview.activePremiumSubs) : "-"}
             delta={undefined}
             deltaLabel={overviewQ.isLoading ? "Loading…" : "Subscribers"}
             icon={Users}
@@ -118,7 +118,7 @@ export function AnalyticsPage() {
         <View className="min-w-[46%] flex-1">
           <MetricCard
             title="Live streams"
-            value={overview ? formatNumber(overview.liveStreams) : "—"}
+            value={overview ? formatNumber(overview.liveStreams) : "-"}
             delta={undefined}
             deltaLabel={overviewQ.isLoading ? "Loading…" : "Right now"}
             icon={Radio}
@@ -127,7 +127,7 @@ export function AnalyticsPage() {
         <View className="min-w-[46%] flex-1">
           <MetricCard
             title="Conversion"
-            value={conversion ? `${conversion.pct.toFixed(2)}%` : "—"}
+            value={conversion ? `${conversion.pct.toFixed(2)}%` : "-"}
             delta={undefined}
             deltaLabel="free → premium"
             icon={PercentCircle}
@@ -136,7 +136,7 @@ export function AnalyticsPage() {
         <View className="min-w-[46%] flex-1">
           <MetricCard
             title="Signups today"
-            value={overview ? formatNumber(overview.todaySignups) : "—"}
+            value={overview ? formatNumber(overview.todaySignups) : "-"}
             delta={undefined}
             deltaLabel="Last 24h"
             icon={Clock}
@@ -186,7 +186,7 @@ export function AnalyticsPage() {
           Revenue by month
         </Text>
         <Text className="text-xs text-muted-foreground">
-          Last 6 months — subs + orders combined
+          Last 6 months - subs + orders combined
         </Text>
         <View
           className="mt-3 flex-row items-end gap-2"
@@ -295,7 +295,7 @@ export function AnalyticsPage() {
                           fontVariant: ["tabular-nums"],
                         }}
                       >
-                        {v == null ? "—" : `${v}%`}
+                        {v == null ? "-" : `${v}%`}
                       </Text>
                     </View>
                   ))}

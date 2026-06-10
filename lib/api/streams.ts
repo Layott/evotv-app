@@ -6,7 +6,7 @@ export interface ListStreamsOpts {
   isPremium?: boolean;
 }
 
-/** GET /api/streams?gameId=&isPremium=  — live streams */
+/** GET /api/streams?gameId=&isPremium=  - live streams */
 export function listLiveStreams(opts: ListStreamsOpts = {}): Promise<Stream[]> {
   return api<Stream[]>("/api/streams", {
     query: { gameId: opts.gameId, isPremium: opts.isPremium },
@@ -41,7 +41,7 @@ export async function getMainChannel(): Promise<Stream | null> {
 }
 
 /**
- * POST /api/streams/[id]/heartbeat — viewer-minute ping.
+ * POST /api/streams/[id]/heartbeat - viewer-minute ping.
  *
  * Backend dedupes per (channelId, viewer-key, minute_bucket) so calling
  * this every 60s while watching is safe. Anonymous viewers get an ip_hash
@@ -57,7 +57,7 @@ export async function sendStreamHeartbeat(
 }
 
 /**
- * DELETE /api/streams/[id]/heartbeat — viewer is leaving.
+ * DELETE /api/streams/[id]/heartbeat - viewer is leaving.
  *
  * Drops the caller's recent watch_events rows for this stream so the
  * count drops immediately instead of decaying over the 90s read-window.
@@ -88,7 +88,7 @@ export interface ListAdminStreamsResult {
   offset: number;
 }
 
-/** POST /api/admin/streams/[id]/force-end — moderator+. */
+/** POST /api/admin/streams/[id]/force-end - moderator+. */
 export async function adminForceEndStream(
   id: string,
   reason?: string,
@@ -99,14 +99,14 @@ export async function adminForceEndStream(
   });
 }
 
-/** DELETE /api/admin/streams/[id] — admin+. Force-ends if live, then soft-deletes. */
+/** DELETE /api/admin/streams/[id] - admin+. Force-ends if live, then soft-deletes. */
 export async function adminDeleteStream(
   id: string,
 ): Promise<{ ok: true; streamId: string; deletedAt: string }> {
   return api(`/api/admin/streams/${id}`, { method: "DELETE" });
 }
 
-/** POST /api/admin/streams/[id]/restore — admin+. Un-soft-deletes. */
+/** POST /api/admin/streams/[id]/restore - admin+. Un-soft-deletes. */
 export async function adminRestoreStream(
   id: string,
 ): Promise<{ ok: true; streamId: string }> {
@@ -114,7 +114,7 @@ export async function adminRestoreStream(
 }
 
 /**
- * PATCH /api/admin/streams/[id] — support_admin+.
+ * PATCH /api/admin/streams/[id] - support_admin+.
  * Programs the EPG airtime and/or the HLS playback URL. Pass null to clear a
  * field. `hlsUrl` accepts a full http(s) manifest (e.g. a Cloudflare Stream
  * `.m3u8`) or a relative origin path; "" / null clears it.
@@ -138,7 +138,7 @@ export async function adminUpdateStreamSchedule(
   return api(`/api/admin/streams/${id}`, { method: "PATCH", body });
 }
 
-/** GET /api/admin/streams — admin only. All streams (live + offline). */
+/** GET /api/admin/streams - admin only. All streams (live + offline). */
 export async function listAdminStreams(
   opts: ListAdminStreamsOpts = {},
 ): Promise<ListAdminStreamsResult> {

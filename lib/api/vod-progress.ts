@@ -6,7 +6,7 @@ export interface VodProgress {
   updatedAt: string | null;
 }
 
-/** GET /api/vod-progress/[vodId] — auth required. Returns null if the user
+/** GET /api/vod-progress/[vodId] - auth required. Returns null if the user
  *  has never watched this VOD. */
 export function getProgress(vodId: string): Promise<VodProgress | null> {
   return api<VodProgress | null>(
@@ -14,7 +14,7 @@ export function getProgress(vodId: string): Promise<VodProgress | null> {
   );
 }
 
-/** POST /api/vod-progress/[vodId] — auth required. */
+/** POST /api/vod-progress/[vodId] - auth required. */
 export function upsertProgress(
   vodId: string,
   positionSec: number,

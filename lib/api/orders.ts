@@ -27,7 +27,7 @@ export interface CreateOrderResult {
   reference: string;
 }
 
-/** POST /api/orders — auth required. Returns order + payment redirect. */
+/** POST /api/orders - auth required. Returns order + payment redirect. */
 export function createOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
   return api<CreateOrderResult>("/api/orders", {
     method: "POST",
@@ -35,7 +35,7 @@ export function createOrder(input: CreateOrderInput): Promise<CreateOrderResult>
   });
 }
 
-/** GET /api/orders/[id] — auth required, owner or admin. Returns null on
+/** GET /api/orders/[id] - auth required, owner or admin. Returns null on
  *  404 so the caller can render a "not found" state without a try/catch. */
 export async function getOrderById(id: string): Promise<Order | null> {
   try {
@@ -49,7 +49,7 @@ export async function getOrderById(id: string): Promise<Order | null> {
 }
 
 /**
- * GET /api/orders — current user's orders, newest first.
+ * GET /api/orders - current user's orders, newest first.
  * Note: backend resolves the user from the bearer; the userId arg is
  * retained for call-site compatibility with the old mock signature.
  */

@@ -199,7 +199,7 @@ export default function CheckoutScreen() {
           try {
             await WebBrowser.openBrowserAsync(res.redirectUrl);
           } catch {
-            /* user dismissed — payment stays pending; they can retry */
+            /* user dismissed - payment stays pending; they can retry */
           }
         }
         setProcessing(false);
@@ -216,11 +216,11 @@ export default function CheckoutScreen() {
           } else if (err.status === 422) {
             toast.error(body?.error ?? "Invalid plan");
           } else {
-            toast.error("Upgrade failed — please try again");
+            toast.error("Upgrade failed - please try again");
           }
           return;
         }
-        toast.error("Network error — please try again");
+        toast.error("Network error - please try again");
       }
       return;
     }
@@ -252,13 +252,13 @@ export default function CheckoutScreen() {
       pushLocalOrder(res.order);
 
       if (res.redirectUrl) {
-        // Mock provider: confirm-payment URL with `mock=1` — opening it
+        // Mock provider: confirm-payment URL with `mock=1` - opening it
         // auto-completes the order. Paystack: redirects to their hosted
         // page. Both paths converge on /(authed)/order/[id] after.
         try {
           await WebBrowser.openBrowserAsync(res.redirectUrl);
         } catch {
-          /* user dismissed the browser — order stays pending */
+          /* user dismissed the browser - order stays pending */
         }
       }
 
@@ -276,11 +276,11 @@ export default function CheckoutScreen() {
         } else if (err.status === 401) {
           toast.error("Sign in again to place the order");
         } else {
-          toast.error("Order failed — please try again");
+          toast.error("Order failed - please try again");
         }
         return;
       }
-      toast.error("Network error — please try again");
+      toast.error("Network error - please try again");
     }
   }
 

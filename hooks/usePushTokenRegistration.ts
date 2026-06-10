@@ -14,12 +14,12 @@ import {
  * push token, register it against the signed-in user. Unregister on
  * sign-out via the cleanup callback returned alongside.
  *
- * On web (or when the native modules are missing — pre-rebuild dev runs):
+ * On web (or when the native modules are missing - pre-rebuild dev runs):
  * silently no-ops. Web push is handled separately via the VAPID flow in
  * `subscribePush()`.
  *
  * Failures (permission denied, project-id missing, network) are all
- * swallowed — push is enrichment, not a blocker for sign-in.
+ * swallowed - push is enrichment, not a blocker for sign-in.
  */
 export function usePushTokenRegistration(isAuthenticated: boolean): void {
   React.useEffect(() => {
@@ -66,7 +66,7 @@ export function usePushTokenRegistration(isAuthenticated: boolean): void {
               : "web";
         await registerExpoPushToken(result.data, platform);
       } catch {
-        /* native module missing (pre-rebuild) or any failure — silent */
+        /* native module missing (pre-rebuild) or any failure - silent */
       }
     })();
 

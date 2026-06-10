@@ -25,7 +25,7 @@ export function AdBanner({ placement = "home_banner" }: AdBannerProps) {
           });
         }
       } catch {
-        /* swallow — ad slot just stays empty if backend is down */
+        /* swallow - ad slot just stays empty if backend is down */
       }
     })();
     return () => {

@@ -6,7 +6,7 @@ import { ChevronLeft, Sparkles } from "lucide-react-native";
 /**
  * MVP gate. Renders a branded "Coming soon" placeholder for features that are
  * built but intentionally hidden for the MVP launch (engagement, social,
- * commerce, creator, dev tools). The route stays alive — flip a screen back to
+ * commerce, creator, dev tools). The route stays alive - flip a screen back to
  * its real body to un-gate. Replaces any mock-data screen so users never see
  * placeholder/fake data.
  *

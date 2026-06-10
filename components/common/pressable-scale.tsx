@@ -15,7 +15,7 @@ type Props = Omit<PressableProps, "style"> & {
 };
 
 /**
- * Pressable with a subtle, GPU-accelerated press-scale (transform only — 60fps
+ * Pressable with a subtle, GPU-accelerated press-scale (transform only - 60fps
  * on native + web). 120ms in / 160ms out, ease-out (no bounce). Drop-in for any
  * tappable card; `className` (NativeWind) passes through untouched.
  */

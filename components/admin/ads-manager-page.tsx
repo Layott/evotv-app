@@ -278,7 +278,7 @@ export function AdsManagerPage() {
                     </View>
                   </View>
                   <Text className="mt-1 text-[10px] text-muted-foreground">
-                    {formatDate(row.startAt)} — {formatDate(row.endAt)}
+                    {formatDate(row.startAt)} - {formatDate(row.endAt)}
                   </Text>
                 </Pressable>
               );

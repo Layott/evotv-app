@@ -43,7 +43,7 @@ function seed(vodId: string): Comment[] {
     },
     {
       handle: "blaze",
-      body: "Whoever edited the highlight cuts — raise.",
+      body: "Whoever edited the highlight cuts - raise.",
       mins: 360,
       likes: 71,
     },

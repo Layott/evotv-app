@@ -1,5 +1,5 @@
 /**
- * useStreamChat — native variant. Uses react-native-sse for EventSource on RN.
+ * useStreamChat - native variant. Uses react-native-sse for EventSource on RN.
  *
  * Bootstraps with REST history then opens SSE for live deltas.
  * Reconnects on close with exponential backoff capped at 30s.

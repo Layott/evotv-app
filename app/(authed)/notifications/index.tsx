@@ -222,7 +222,7 @@ export default function NotificationsScreen() {
         );
       }
       if (n.linkUrl && n.linkUrl !== "#") {
-        // Web links use plain paths — RN accepts the same string in expo-router.
+        // Web links use plain paths - RN accepts the same string in expo-router.
         // If push fails (not a known route), the catch swallows so we don't crash.
         try {
           router.push(n.linkUrl as never);

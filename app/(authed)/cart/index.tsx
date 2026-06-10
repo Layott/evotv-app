@@ -96,7 +96,7 @@ export default function CartScreen() {
   function applyPromo() {
     if (promo.trim().toUpperCase() === "EVO10") {
       setDiscount(0.1);
-      toast.success("Promo EVO10 applied — 10% off");
+      toast.success("Promo EVO10 applied - 10% off");
     } else {
       setDiscount(0);
       toast.error("Invalid promo code");

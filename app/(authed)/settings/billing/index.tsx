@@ -319,7 +319,7 @@ export default function BillingScreen() {
                 Pay with Mobile Money
               </Text>
               <Text className="text-xs text-muted-foreground">
-                M-Pesa, MTN MoMo, Airtel Money — STK push
+                M-Pesa, MTN MoMo, Airtel Money - STK push
               </Text>
             </View>
           </Pressable>

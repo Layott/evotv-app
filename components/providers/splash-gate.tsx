@@ -6,11 +6,11 @@ import { useGeistFonts } from "./font-loader";
 import { useAuth } from "./auth-provider";
 
 void SplashScreen.preventAutoHideAsync().catch(() => {
-  // Splash already hidden — safe to ignore.
+  // Splash already hidden - safe to ignore.
 });
 
 /**
- * Splash gate. Pure setInterval-driven animation — re-renders the view
+ * Splash gate. Pure setInterval-driven animation - re-renders the view
  * with new transform/opacity values every 60ms. Bypasses RN's `Animated`
  * + Reanimated entirely after both reportedly didn't visibly animate on
  * the user's APK build #11. Slightly higher CPU than driver-backed

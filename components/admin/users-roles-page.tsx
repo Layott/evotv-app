@@ -57,7 +57,7 @@ const ALL_ROLES: AdminAssignableRole[] = [
 const SANCTION_OPTIONS: { kind: SanctionKind; label: string; desc: string }[] = [
   { kind: "chat_banned", label: "Chat ban", desc: "Block from chat in all streams + parties" },
   { kind: "suspended", label: "Suspend", desc: "Disable account + revoke all sessions" },
-  { kind: "banned", label: "Permaban", desc: "Permanent — hardest action" },
+  { kind: "banned", label: "Permaban", desc: "Permanent - hardest action" },
 ];
 
 export function UsersRolesPage() {

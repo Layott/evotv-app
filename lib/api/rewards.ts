@@ -54,7 +54,7 @@ export function listDrops(opts: {
   });
 }
 
-/** GET /api/rewards/me — auth required. Returns XP tier + coin balance. */
+/** GET /api/rewards/me - auth required. Returns XP tier + coin balance. */
 export function getXpAndTier(_userId?: string): Promise<XpTierInfo> {
   return api<XpTierInfo>("/api/rewards/me");
 }
@@ -65,7 +65,7 @@ export async function getCoinBalance(_userId?: string): Promise<number> {
   return info.coinsBalance;
 }
 
-/** POST /api/rewards/redeem — auth required. Spend coins on a drop. */
+/** POST /api/rewards/redeem - auth required. Spend coins on a drop. */
 export function redeemDrop(
   dropId: string,
   _userId?: string,
@@ -76,7 +76,7 @@ export function redeemDrop(
   });
 }
 
-/** GET /api/rewards/redemptions — auth required. User redemption history. */
+/** GET /api/rewards/redemptions - auth required. User redemption history. */
 export function listMyRedemptions(_userId?: string): Promise<Redemption[]> {
   return api<Redemption[]>("/api/rewards/redemptions");
 }
@@ -124,13 +124,13 @@ export class QuestClaimError extends Error {
   }
 }
 
-/** GET /api/rewards/quests — auth required. Today's daily quests + progress. */
+/** GET /api/rewards/quests - auth required. Today's daily quests + progress. */
 export function listDailyQuests(): Promise<DailyQuest[]> {
   return api<DailyQuest[]>("/api/rewards/quests");
 }
 
 /**
- * POST /api/rewards/quests/{id}/claim — claim a completed daily quest. Throws
+ * POST /api/rewards/quests/{id}/claim - claim a completed daily quest. Throws
  * `QuestClaimError` for incomplete / already-claimed / unknown-quest cases so
  * call sites can show a precise toast.
  */
@@ -154,7 +154,7 @@ export async function claimDailyQuest(
   }
 }
 
-/** GET /api/rewards/xp-events?limit=20 — recent XP grants. */
+/** GET /api/rewards/xp-events?limit=20 - recent XP grants. */
 export function listRecentXpEvents(limit = 20): Promise<XpEvent[]> {
   return api<XpEvent[]>("/api/rewards/xp-events", {
     query: { limit },

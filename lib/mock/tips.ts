@@ -1,5 +1,5 @@
 // Tipping / Cheers mock module.
-// Phase F mock — every helper preserves the signature it will keep when swapped to lib/api/tips.
+// Phase F mock - every helper preserves the signature it will keep when swapped to lib/api/tips.
 
 import { sleep, hoursAgo, daysAgo, minutesAgo } from "./_util";
 import { syncGet, syncSet } from "@/lib/storage/persist";
@@ -60,7 +60,7 @@ function saveState(s: PersistedState) {
   }
 }
 
-// Shared coin wallet — read/written via the rewards persisted state so tipping
+// Shared coin wallet - read/written via the rewards persisted state so tipping
 // and the rewards store both see one balance.
 interface RewardsWallet {
   coins?: Record<string, number>;
@@ -202,10 +202,10 @@ function buildSeedTips(): Tip[] {
       streamId: i % 3 === 0 ? "stream_lagos_final" : i % 3 === 1 ? "channel_main" : "stream_codm_scrim",
       streamTitle:
         i % 3 === 0
-          ? "EVO Lagos Invitational — Semifinal 1 LIVE"
+          ? "EVO Lagos Invitational - Semifinal 1 LIVE"
           : i % 3 === 1
-            ? "EVO TV Channel — 24/7 Esports"
-            : "CoD Mobile Scrim Night — Titan vs Rogue",
+            ? "EVO TV Channel - 24/7 Esports"
+            : "CoD Mobile Scrim Night - Titan vs Rogue",
       amountCoins: amount,
       message: msg,
       atIso:

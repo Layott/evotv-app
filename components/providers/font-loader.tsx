@@ -1,7 +1,7 @@
 import * as React from "react";
 
 /**
- * Geist font loader — disabled until real .ttf assets land.
+ * Geist font loader - disabled until real .ttf assets land.
  *
  * Drop these files into EVOTV-app/assets/fonts/ then restore the `useFonts`
  * call below:

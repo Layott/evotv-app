@@ -12,7 +12,7 @@ export interface StubProps {
 export function Stub({ name, className, children }: StubProps) {
   if (__DEV__) {
     console.warn(
-      `[ui/${name}] Not implemented in React Native — see ui/README.md TODO.`,
+      `[ui/${name}] Not implemented in React Native - see ui/README.md TODO.`,
     );
   }
   return (

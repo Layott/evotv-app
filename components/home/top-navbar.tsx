@@ -28,7 +28,7 @@ export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
     else router.push("/discover");
   };
 
-  // Notification bell is a soft polling target — every 90s while signed in.
+  // Notification bell is a soft polling target - every 90s while signed in.
   // Cheap-enough query that backs the unread badge without an SSE channel.
   const summaryQ = useQuery({
     queryKey: ["notifications", "summary"],

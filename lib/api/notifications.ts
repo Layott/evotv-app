@@ -11,13 +11,13 @@ interface NotificationsEnvelope {
   unread: number;
 }
 
-/** GET /api/notifications — current user's inbox. */
+/** GET /api/notifications - current user's inbox. */
 export async function listNotifications(): Promise<NotificationItem[]> {
   const res = await api<NotificationsEnvelope>("/api/notifications");
   return res.items ?? [];
 }
 
-/** GET /api/notifications?unread=1 — only unread rows. */
+/** GET /api/notifications?unread=1 - only unread rows. */
 export async function listUnreadNotifications(): Promise<NotificationItem[]> {
   const res = await api<NotificationsEnvelope>("/api/notifications", {
     query: { unread: "1" },

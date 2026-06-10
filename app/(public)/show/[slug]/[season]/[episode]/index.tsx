@@ -67,7 +67,7 @@ export default function EpisodePlayerScreen() {
   }, [seasonEpisodesQ.data, episode]);
 
   const { isAuthenticated } = useAuth();
-  // Continue-watching seek — fetch saved position so the player resumes
+  // Continue-watching seek - fetch saved position so the player resumes
   // where the user left off.
   const progressQ = useQuery({
     queryKey: ["episode-progress", episode?.id],
@@ -83,7 +83,7 @@ export default function EpisodePlayerScreen() {
     return pos;
   }, [progressQ.data, episode]);
 
-  // Real progress beacon — HLSPlayer fires onProgress(positionSec) every 15s
+  // Real progress beacon - HLSPlayer fires onProgress(positionSec) every 15s
   // and we POST to /api/episodes/[id]/progress. Dedup so we don't write the
   // same second repeatedly when paused.
   const lastWrittenRef = React.useRef<number>(-1);

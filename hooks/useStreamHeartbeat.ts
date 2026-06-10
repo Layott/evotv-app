@@ -1,5 +1,5 @@
 /**
- * useStreamHeartbeat — pings POST /api/streams/[id]/heartbeat every 60s
+ * useStreamHeartbeat - pings POST /api/streams/[id]/heartbeat every 60s
  * while mounted + the stream is live, then fires DELETE on unmount so the
  * read-time viewer count drops immediately instead of decaying for ~90s.
  *
@@ -11,7 +11,7 @@
  * caller can invalidate its stream query and surface the bumped count
  * without waiting for the next refetchInterval tick.
  *
- * Silent on failure — heartbeat errors should not surface to user.
+ * Silent on failure - heartbeat errors should not surface to user.
  */
 
 import * as React from "react";
@@ -60,7 +60,7 @@ export function useStreamHeartbeat(
     return () => {
       cancelled = true;
       if (timer) clearInterval(timer);
-      // Best-effort drop — backend filters to the last 90s anyway.
+      // Best-effort drop - backend filters to the last 90s anyway.
       void stopStreamHeartbeat(streamId).catch(() => {});
     };
   }, [streamId, enabled]);

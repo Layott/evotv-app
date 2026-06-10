@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 
 /**
- * The Profile tab is a redirect target — the real Profile screen lives at
+ * The Profile tab is a redirect target - the real Profile screen lives at
  * /(authed)/profile/index.tsx. Native Expo Router doesn't unmount the Tabs
  * navigator gracefully when a Tabs.Screen child returns <Redirect/> at render
  * time (leaves a blank frame). Imperative `router.replace` inside a focus

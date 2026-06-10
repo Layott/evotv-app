@@ -76,7 +76,7 @@ interface PaymentMethodCardProps {
   iconFg: string;
   onPress: () => void;
   primary?: boolean;
-  /** Method not live yet — dims the card + shows "Coming soon". */
+  /** Method not live yet - dims the card + shows "Coming soon". */
   soon?: boolean;
 }
 
@@ -219,7 +219,7 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
             textClassName="text-black font-semibold"
             onPress={onUpgrade}
           >
-            {tier.cta} — {formatNgn(tier.priceNgn)}/mo
+            {tier.cta} · {formatNgn(tier.priceNgn)}/mo
           </Button>
         )}
       </View>
@@ -273,7 +273,7 @@ export default function UpgradeScreen() {
           </Text>
           <Text className="text-sm text-muted-foreground text-center">
             Upgrade once, watch every tournament, anime show, and podcast
-            episode across Africa in full fidelity — plus early access to EVO
+            episode across Africa in full fidelity, plus early access to EVO
             Originals and exclusive analysis from the creators you trust.
           </Text>
         </View>
@@ -317,7 +317,7 @@ export default function UpgradeScreen() {
           <PaymentMethodCard
             badge="Mobile money"
             title="M-Pesa, MoMo, Airtel"
-            subtitle="STK push to your phone — launching soon."
+            subtitle="STK push to your phone. Launching soon."
             Icon={Phone}
             iconBg="rgba(16,185,129,0.15)"
             iconFg="#34d399"
@@ -331,7 +331,7 @@ export default function UpgradeScreen() {
           <PaymentMethodCard
             badge="USSD"
             title="Dial-to-pay"
-            subtitle="No app needed — launching soon."
+            subtitle="No app needed. Launching soon."
             Icon={Ticket}
             iconBg="rgba(245,158,11,0.15)"
             iconFg="#fbbf24"

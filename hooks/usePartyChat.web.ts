@@ -1,5 +1,5 @@
 /**
- * usePartyChat — web variant. Browser EventSource (credentials:include).
+ * usePartyChat - web variant. Browser EventSource (credentials:include).
  */
 
 import * as React from "react";

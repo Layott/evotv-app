@@ -52,7 +52,7 @@ function formatTime(iso: string): string {
       minute: "2-digit",
     });
   } catch {
-    return "—";
+    return "-";
   }
 }
 
@@ -394,7 +394,7 @@ export default function ScheduleScreen() {
             What's airing
           </Text>
           <Text className="text-sm text-muted-foreground">
-            Live streams, anime drops, lifestyle premieres, and esports matches —
+            Live streams, anime drops, lifestyle premieres, and esports matches -
             in one schedule.
           </Text>
         </View>

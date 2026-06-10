@@ -6,7 +6,7 @@ export const events: EsportsEvent[] = [
   {
     id: "event_afc_championship",
     slug: "afc-championship-2026",
-    title: "EVO Championship 2026 — Grand Finals",
+    title: "EVO Championship 2026 - Grand Finals",
     gameId: "game_freefire",
     startsAt: hoursAhead(2),
     endsAt: hoursAhead(8),

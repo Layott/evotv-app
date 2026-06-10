@@ -82,7 +82,7 @@ export default function ProfileEditScreen() {
         return;
       }
       if (err instanceof ApiError && err.status === 422) {
-        toast.error("Check the form — some fields are invalid");
+        toast.error("Check the form - some fields are invalid");
         return;
       }
       toast.error("Couldn't save profile", {

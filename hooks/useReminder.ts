@@ -18,7 +18,7 @@ const SERVER_LEAD_MIN = 60;
  *   1. Server reminder via `/api/reminders` (hourly cron fans out Expo Push
  *      at airsAt - SERVER_LEAD_MIN). Required for web users + cross-device.
  *   2. Local Expo notification scheduled on device (fires at airsAt - LOCAL_LEAD_MIN).
- *      Works offline, fine-grained timing. Native only — silently no-ops on web.
+ *      Works offline, fine-grained timing. Native only - silently no-ops on web.
  *
  * The local notification ID format: `epg:${targetId}` so toggle off can cancel it.
  */
@@ -92,7 +92,7 @@ async function scheduleLocalNotification(
       identifier: `epg:${targetId}`,
       content: {
         title: "Coming up on EVO TV",
-        body: `Starting in ${LOCAL_LEAD_MIN} min — tap to open the schedule.`,
+        body: `Starting in ${LOCAL_LEAD_MIN} min - tap to open the schedule.`,
         data: { kind: "epg_reminder", targetId, airsAt },
         sound: "default",
       },
@@ -101,7 +101,7 @@ async function scheduleLocalNotification(
       >[0]["trigger"],
     });
   } catch {
-    /* native module unavailable — fall back to server cron */
+    /* native module unavailable - fall back to server cron */
   }
 }
 

@@ -1,5 +1,5 @@
 /**
- * Predictions API — wraps backend /api/predictions routes.
+ * Predictions API - wraps backend /api/predictions routes.
  *
  * Phase 6 scope:
  *   - submitPrediction → POST /api/predictions/picks (real, atomic debit,
@@ -11,7 +11,7 @@
  *     /api/tips/balance but the mock signature returns a different shape.
  *
  * Collision: getCoinBalance + getTeamById name-clash with other modules.
- * Don't re-export from lib/api/index.ts — import direct.
+ * Don't re-export from lib/api/index.ts - import direct.
  */
 
 import { api, ApiError } from "./_client";
@@ -135,7 +135,7 @@ export async function listMyPredictions(_userId?: string): Promise<Prediction[]>
   }
 }
 
-// Helper functions backend hasn't covered — proxy to mock for now.
+// Helper functions backend hasn't covered - proxy to mock for now.
 export const listOpenPredictionEvents = mockListOpenEvents;
 export const listLeaderboard = mockListLeaderboard;
 export const getCoinBalance = mockGetCoinBalance;

@@ -36,7 +36,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { HLSPlayer } from "@/components/stream/hls-player";
 import { VodRelated } from "@/components/vod/vod-related";
-// VodComments hidden — no backend comments endpoint yet. Re-enable when
+// VodComments hidden - no backend comments endpoint yet. Re-enable when
 // /api/vods/[id]/comments lands.
 // import { VodComments } from "@/components/vod/vod-comments";
 import { ReportButton } from "@/components/common/report-button";
@@ -213,7 +213,7 @@ export default function VodScreen() {
     },
   });
 
-  // Continue-watching seek — fetch the user's last saved position so the
+  // Continue-watching seek - fetch the user's last saved position so the
   // player can resume on mount. Silent null when unwatched or unauthed.
   const progressQ = useQuery({
     queryKey: ["vod-progress", vodId],
@@ -233,7 +233,7 @@ export default function VodScreen() {
   }, [progressQ.data]);
 
   // Persist player position every 15s (driven by HLSPlayer's onProgress).
-  // Silent on failure — losing one progress update is no big deal. Bumps
+  // Silent on failure - losing one progress update is no big deal. Bumps
   // both the watch-history (library tab) + the continue-watching seek
   // path above. Hooks declared above the conditional early returns so
   // React's rules-of-hooks stay satisfied.
@@ -327,7 +327,7 @@ export default function VodScreen() {
     }
   };
   const onDislike = () => {
-    // Backend has no dislike endpoint — keep local-only feedback gesture
+    // Backend has no dislike endpoint - keep local-only feedback gesture
     // (mirrored UX from YouTube). Doesn't persist.
     if (disliked) {
       setDisliked(false);

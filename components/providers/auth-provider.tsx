@@ -12,7 +12,7 @@ const BASE_URL =
 const OAUTH_REDIRECT = "evotv://oauth";
 
 /**
- * Real auth provider — Better-Auth bearer flow against the EVO TV backend.
+ * Real auth provider - Better-Auth bearer flow against the EVO TV backend.
  *
  * Wire order in components/providers/index.tsx:
  *   ThemeProvider → QueryProvider → AuthProvider → children + Toaster + RoleSwitcher
@@ -152,7 +152,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             if (!cancelled) setPublisherMemberships(memberships);
           }
         } catch {
-          // No valid session — stay guest.
+          // No valid session - stay guest.
         }
         const followsList = await persist.get<string[]>(FOLLOWS_KEY);
         const onboarded = await persist.get<boolean>(ONBOARD_KEY);

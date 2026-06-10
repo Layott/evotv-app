@@ -1,7 +1,7 @@
 import { api } from "./_client";
 
 /**
- * Row shape returned by GET /api/users/me/vod-progress — a vod_progress row
+ * Row shape returned by GET /api/users/me/vod-progress - a vod_progress row
  * joined with the parent VOD so the client renders without a second fetch.
  */
 export interface VodProgressEntry {

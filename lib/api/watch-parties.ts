@@ -1,9 +1,9 @@
 /**
- * Watch-parties API client — backed by /api/parties/* (Phase 7.1).
+ * Watch-parties API client - backed by /api/parties/* (Phase 7.1).
  *
  * Shape difference vs lib/mock/watch-parties.ts:
  *  - Backend uses isPrivate:boolean + inviteCode, mock used visibility:"public"|"invite"
- *  - Backend doesn't track language or topic — those mock fields are dropped on flip
+ *  - Backend doesn't track language or topic - those mock fields are dropped on flip
  *  - Backend lists 50 most-recent active parties (endedAt is null)
  */
 
@@ -134,7 +134,7 @@ export interface PartyChatMessage {
   userAvatarUrl: string | null;
 }
 
-/** GET /api/parties/[id]/messages — last 100, oldest→newest. Requires membership. */
+/** GET /api/parties/[id]/messages - last 100, oldest→newest. Requires membership. */
 export async function listPartyMessages(
   partyId: string,
 ): Promise<PartyChatMessage[]> {
@@ -143,7 +143,7 @@ export async function listPartyMessages(
   );
 }
 
-/** POST /api/parties/[id]/messages — append + broadcast via SSE. */
+/** POST /api/parties/[id]/messages - append + broadcast via SSE. */
 export async function sendPartyMessage(
   partyId: string,
   body: string,

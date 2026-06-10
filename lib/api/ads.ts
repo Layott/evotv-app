@@ -2,7 +2,7 @@ import { api } from "./_client";
 import type { Ad, AdPlacement } from "@/lib/types";
 
 /**
- * GET /api/ads/serve?placement=<slot> — public. Returns one active ad
+ * GET /api/ads/serve?placement=<slot> - public. Returns one active ad
  * (weight-biased) for the slot or `{ ad: null }` if none.
  */
 export function serveAd(placement: AdPlacement): Promise<{ ad: Ad | null }> {
@@ -11,7 +11,7 @@ export function serveAd(placement: AdPlacement): Promise<{ ad: Ad | null }> {
   });
 }
 
-/** POST /api/ads/impression — increments impression count. */
+/** POST /api/ads/impression - increments impression count. */
 export function recordAdImpression(adId: string): Promise<{ ok: true }> {
   return api<{ ok: true }>("/api/ads/impression", {
     method: "POST",
@@ -19,7 +19,7 @@ export function recordAdImpression(adId: string): Promise<{ ok: true }> {
   });
 }
 
-/** POST /api/ads/click — returns the click-through URL. */
+/** POST /api/ads/click - returns the click-through URL. */
 export function recordAdClick(adId: string): Promise<{ clickUrl: string }> {
   return api<{ clickUrl: string }>("/api/ads/click", {
     method: "POST",
@@ -41,7 +41,7 @@ export interface ListAdsResult {
   offset: number;
 }
 
-/** GET /api/admin/ads — admin only. Paginated, optional placement+active filter. */
+/** GET /api/admin/ads - admin only. Paginated, optional placement+active filter. */
 export async function listAdminAds(
   opts: ListAdsOptions = {},
 ): Promise<ListAdsResult> {
@@ -56,14 +56,14 @@ export async function listAdminAds(
 
 export type CreateAdPayload = Omit<Ad, "id" | "impressions" | "clicks">;
 
-/** POST /api/admin/ads — admin only. */
+/** POST /api/admin/ads - admin only. */
 export async function createAd(payload: CreateAdPayload): Promise<Ad> {
   return api<Ad>("/api/admin/ads", { method: "POST", body: payload });
 }
 
 export type UpdateAdPayload = Partial<CreateAdPayload>;
 
-/** PATCH /api/admin/ads/[id] — admin only. */
+/** PATCH /api/admin/ads/[id] - admin only. */
 export async function updateAd(id: string, payload: UpdateAdPayload): Promise<Ad> {
   return api<Ad>(`/api/admin/ads/${encodeURIComponent(id)}`, {
     method: "PATCH",
@@ -71,7 +71,7 @@ export async function updateAd(id: string, payload: UpdateAdPayload): Promise<Ad
   });
 }
 
-/** DELETE /api/admin/ads/[id] — admin only. */
+/** DELETE /api/admin/ads/[id] - admin only. */
 export async function deleteAd(id: string): Promise<{ ok: true }> {
   return api<{ ok: true }>(`/api/admin/ads/${encodeURIComponent(id)}`, {
     method: "DELETE",

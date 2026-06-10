@@ -12,7 +12,7 @@ export interface EventHeroProps {
 }
 
 function formatNgn(n: number | null | undefined): string {
-  if (n == null || !Number.isFinite(n)) return "₦—";
+  if (n == null || !Number.isFinite(n)) return "₦-";
   if (n >= 1_000_000) {
     const m = n / 1_000_000;
     return `₦${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M`;
@@ -166,7 +166,7 @@ export function EventHero({ event, game }: EventHeroProps) {
             <View className="flex-row items-center gap-1">
               <Calendar size={12} color="#d4d4d4" />
               <Text style={{ fontSize: 11, color: "#d4d4d4" }}>
-                {startLabel} — {endLabel}
+                {startLabel} - {endLabel}
               </Text>
             </View>
             <View className="flex-row items-center gap-1">

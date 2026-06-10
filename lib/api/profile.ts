@@ -148,7 +148,7 @@ export async function deleteOwnAccount(): Promise<{ ok: true; scheduledForIso: s
   const data = (await res.json().catch(() => ({}))) as {
     scheduledForIso?: string;
   };
-  // Backend may or may not return a scheduled-for date — synthesize one
+  // Backend may or may not return a scheduled-for date - synthesize one
   // matching the cron's 30-day purge window.
   const scheduledForIso =
     data.scheduledForIso ??
@@ -156,7 +156,7 @@ export async function deleteOwnAccount(): Promise<{ ok: true; scheduledForIso: s
   return { ok: true, scheduledForIso };
 }
 
-/** DELETE /api/users/me/avatar — revert to default. */
+/** DELETE /api/users/me/avatar - revert to default. */
 export async function removeAvatar(): Promise<void> {
   const token = await getToken();
   const res = await fetch(`${BASE_URL}/api/users/me/avatar`, {
@@ -169,7 +169,7 @@ export async function removeAvatar(): Promise<void> {
 }
 
 /**
- * GET /api/users/me/export — GDPR data export.
+ * GET /api/users/me/export - GDPR data export.
  *
  * Fetches the JSON dump + delivers it cross-platform:
  *  - web: Blob + anchor download, same pattern as ICS.

@@ -53,13 +53,13 @@ export default function ChannelHomeScreen() {
               href={`/(partner)/channels/${id}/analytics` as never}
               icon={<ShieldCheck size={16} color="#FAFAFA" />}
               title="Analytics"
-              subtitle="Daily rollup — views, watch time, tips"
+              subtitle="Daily rollup - views, watch time, tips"
             />
             <NavRow
               href={`/(partner)/channels/${id}/mod` as never}
               icon={<MessageSquare size={16} color="#FAFAFA" />}
               title="Chat moderation"
-              subtitle="Pin, delete, timeout — live during broadcasts"
+              subtitle="Pin, delete, timeout - live during broadcasts"
             />
           </View>
         </View>

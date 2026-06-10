@@ -1,5 +1,5 @@
 /**
- * Pickem API — wraps backend /api/pickem routes.
+ * Pickem API - wraps backend /api/pickem routes.
  *
  * Phase 6 scope:
  *   - submitPickemEntry → POST /api/pickem/[eventId] (upsert; 409 if locked)
@@ -81,7 +81,7 @@ export async function submitPickemEntry(
     if (err instanceof ApiError) {
       reason =
         err.status === 409
-          ? "Bracket locked — picks closed"
+          ? "Bracket locked - picks closed"
           : err.status === 401
             ? "Sign in to submit picks"
             : err.status === 404
@@ -140,7 +140,7 @@ export async function listLeagueLeaderboardForEvent(
   }
 }
 
-// Helpers below remain on mock — backend has no equivalents yet.
+// Helpers below remain on mock - backend has no equivalents yet.
 export const buildBracket = mockBuildBracket;
 export const getBracketForEvent = mockGetBracketForEvent;
 export const deriveBracketWithPicks = mockDeriveBracketWithPicks;

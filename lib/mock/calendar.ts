@@ -196,7 +196,7 @@ export function buildIcsFile(matches: CalendarMatch[]): string {
     const dtEnd = toIcsDate(
       new Date(new Date(m.scheduledAt).getTime() + m.durationMin * 60_000).toISOString(),
     );
-    const summary = `${m.teamA.tag} vs ${m.teamB.tag} — ${m.eventTitle}`;
+    const summary = `${m.teamA.tag} vs ${m.teamB.tag} - ${m.eventTitle}`;
     const description = `${m.round} · Bo${m.bestOf} · ${m.gameShortName} · ${m.region}`;
     lines.push(
       "BEGIN:VEVENT",
@@ -235,7 +235,7 @@ export async function downloadIcs(filename: string, ics: string): Promise<void> 
     return;
   }
 
-  // Native — require at call time so web bundle never resolves expo-sharing.
+  // Native - require at call time so web bundle never resolves expo-sharing.
   /* eslint-disable @typescript-eslint/no-require-imports */
   const FileSystem = require("expo-file-system") as typeof import("expo-file-system");
   const Sharing = require("expo-sharing") as typeof import("expo-sharing");

@@ -1,5 +1,5 @@
 // Drops & Watch-time Rewards mock module.
-// Phase F mock — every helper preserves the signature it will keep when swapped to lib/api/rewards.
+// Phase F mock - every helper preserves the signature it will keep when swapped to lib/api/rewards.
 //
 // Persistence: all mutations are mirrored into AsyncStorage under `evotv_rewards_v1`
 // so a refresh keeps progress, claimed quests, and redemptions intact.
@@ -278,7 +278,7 @@ const SEED_PROGRESS: Record<string, number> = {
 const DROPS: Drop[] = [
   {
     id: "drop_ff_diamond_skin",
-    name: "Free Fire — Diamond Bundle Skin",
+    name: "Free Fire - Diamond Bundle Skin",
     kind: "cosmetic",
     cost: 2_400,
     stock: 42,
@@ -291,7 +291,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_ff_pet_bundle",
-    name: "Free Fire — Pet Spirit Bundle",
+    name: "Free Fire - Pet Spirit Bundle",
     kind: "cosmetic",
     cost: 1_800,
     stock: 64,
@@ -304,7 +304,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_codm_blueprint",
-    name: "CoD Mobile — Mythic Blueprint",
+    name: "CoD Mobile - Mythic Blueprint",
     kind: "cosmetic",
     cost: 3_600,
     stock: 18,
@@ -317,7 +317,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_codm_emote",
-    name: "CoD Mobile — Operator Emote Pack",
+    name: "CoD Mobile - Operator Emote Pack",
     kind: "cosmetic",
     cost: 900,
     stock: 120,
@@ -330,7 +330,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_pubgm_uc_50",
-    name: "PUBG Mobile — 50 UC Top-up",
+    name: "PUBG Mobile - 50 UC Top-up",
     kind: "cosmetic",
     cost: 600,
     stock: 200,
@@ -343,7 +343,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_pubgm_skin",
-    name: "PUBG Mobile — Drift Helmet Skin",
+    name: "PUBG Mobile - Drift Helmet Skin",
     kind: "cosmetic",
     cost: 2_100,
     stock: 35,
@@ -356,7 +356,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_eafc_mobile_pack",
-    name: "EA FC Mobile — Gold Pack x3",
+    name: "EA FC Mobile - Gold Pack x3",
     kind: "cosmetic",
     cost: 1_200,
     stock: 88,
@@ -369,7 +369,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_eafc_kit",
-    name: "EA FC — EVO TV Custom Kit",
+    name: "EA FC - EVO TV Custom Kit",
     kind: "cosmetic",
     cost: 800,
     stock: 145,
@@ -382,7 +382,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_premium_7d",
-    name: "EVO Premium — 7 day trial",
+    name: "EVO Premium - 7 day trial",
     kind: "premium-trial",
     cost: 1_500,
     stock: 50,
@@ -395,7 +395,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_premium_30d",
-    name: "EVO Premium — 30 day trial",
+    name: "EVO Premium - 30 day trial",
     kind: "premium-trial",
     cost: 5_500,
     stock: 25,
@@ -408,7 +408,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_premium_1d",
-    name: "EVO Premium — 24h pass",
+    name: "EVO Premium - 24h pass",
     kind: "premium-trial",
     cost: 300,
     stock: 500,
@@ -473,7 +473,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_dstv_voucher",
-    name: "DStv NOW — 1 month voucher",
+    name: "DStv NOW - 1 month voucher",
     kind: "merch-voucher",
     cost: 3_200,
     stock: 30,
@@ -525,7 +525,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_dstv_xtraview",
-    name: "Showmax — 14 day pass",
+    name: "Showmax - 14 day pass",
     kind: "merch-voucher",
     cost: 1_800,
     stock: 60,
@@ -538,7 +538,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_ff_emote_dance",
-    name: "Free Fire — Signature Dance Emote",
+    name: "Free Fire - Signature Dance Emote",
     kind: "cosmetic",
     cost: 700,
     stock: 220,
@@ -551,7 +551,7 @@ const DROPS: Drop[] = [
   },
   {
     id: "drop_codm_camo",
-    name: "CoD Mobile — Sunset Camo",
+    name: "CoD Mobile - Sunset Camo",
     kind: "cosmetic",
     cost: 1_400,
     stock: 75,
@@ -604,7 +604,7 @@ function defaultRedemptions(userId: string): Redemption[] {
       id: "redemption_seed_1",
       userId,
       dropId: "drop_premium_1d",
-      dropName: "EVO Premium — 24h pass",
+      dropName: "EVO Premium - 24h pass",
       dropKind: "premium-trial",
       partner: "EVO TV",
       imageUrl: vodPoster("drop_premium_1d"),
@@ -617,7 +617,7 @@ function defaultRedemptions(userId: string): Redemption[] {
       id: "redemption_seed_2",
       userId,
       dropId: "drop_eafc_kit",
-      dropName: "EA FC — EVO TV Custom Kit",
+      dropName: "EA FC - EVO TV Custom Kit",
       dropKind: "cosmetic",
       partner: "EA Sports",
       imageUrl: clipThumb("drop_eafc_kit"),

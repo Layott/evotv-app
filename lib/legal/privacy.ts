@@ -1,4 +1,4 @@
-// AUTO-MAINTAINED — mirror of docs/PRIVACY.md without the H1 title line.
+// AUTO-MAINTAINED - mirror of docs/PRIVACY.md without the H1 title line.
 // Update both files together when revising.
 export const PRIVACY_BODY = `**Last updated:** 2026-05-15
 **Effective:** 2026-05-15
@@ -18,23 +18,23 @@ EVO TV is operated by the EVO TV team based in Nigeria. Questions: **privacy@evo
 ## 2. What we collect
 
 ### 2.1 Information you provide
-- **Account details** — email, password (hashed), display name, handle, country.
-- **Profile content** — avatar image, bio, follow lists.
-- **Content you create** — clips, chat messages, comments, watch-party messages, reports you submit.
-- **Payment information** — only payment-method tokens issued by our processor (Paystack). We never see or store your raw card / bank details.
-- **Communication** — emails / support requests you send us.
+- **Account details** - email, password (hashed), display name, handle, country.
+- **Profile content** - avatar image, bio, follow lists.
+- **Content you create** - clips, chat messages, comments, watch-party messages, reports you submit.
+- **Payment information** - only payment-method tokens issued by our processor (Paystack). We never see or store your raw card / bank details.
+- **Communication** - emails / support requests you send us.
 
 ### 2.2 Information collected automatically
-- **Watch activity** — which streams / VODs / clips you watched, for how long, when (used for recommendations, viewer counts, watch-history).
-- **Device info** — model, OS version, app version (crash reports + compatibility).
-- **Approximate location** — derived from your IP address (city + country only, never precise GPS).
-- **IP address** — hashed at rest with a salted SHA-256 so we can detect abuse + ban-evasion without storing raw IPs long-term.
-- **Authentication events** — sign-in time, success/failure, hashed IP + device ID. 100-record per-user cap.
-- **Sentry** — anonymized error / crash reports (when enabled).
+- **Watch activity** - which streams / VODs / clips you watched, for how long, when (used for recommendations, viewer counts, watch-history).
+- **Device info** - model, OS version, app version (crash reports + compatibility).
+- **Approximate location** - derived from your IP address (city + country only, never precise GPS).
+- **IP address** - hashed at rest with a salted SHA-256 so we can detect abuse + ban-evasion without storing raw IPs long-term.
+- **Authentication events** - sign-in time, success/failure, hashed IP + device ID. 100-record per-user cap.
+- **Sentry** - anonymized error / crash reports (when enabled).
 
 ### 2.3 Cookies + similar
-- **Session cookie** — HttpOnly, sets you as signed in. Survives 30 days.
-- **localStorage** (web only) — session token mirror, theme preference.
+- **Session cookie** - HttpOnly, sets you as signed in. Survives 30 days.
+- **localStorage** (web only) - session token mirror, theme preference.
 - **No third-party tracking pixels.** No Google Analytics. No Facebook Pixel.
 
 ---
@@ -63,12 +63,12 @@ We do not sell your data to anyone. We do not share it with advertising networks
 
 You have the right to:
 
-- **Access** your data — email privacy@evotv.app.
-- **Correct** wrong data — edit your profile or ask us.
-- **Delete** your account — Settings → Danger zone → Delete account. We mark you for deletion, revoke all sessions, and run a 30-day grace window. After 30 days, the GDPR purge job permanently removes your personal data (watch history, chats, clips, login events, API keys, party messages). The user row is anonymized so comments and tips you sent remain readable.
-- **Object** to a specific use — email us.
-- **Port** your data — request a machine-readable export.
-- **Withdraw consent** — for anything that depends on consent.
+- **Access** your data - email privacy@evotv.app.
+- **Correct** wrong data - edit your profile or ask us.
+- **Delete** your account - Settings → Danger zone → Delete account. We mark you for deletion, revoke all sessions, and run a 30-day grace window. After 30 days, the GDPR purge job permanently removes your personal data (watch history, chats, clips, login events, API keys, party messages). The user row is anonymized so comments and tips you sent remain readable.
+- **Object** to a specific use - email us.
+- **Port** your data - request a machine-readable export.
+- **Withdraw consent** - for anything that depends on consent.
 
 GDPR + NDPR (Nigeria Data Protection Regulation) apply.
 
@@ -76,14 +76,14 @@ GDPR + NDPR (Nigeria Data Protection Regulation) apply.
 
 ## 6. Data retention
 
-- **Active account data** — while your account is active.
-- **Watch events** — 90 days (rolled up into anonymous analytics after).
-- **Login events (forensic)** — 180 days, then purged.
-- **Chat messages** — while the parent stream/party exists.
-- **Deleted-account residue** — 30 days then anonymized.
-- **Audit log (admin actions)** — 7 years (legal/compliance).
-- **Payment records** — 7 years (Nigerian tax law).
-- **Sentry errors** — 90 days.
+- **Active account data** - while your account is active.
+- **Watch events** - 90 days (rolled up into anonymous analytics after).
+- **Login events (forensic)** - 180 days, then purged.
+- **Chat messages** - while the parent stream/party exists.
+- **Deleted-account residue** - 30 days then anonymized.
+- **Audit log (admin actions)** - 7 years (legal/compliance).
+- **Payment records** - 7 years (Nigerian tax law).
+- **Sentry errors** - 90 days.
 
 ---
 
@@ -94,7 +94,7 @@ GDPR + NDPR (Nigeria Data Protection Regulation) apply.
 - IPs hashed with a private salt before storage.
 - HTTPS everywhere (Vercel-managed TLS).
 - Rate limits on auth endpoints.
-- No raw payment card / bank data ever touches our servers — handled by Paystack.
+- No raw payment card / bank data ever touches our servers - handled by Paystack.
 
 Despite our efforts, no system is 100% secure. If your account is compromised, email security@evotv.app.
 

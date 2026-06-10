@@ -56,7 +56,7 @@ export async function listInitialMessages(streamId: string): Promise<ChatMessage
   return seedMessages(streamId);
 }
 
-// In-memory moderation log (mock only — Phase 1+ replaces with chat_messages table writes).
+// In-memory moderation log (mock only - Phase 1+ replaces with chat_messages table writes).
 const moderationLog: Array<{ action: "pin" | "delete" | "ban"; messageId: string; userHandle: string; at: string }> = [];
 const bannedUsers = new Set<string>();
 
@@ -74,7 +74,7 @@ export async function banUser(userHandle: string, durationHours = 24): Promise<v
   await sleep(120);
   bannedUsers.add(userHandle);
   moderationLog.push({ action: "ban", messageId: "", userHandle, at: now() });
-  // duration intentionally unused — server-side enforcement comes in Phase 2.
+  // duration intentionally unused - server-side enforcement comes in Phase 2.
   void durationHours;
 }
 

@@ -1,5 +1,5 @@
 // Creator Program mock module.
-// Phase F mock — every helper preserves the signature it will keep when swapped to lib/api/creators.
+// Phase F mock - every helper preserves the signature it will keep when swapped to lib/api/creators.
 
 import { sleep, daysAgo, hoursAgo, minutesAgo } from "./_util";
 import { clipThumb, vodPoster } from "./_media";
@@ -50,7 +50,7 @@ export interface CreatorClipDraft {
   capturedAt: string;
   vodSourceTitle: string;
   status: ClipStatus;
-  highlightScore: number; // 0..100 — mock auto-clipper confidence
+  highlightScore: number; // 0..100 - mock auto-clipper confidence
 }
 
 export interface CreatorMetrics {
@@ -155,17 +155,17 @@ function buildPayouts(userId: string): CreatorPayout[] {
 
 function buildClipDrafts(userId: string): CreatorClipDraft[] {
   const titles = [
-    "Insane 1v4 clutch — final ring",
+    "Insane 1v4 clutch - final ring",
     "Triple kill in 4 seconds",
     "Caster reaction: GOAT moment",
     "Squad wipe at A-site",
     "No-scope from 200m",
-    "Last-second goal — extra time",
+    "Last-second goal - extra time",
     "Mythic blueprint reveal",
     "First open-mic moment of the season",
     "Game-winning play vs Nova Esports",
     "Crowd erupts after grand-final win",
-    "Trick-shot compilation — Day 1",
+    "Trick-shot compilation - Day 1",
     "Failed wallhack cosplay (lol)",
   ];
   const sourceVods = [

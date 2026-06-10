@@ -6,7 +6,7 @@ export const BASE_URL =
 
 /**
  * Token storage key. MUST match expo-secure-store's allowed character set
- * (`[A-Za-z0-9._-]+`). Colons are REJECTED by SecureStore on iOS/Android —
+ * (`[A-Za-z0-9._-]+`). Colons are REJECTED by SecureStore on iOS/Android -
  * earlier `"evotv:session-token"` silently failed every write, so sessions
  * didn't survive app close. Fixed by using underscores.
  */
@@ -17,7 +17,7 @@ const LEGACY_TOKEN_KEY = "evotv:session-token"; // web localStorage migration
  * Token storage.
  *
  * Native: expo-secure-store (Keychain / Keystore).
- * Web: localStorage. NOTE — insecure. Real prod web should swap to httpOnly
+ * Web: localStorage. NOTE - insecure. Real prod web should swap to httpOnly
  * cookies via fetch credentials: "include" + a separate auth flow that does
  * not round-trip a bearer through JS.
  */

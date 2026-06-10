@@ -20,7 +20,7 @@ export interface UpdateMyProfilePatch {
   country?: string;
 }
 
-/** GET /api/users/me — joined view of user + profile (bio, country). */
+/** GET /api/users/me - joined view of user + profile (bio, country). */
 export async function getMyProfile(): Promise<MyProfileResponse["user"] | null> {
   try {
     const res = await api<MyProfileResponse>("/api/users/me");
@@ -31,7 +31,7 @@ export async function getMyProfile(): Promise<MyProfileResponse["user"] | null> 
   }
 }
 
-/** PATCH /api/users/me — update editable profile fields. Returns the refreshed shape. */
+/** PATCH /api/users/me - update editable profile fields. Returns the refreshed shape. */
 export async function updateMyProfile(
   patch: UpdateMyProfilePatch,
 ): Promise<MyProfileResponse["user"]> {

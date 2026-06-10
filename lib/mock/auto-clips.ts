@@ -37,7 +37,7 @@ const HIGHLIGHTS: Record<AutoClipTrigger, { label: string; captions: string[] }>
   "chat-spike": {
     label: "Chat spike",
     captions: [
-      "Chat exploded — 14× baseline messages in 6s",
+      "Chat exploded - 14× baseline messages in 6s",
       "Hype meter pegged red, viewers reacting hard",
       "Massive emote spam, something just happened",
     ],
@@ -62,14 +62,14 @@ const HIGHLIGHTS: Record<AutoClipTrigger, { label: string; captions: string[] }>
     label: "Caster tag",
     captions: [
       "Caster tagged this moment for highlights",
-      "Production cut — flagged as feature clip",
-      "Director clip — bracketed with replay",
+      "Production cut - flagged as feature clip",
+      "Director clip - bracketed with replay",
     ],
   },
   "casters-hyped": {
     label: "Casters hyped",
     captions: [
-      "Caster volume spike — they lost it on-air",
+      "Caster volume spike - they lost it on-air",
       "Booth went off after the play",
       "Co-caster screamed live",
     ],

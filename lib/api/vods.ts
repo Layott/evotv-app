@@ -29,7 +29,7 @@ export function listRelatedVods(vodId: string, limit = 6): Promise<Vod[]> {
   return api<Vod[]>(`/api/vods/${vodId}/related`, { query: { limit } });
 }
 
-/** GET /api/trending/clips — backend wraps in `{ clips: [...] }`. */
+/** GET /api/trending/clips - backend wraps in `{ clips: [...] }`. */
 export async function listTrendingClips(limit = 10): Promise<Clip[]> {
   const res = await api<{ clips: Clip[] }>("/api/trending/clips", {
     query: { limit },

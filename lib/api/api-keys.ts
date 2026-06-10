@@ -13,7 +13,7 @@ export interface CreateApiKeyResult {
   id: string;
   name: string;
   prefix: string;
-  /** Plaintext — returned ONCE on create. Save it immediately. */
+  /** Plaintext - returned ONCE on create. Save it immediately. */
   key: string;
 }
 

@@ -8,7 +8,7 @@
  * lite-mode are intentionally NOT re-exported (would collide on getCoinBalance
  * and friends). Import those modules directly with renames.
  *
- * Backend lives at process.env.EXPO_PUBLIC_API_BASE_URL — points at the
+ * Backend lives at process.env.EXPO_PUBLIC_API_BASE_URL - points at the
  * ../EVOTV/ Next.js app (port 3060 in local dev, evo-tv.vercel.app in prod).
  */
 export * from "./events";
@@ -45,7 +45,7 @@ export * from "./rewards";
 
 // Modules to mirror as backend routes land:
 //   - admin, chat, users
-//   - predictions / lite-mode — collision, import directly with rename
+//   - predictions / lite-mode - collision, import directly with rename
 //   - feature-specific: pickem, fantasy, creators, payment-methods,
 //     ussd, downloads, apps, cast, embed, bots, sso, captions, ai-commentary,
 //     commentary-tracks, forensic, api-keys, calendar, auto-clips, partners,

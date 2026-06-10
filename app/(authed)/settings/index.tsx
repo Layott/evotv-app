@@ -129,7 +129,7 @@ export default function SettingsScreen() {
         setAutoplay(p.playback.autoplay);
         setLanguage(p.language);
       } catch {
-        // Fall back silently — preserves screen usability if backend is down.
+        // Fall back silently - preserves screen usability if backend is down.
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -738,7 +738,7 @@ export default function SettingsScreen() {
             </View>
           </SectionCard>
 
-          {/* Appearance — system / dark / light. Light theme is a work in
+          {/* Appearance - system / dark / light. Light theme is a work in
               progress; many screens still hardcode dark hex values. NativeWind
               flips the className tokens cleanly; raw hex won't until the audit
               lands. */}
@@ -779,7 +779,7 @@ export default function SettingsScreen() {
                       </Text>
                       {opt.v === "light" ? (
                         <Text className="text-[11px] text-muted-foreground">
-                          Beta — some screens still render dark colors.
+                          Beta - some screens still render dark colors.
                         </Text>
                       ) : null}
                     </View>

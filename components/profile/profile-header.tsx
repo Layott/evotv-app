@@ -19,7 +19,7 @@ interface ProfileHeaderProps {
   stats?: ProfileStats;
   canEdit?: boolean;
   onEdit?: () => void;
-  /** Tapping the avatar (when canEdit) — typically opens the image picker. */
+  /** Tapping the avatar (when canEdit) - typically opens the image picker. */
   onAvatarPress?: () => void;
   /** True while an avatar upload is in flight (shows overlay spinner). */
   avatarUploading?: boolean;

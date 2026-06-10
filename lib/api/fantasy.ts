@@ -38,7 +38,7 @@ export interface ListLeaguesOpts {
   gameId?: string;
 }
 
-/** GET /api/fantasy/leagues — list w/ filter. */
+/** GET /api/fantasy/leagues - list w/ filter. */
 export function listLeagues(
   opts: ListLeaguesOpts = {},
 ): Promise<FantasyLeagueRow[]> {
@@ -52,7 +52,7 @@ export function listLeagues(
   });
 }
 
-/** GET /api/fantasy/leagues/[id] — null on 404. */
+/** GET /api/fantasy/leagues/[id] - null on 404. */
 export async function getLeagueById(
   id: string,
 ): Promise<FantasyLeagueRow | null> {
@@ -88,7 +88,7 @@ export interface CreateLeaguePayload {
   bannerSeed?: string;
 }
 
-/** POST /api/fantasy/leagues — create. Owner auto-joins. */
+/** POST /api/fantasy/leagues - create. Owner auto-joins. */
 export function createLeague(
   payload: CreateLeaguePayload,
 ): Promise<FantasyLeagueRow> {
@@ -121,14 +121,14 @@ export interface LineupRow {
   picks: Array<{ playerId: string; cost: number; pointsScored: number }>;
 }
 
-/** GET /api/fantasy/leagues/[id]/lineup — caller's lineup (null if none). */
+/** GET /api/fantasy/leagues/[id]/lineup - caller's lineup (null if none). */
 export function getLineup(leagueId: string): Promise<LineupRow | null> {
   return api<LineupRow | null>(
     `/api/fantasy/leagues/${encodeURIComponent(leagueId)}/lineup`,
   );
 }
 
-/** POST /api/fantasy/leagues/[id]/lineup — upsert. */
+/** POST /api/fantasy/leagues/[id]/lineup - upsert. */
 export function submitLineup(
   leagueId: string,
   picks: LineupPickPayload[],

@@ -176,7 +176,7 @@ export async function listAuditLog(
 
 /**
  * Build the URL for the CSV export endpoint. Caller can pass this to
- * expo-sharing or window.open. Bearer token is NOT in the URL — the caller
+ * expo-sharing or window.open. Bearer token is NOT in the URL - the caller
  * must fetch with Authorization header + write the response to disk.
  */
 export function auditLogExportUrl(filters: AuditLogFilters = {}): string {
@@ -248,7 +248,7 @@ export interface ListSubscriptionsResult
   subscriptions: AdminSubscriptionRow[];
 }
 
-/** GET /api/admin/subscriptions — admin+. */
+/** GET /api/admin/subscriptions - admin+. */
 export async function listAdminSubscriptions(
   opts: { status?: SubscriptionStatus; limit?: number; offset?: number } = {},
 ): Promise<ListSubscriptionsResult> {
@@ -262,7 +262,7 @@ export async function listAdminSubscriptions(
   );
 }
 
-/** PATCH /api/admin/subscriptions/[id] {action:"cancel"} — admin+. */
+/** PATCH /api/admin/subscriptions/[id] {action:"cancel"} - admin+. */
 export async function adminCancelSubscription(
   id: string,
 ): Promise<{ ok: true; subscription: Subscription }> {
@@ -272,7 +272,7 @@ export async function adminCancelSubscription(
   });
 }
 
-/** PATCH /api/admin/subscriptions/[id] {action:"extend",days} — admin+. */
+/** PATCH /api/admin/subscriptions/[id] {action:"extend",days} - admin+. */
 export async function adminExtendSubscription(
   id: string,
   days = 30,
@@ -490,7 +490,7 @@ export interface AdminCreatorApplication {
   reviewerNote: string | null;
 }
 
-/** GET /api/admin/creator-program?status= — moderator+. */
+/** GET /api/admin/creator-program?status= - moderator+. */
 export function listCreatorApplications(
   status?: CreatorAppStatus,
 ): Promise<AdminCreatorApplication[]> {
@@ -499,7 +499,7 @@ export function listCreatorApplications(
   });
 }
 
-/** PATCH /api/admin/creator-program/[id] — moderator+. */
+/** PATCH /api/admin/creator-program/[id] - moderator+. */
 export function reviewCreatorApplication(
   id: string,
   status: "in_review" | "approved" | "rejected",

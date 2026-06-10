@@ -87,7 +87,7 @@ export default function PublicLayout() {
         }}
       />
 
-      {/* Hidden public routes — exist as routes, not in tab bar */}
+      {/* Hidden public routes - exist as routes, not in tab bar */}
       <Tabs.Screen name="categories/index" options={{ href: null }} />
       <Tabs.Screen name="categories/[slug]/index" options={{ href: null }} />
       <Tabs.Screen name="channel/index" options={{ href: null }} />

@@ -19,7 +19,7 @@ function fmtViewers(n: number) {
 
 const SCHEDULE = [
   { slot: "00:00 – 02:00", title: "Weekly Recap: EVO Week 4", tag: "Recap" },
-  { slot: "02:00 – 04:00", title: "Film Room — Team Alpha", tag: "Analysis" },
+  { slot: "02:00 – 04:00", title: "Film Room - Team Alpha", tag: "Analysis" },
   { slot: "04:00 – 06:00", title: "Best Plays Mixtape", tag: "Highlights" },
   { slot: "06:00 – 08:00", title: "Evo Talk S3 E12", tag: "Show" },
   { slot: "08:00 – 10:00", title: "CoD Mobile Scrim Night", tag: "Live" },
@@ -484,7 +484,7 @@ export default function ChannelScreen() {
             className="flex-1 text-xs leading-relaxed text-muted-foreground"
           >
             The EVO TV Channel runs 24/7 on localhost during dev. In production,
-            this is the flagship broadcast feed — programmatic mix of simulcasts,
+            this is the flagship broadcast feed - programmatic mix of simulcasts,
             shows, highlights, and paid placements. Free viewers see pre-roll
             ads; Premium subscribers get an ad-free feed with a higher bitrate
             ladder.

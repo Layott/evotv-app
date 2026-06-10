@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = React.useState(false);
 
   // Live rails refetch every 60s so viewer counts + live-status flips
-  // surface without a manual pull-to-refresh. 60s is conservative — the
+  // surface without a manual pull-to-refresh. 60s is conservative - the
   // backend viewer-count window is 90s, so users see motion before rows
   // visually "die".
   const featured = useQuery({

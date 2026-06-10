@@ -14,10 +14,10 @@ import { streamThumb } from "./_media";
 import { syncGet, syncSet } from "@/lib/storage/persist";
 
 /**
- * Phase 9b — EVO Originals + Licensed shows.
+ * Phase 9b - EVO Originals + Licensed shows.
  *
  * Show → Season → Episode hierarchy. Three pillars represented. Five shows
- * total — enough to scaffold every surface (Originals hub rail, show landing,
+ * total - enough to scaffold every surface (Originals hub rail, show landing,
  * episode list, episode player, continue-watching) without feeling empty.
  */
 
@@ -45,7 +45,7 @@ export const shows: Show[] = [
     slug: "otaku-court",
     title: "Otaku Court",
     synopsis:
-      "Weekly anime debate show. Three otakus, one verdict. New episodes Friday — every season closes with a community-voted finale.",
+      "Weekly anime debate show. Three otakus, one verdict. New episodes Friday - every season closes with a community-voted finale.",
     heroUrl: streamThumb("show_otaku_court_hero"),
     posterUrl: streamThumb("show_otaku_court_poster"),
     pillar: "anime",
@@ -99,7 +99,7 @@ export const shows: Show[] = [
     slug: "continent-tech",
     title: "Continent Tech",
     synopsis:
-      "Weekly long-form interviews with African founders building global products. From Nairobi AI labs to Cape Town fintech — the conversations behind the cap tables.",
+      "Weekly long-form interviews with African founders building global products. From Nairobi AI labs to Cape Town fintech - the conversations behind the cap tables.",
     heroUrl: streamThumb("show_continent_tech_hero"),
     posterUrl: streamThumb("show_continent_tech_poster"),
     pillar: "lifestyle",
@@ -115,17 +115,17 @@ export const shows: Show[] = [
 ];
 
 export const seasons: Season[] = [
-  // Inside Naija Esports — S1 (4 eps) + S2 (4 eps)
+  // Inside Naija Esports - S1 (4 eps) + S2 (4 eps)
   { id: "season_naija_s1", showId: "show_naija_esports_inside", seasonNumber: 1, title: "Free Fire reign", episodeCount: 4, releasedAt: daysAgo(120) },
   { id: "season_naija_s2", showId: "show_naija_esports_inside", seasonNumber: 2, title: "Cross-game expansion", episodeCount: 4, releasedAt: daysAgo(30) },
-  // Otaku Court — S1 (6) + S2 (6)
+  // Otaku Court - S1 (6) + S2 (6)
   { id: "season_otaku_s1", showId: "show_otaku_court", seasonNumber: 1, title: "Founding rulings", episodeCount: 6, releasedAt: daysAgo(90) },
   { id: "season_otaku_s2", showId: "show_otaku_court", seasonNumber: 2, title: "The community-trial era", episodeCount: 6, releasedAt: daysAgo(20) },
-  // Sukuna — S1 (6)
+  // Sukuna - S1 (6)
   { id: "season_sukuna_s1", showId: "show_sukuna_armor_diaries", seasonNumber: 1, title: "Foam to finale", episodeCount: 6, releasedAt: daysAgo(45) },
-  // Lagos After Dark — S1 (8)
+  // Lagos After Dark - S1 (8)
   { id: "season_lagos_s1", showId: "show_lagos_after_dark", seasonNumber: 1, title: "After-hours Lagos", episodeCount: 8, releasedAt: daysAgo(30) },
-  // Continent Tech — S1+S2+S3 (8 each)
+  // Continent Tech - S1+S2+S3 (8 each)
   { id: "season_tech_s1", showId: "show_continent_tech", seasonNumber: 1, title: "Year one", episodeCount: 8, releasedAt: daysAgo(200) },
   { id: "season_tech_s2", showId: "show_continent_tech", seasonNumber: 2, title: "Year two", episodeCount: 8, releasedAt: daysAgo(120) },
   { id: "season_tech_s3", showId: "show_continent_tech", seasonNumber: 3, title: "Year three", episodeCount: 8, releasedAt: daysAgo(20) },
@@ -168,7 +168,7 @@ export const episodes: Episode[] = [
     { title: "Lagos team-house tour", synopsis: "Inside Team Alpha's apartment-block bootcamp.", runtimeSec: 1620, releasedDaysAgo: 115 },
     { title: "Practice-day rituals", synopsis: "Pre-scrim warm-ups, custom-loadout debates.", runtimeSec: 1740, releasedDaysAgo: 100 },
     { title: "Road to Casablanca", synopsis: "First-ever cross-region travel for an African mobile esports squad.", runtimeSec: 1900, releasedDaysAgo: 80 },
-    { title: "Finals day — through the headset", synopsis: "Locker-room mic from kick-off to trophy lift.", runtimeSec: 2100, releasedDaysAgo: 60 },
+    { title: "Finals day - through the headset", synopsis: "Locker-room mic from kick-off to trophy lift.", runtimeSec: 2100, releasedDaysAgo: 60 },
   ]),
   ...buildEpisodes("show_naija_esports_inside", "season_naija_s2", 2, [
     { title: "Why we picked up CoD Mobile", synopsis: "The strategy meeting that birthed Alpha's second squad.", runtimeSec: 1500, releasedDaysAgo: 25 },
@@ -178,11 +178,11 @@ export const episodes: Episode[] = [
   ]),
   ...buildEpisodes("show_otaku_court", "season_otaku_s1", 1, [
     { title: "Is Frieren actually slow?", synopsis: "The court rules on pacing complaints.", runtimeSec: 2700, releasedDaysAgo: 88 },
-    { title: "JJK manga vs anime — the verdict", synopsis: "When does adaptation pacing go wrong?", runtimeSec: 2820, releasedDaysAgo: 75 },
+    { title: "JJK manga vs anime - the verdict", synopsis: "When does adaptation pacing go wrong?", runtimeSec: 2820, releasedDaysAgo: 75 },
     { title: "Demon Slayer S4 expectations", synopsis: "Pre-premiere predictions show.", runtimeSec: 2600, releasedDaysAgo: 60 },
-    { title: "Shounen tropes — necessary or not?", synopsis: "Friendship, training arcs, the works.", runtimeSec: 2880, releasedDaysAgo: 50 },
+    { title: "Shounen tropes - necessary or not?", synopsis: "Friendship, training arcs, the works.", runtimeSec: 2880, releasedDaysAgo: 50 },
     { title: "Best fight scene of the year", synopsis: "Community-submitted clips, judged live.", runtimeSec: 3000, releasedDaysAgo: 40 },
-    { title: "Season 1 verdicts: revisited", synopsis: "Three months later — what did the court get wrong?", runtimeSec: 2700, releasedDaysAgo: 25 },
+    { title: "Season 1 verdicts: revisited", synopsis: "Three months later - what did the court get wrong?", runtimeSec: 2700, releasedDaysAgo: 25 },
   ]),
   ...buildEpisodes("show_otaku_court", "season_otaku_s2", 2, [
     { title: "Live anime release calendar overhaul", synopsis: "Why subs/dubs shifted in 2026.", runtimeSec: 2700, releasedDaysAgo: 18 },
@@ -193,25 +193,25 @@ export const episodes: Episode[] = [
     { title: "Community trial: this season's MVP", synopsis: "Audience votes live.", runtimeSec: 2700, releasedDaysAgo: 1 },
   ]),
   ...buildEpisodes("show_sukuna_armor_diaries", "season_sukuna_s1", 1, [
-    { title: "Episode 1 — Foam pattern fitting", synopsis: "Print + cut + tape-fit walkthrough.", runtimeSec: 2400, releasedDaysAgo: 45 },
-    { title: "Episode 2 — Heat-shaping the chestplate", synopsis: "Curves without cracks.", runtimeSec: 2580, releasedDaysAgo: 40 },
-    { title: "Episode 3 — EVA detailing", synopsis: "Where the texture comes from.", runtimeSec: 2700, releasedDaysAgo: 35 },
-    { title: "Episode 4 — Base-coating", synopsis: "Plasti-dip, primer, anchor coats.", runtimeSec: 2520, releasedDaysAgo: 30 },
-    { title: "Episode 5 — Weathering", synopsis: "Battle-damage techniques.", runtimeSec: 2640, releasedDaysAgo: 25 },
-    { title: "Episode 6 — Finale: wearing it", synopsis: "Strap-up, photo session, post-mortem.", runtimeSec: 2820, releasedDaysAgo: 20 },
+    { title: "Episode 1 - Foam pattern fitting", synopsis: "Print + cut + tape-fit walkthrough.", runtimeSec: 2400, releasedDaysAgo: 45 },
+    { title: "Episode 2 - Heat-shaping the chestplate", synopsis: "Curves without cracks.", runtimeSec: 2580, releasedDaysAgo: 40 },
+    { title: "Episode 3 - EVA detailing", synopsis: "Where the texture comes from.", runtimeSec: 2700, releasedDaysAgo: 35 },
+    { title: "Episode 4 - Base-coating", synopsis: "Plasti-dip, primer, anchor coats.", runtimeSec: 2520, releasedDaysAgo: 30 },
+    { title: "Episode 5 - Weathering", synopsis: "Battle-damage techniques.", runtimeSec: 2640, releasedDaysAgo: 25 },
+    { title: "Episode 6 - Finale: wearing it", synopsis: "Strap-up, photo session, post-mortem.", runtimeSec: 2820, releasedDaysAgo: 20 },
   ]),
   ...buildEpisodes("show_lagos_after_dark", "season_lagos_s1", 1, [
-    { title: "Episode 1 — 11pm: the kitchens", synopsis: "Suya stands, late-night chefs, the smoke.", runtimeSec: 2520, releasedDaysAgo: 28 },
-    { title: "Episode 2 — Midnight: drivers", synopsis: "Uber, danfo, road-runners.", runtimeSec: 2580, releasedDaysAgo: 25 },
-    { title: "Episode 3 — 1am: club promoters", synopsis: "Who's working, who's spending.", runtimeSec: 2700, releasedDaysAgo: 21 },
-    { title: "Episode 4 — 2am: the dancers", synopsis: "Routines, choreography, the after-after.", runtimeSec: 2640, releasedDaysAgo: 18 },
-    { title: "Episode 5 — 3am: studios", synopsis: "Where Lagos pop is recorded.", runtimeSec: 2880, releasedDaysAgo: 14 },
-    { title: "Episode 6 — 4am: the markets", synopsis: "Fish, produce, the loading docks.", runtimeSec: 2520, releasedDaysAgo: 10 },
-    { title: "Episode 7 — 5am: the dawn ravers", synopsis: "Beach parties at sunrise.", runtimeSec: 2700, releasedDaysAgo: 6 },
-    { title: "Episode 8 — 6am: shift change", synopsis: "Where night ends and day begins.", runtimeSec: 2820, releasedDaysAgo: 2 },
+    { title: "Episode 1 - 11pm: the kitchens", synopsis: "Suya stands, late-night chefs, the smoke.", runtimeSec: 2520, releasedDaysAgo: 28 },
+    { title: "Episode 2 - Midnight: drivers", synopsis: "Uber, danfo, road-runners.", runtimeSec: 2580, releasedDaysAgo: 25 },
+    { title: "Episode 3 - 1am: club promoters", synopsis: "Who's working, who's spending.", runtimeSec: 2700, releasedDaysAgo: 21 },
+    { title: "Episode 4 - 2am: the dancers", synopsis: "Routines, choreography, the after-after.", runtimeSec: 2640, releasedDaysAgo: 18 },
+    { title: "Episode 5 - 3am: studios", synopsis: "Where Lagos pop is recorded.", runtimeSec: 2880, releasedDaysAgo: 14 },
+    { title: "Episode 6 - 4am: the markets", synopsis: "Fish, produce, the loading docks.", runtimeSec: 2520, releasedDaysAgo: 10 },
+    { title: "Episode 7 - 5am: the dawn ravers", synopsis: "Beach parties at sunrise.", runtimeSec: 2700, releasedDaysAgo: 6 },
+    { title: "Episode 8 - 6am: shift change", synopsis: "Where night ends and day begins.", runtimeSec: 2820, releasedDaysAgo: 2 },
   ]),
   ...buildEpisodes("show_continent_tech", "season_tech_s3", 3, [
-    { title: "Nairobi AI labs — the founder interviews", synopsis: "Three startups, one corridor.", runtimeSec: 3300, releasedDaysAgo: 19 },
+    { title: "Nairobi AI labs - the founder interviews", synopsis: "Three startups, one corridor.", runtimeSec: 3300, releasedDaysAgo: 19 },
     { title: "Lagos fintech round-up", synopsis: "Who's lending, who's collecting.", runtimeSec: 3000, releasedDaysAgo: 16 },
     { title: "Cape Town SaaS scene", synopsis: "Bootstrapping vs venture in 2026.", runtimeSec: 3180, releasedDaysAgo: 12 },
     { title: "Accra dev tools week", synopsis: "Conferences, code, contracts.", runtimeSec: 3060, releasedDaysAgo: 9 },

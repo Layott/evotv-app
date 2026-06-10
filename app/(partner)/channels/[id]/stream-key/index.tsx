@@ -30,7 +30,7 @@ export default function StreamKeyScreen() {
   const onRotate = async () => {
     if (!id) return;
     if (revealed) {
-      // Already showing a fresh key — confirm before generating another.
+      // Already showing a fresh key - confirm before generating another.
       Alert.alert(
         "Rotate again?",
         "You already have a fresh key on screen. Rotating will invalidate it.",
@@ -106,7 +106,7 @@ export default function StreamKeyScreen() {
               <View className="flex-row items-center gap-2">
                 <AlertTriangle size={14} color="#FCD34D" />
                 <Text className="text-xs font-semibold text-amber-300">
-                  Save this now — it won't be shown again
+                  Save this now - it won't be shown again
                 </Text>
               </View>
               <View className="mt-3 rounded-lg border border-amber-500/30 bg-black/40 p-3">
@@ -133,7 +133,7 @@ export default function StreamKeyScreen() {
               </Text>
               <Text className="mt-2 text-sm text-foreground">
                 {stateQ.data?.hasActiveKey
-                  ? "A key is currently active. Plaintext is never re-shown — rotate to issue a new one."
+                  ? "A key is currently active. Plaintext is never re-shown - rotate to issue a new one."
                   : "No active key yet. Rotate to generate."}
               </Text>
               {stateQ.data?.activeKey ? (

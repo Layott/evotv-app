@@ -18,7 +18,7 @@ export function listProducts(opts: ListProductsOpts = {}): Promise<Product[]> {
   });
 }
 
-/** GET /api/products/[id] — also accepts slug. Returns null on 404 so the
+/** GET /api/products/[id] - also accepts slug. Returns null on 404 so the
  *  caller can render a not-found state without a try/catch. */
 export async function getProductById(id: string): Promise<Product | null> {
   try {

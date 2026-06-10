@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /**
  * Async key/value persistence over AsyncStorage. JSON-serialised.
- * Mirrors the web app's typed helpers but is fully async — RN has no synchronous storage.
+ * Mirrors the web app's typed helpers but is fully async - RN has no synchronous storage.
  */
 export const persist = {
   async get<T>(key: string): Promise<T | null> {
@@ -74,7 +74,7 @@ export function syncGet(key: string): string | null {
 }
 
 /**
- * Synchronous write — updates the memory cache immediately and fires an async
+ * Synchronous write - updates the memory cache immediately and fires an async
  * AsyncStorage write in the background. Returns void.
  */
 export function syncSet(key: string, value: string): void {
@@ -86,7 +86,7 @@ export function syncSet(key: string, value: string): void {
 }
 
 /**
- * Synchronous remove — clears memory and fires async AsyncStorage delete.
+ * Synchronous remove - clears memory and fires async AsyncStorage delete.
  */
 export function syncRemove(key: string): void {
   delete memoryCache[key];

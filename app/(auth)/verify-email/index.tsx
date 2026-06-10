@@ -90,7 +90,7 @@ function OtpInput({
         textContentType="oneTimeCode"
         editable={!disabled}
         onSubmitEditing={onSubmitEditing}
-        // Visually hidden but still focusable — capture all input here.
+        // Visually hidden but still focusable - capture all input here.
         style={{
           position: "absolute",
           opacity: 0,

@@ -1,5 +1,5 @@
 /**
- * Tips API — wraps backend /api/tips routes.
+ * Tips API - wraps backend /api/tips routes.
  *
  * Phase 2A scope:
  *  - getCoinBalance + sendTip hit real backend.

@@ -1,5 +1,5 @@
 /**
- * Chat API — backed by /api/streams/[id]/chat (REST) + /api/sse/chat/[streamId] (SSE).
+ * Chat API - backed by /api/streams/[id]/chat (REST) + /api/sse/chat/[streamId] (SSE).
  *
  * Wire shape:
  *   - listInitialMessages(streamId)  GET  /api/streams/:id/chat → { messages: ChatMessage[] }

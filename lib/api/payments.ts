@@ -12,7 +12,7 @@ export interface InitCheckoutResult {
   amountNgn: number;
 }
 
-/** POST /api/payments/init — auth required. Starts a plan upgrade. */
+/** POST /api/payments/init - auth required. Starts a plan upgrade. */
 export function initPlanCheckout(
   input: InitPlanCheckoutInput,
 ): Promise<InitCheckoutResult> {
@@ -22,7 +22,7 @@ export function initPlanCheckout(
   });
 }
 
-/** GET /api/payments/verify/[ref] — verifies a Paystack callback. */
+/** GET /api/payments/verify/[ref] - verifies a Paystack callback. */
 export function verifyPayment(reference: string): Promise<{
   ok: boolean;
   amountNgn?: number;

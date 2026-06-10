@@ -101,7 +101,7 @@ export async function searchUsers(query: string): Promise<Profile[]> {
   );
 }
 
-// In-memory account-action queue (mock only — Phase 1A swaps for real BA + worker).
+// In-memory account-action queue (mock only - Phase 1A swaps for real BA + worker).
 const accountActions: Array<{ kind: "delete" | "export"; userId: string; at: string }> = [];
 
 export async function requestAccountDeletion(userId: string): Promise<{ scheduledForIso: string }> {

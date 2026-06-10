@@ -30,7 +30,7 @@ function statusColor(s: CreatorAppStatus): string {
 }
 
 function fmtDate(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   try {
     return new Date(iso).toLocaleString();
   } catch {
@@ -82,7 +82,7 @@ export default function AdminCreatorProgramScreen() {
           </View>
           <Text className="text-sm text-muted-foreground">
             Approve or reject creator-program applicants. Approving here only
-            flips status — promote the user's role separately in Users.
+            flips status - promote the user's role separately in Users.
           </Text>
         </View>
 

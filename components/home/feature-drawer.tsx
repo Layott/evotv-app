@@ -50,7 +50,7 @@ interface FeatureLink {
   Icon: LucideIcon;
   premium?: boolean;
   adminOnly?: boolean;
-  /** Gated for MVP — shows a "SOON" badge + an in-drawer blurb instead of
+  /** Gated for MVP - shows a "SOON" badge + an in-drawer blurb instead of
    *  navigating to the feature (keeps drawer context, no broken back). */
   gated?: boolean;
   /** What this feature offers when it launches (shown in the gated sheet). */
@@ -107,7 +107,7 @@ const GROUPS: FeatureGroup[] = [
       { label: "Earnings", href: "/creator-dashboard/earnings", Icon: Wallet, gated: true, blurb: "See your revenue and request payouts." },
       { label: "Auto-clipper", href: "/auto-clipper", Icon: Clapperboard, gated: true, blurb: "Auto-generate highlight clips from your live streams." },
       { label: "Integrations", href: "/integrations", Icon: Share2, gated: true, blurb: "Connect Discord, Telegram and more to your channel." },
-      { label: "USSD", href: "/ussd", Icon: Phone, gated: true, blurb: "Pay and subscribe by dialling a code — no app needed." },
+      { label: "USSD", href: "/ussd", Icon: Phone, gated: true, blurb: "Pay and subscribe by dialling a code. No app needed." },
     ],
   },
   {
@@ -158,7 +158,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
   // the admin Users screen.
   const isCreator = role === "creator" || role === "admin";
   const handleNav = (item: FeatureLink) => {
-    // Gated features never navigate — show an in-drawer blurb instead. Keeps
+    // Gated features never navigate - show an in-drawer blurb instead. Keeps
     // the drawer open (no broken back) and signals "coming soon" in context.
     if (item.gated) {
       setGatedInfo({ title: item.label, blurb: item.blurb ?? "Launching soon." });

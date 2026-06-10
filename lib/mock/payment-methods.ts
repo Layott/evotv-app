@@ -18,7 +18,7 @@ export interface PaymentProvider {
   name: string;
   kind: PaymentKind;
   countries: string[];
-  /** logo emoji glyph for compact mock visuals — gets rendered in a coloured tile in the UI */
+  /** logo emoji glyph for compact mock visuals - gets rendered in a coloured tile in the UI */
   logo: string;
   /** brand-ish accent colour (used for the tile bg) */
   accent: string;
@@ -40,7 +40,7 @@ export interface PaymentAttempt {
   failureReason?: string;
   /** if true, the attempt is configured to fail when polled (used for the fail-mode toggle) */
   forceFail?: boolean;
-  /** in ms — used by pollAttempt() to flip pending → terminal status by timestamp math, not real timers */
+  /** in ms - used by pollAttempt() to flip pending → terminal status by timestamp math, not real timers */
   durationMs: number;
   userId: string;
 }
@@ -55,7 +55,7 @@ const PROVIDERS: PaymentProvider[] = [
     accent: "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30",
     feeNgn: 50,
     etaSeconds: 10,
-    description: "Safaricom mobile money — Kenya, Tanzania & Uganda.",
+    description: "Safaricom mobile money - Kenya, Tanzania & Uganda.",
   },
   {
     id: "mtn-momo",
@@ -77,7 +77,7 @@ const PROVIDERS: PaymentProvider[] = [
     accent: "bg-red-500/15 text-red-300 ring-1 ring-red-500/30",
     feeNgn: 60,
     etaSeconds: 10,
-    description: "Airtel Money — Nigeria, Kenya, Uganda, Rwanda & Malawi.",
+    description: "Airtel Money - Nigeria, Kenya, Uganda, Rwanda & Malawi.",
   },
   {
     id: "paystack-card",
@@ -167,7 +167,7 @@ function seedAttempts(existing: PaymentAttempt[]): PaymentAttempt[] {
       id: "seed_pay_4",
       provider: "paystack-card",
       providerLabel: "Paystack",
-      phone: "—",
+      phone: "-",
       amountNgn: 4_500,
       status: "success",
       ref: "PSK_LRT8C7",

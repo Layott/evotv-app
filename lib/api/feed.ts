@@ -9,7 +9,7 @@ export interface HomeFeed {
   trendingClips: Clip[];
 }
 
-/** GET /api/feed/home — single aggregate call for the home screen. */
+/** GET /api/feed/home - single aggregate call for the home screen. */
 export function getHomeFeed(): Promise<HomeFeed> {
   return api<HomeFeed>("/api/feed/home");
 }

@@ -19,12 +19,12 @@ export function getTeamBySlug(slug: string): Promise<Team | null> {
 export type CreateTeamPayload = Omit<Team, "id">;
 export type UpdateTeamPayload = Partial<CreateTeamPayload>;
 
-/** POST /api/admin/teams — admin only. */
+/** POST /api/admin/teams - admin only. */
 export async function createTeam(payload: CreateTeamPayload): Promise<Team> {
   return api<Team>("/api/admin/teams", { method: "POST", body: payload });
 }
 
-/** PATCH /api/admin/teams/[id] — admin only. */
+/** PATCH /api/admin/teams/[id] - admin only. */
 export async function updateTeam(
   id: string,
   payload: UpdateTeamPayload,
@@ -35,7 +35,7 @@ export async function updateTeam(
   });
 }
 
-/** DELETE /api/admin/teams/[id] — admin only. */
+/** DELETE /api/admin/teams/[id] - admin only. */
 export async function deleteTeam(id: string): Promise<{ ok: true }> {
   return api<{ ok: true }>(`/api/admin/teams/${encodeURIComponent(id)}`, {
     method: "DELETE",

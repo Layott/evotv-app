@@ -52,7 +52,7 @@ export function ForensicPage() {
           <View className="flex-row items-center gap-2">
             <AlertTriangle size={16} color="#F59E0B" />
             <Text className="text-sm font-semibold text-foreground">
-              Watermark + leak tracking — coming with Phase 4
+              Watermark + leak tracking - coming with Phase 4
             </Text>
           </View>
           <Text className="mt-1.5 text-xs text-muted-foreground">
@@ -77,7 +77,7 @@ export function ForensicPage() {
               Full audit log
             </Text>
             <Text className="text-xs text-muted-foreground">
-              Every admin action — searchable + filterable
+              Every admin action - searchable + filterable
             </Text>
           </View>
           <ChevronRight size={18} color="#737373" />

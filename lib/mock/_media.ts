@@ -1,6 +1,6 @@
 // Centralized gaming-themed media URLs for mock data.
 // Strategy: prefer local assets in /public, fall back to DiceBear for unique avatars.
-// NOTE: in the RN app, the `/foo.jpg` paths are placeholders only — RN consumers
+// NOTE: in the RN app, the `/foo.jpg` paths are placeholders only - RN consumers
 // must remap them to require()'d assets or remote CDN URLs before rendering.
 
 const STREAM_THUMBS = [

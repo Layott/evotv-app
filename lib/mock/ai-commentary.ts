@@ -20,21 +20,21 @@ export interface AiCommentaryConfig {
 export const VOICE_PRESETS: AiVoicePreset[] = [
   {
     id: "analyst-male",
-    label: "Analyst — Male",
+    label: "Analyst - Male",
     blurb: "Calm, measured pace. Stat-driven. Best for pro matches.",
     sample: "Alpha's win-rate after taking mid is up 18% this split.",
   },
   {
     id: "analyst-female",
-    label: "Analyst — Female",
+    label: "Analyst - Female",
     blurb: "Tactical breakdown. Calm tone. Great for film-room style.",
     sample: "Notice how Nova staggers their entry to bait the rotation.",
   },
   {
     id: "hype-male",
-    label: "Hype — Male",
+    label: "Hype - Male",
     blurb: "High energy, peak-moment focused. Fits highlights and tournaments.",
-    sample: "OH MY DAYS — that 1v4 from Viper just shifted the bracket!",
+    sample: "OH MY DAYS - that 1v4 from Viper just shifted the bracket!",
   },
 ];
 
@@ -98,37 +98,37 @@ export async function setAiCommentaryConfig(
 const COMMENTARY_BY_GAME: Record<string, string[]> = {
   game_freefire: [
     "Alpha pushing aggressive at 0:45, exposing flank to Vortex.",
-    "Nova's IGL just dropped a vector — telegraphed the rotation perfectly.",
+    "Nova's IGL just dropped a vector - telegraphed the rotation perfectly.",
     "Map heat-map flipped: 70% of fights now in zone B.",
     "Viper's TTK has dropped 12% since the patch. Watch this peek.",
     "Eclipse running 4-stack stagger; risky on a small zone.",
-    "Predicted final-circle in NW corner — Apex already pre-rotated.",
+    "Predicted final-circle in NW corner - Apex already pre-rotated.",
     "Stat note: Alpha wins 78% of fights they initiate within 50m.",
     "Two utility advantages remaining for Nova entering the fight.",
     "Probability model gives Vortex a 64% chance to take this round.",
     "Free Fire engine note: bullet drop minimal at this range.",
   ],
   game_codm: [
-    "Titan pushing hardpoint with full ult economy — high-percentage play.",
+    "Titan pushing hardpoint with full ult economy - high-percentage play.",
     "Specter's score-per-life is leading the lobby at 1.34.",
     "Anchor positions favor Rogue here, expect a slow rotate.",
     "Killstreak prediction: Titan ready to cash in within 30 seconds.",
     "Map control swung: Specter holding 62% of mid.",
     "Stat watch: Rogue is 0-for-3 on hardpoint contests this map.",
-    "Crosshair placement note — pre-aiming common angle pays off.",
+    "Crosshair placement note - pre-aiming common angle pays off.",
   ],
   game_pubgm: [
-    "Zenith plays the edge, Hydra holds compound — classic mismatch.",
+    "Zenith plays the edge, Hydra holds compound - classic mismatch.",
     "Final ten teams, blue zone closing in 90 seconds.",
-    "Vehicle audio just popped — possible third-party from the south.",
+    "Vehicle audio just popped - possible third-party from the south.",
     "Hydra's late-circle survival is league-leading at 58%.",
     "Stat overlay: Zenith averages 4.2 fights per match this split.",
   ],
   game_eafc: [
-    "Vanguard switching to a 4-3-3 high press — bold call.",
+    "Vanguard switching to a 4-3-3 high press - bold call.",
     "Stride's pass completion under pressure dropped to 62%.",
     "Set-piece probability up: Vanguard converts 38% of corners.",
-    "Watch the diagonal run from the striker — that lane is open.",
+    "Watch the diagonal run from the striker - that lane is open.",
   ],
 };
 

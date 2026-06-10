@@ -227,7 +227,7 @@ export default function OriginalsScreen() {
             <Crown size={11} color={BRAND} /> EVO Originals + Licensed
           </Badge>
           <Text className="text-2xl font-bold leading-tight text-foreground">
-            Shows, seasons, and episode drops — built for African audiences.
+            Shows, seasons, and episode drops - built for African audiences.
           </Text>
           <Text className="text-sm text-muted-foreground">
             Esports docuseries, anime debate shows, lifestyle audio-docs, tech
@@ -308,7 +308,7 @@ export default function OriginalsScreen() {
         {/* ESPORTS PILLAR */}
         {byPillar("esports").length > 0 ? (
           <Rail
-            title="Esports — behind the scenes"
+            title="Esports - behind the scenes"
             icon={
               <View
                 style={{
@@ -329,7 +329,7 @@ export default function OriginalsScreen() {
         {/* ANIME PILLAR */}
         {byPillar("anime").length > 0 ? (
           <Rail
-            title="Anime — debate + build-along"
+            title="Anime - debate + build-along"
             icon={
               <View
                 style={{
@@ -350,7 +350,7 @@ export default function OriginalsScreen() {
         {/* LIFESTYLE PILLAR */}
         {byPillar("lifestyle").length > 0 ? (
           <Rail
-            title="Lifestyle — long-form audio + interviews"
+            title="Lifestyle - long-form audio + interviews"
             icon={
               <View
                 style={{
@@ -375,7 +375,7 @@ export default function OriginalsScreen() {
           </Text>
           <Text className="mt-2 text-xs text-muted-foreground">
             New episodes drop weekly. EVO Originals + select licensed
-            programming. Premium subscribers get early access — the first
+            programming. Premium subscribers get early access - the first
             48 hours after release are subs-only.
           </Text>
         </View>

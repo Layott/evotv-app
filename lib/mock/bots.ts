@@ -13,7 +13,7 @@ export interface BotIntegration {
   id: string;
   userId: string;
   kind: BotKind;
-  /** Server / group ID — Discord guild ID or Telegram chat ID. */
+  /** Server / group ID - Discord guild ID or Telegram chat ID. */
   serverId: string;
   /** Display label shown on the integrations list. */
   serverName: string;

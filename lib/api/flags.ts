@@ -1,5 +1,5 @@
 /**
- * Feature flags — admin-only routes today. Public read of flags is not
+ * Feature flags - admin-only routes today. Public read of flags is not
  * exposed yet (RN client never reads flags outside the admin settings UI).
  *
  * Backend:
@@ -55,7 +55,7 @@ export async function setFlag(
     });
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) {
-      // Flag doesn't exist yet — upsert via POST.
+      // Flag doesn't exist yet - upsert via POST.
       await api("/api/admin/feature-flags", {
         method: "POST",
         body: { key, enabled, description: description ?? "" },

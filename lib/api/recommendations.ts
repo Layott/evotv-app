@@ -6,7 +6,7 @@ export interface RecommendationsResult {
   source: "personalized" | "trending";
 }
 
-/** GET /api/recommendations?limit=  — falls back to trending for guests. */
+/** GET /api/recommendations?limit=  - falls back to trending for guests. */
 export function listRecommendations(limit = 20): Promise<RecommendationsResult> {
   return api<RecommendationsResult>("/api/recommendations", {
     query: { limit },

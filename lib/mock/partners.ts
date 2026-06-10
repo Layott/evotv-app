@@ -237,7 +237,7 @@ export async function listOddsForStream(streamId: string): Promise<{
   if (!meta) {
     return {
       matchId: "match_unknown",
-      matchLabel: "—",
+      matchLabel: "-",
       odds: await listMatchOdds("match_1"),
     };
   }

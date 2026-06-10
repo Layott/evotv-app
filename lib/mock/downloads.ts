@@ -18,7 +18,7 @@ export interface OfflineDownload {
   title: string;
   thumbnailUrl: string;
   sizeBytes: number;
-  /** snapshot of progress at startedAt — pre-computed, real progress derives from elapsed time */
+  /** snapshot of progress at startedAt - pre-computed, real progress derives from elapsed time */
   progressPct: number;
   status: DownloadStatus;
   queuedAt: string;
@@ -112,7 +112,7 @@ function seed(existing: OfflineDownload[]): OfflineDownload[] {
       durationMs: 10_000,
       userId: SEED_USER_ID,
     },
-    // 3: actively downloading — startedAt 4s ago, 10s duration → ~40% on first listing
+    // 3: actively downloading - startedAt 4s ago, 10s duration → ~40% on first listing
     {
       id: "seed_dl_3",
       vodId: "vod_9",
@@ -128,7 +128,7 @@ function seed(existing: OfflineDownload[]): OfflineDownload[] {
       durationMs: 10_000,
       userId: SEED_USER_ID,
     },
-    // 4: queued — not started
+    // 4: queued - not started
     {
       id: "seed_dl_4",
       vodId: "vod_14",
@@ -144,7 +144,7 @@ function seed(existing: OfflineDownload[]): OfflineDownload[] {
       durationMs: 10_000,
       userId: SEED_USER_ID,
     },
-    // 5: paused — show interruptable state
+    // 5: paused - show interruptable state
     {
       id: "seed_dl_5",
       vodId: "vod_18",

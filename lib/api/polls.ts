@@ -11,7 +11,7 @@ export function getPollById(id: string): Promise<Poll | null> {
   return api<Poll | null>(`/api/polls/${id}`);
 }
 
-/** POST /api/polls/[id]/vote — body { optionId } */
+/** POST /api/polls/[id]/vote - body { optionId } */
 export function voteOnPoll(pollId: string, optionId: string): Promise<Poll> {
   return api<Poll>(`/api/polls/${pollId}/vote`, {
     method: "POST",
@@ -26,7 +26,7 @@ export interface CreatePollPayload {
   closesAt: string;
 }
 
-/** POST /api/streams/[id]/polls — admin only. */
+/** POST /api/streams/[id]/polls - admin only. */
 export async function createPoll(payload: CreatePollPayload): Promise<Poll> {
   const res = await api<{ poll: Poll }>(
     `/api/streams/${encodeURIComponent(payload.streamId)}/polls`,
@@ -42,7 +42,7 @@ export async function createPoll(payload: CreatePollPayload): Promise<Poll> {
   return res.poll;
 }
 
-/** POST /api/polls/[id]/close — admin only. */
+/** POST /api/polls/[id]/close - admin only. */
 export async function closePollById(pollId: string): Promise<Poll> {
   const res = await api<{ poll: Poll }>(
     `/api/polls/${encodeURIComponent(pollId)}/close`,

@@ -44,7 +44,7 @@ export function HlsPlayer({
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const [hasStarted, setHasStarted] = React.useState(autoPlay);
   const [errored, setErrored] = React.useState(false);
-  // One-shot seek latch — never re-seek if user has manually scrubbed.
+  // One-shot seek latch - never re-seek if user has manually scrubbed.
   const seekedRef = React.useRef(false);
 
   React.useEffect(() => {
@@ -109,7 +109,7 @@ export function HlsPlayer({
     if (autoPlay) {
       video.muted = muted;
       void video.play().catch(() => {
-        /* autoplay blocked — user must tap */
+        /* autoplay blocked - user must tap */
       });
     }
 
@@ -132,7 +132,7 @@ export function HlsPlayer({
     if (video) video.muted = muted;
   }, [muted]);
 
-  // Progress beacon — polls video.currentTime on a fixed cadence. We avoid
+  // Progress beacon - polls video.currentTime on a fixed cadence. We avoid
   // 'timeupdate' here because it fires multiple times per second and would
   // hammer the network if the parent persists every emit.
   React.useEffect(() => {

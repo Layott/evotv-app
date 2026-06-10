@@ -11,12 +11,12 @@ export interface Tier {
   features: string[];
 }
 
-/** GET /api/tiers — public, returns full tier ladder. */
+/** GET /api/tiers - public, returns full tier ladder. */
 export function listTiers(): Promise<Tier[]> {
   return api<Tier[]>("/api/tiers");
 }
 
-/** GET /api/subscriptions/me — auth required. */
+/** GET /api/subscriptions/me - auth required. */
 export async function getActiveSubscription(
   _userId?: string,
 ): Promise<Subscription | null> {
@@ -26,7 +26,7 @@ export async function getActiveSubscription(
   return res.subscription;
 }
 
-/** POST /api/subscriptions/cancel — auth required. */
+/** POST /api/subscriptions/cancel - auth required. */
 export function cancelSubscription(_userId?: string): Promise<{ ok: true }> {
   return api<{ ok: true }>("/api/subscriptions/cancel", { method: "POST" });
 }

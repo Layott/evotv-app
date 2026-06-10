@@ -82,7 +82,7 @@ function NotFound({ handle, onBack }: { handle: string; onBack: () => void }) {
         Profile not found
       </Text>
       <Text className="mt-1 text-center text-sm text-muted-foreground">
-        @{handle} doesn't exist on EVO TV — or the account was removed.
+        @{handle} doesn't exist on EVO TV - or the account was removed.
       </Text>
       <Pressable
         onPress={onBack}

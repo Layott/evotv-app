@@ -3,7 +3,7 @@ import { ScrollView, Text, View } from "react-native";
 
 /**
  * Minimal markdown-ish renderer for the bundled legal docs. Not a full
- * markdown engine — just splits on blank lines + recognizes:
+ * markdown engine - just splits on blank lines + recognizes:
  *   # heading        → 2xl bold
  *   ## subheading    → lg bold
  *   ### subheading2  → base semibold

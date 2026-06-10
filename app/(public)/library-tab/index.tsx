@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 
 /**
- * Library tab — same redirect pattern as profile-tab. See that file's comment.
+ * Library tab - same redirect pattern as profile-tab. See that file's comment.
  */
 export default function LibraryTabRedirect() {
   const router = useRouter();

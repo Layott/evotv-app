@@ -60,7 +60,7 @@ export const products: Product[] = [
   {
     id: "prod_premium_gift",
     slug: "premium-sub-gift",
-    name: "Premium Subscription Gift Card — 3 months",
+    name: "Premium Subscription Gift Card - 3 months",
     description: "Gift Premium to a friend. Delivered via email.",
     category: "digital",
     priceNgn: 12_500,
@@ -74,7 +74,7 @@ export const products: Product[] = [
   {
     id: "prod_gift_card",
     slug: "evo-gift-card-10k",
-    name: "EVO TV Gift Card — ₦10,000",
+    name: "EVO TV Gift Card - ₦10,000",
     description: "Redeemable for subscriptions, merch, or in-stream gifts.",
     category: "digital",
     priceNgn: 10_000,
@@ -102,7 +102,7 @@ export const products: Product[] = [
   {
     id: "prod_mousepad",
     slug: "evo-pro-mousepad",
-    name: "EVO Pro Mousepad — XL",
+    name: "EVO Pro Mousepad - XL",
     description: "900x400mm stitched cloth mousepad. Low friction weave.",
     category: "accessory",
     priceNgn: 9_500,

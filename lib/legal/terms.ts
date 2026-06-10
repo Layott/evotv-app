@@ -1,4 +1,4 @@
-// AUTO-MAINTAINED — mirror of docs/TERMS.md without the H1 title line.
+// AUTO-MAINTAINED - mirror of docs/TERMS.md without the H1 title line.
 // Update both files together when revising.
 export const TERMS_BODY = `**Last updated:** 2026-05-15
 **Effective:** 2026-05-15
@@ -27,7 +27,7 @@ You must be **13 or older** to use the Service. If you are under 18, you confirm
 
 You agree NOT to:
 
-- Post content that is illegal, infringing, harassing, hateful, sexually explicit (especially involving minors — CSAM is reported to authorities immediately), threatening, defamatory, or fraudulent.
+- Post content that is illegal, infringing, harassing, hateful, sexually explicit (especially involving minors - CSAM is reported to authorities immediately), threatening, defamatory, or fraudulent.
 - Stream or upload content you don't have rights to (copyright violations).
 - Impersonate another person, brand, or EVO TV staff.
 - Spam chat, watch parties, or comments.
@@ -43,8 +43,8 @@ Violations may result in content removal, chat ban, account suspension, permanen
 
 ## 4. Content + intellectual property
 
-- **Your content** — you retain ownership of streams, VODs, clips, chats, comments, and other content you create. By posting, you grant EVO TV a worldwide, royalty-free, non-exclusive license to host, store, reproduce, modify (for format conversion, thumbnail extraction, captioning), display, distribute, and create derivative works for the purpose of operating the Service.
-- **Our content** — the EVO TV brand, logos, app UI, code, designs, and our original editorial content are owned by EVO TV. You may not copy or reuse without permission.
+- **Your content** - you retain ownership of streams, VODs, clips, chats, comments, and other content you create. By posting, you grant EVO TV a worldwide, royalty-free, non-exclusive license to host, store, reproduce, modify (for format conversion, thumbnail extraction, captioning), display, distribute, and create derivative works for the purpose of operating the Service.
+- **Our content** - the EVO TV brand, logos, app UI, code, designs, and our original editorial content are owned by EVO TV. You may not copy or reuse without permission.
 
 ---
 
@@ -65,7 +65,7 @@ EVO TV may terminate a partner relationship for cause.
 ## 6. Payments + Coins + Tips
 
 - **Coins** are an in-app currency for tips, predictions, and unlock features. Coins have **no cash value** and are non-refundable.
-- **Tips** are voluntary contributions to creators. Once a tip is sent it is **non-refundable** — there are no refunds on EVO TV.
+- **Tips** are voluntary contributions to creators. Once a tip is sent it is **non-refundable** - there are no refunds on EVO TV.
 - **Subscriptions** (when available) renew automatically and can be cancelled before the next billing date.
 - **Payouts** to partners are subject to a minimum threshold, Paystack KYC, and withholding for any chargebacks or fraud claims.
 - **Disputes** about a payment must be raised within 30 days via support@evotv.app.
@@ -126,9 +126,9 @@ We may update these Terms. Material changes will be announced in-app and via ema
 
 ## 14. Contact
 
-**support@evotv.app** — general questions
-**legal@evotv.app** — copyright + legal
-**privacy@evotv.app** — data + privacy
+**support@evotv.app** - general questions
+**legal@evotv.app** - copyright + legal
+**privacy@evotv.app** - data + privacy
 
 EVO TV team
 Lagos, Nigeria`;

@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
 function fmtDate(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   try {
     return new Date(iso).toLocaleDateString();
   } catch {
@@ -47,7 +47,7 @@ export default function ApiKeysScreen() {
       setRevealedKey(res.key);
       setNewKeyName("");
       queryClient.invalidateQueries({ queryKey: ["api-keys"] });
-      toast.success("Key created — copy it now");
+      toast.success("Key created - copy it now");
     },
     onError: (err) =>
       toast.error("Couldn't create key", {

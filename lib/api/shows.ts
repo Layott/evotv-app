@@ -11,7 +11,7 @@ import type {
 import { api, ApiError } from "./_client";
 
 /**
- * Phase 9b — real backend. Mirrors the mock signatures in lib/mock/shows.ts
+ * Phase 9b - real backend. Mirrors the mock signatures in lib/mock/shows.ts
  * so swap is one import-rename per call site. Continue-watching + watchlist
  * shape adapted to the backend envelopes.
  */
@@ -55,7 +55,7 @@ export async function getShowWithSeasonsBySlug(
 }
 
 export async function listSeasonsForShow(showId: string): Promise<Season[]> {
-  // No standalone endpoint — caller can use getShowWithSeasonsBySlug instead.
+  // No standalone endpoint - caller can use getShowWithSeasonsBySlug instead.
   // This signature exists for parity with the mock; it returns [] to keep
   // call sites happy without an extra round-trip.
   void showId;
@@ -86,7 +86,7 @@ export interface EpisodeProgressEntry {
   completed: boolean;
 }
 
-/** GET /api/episodes/[id]/progress — saved position or null if unwatched. */
+/** GET /api/episodes/[id]/progress - saved position or null if unwatched. */
 export function getEpisodeProgress(
   episodeId: string,
 ): Promise<EpisodeProgressEntry | null> {

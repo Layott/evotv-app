@@ -7,7 +7,7 @@ export interface ToggleLikeResult {
   count: number;
 }
 
-/** POST /api/likes — auth required. Toggles like on a vod or clip. */
+/** POST /api/likes - auth required. Toggles like on a vod or clip. */
 export function toggleLike(
   targetType: LikeTarget,
   targetId: string,

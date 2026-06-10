@@ -50,7 +50,7 @@ export function listMatchesForEvent(eventId: string): Promise<Match[]> {
 export type CreateEventPayload = Omit<EsportsEvent, "id">;
 export type UpdateEventPayload = Partial<CreateEventPayload>;
 
-/** POST /api/admin/events — admin only. */
+/** POST /api/admin/events - admin only. */
 export async function createEvent(
   payload: CreateEventPayload,
 ): Promise<EsportsEvent> {
@@ -60,7 +60,7 @@ export async function createEvent(
   });
 }
 
-/** PATCH /api/admin/events/[id] — admin only. */
+/** PATCH /api/admin/events/[id] - admin only. */
 export async function updateEvent(
   id: string,
   payload: UpdateEventPayload,
@@ -71,7 +71,7 @@ export async function updateEvent(
   });
 }
 
-/** DELETE /api/admin/events/[id] — admin only. */
+/** DELETE /api/admin/events/[id] - admin only. */
 export async function deleteEvent(id: string): Promise<{ ok: true }> {
   return api<{ ok: true }>(`/api/admin/events/${encodeURIComponent(id)}`, {
     method: "DELETE",

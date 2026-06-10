@@ -9,14 +9,14 @@ export interface Follow {
   createdAt: string;
 }
 
-/** GET /api/follows — current user's follows. Backend wraps in
+/** GET /api/follows - current user's follows. Backend wraps in
  *  `{ follows: Follow[] }` so unwrap on the client. */
 export async function listMyFollows(): Promise<Follow[]> {
   const res = await api<{ follows: Follow[] }>("/api/follows");
   return res.follows ?? [];
 }
 
-/** POST /api/follows — body { targetType, targetId } */
+/** POST /api/follows - body { targetType, targetId } */
 export function follow(targetType: FollowTarget, targetId: string): Promise<Follow> {
   return api<Follow>("/api/follows", {
     method: "POST",
@@ -24,7 +24,7 @@ export function follow(targetType: FollowTarget, targetId: string): Promise<Foll
   });
 }
 
-/** DELETE /api/follows — body { targetType, targetId } */
+/** DELETE /api/follows - body { targetType, targetId } */
 export function unfollow(targetType: FollowTarget, targetId: string): Promise<void> {
   return api<void>("/api/follows", {
     method: "DELETE",
@@ -40,7 +40,7 @@ export function isFollowing(targetType: FollowTarget, targetId: string): Promise
 }
 
 /**
- * POST /api/follows — toggle helper that mirrors backend's actual response
+ * POST /api/follows - toggle helper that mirrors backend's actual response
  * shape `{ following: boolean }`. Returns the *new* follow state.
  */
 export function toggleFollow(

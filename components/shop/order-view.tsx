@@ -354,7 +354,7 @@ export function OrderView({ id }: OrderViewProps) {
             </View>
           ) : (
             <Text className="text-sm text-muted-foreground">
-              Digital order — no shipping.
+              Digital order - no shipping.
             </Text>
           )}
         </View>

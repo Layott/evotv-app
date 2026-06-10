@@ -146,7 +146,7 @@ export function StreamsManagerPage() {
   const handleDelete = React.useCallback((stream: Stream) => {
     Alert.alert(
       "Delete stream?",
-      `Soft-deletes "${stream.title}" — it disappears from all public lists. Recoverable within 30 days.`,
+      `Soft-deletes "${stream.title}" - it disappears from all public lists. Recoverable within 30 days.`,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -212,7 +212,7 @@ export function StreamsManagerPage() {
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 24 }}>
         <PageHeader
           title="Streams"
-          description="Read-only browse — stream keys + create + rotate via dedicated screens later."
+          description="Read-only browse - stream keys + create + rotate via dedicated screens later."
         />
 
         <View className="mb-3 flex-row items-center gap-2">
@@ -621,7 +621,7 @@ function ScheduleEditor({
           onPress={() => {
             const parsed = new Date(startAt);
             if (Number.isNaN(parsed.getTime())) {
-              toast.error("Invalid date — use YYYY-MM-DDTHH:mm");
+              toast.error("Invalid date - use YYYY-MM-DDTHH:mm");
               return;
             }
             const d = Number(duration);
@@ -818,7 +818,7 @@ function PlayoutFileEditor({
         </View>
       ) : (
         <Text className="mb-2 text-[11px] text-muted-foreground">
-          No file chosen — this slot plays filler until you pick one.
+          No file chosen - this slot plays filler until you pick one.
         </Text>
       )}
 
@@ -878,7 +878,7 @@ function PlayoutFileEditor({
           })}
           {shown.length < files.length ? (
             <Text className="px-1 py-1 text-[10px] text-muted-foreground">
-              Showing {shown.length} of {files.length} — filter to narrow.
+              Showing {shown.length} of {files.length} - filter to narrow.
             </Text>
           ) : null}
         </View>

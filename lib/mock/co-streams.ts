@@ -22,7 +22,7 @@ export interface CoStreamTrack {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Seed pool — used for every stream id, picked deterministically
+// Seed pool - used for every stream id, picked deterministically
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface CreatorSeed {

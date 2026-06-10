@@ -34,7 +34,7 @@ const FEATURES: Feature[] = [
     icon: Sparkles,
     iconColor: "#2CD7E3",
     title: "Auto-clipper",
-    body: "Our highlight engine automatically queues your best moments — approve and publish in two taps.",
+    body: "Our highlight engine automatically queues your best moments - approve and publish in two taps.",
   },
   {
     icon: Mic2,

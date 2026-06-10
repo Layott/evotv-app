@@ -103,7 +103,7 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
               fallbackLabel={s.title}
               tintSeed={s.id}
             />
-            {/* Bottom-fade overlay (no gradient dep — solid view with opacity stacks) */}
+            {/* Bottom-fade overlay (no gradient dep - solid view with opacity stacks) */}
             <View
               className="absolute inset-x-0 bottom-0 h-1/2"
               style={{ backgroundColor: "rgba(0,0,0,0.7)" }}

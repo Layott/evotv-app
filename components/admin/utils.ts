@@ -23,7 +23,7 @@ export function formatNumber(value: number | null | undefined): string {
 }
 
 export function timeAgo(iso: string | null | undefined): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   const diffMs = Date.now() - new Date(iso).getTime();
   if (diffMs < 0) {
     const ahead = Math.abs(diffMs);
@@ -40,7 +40,7 @@ export function timeAgo(iso: string | null | undefined): string {
 }
 
 export function formatDate(iso: string | null | undefined): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   return new Date(iso).toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
@@ -49,7 +49,7 @@ export function formatDate(iso: string | null | undefined): string {
 }
 
 export function formatDateTime(iso: string | null | undefined): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   return new Date(iso).toLocaleString(undefined, {
     year: "numeric",
     month: "short",

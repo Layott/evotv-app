@@ -190,7 +190,7 @@ export const API_DOC_ENDPOINTS = [
         sample: [
           {
             id: "stream_lagos_final",
-            title: "EVO Lagos Invitational — Semifinal 1 LIVE",
+            title: "EVO Lagos Invitational - Semifinal 1 LIVE",
             gameId: "game_freefire",
             isLive: true,
             viewerCount: 18420,
@@ -207,7 +207,7 @@ export const API_DOC_ENDPOINTS = [
         params: ["id"],
         sample: {
           id: "stream_lagos_final",
-          title: "EVO Lagos Invitational — Semifinal 1 LIVE",
+          title: "EVO Lagos Invitational - Semifinal 1 LIVE",
           hlsUrl: "https://cdn.evo.tv/live/stream_lagos_final.m3u8",
           viewerCount: 18420,
         },

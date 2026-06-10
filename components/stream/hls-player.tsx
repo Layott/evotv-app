@@ -55,7 +55,7 @@ export function HlsPlayer({
 
   // Listen for status changes to surface load/error. On readyToPlay we
   // also apply the optional startAtSec seek (one-shot per mount via the
-  // seekedRef latch — never re-seek if the user has manually scrubbed).
+  // seekedRef latch - never re-seek if the user has manually scrubbed).
   const seekedRef = React.useRef(false);
   React.useEffect(() => {
     const sub = player.addListener("statusChange", (event) => {
@@ -87,7 +87,7 @@ export function HlsPlayer({
     player.muted = muted;
   }, [player, muted]);
 
-  // Progress beacon — fires `onProgress(positionSec)` on a fixed cadence
+  // Progress beacon - fires `onProgress(positionSec)` on a fixed cadence
   // while the player is mounted. We intentionally poll instead of listening
   // to a high-frequency event so the parent can write to a remote endpoint
   // without throttling.

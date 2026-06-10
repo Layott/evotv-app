@@ -5,7 +5,7 @@ import { streamThumb } from "./_media";
 export const streams: Stream[] = [
   {
     id: "channel_main",
-    title: "EVO TV Channel — 24/7 Esports",
+    title: "EVO TV Channel - 24/7 Esports",
     description:
       "The EVO TV flagship channel. Non-stop rotation of highlights, recaps, weekly shows, and simulcasts of headline African esports events.",
     eventId: null,
@@ -26,7 +26,7 @@ export const streams: Stream[] = [
   },
   {
     id: "stream_lagos_final",
-    title: "EVO Lagos Invitational — Semifinal 1 LIVE",
+    title: "EVO Lagos Invitational - Semifinal 1 LIVE",
     description: "Team Alpha vs Nova Esports. Best of 5. English commentary.",
     eventId: "event_ff_lagos",
     gameId: "game_freefire",
@@ -46,7 +46,7 @@ export const streams: Stream[] = [
   },
   {
     id: "stream_casablanca",
-    title: "PUBG Mobile Casablanca Classic — Final Day",
+    title: "PUBG Mobile Casablanca Classic - Final Day",
     description: "Zenith vs Hydra. Arabic + English dual audio.",
     eventId: "event_pubgm_casablanca",
     gameId: "game_pubgm",
@@ -66,7 +66,7 @@ export const streams: Stream[] = [
   },
   {
     id: "stream_codm_scrim",
-    title: "CoD Mobile Scrim Night — Titan vs Rogue",
+    title: "CoD Mobile Scrim Night - Titan vs Rogue",
     description: "Pre-Cairo Cup preparation scrims.",
     eventId: null,
     gameId: "game_codm",
@@ -86,7 +86,7 @@ export const streams: Stream[] = [
   },
   {
     id: "stream_premium_analysis",
-    title: "Post-match Film Room — Week 4 (PREMIUM)",
+    title: "Post-match Film Room - Week 4 (PREMIUM)",
     description: "Deep-dive film analysis from former pros. Premium subscribers only.",
     eventId: null,
     gameId: "game_freefire",
@@ -106,7 +106,7 @@ export const streams: Stream[] = [
   },
   {
     id: "stream_talk_show",
-    title: "The Evo Talk — Episode 12",
+    title: "The Evo Talk - Episode 12",
     description: "Weekly roundtable. Guest: Team Alpha IGL.",
     eventId: null,
     gameId: "game_freefire",
@@ -126,7 +126,7 @@ export const streams: Stream[] = [
   },
   {
     id: "stream_eafc_watch",
-    title: "EA FC Continental — Watch Party",
+    title: "EA FC Continental - Watch Party",
     description: "Community watch-along with live commentary.",
     eventId: "event_eafc_fc_cup",
     gameId: "game_eafc",
@@ -144,10 +144,10 @@ export const streams: Stream[] = [
     tags: ["EA FC", "Watch Party"],
     isPremium: false,
   },
-  // ── Anime pillar — UGC reaction streams + cosplay + otaku podcasts ────
+  // ── Anime pillar - UGC reaction streams + cosplay + otaku podcasts ────
   {
     id: "stream_anime_addict_naija",
-    title: "AnimeAddict Naija — Demon Slayer S4 Premiere Reaction",
+    title: "AnimeAddict Naija - Demon Slayer S4 Premiere Reaction",
     description:
       "First-watch reaction to the new Demon Slayer season premiere. Live chat + spoiler-free zone for the first 24 hours.",
     eventId: null,
@@ -169,7 +169,7 @@ export const streams: Stream[] = [
   },
   {
     id: "stream_otaku_talk",
-    title: "Otaku Talk Lagos — Weekly Top 10 Anime Hot Takes",
+    title: "Otaku Talk Lagos - Weekly Top 10 Anime Hot Takes",
     description:
       "Three otakus, ten anime takes, infinite debate. Drop your picks in chat.",
     eventId: null,
@@ -191,7 +191,7 @@ export const streams: Stream[] = [
   },
   {
     id: "stream_cosplay_sunday",
-    title: "Cosplay Sunday — Build-along: Sukuna armor finale",
+    title: "Cosplay Sunday - Build-along: Sukuna armor finale",
     description:
       "Foam-armor finishing session. Q&A throughout. Suitable for beginners.",
     eventId: null,
@@ -211,10 +211,10 @@ export const streams: Stream[] = [
     isPremium: false,
     pillar: "anime",
   },
-  // ── Lifestyle pillar — podcasts + talk shows + news ───────────────────
+  // ── Lifestyle pillar - podcasts + talk shows + news ───────────────────
   {
     id: "stream_lagos_lifestyle_pod",
-    title: "Lagos Lifestyle Pod — Live: Inside the new Eko nightlife",
+    title: "Lagos Lifestyle Pod - Live: Inside the new Eko nightlife",
     description:
       "Three hosts, one new bar a week. Tonight: rooftop scenes in Lekki. Listener calls open.",
     eventId: null,
@@ -236,7 +236,7 @@ export const streams: Stream[] = [
   },
   {
     id: "stream_tech_talk_africa",
-    title: "Tech Talk Africa — Live: AI startups breaking out of Nairobi",
+    title: "Tech Talk Africa - Live: AI startups breaking out of Nairobi",
     description:
       "Founder interviews + breaking tech news. Live Q&A in chat throughout.",
     eventId: null,
@@ -258,7 +258,7 @@ export const streams: Stream[] = [
   },
   {
     id: "stream_nollywood_news_daily",
-    title: "Nollywood News Daily — Tonight's industry roundup",
+    title: "Nollywood News Daily - Tonight's industry roundup",
     description:
       "What dropped, who signed, who's beefing. The 30-minute daily Nollywood digest.",
     eventId: null,
@@ -281,7 +281,7 @@ export const streams: Stream[] = [
 ];
 
 // Default pillar fallback for legacy seed rows without an explicit `pillar`.
-// Phase 9a treats anything pre-existing as esports — accurate for all
+// Phase 9a treats anything pre-existing as esports - accurate for all
 // existing seed rows above the divider.
 for (const s of streams) {
   if (!s.pillar) s.pillar = "esports";
@@ -316,7 +316,7 @@ export async function getMainChannel(): Promise<Stream | null> {
   return streams.find((s) => s.id === "channel_main") ?? null;
 }
 
-// In-memory report log (mock only — Phase 2 swaps for ops.audit_log writes).
+// In-memory report log (mock only - Phase 2 swaps for ops.audit_log writes).
 const reportLog: Array<{ streamId: string; reason: string; reportedBy: string; at: string }> = [];
 
 export async function reportStream(streamId: string, reason = "user-reported", reportedBy = "user_current"): Promise<{ ticketId: string }> {

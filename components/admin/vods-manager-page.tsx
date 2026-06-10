@@ -79,7 +79,7 @@ export function VodsManagerPage() {
   function handleDelete(vod: AdminVod) {
     Alert.alert(
       "Delete VOD?",
-      `Soft-deletes "${vod.title}" — disappears from all public lists. Recoverable within 30 days.`,
+      `Soft-deletes "${vod.title}" - disappears from all public lists. Recoverable within 30 days.`,
       [
         { text: "Cancel", style: "cancel" },
         { text: "Delete", style: "destructive", onPress: () => deleteMut.mutate(vod) },

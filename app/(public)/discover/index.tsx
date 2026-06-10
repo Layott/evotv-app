@@ -167,7 +167,7 @@ export default function DiscoverScreen() {
     ? resultsQ.data?.players ?? []
     : playersQ.data ?? [];
 
-  // Apply pillar filter — rows without an explicit pillar default to esports.
+  // Apply pillar filter - rows without an explicit pillar default to esports.
   const streams =
     pillarFilter === "all"
       ? rawStreams

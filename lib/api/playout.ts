@@ -15,7 +15,7 @@ export interface ListPlayoutMediaResult {
 }
 
 /**
- * GET /api/admin/playout-media — support_admin+.
+ * GET /api/admin/playout-media - support_admin+.
  * Active media files the office playout box has reported (see the office
  * media-agent). Powers the file picker in the stream schedule editor.
  */

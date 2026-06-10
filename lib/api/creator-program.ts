@@ -49,7 +49,7 @@ export function submitApplication(
   });
 }
 
-/** GET /api/creator-program/me — null if user never applied. */
+/** GET /api/creator-program/me - null if user never applied. */
 export async function getMyApplication(): Promise<CreatorApplication | null> {
   try {
     return await api<CreatorApplication | null>("/api/creator-program/me");

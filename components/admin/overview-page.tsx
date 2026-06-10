@@ -304,6 +304,7 @@ export function OverviewPage() {
             { label: "Polls", to: "/admin/polls" },
             { label: "Ads", to: "/admin/ads" },
             { label: "Content", to: "/admin/content" },
+            { label: "Waitlist", to: "/admin/waitlist" },
             { label: "Audit log", to: "/admin/audit-log" },
             { label: "Sanctions", to: "/admin/sanctions" },
             { label: "Channels", to: "/admin/channels" },

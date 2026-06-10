@@ -6,9 +6,9 @@ export type ISODate = string;
  * stream / VOD / clip / channel rolls up under one of these so Discover,
  * Home rails, and user pillar prefs can filter coherently.
  *
- * - `esports` — gaming streams, tournaments, match VODs, clips
- * - `anime` — anime reaction streams, watch-alongs, otaku podcasts, cosplay
- * - `lifestyle` — lifestyle podcasts, talk shows, news, creator-led shows
+ * - `esports` - gaming streams, tournaments, match VODs, clips
+ * - `anime` - anime reaction streams, watch-alongs, otaku podcasts, cosplay
+ * - `lifestyle` - lifestyle podcasts, talk shows, news, creator-led shows
  */
 export type ContentPillar = "esports" | "anime" | "lifestyle";
 
@@ -24,7 +24,7 @@ export const PILLAR_LABELS: Record<ContentPillar, string> = {
   lifestyle: "Lifestyle",
 };
 
-/* ── Phase 9b — Shows / Seasons / Episodes ───────────────────────────── */
+/* ── Phase 9b - Shows / Seasons / Episodes ───────────────────────────── */
 
 export type ShowStatus = "airing" | "completed" | "upcoming" | "hiatus";
 export type ShowOriginType = "evo_original" | "licensed" | "syndicated";
@@ -154,6 +154,9 @@ export interface Game {
   category: "br" | "fps" | "moba" | "sports" | "fighting";
   platform: "mobile" | "pc" | "console";
   activePlayers: number;
+  enabled: boolean;
+  featured: boolean;
+  displayOrder: number;
 }
 
 export interface Team {
@@ -243,7 +246,7 @@ export interface Stream {
   tags: string[];
   isPremium: boolean;
   /**
-   * Top-level pillar. Optional during the Phase 9a migration — defaults to
+   * Top-level pillar. Optional during the Phase 9a migration - defaults to
    * `esports` for rows that pre-date the column. Once the backend backfills
    * every row, this should be required.
    */

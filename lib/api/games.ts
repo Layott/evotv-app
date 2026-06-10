@@ -1,9 +1,18 @@
 import type { Game } from "@/lib/types";
 import { api } from "./_client";
 
-/** GET /api/games — returns the full game catalog. */
+/** GET /api/games - returns only enabled games, ordered featured -> displayOrder -> name. */
 export function listGames(): Promise<Game[]> {
   return api<Game[]>("/api/games");
+}
+
+/**
+ * GET /api/admin/games - admin only. Returns the FULL catalog including
+ * disabled games (unlike the public list route), ordered featured ->
+ * displayOrder -> name. Auth bearer is attached by the shared `api` client.
+ */
+export function listAdminGames(): Promise<Game[]> {
+  return api<Game[]>("/api/admin/games");
 }
 
 /**
@@ -24,12 +33,12 @@ export async function getGameBySlug(slug: string): Promise<Game | null> {
 export type CreateGamePayload = Omit<Game, "id">;
 export type UpdateGamePayload = Partial<CreateGamePayload>;
 
-/** POST /api/admin/games — admin only. */
+/** POST /api/admin/games - admin only. */
 export async function createGame(payload: CreateGamePayload): Promise<Game> {
   return api<Game>("/api/admin/games", { method: "POST", body: payload });
 }
 
-/** PATCH /api/admin/games/[id] — admin only. */
+/** PATCH /api/admin/games/[id] - admin only. */
 export async function updateGame(
   id: string,
   payload: UpdateGamePayload,
@@ -40,7 +49,7 @@ export async function updateGame(
   });
 }
 
-/** DELETE /api/admin/games/[id] — admin only. */
+/** DELETE /api/admin/games/[id] - admin only. */
 export async function deleteGame(id: string): Promise<{ ok: true }> {
   return api<{ ok: true }>(`/api/admin/games/${encodeURIComponent(id)}`, {
     method: "DELETE",

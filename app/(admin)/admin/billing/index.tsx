@@ -5,7 +5,7 @@ import { AdminBillingPage } from "@/components/admin/billing-page";
 export default function AdminBillingScreen() {
   return (
     <>
-      <Stack.Screen options={{ title: "Billing & USSD" }} />
+      <Stack.Screen options={{ title: "Billing" }} />
       <AdminBillingPage />
     </>
   );

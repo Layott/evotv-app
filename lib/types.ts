@@ -251,6 +251,9 @@ export interface Stream {
   scheduledStartAt?: ISODate | null;
   /** Pre-announced duration in minutes. Pairs with scheduledStartAt. */
   scheduledDurationMin?: number | null;
+  /** Admin-chosen media file the office playout engine should air for this
+   *  scheduled program. Only present on admin endpoints. */
+  playoutFilePath?: string | null;
   /** Only present on admin endpoints. Public list endpoints filter out deleted rows. */
   deletedAt?: ISODate | null;
 }

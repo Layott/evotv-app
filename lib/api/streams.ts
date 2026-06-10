@@ -115,19 +115,25 @@ export async function adminRestoreStream(
 
 /**
  * PATCH /api/admin/streams/[id] — support_admin+.
- * Programs the EPG airtime. Pass null to clear.
+ * Programs the EPG airtime and/or the HLS playback URL. Pass null to clear a
+ * field. `hlsUrl` accepts a full http(s) manifest (e.g. a Cloudflare Stream
+ * `.m3u8`) or a relative origin path; "" / null clears it.
  */
 export async function adminUpdateStreamSchedule(
   id: string,
   body: {
     scheduledStartAt?: string | null;
     scheduledDurationMin?: number | null;
+    hlsUrl?: string | null;
+    playoutFilePath?: string | null;
   },
 ): Promise<{
   ok: true;
   streamId: string;
   scheduledStartAt?: string | null;
   scheduledDurationMin?: number | null;
+  hlsPath?: string;
+  playoutFilePath?: string | null;
 }> {
   return api(`/api/admin/streams/${id}`, { method: "PATCH", body });
 }

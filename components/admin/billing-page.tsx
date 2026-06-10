@@ -1,120 +1,131 @@
 import * as React from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import {
-  CheckCircle2,
-  Clock4,
+  BadgeCheck,
+  CalendarPlus,
   Loader2,
   RefreshCw,
-  Search,
+  TrendingUp,
+  Users,
+  Wallet,
   XCircle,
 } from "lucide-react-native";
 import { toast } from "sonner-native";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
-  listAllUssdSessions,
-  overrideUssdSession,
-  type UssdSession,
-  type UssdStatus,
-} from "@/lib/mock/ussd";
+  adminCancelSubscription,
+  adminExtendSubscription,
+  getFreeToPremiumConversion,
+  getOverviewMetrics,
+  getRevenueByMonth,
+  listAdminSubscriptions,
+  type AdminSubscriptionRow,
+} from "@/lib/api/admin";
+import type { SubscriptionStatus } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-
 import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
-import { formatNgn, timeAgo } from "./utils";
+import { formatNgn, formatDateTime } from "./utils";
 
-function statusTone(s: UssdStatus): "amber" | "emerald" | "red" {
-  if (s === "awaiting") return "amber";
-  if (s === "confirmed") return "emerald";
-  return "red";
+const SUB_STATUSES: (SubscriptionStatus | "all")[] = [
+  "all",
+  "active",
+  "past_due",
+  "canceled",
+  "paused",
+];
+
+function subTone(s: SubscriptionStatus): "emerald" | "amber" | "red" | "neutral" {
+  if (s === "active") return "emerald";
+  if (s === "past_due") return "amber";
+  if (s === "canceled") return "red";
+  return "neutral";
 }
 
 export function AdminBillingPage() {
-  const [search, setSearch] = React.useState("");
-  const [statusFilter, setStatusFilter] = React.useState<string>("all");
-  const [confirming, setConfirming] = React.useState<UssdSession | null>(null);
-  const [expiring, setExpiring] = React.useState<UssdSession | null>(null);
-  const [refreshKey, setRefreshKey] = React.useState(0);
+  const queryClient = useQueryClient();
+  const [statusFilter, setStatusFilter] =
+    React.useState<SubscriptionStatus | "all">("all");
 
-  const sessionsQ = useQuery({
-    queryKey: ["admin", "ussd-sessions", refreshKey],
-    queryFn: () => listAllUssdSessions(),
-    refetchInterval: 5_000,
+  const overviewQ = useQuery({
+    queryKey: ["admin", "billing-overview"],
+    queryFn: getOverviewMetrics,
+    staleTime: 30_000,
+  });
+  const conversionQ = useQuery({
+    queryKey: ["admin", "billing-conversion"],
+    queryFn: getFreeToPremiumConversion,
+    staleTime: 60_000,
+  });
+  const revenueQ = useQuery({
+    queryKey: ["admin", "billing-revenue"],
+    queryFn: () => getRevenueByMonth(6),
+    staleTime: 60_000,
+  });
+  const subsQ = useQuery({
+    queryKey: ["admin", "subscriptions", statusFilter],
+    queryFn: () =>
+      listAdminSubscriptions({
+        status: statusFilter === "all" ? undefined : statusFilter,
+        limit: 200,
+      }),
+    staleTime: 30_000,
   });
 
-  const sessions: UssdSession[] = sessionsQ.data ?? [];
-
-  const filtered = React.useMemo(() => {
-    let rows = sessions;
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      rows = rows.filter((s) =>
-        [s.code, s.providerLabel, s.shortCode, s.userId].some((v) =>
-          v.toLowerCase().includes(q),
-        ),
-      );
-    }
-    if (statusFilter !== "all")
-      rows = rows.filter((s) => s.status === statusFilter);
-    return rows;
-  }, [sessions, search, statusFilter]);
-
-  const counts = React.useMemo(() => {
-    const c = {
-      awaiting: 0,
-      confirmed: 0,
-      expired: 0,
-      total: sessions.length,
-    };
-    for (const s of sessions) c[s.status] += 1;
-    return c;
-  }, [sessions]);
-
-  async function refresh() {
-    setRefreshKey((k) => k + 1);
-    await sessionsQ.refetch();
+  function invalidateBilling() {
+    queryClient.invalidateQueries({ queryKey: ["admin", "subscriptions"] });
+    queryClient.invalidateQueries({ queryKey: ["admin", "billing-overview"] });
+    queryClient.invalidateQueries({ queryKey: ["admin", "billing-conversion"] });
   }
 
-  async function override(
-    session: UssdSession,
-    next: Exclude<UssdStatus, "awaiting">,
-  ) {
-    const updated = await overrideUssdSession(session.id, next);
-    if (!updated) {
-      toast.error("Session no longer exists");
-    } else {
-      toast.success(
-        next === "confirmed"
-          ? `Confirmed ${session.code} manually`
-          : `Marked ${session.code} expired`,
-      );
-    }
-    await sessionsQ.refetch();
-  }
+  const cancelMut = useMutation({
+    mutationFn: (id: string) => adminCancelSubscription(id),
+    onSuccess: () => {
+      toast.success("Subscription canceled");
+      invalidateBilling();
+    },
+    onError: (err) =>
+      toast.error("Couldn't cancel", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+  const extendMut = useMutation({
+    mutationFn: (id: string) => adminExtendSubscription(id, 30),
+    onSuccess: () => {
+      toast.success("Extended 30 days");
+      invalidateBilling();
+    },
+    onError: (err) =>
+      toast.error("Couldn't extend", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const subs = subsQ.data?.subscriptions ?? [];
+  const revenue = revenueQ.data ?? [];
+  const revenueMax = Math.max(1, ...revenue.map((r) => r.ngn));
+  const pending = cancelMut.isPending || extendMut.isPending;
 
   return (
     <View className="flex-1 bg-background">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 24 }}>
         <PageHeader
-          title="Billing & USSD"
-          description="Monitor pending USSD sessions, manually confirm or expire."
+          title="Billing"
+          description="Revenue, premium members, and subscription management."
           actions={
             <Button
               variant="outline"
-              onPress={refresh}
-              disabled={sessionsQ.isFetching}
+              onPress={() => {
+                overviewQ.refetch();
+                revenueQ.refetch();
+                subsQ.refetch();
+                conversionQ.refetch();
+              }}
+              disabled={subsQ.isFetching}
             >
-              {sessionsQ.isFetching ? (
+              {subsQ.isFetching ? (
                 <Loader2 size={14} color="#A3A3A3" />
               ) : (
                 <RefreshCw size={14} color="#FAFAFA" />
@@ -124,54 +135,81 @@ export function AdminBillingPage() {
           }
         />
 
+        {/* Revenue cards */}
         <View className="mb-4 flex-row flex-wrap gap-2">
-          <SummaryCard
-            label="Total"
-            value={counts.total}
-            tone="neutral"
-            Icon={Clock4}
+          <MetricCard
+            label="MRR"
+            value={formatNgn(overviewQ.data?.mrrNgn ?? 0)}
+            Icon={Wallet}
+            loading={overviewQ.isLoading}
           />
-          <SummaryCard
-            label="Awaiting"
-            value={counts.awaiting}
-            tone="amber"
-            Icon={Clock4}
+          <MetricCard
+            label="Active premium"
+            value={String(overviewQ.data?.activePremiumSubs ?? 0)}
+            Icon={BadgeCheck}
+            loading={overviewQ.isLoading}
           />
-          <SummaryCard
-            label="Confirmed"
-            value={counts.confirmed}
-            tone="emerald"
-            Icon={CheckCircle2}
-          />
-          <SummaryCard
-            label="Expired"
-            value={counts.expired}
-            tone="red"
-            Icon={XCircle}
+          <MetricCard
+            label="Free → premium"
+            value={`${conversionQ.data?.pct ?? 0}%`}
+            Icon={TrendingUp}
+            loading={conversionQ.isLoading}
           />
         </View>
 
-        <View className="rounded-2xl border border-border bg-card/40 p-4">
+        {/* Revenue by month */}
+        <View className="mb-4 rounded-2xl border border-border bg-card/40 p-4">
           <Text className="text-base font-semibold text-foreground">
-            Pending USSD
+            Revenue (last 6 months)
           </Text>
           <Text className="mt-0.5 text-xs text-muted-foreground">
-            Auto-confirm 30s after start. Override only when carrier stalls.
+            Subscriptions + paid orders, NGN.
+          </Text>
+          {revenueQ.isLoading ? (
+            <View className="items-center py-6">
+              <ActivityIndicator color="#2CD7E3" />
+            </View>
+          ) : (
+            <View className="mt-3 gap-2">
+              {revenue.map((r) => (
+                <View key={r.month} className="flex-row items-center gap-2">
+                  <Text className="w-16 text-xs text-muted-foreground">
+                    {r.month}
+                  </Text>
+                  <View className="h-2.5 flex-1 overflow-hidden rounded-full bg-card">
+                    <View
+                      className="h-full rounded-full bg-cyan-500"
+                      style={{ width: `${(r.ngn / revenueMax) * 100}%` }}
+                    />
+                  </View>
+                  <Text
+                    className="w-20 text-right text-xs text-foreground"
+                    style={{ fontVariant: ["tabular-nums"] }}
+                  >
+                    {formatNgn(r.ngn)}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+
+        {/* Subscriptions */}
+        <View className="rounded-2xl border border-border bg-card/40 p-4">
+          <Text className="text-base font-semibold text-foreground">
+            Subscriptions
+          </Text>
+          <Text className="mt-0.5 text-xs text-muted-foreground">
+            Manage premium access. Cancel or extend a member's period.
           </Text>
 
-          <View className="mt-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
-            <Search size={14} color="#A3A3A3" />
-            <Input
-              value={search}
-              onChangeText={setSearch}
-              placeholder="Search code, provider, user"
-              className="h-9 flex-1 border-0 bg-transparent px-0"
-            />
-          </View>
-
-          <View className="mt-3 flex-row gap-1.5">
-            {(["all", "awaiting", "confirmed", "expired"] as const).map(
-              (s) => (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            className="mt-3"
+          >
+            <View className="flex-row gap-1.5">
+              {SUB_STATUSES.map((s) => (
                 <Pressable
                   key={s}
                   onPress={() => setStatusFilter(s)}
@@ -191,202 +229,150 @@ export function AdminBillingPage() {
                     {s}
                   </Text>
                 </Pressable>
-              ),
-            )}
-            <Text className="ml-auto text-xs text-muted-foreground">
-              {filtered.length}
-            </Text>
-          </View>
+              ))}
+            </View>
+          </ScrollView>
 
           <View className="mt-3">
-            {sessionsQ.isLoading ? (
-              <Text className="text-sm text-muted-foreground">Loading…</Text>
-            ) : filtered.length === 0 ? (
+            {subsQ.isLoading ? (
+              <View className="items-center py-8">
+                <ActivityIndicator color="#2CD7E3" />
+              </View>
+            ) : subsQ.isError ? (
+              <Text className="py-6 text-center text-sm text-red-400">
+                Failed to load subscriptions.
+              </Text>
+            ) : subs.length === 0 ? (
               <View className="rounded-xl border border-dashed border-border p-6">
                 <Text className="text-center text-sm text-muted-foreground">
-                  No USSD sessions match these filters.
+                  No subscriptions match this filter.
                 </Text>
               </View>
-            ) : null}
-            {filtered.map((row) => (
-              <View
-                key={row.id}
-                className="mb-2 rounded-xl border border-border bg-card/60 p-3"
-              >
-                <View className="flex-row items-center justify-between">
-                  <Text
-                    className="font-mono text-base text-foreground"
-                    style={{ letterSpacing: 4 }}
-                  >
-                    {row.code}
-                  </Text>
-                  <StatusBadge
-                    tone={statusTone(row.status)}
-                    dot={row.status === "awaiting"}
-                  >
-                    {row.status}
-                  </StatusBadge>
-                </View>
-                <View className="mt-2 flex-row items-center justify-between">
-                  <View className="flex-1">
-                    <Text className="text-sm text-foreground">
-                      {row.providerLabel}
-                    </Text>
-                    <Text className="font-mono text-xs text-muted-foreground">
-                      {row.shortCode}
-                    </Text>
-                    <Text className="font-mono text-[10px] text-muted-foreground">
-                      {row.userId}
-                    </Text>
-                  </View>
-                  <View className="items-end">
-                    <Text
-                      className="text-sm font-semibold text-foreground"
-                      style={{ fontVariant: ["tabular-nums"] }}
-                    >
-                      {formatNgn(row.amountNgn)}
-                    </Text>
-                    <Text className="text-[10px] text-muted-foreground">
-                      {timeAgo(row.startedAt)}
-                    </Text>
-                  </View>
-                </View>
-                <View className="mt-3 flex-row gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={row.status !== "awaiting"}
-                    className="flex-1"
-                    onPress={() => setConfirming(row)}
-                  >
-                    <CheckCircle2 size={12} color="#FAFAFA" />
-                    <Text className="text-xs text-foreground">Confirm</Text>
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={row.status !== "awaiting"}
-                    className="flex-1"
-                    onPress={() => setExpiring(row)}
-                  >
-                    <XCircle size={12} color="#FAFAFA" />
-                    <Text className="text-xs text-foreground">Expire</Text>
-                  </Button>
-                </View>
-              </View>
-            ))}
+            ) : (
+              <>
+                <Text className="mb-2 text-xs text-muted-foreground">
+                  {subs.length} of {subsQ.data?.total ?? subs.length}
+                </Text>
+                {subs.map((row) => (
+                  <SubscriptionRow
+                    key={row.id}
+                    row={row}
+                    pending={pending}
+                    onCancel={() => cancelMut.mutate(row.id)}
+                    onExtend={() => extendMut.mutate(row.id)}
+                  />
+                ))}
+              </>
+            )}
           </View>
         </View>
       </ScrollView>
-
-      <Dialog
-        open={!!confirming}
-        onOpenChange={(o) => !o && setConfirming(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Manually confirm session?</DialogTitle>
-            <DialogDescription>
-              Marks linking code {confirming?.code} confirmed and grants user
-              Premium.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onPress={() => setConfirming(null)}>
-              <Text className="text-sm text-foreground">Cancel</Text>
-            </Button>
-            <Button
-              className="bg-cyan-500"
-              onPress={async () => {
-                if (!confirming) return;
-                await override(confirming, "confirmed");
-                setConfirming(null);
-              }}
-            >
-              <Text className="text-sm font-medium text-black">
-                Confirm session
-              </Text>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!expiring} onOpenChange={(o) => !o && setExpiring(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Expire session?</DialogTitle>
-            <DialogDescription>
-              Invalidates linking code {expiring?.code}. User must restart.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onPress={() => setExpiring(null)}>
-              <Text className="text-sm text-foreground">Cancel</Text>
-            </Button>
-            <Button
-              variant="destructive"
-              onPress={async () => {
-                if (!expiring) return;
-                await override(expiring, "expired");
-                setExpiring(null);
-              }}
-            >
-              <Text className="text-sm text-white">Expire</Text>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </View>
   );
 }
 
-function SummaryCard({
+function SubscriptionRow({
+  row,
+  pending,
+  onCancel,
+  onExtend,
+}: {
+  row: AdminSubscriptionRow;
+  pending: boolean;
+  onCancel: () => void;
+  onExtend: () => void;
+}) {
+  return (
+    <View className="mb-2 rounded-xl border border-border bg-card/60 p-3">
+      <View className="flex-row items-center justify-between">
+        <View className="flex-1 pr-2">
+          <Text className="text-sm text-foreground" numberOfLines={1}>
+            {row.userHandle ? `@${row.userHandle}` : row.userName || row.userEmail}
+          </Text>
+          <Text className="text-[10px] text-muted-foreground" numberOfLines={1}>
+            {row.userEmail}
+          </Text>
+        </View>
+        <StatusBadge tone={subTone(row.status)} dot={row.status === "active"}>
+          {row.status}
+        </StatusBadge>
+      </View>
+
+      <View className="mt-2 flex-row items-center justify-between">
+        <View>
+          <Text className="text-xs capitalize text-foreground">
+            {row.tier} · {row.provider}
+          </Text>
+          <Text className="text-[10px] text-muted-foreground">
+            Renews {formatDateTime(row.currentPeriodEnd)}
+          </Text>
+        </View>
+        <Text
+          className="text-sm font-semibold text-foreground"
+          style={{ fontVariant: ["tabular-nums"] }}
+        >
+          {formatNgn(row.priceNgn)}
+        </Text>
+      </View>
+
+      <View className="mt-3 flex-row gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          className="flex-1"
+          disabled={
+            pending || (row.status !== "active" && row.status !== "past_due")
+          }
+          onPress={onExtend}
+        >
+          <CalendarPlus size={12} color="#FAFAFA" />
+          <Text className="text-xs text-foreground">Extend 30d</Text>
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="flex-1"
+          disabled={pending || row.status !== "active"}
+          onPress={onCancel}
+        >
+          <XCircle size={12} color="#FCA5A5" />
+          <Text className="text-xs text-foreground">Cancel</Text>
+        </Button>
+      </View>
+    </View>
+  );
+}
+
+function MetricCard({
   label,
   value,
-  tone,
   Icon,
+  loading,
 }: {
   label: string;
-  value: number;
-  tone: "neutral" | "amber" | "emerald" | "red";
+  value: string;
   Icon: import("lucide-react-native").LucideIcon;
+  loading?: boolean;
 }) {
-  const accent: Record<typeof tone, { bg: string; ring: string; iconColor: string }> = {
-    neutral: {
-      bg: "bg-neutral-700/30",
-      ring: "border-neutral-700",
-      iconColor: "#A3A3A3",
-    },
-    amber: {
-      bg: "bg-amber-500/10",
-      ring: "border-amber-500/30",
-      iconColor: "#FCD34D",
-    },
-    emerald: {
-      bg: "bg-cyan-500/10",
-      ring: "border-cyan-500/30",
-      iconColor: "#67E8F0",
-    },
-    red: { bg: "bg-red-500/10", ring: "border-red-500/30", iconColor: "#FCA5A5" },
-  };
-  const t = accent[tone];
   return (
-    <View className="min-w-[46%] flex-1 flex-row items-center gap-3 rounded-2xl border border-border bg-card/40 p-3">
-      <View
-        className={`h-10 w-10 items-center justify-center rounded-lg border ${t.bg} ${t.ring}`}
-      >
-        <Icon size={20} color={t.iconColor} />
+    <View className="min-w-[30%] flex-1 flex-row items-center gap-3 rounded-2xl border border-border bg-card/40 p-3">
+      <View className="h-10 w-10 items-center justify-center rounded-lg border border-cyan-500/30 bg-cyan-500/10">
+        <Icon size={20} color="#67E8F0" />
       </View>
       <View className="flex-1">
         <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
           {label}
         </Text>
-        <Text
-          className="text-lg font-bold text-foreground"
-          style={{ fontVariant: ["tabular-nums"] }}
-        >
-          {value}
-        </Text>
+        {loading ? (
+          <Text className="text-lg font-bold text-muted-foreground">…</Text>
+        ) : (
+          <Text
+            className="text-lg font-bold text-foreground"
+            style={{ fontVariant: ["tabular-nums"] }}
+          >
+            {value}
+          </Text>
+        )}
       </View>
     </View>
   );

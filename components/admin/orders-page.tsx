@@ -2,22 +2,12 @@ import * as React from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Search, X } from "lucide-react-native";
-import { toast } from "sonner-native";
 import { useQuery } from "@tanstack/react-query";
 
 import { listAdminOrders } from "@/lib/api/admin";
 import type { Order, OrderStatus } from "@/lib/types";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
@@ -47,7 +37,6 @@ export function OrdersPage() {
   const [search, setSearch] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<OrderStatus | "all">("all");
   const [selected, setSelected] = React.useState<Order | null>(null);
-  const [refundConfirm, setRefundConfirm] = React.useState<Order | null>(null);
 
   const ordersQuery = useQuery({
     queryKey: ["admin-orders", statusFilter],
@@ -67,14 +56,6 @@ export function OrdersPage() {
       [o.id, o.userId, o.paymentRef].some((v) => v.toLowerCase().includes(q)),
     );
   }, [ordersQuery.data, search]);
-
-  function handleRefund() {
-    if (!refundConfirm) return;
-    toast.info("Refund flow pending backend wire", {
-      description: `Order ${refundConfirm.id}`,
-    });
-    setRefundConfirm(null);
-  }
 
   return (
     <View className="flex-1 bg-background">
@@ -321,41 +302,11 @@ export function OrdersPage() {
                     </Text>
                   ) : null}
                 </View>
-
-                <Button
-                  variant="destructive"
-                  disabled={selected.status === "refunded"}
-                  onPress={() => setRefundConfirm(selected)}
-                >
-                  <Text className="text-sm text-white">Issue refund</Text>
-                </Button>
               </ScrollView>
             ) : null}
           </Pressable>
         </Pressable>
       </Modal>
-
-      <Dialog
-        open={!!refundConfirm}
-        onOpenChange={(o) => !o && setRefundConfirm(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Issue refund?</DialogTitle>
-            <DialogDescription>
-              This will mark order {refundConfirm?.id} as refunded.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onPress={() => setRefundConfirm(null)}>
-              <Text className="text-sm text-foreground">Cancel</Text>
-            </Button>
-            <Button variant="destructive" onPress={handleRefund}>
-              <Text className="text-sm text-white">Confirm refund</Text>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </View>
   );
 }

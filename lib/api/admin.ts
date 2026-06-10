@@ -15,7 +15,15 @@
  */
 
 import { api } from "./_client";
-import type { Order, OrderStatus, Poll, Role } from "@/lib/types";
+import type {
+  Order,
+  OrderStatus,
+  Poll,
+  Role,
+  Subscription,
+  SubscriptionStatus,
+  SubscriptionTier,
+} from "@/lib/types";
 
 export interface EmailTemplate {
   key: string;
@@ -214,6 +222,65 @@ export async function listAdminOrders(
   if (opts.offset) q.set("offset", String(opts.offset));
   const qs = q.toString();
   return api<ListOrdersResult>(`/api/admin/orders${qs ? `?${qs}` : ""}`);
+}
+
+// -------------------------------------------------------------------
+// Subscriptions (admin billing)
+// -------------------------------------------------------------------
+
+export interface AdminSubscriptionRow {
+  id: string;
+  userId: string;
+  tier: SubscriptionTier;
+  status: SubscriptionStatus;
+  provider: "paystack" | "stripe" | "mock";
+  providerSubId: string;
+  currentPeriodEnd: string;
+  priceNgn: number;
+  createdAt: string;
+  userEmail: string;
+  userName: string;
+  userHandle: string | null;
+}
+
+export interface ListSubscriptionsResult
+  extends PaginatedListResult<AdminSubscriptionRow> {
+  subscriptions: AdminSubscriptionRow[];
+}
+
+/** GET /api/admin/subscriptions — admin+. */
+export async function listAdminSubscriptions(
+  opts: { status?: SubscriptionStatus; limit?: number; offset?: number } = {},
+): Promise<ListSubscriptionsResult> {
+  const q = new URLSearchParams();
+  if (opts.status) q.set("status", opts.status);
+  if (opts.limit) q.set("limit", String(opts.limit));
+  if (opts.offset) q.set("offset", String(opts.offset));
+  const qs = q.toString();
+  return api<ListSubscriptionsResult>(
+    `/api/admin/subscriptions${qs ? `?${qs}` : ""}`,
+  );
+}
+
+/** PATCH /api/admin/subscriptions/[id] {action:"cancel"} — admin+. */
+export async function adminCancelSubscription(
+  id: string,
+): Promise<{ ok: true; subscription: Subscription }> {
+  return api(`/api/admin/subscriptions/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: { action: "cancel" },
+  });
+}
+
+/** PATCH /api/admin/subscriptions/[id] {action:"extend",days} — admin+. */
+export async function adminExtendSubscription(
+  id: string,
+  days = 30,
+): Promise<{ ok: true; subscription: Subscription }> {
+  return api(`/api/admin/subscriptions/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: { action: "extend", days },
+  });
 }
 
 export interface ListPollsOptions {

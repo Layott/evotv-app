@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { CalendarClock, RotateCcw, Search, X, Square, Trash2 } from "lucide-react-native";
+import { CalendarClock, Film, Radio, RotateCcw, Search, X, Square, Trash2 } from "lucide-react-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -22,6 +22,7 @@ import {
 } from "@/lib/api/streams";
 import { listGames } from "@/lib/api/games";
 import { listEvents } from "@/lib/api/events";
+import { listPlayoutMedia } from "@/lib/api/playout";
 import type { Stream } from "@/lib/types";
 
 import { Input } from "@/components/ui/input";
@@ -95,6 +96,34 @@ export function StreamsManagerPage() {
     },
     onError: (err) =>
       toast.error("Couldn't update schedule", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const hlsMut = useMutation({
+    mutationFn: (args: { id: string; hlsUrl: string | null }) =>
+      adminUpdateStreamSchedule(args.id, { hlsUrl: args.hlsUrl }),
+    onSuccess: () => {
+      toast.success("Playback URL updated");
+      queryClient.invalidateQueries({ queryKey: ["admin-streams"] });
+    },
+    onError: (err) =>
+      toast.error("Couldn't update playback URL", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const playoutMut = useMutation({
+    mutationFn: (args: { id: string; playoutFilePath: string | null }) =>
+      adminUpdateStreamSchedule(args.id, {
+        playoutFilePath: args.playoutFilePath,
+      }),
+    onSuccess: () => {
+      toast.success("Playout file updated");
+      queryClient.invalidateQueries({ queryKey: ["admin-streams"] });
+    },
+    onError: (err) =>
+      toast.error("Couldn't set playout file", {
         description: err instanceof Error ? err.message : "Unknown error",
       }),
   });
@@ -405,6 +434,28 @@ export function StreamsManagerPage() {
                   }
                 />
 
+                <HlsUrlEditor
+                  stream={selected}
+                  isPending={hlsMut.isPending}
+                  onSave={(hlsUrl) =>
+                    hlsMut.mutate({ id: selected.id, hlsUrl })
+                  }
+                  onClear={() =>
+                    hlsMut.mutate({ id: selected.id, hlsUrl: null })
+                  }
+                />
+
+                <PlayoutFileEditor
+                  stream={selected}
+                  isPending={playoutMut.isPending}
+                  onPick={(filePath) =>
+                    playoutMut.mutate({ id: selected.id, playoutFilePath: filePath })
+                  }
+                  onClear={() =>
+                    playoutMut.mutate({ id: selected.id, playoutFilePath: null })
+                  }
+                />
+
                 <View className="mt-5 flex-row gap-2">
                   {selected.deletedAt ? (
                     <Pressable
@@ -600,6 +651,238 @@ function ScheduleEditor({
           </Pressable>
         ) : null}
       </View>
+    </View>
+  );
+}
+
+/**
+ * Paste the HLS playback URL the app should play for this stream. For a linear
+ * channel served by an external origin (Cloudflare Stream), paste the `.m3u8`
+ * manifest; the app plays it directly. Accepts a full http(s) URL or a relative
+ * /path. Clearing reverts to the auto origin path set when an encoder connects.
+ */
+function HlsUrlEditor({
+  stream,
+  isPending,
+  onSave,
+  onClear,
+}: {
+  stream: Stream;
+  isPending: boolean;
+  onSave: (hlsUrl: string) => void;
+  onClear: () => void;
+}) {
+  const initial = stream.hlsUrl ?? "";
+  const [url, setUrl] = React.useState(initial);
+
+  React.useEffect(() => {
+    setUrl(stream.hlsUrl ?? "");
+  }, [stream.id, stream.hlsUrl]);
+
+  const trimmed = url.trim();
+  const dirty = trimmed !== initial.trim();
+  const valid =
+    trimmed === "" ||
+    /^https?:\/\//i.test(trimmed) ||
+    trimmed.startsWith("/");
+
+  return (
+    <View className="mt-4 rounded-lg border border-border bg-card/40 p-3">
+      <View className="mb-3 flex-row items-center gap-2">
+        <Radio size={14} color="#67e8f9" />
+        <Text className="text-sm font-semibold text-foreground">
+          Playback URL (HLS)
+        </Text>
+        {stream.hlsUrl ? (
+          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+            Set
+          </Text>
+        ) : (
+          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+            Auto
+          </Text>
+        )}
+      </View>
+
+      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+        .m3u8 manifest URL
+      </Text>
+      <Input
+        value={url}
+        onChangeText={setUrl}
+        placeholder="https://customer-xxx.cloudflarestream.com/<uid>/manifest/video.m3u8"
+        autoCapitalize="none"
+        autoCorrect={false}
+        className="mb-3 h-9"
+      />
+
+      <View className="flex-row gap-2">
+        <Pressable
+          onPress={() => {
+            if (!valid) {
+              toast.error("Enter an http(s) URL or a /path");
+              return;
+            }
+            onSave(trimmed);
+          }}
+          disabled={!dirty || !valid || isPending}
+          className="flex-1 items-center rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+          style={{ opacity: !dirty || !valid || isPending ? 0.5 : 1 }}
+        >
+          <Text className="text-xs font-semibold text-cyan-300">
+            {isPending ? "Saving…" : "Save URL"}
+          </Text>
+        </Pressable>
+        {stream.hlsUrl ? (
+          <Pressable
+            onPress={onClear}
+            disabled={isPending}
+            className="items-center rounded-lg border border-border bg-card px-3 py-2"
+          >
+            <Text className="text-xs font-medium text-muted-foreground">
+              Clear
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
+    </View>
+  );
+}
+
+/**
+ * Pick which media file (reported by the office playout box) airs for this
+ * scheduled program. The office media-agent populates the list; choosing here
+ * sets streams.playoutFilePath, which the playout adapter resolves over its
+ * local media-map.json. No file chosen = the slot plays filler.
+ */
+function PlayoutFileEditor({
+  stream,
+  isPending,
+  onPick,
+  onClear,
+}: {
+  stream: Stream;
+  isPending: boolean;
+  onPick: (filePath: string) => void;
+  onClear: () => void;
+}) {
+  const [filter, setFilter] = React.useState("");
+  const mediaQ = useQuery({
+    queryKey: ["playout-media"],
+    queryFn: () => listPlayoutMedia(),
+    staleTime: 30_000,
+  });
+  const files = mediaQ.data?.files ?? [];
+  const current = stream.playoutFilePath ?? null;
+
+  const shown = React.useMemo(() => {
+    const f = filter.trim().toLowerCase();
+    const list = f
+      ? files.filter(
+          (x) =>
+            x.fileName.toLowerCase().includes(f) ||
+            x.filePath.toLowerCase().includes(f),
+        )
+      : files;
+    return list.slice(0, 50);
+  }, [files, filter]);
+
+  return (
+    <View className="mt-4 rounded-lg border border-border bg-card/40 p-3">
+      <View className="mb-3 flex-row items-center gap-2">
+        <Film size={14} color="#67e8f9" />
+        <Text className="text-sm font-semibold text-foreground">
+          Playout file
+        </Text>
+        {current ? (
+          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+            Chosen
+          </Text>
+        ) : (
+          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+            None
+          </Text>
+        )}
+      </View>
+
+      {current ? (
+        <View className="mb-3 flex-row items-center gap-2 rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2 py-1.5">
+          <Text className="flex-1 text-xs text-cyan-200" numberOfLines={1}>
+            {current}
+          </Text>
+          <Pressable onPress={onClear} disabled={isPending}>
+            <Text className="text-[11px] font-medium text-muted-foreground">
+              Clear
+            </Text>
+          </Pressable>
+        </View>
+      ) : (
+        <Text className="mb-2 text-[11px] text-muted-foreground">
+          No file chosen — this slot plays filler until you pick one.
+        </Text>
+      )}
+
+      <Input
+        value={filter}
+        onChangeText={setFilter}
+        placeholder="Filter files…"
+        autoCapitalize="none"
+        autoCorrect={false}
+        className="mb-2 h-9"
+      />
+
+      {mediaQ.isLoading ? (
+        <Text className="py-2 text-xs text-muted-foreground">
+          Loading library…
+        </Text>
+      ) : files.length === 0 ? (
+        <Text className="py-2 text-xs text-muted-foreground">
+          No files reported yet. The office media-agent populates this list.
+        </Text>
+      ) : (
+        <View className="gap-1">
+          {shown.map((f) => {
+            const active = f.filePath === current;
+            return (
+              <Pressable
+                key={f.id}
+                onPress={() => onPick(f.filePath)}
+                disabled={isPending || active}
+                className={`flex-row items-center gap-2 rounded-md border px-2 py-2 ${
+                  active
+                    ? "border-cyan-500 bg-cyan-500/10"
+                    : "border-border bg-card"
+                }`}
+              >
+                <Film size={12} color={active ? "#67e8f9" : "#6b7280"} />
+                <View className="flex-1">
+                  <Text
+                    className={`text-xs ${active ? "text-cyan-200" : "text-foreground"}`}
+                    numberOfLines={1}
+                  >
+                    {f.fileName}
+                  </Text>
+                  <Text
+                    className="text-[10px] text-muted-foreground"
+                    numberOfLines={1}
+                  >
+                    {f.sizeMb ? `${f.sizeMb} MB` : ""}
+                    {f.durationSec ? ` · ${Math.round(f.durationSec / 60)} min` : ""}
+                  </Text>
+                </View>
+                {active ? (
+                  <Text className="text-[10px] text-cyan-400">current</Text>
+                ) : null}
+              </Pressable>
+            );
+          })}
+          {shown.length < files.length ? (
+            <Text className="px-1 py-1 text-[10px] text-muted-foreground">
+              Showing {shown.length} of {files.length} — filter to narrow.
+            </Text>
+          ) : null}
+        </View>
+      )}
     </View>
   );
 }

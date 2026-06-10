@@ -46,6 +46,7 @@ const ROLE_FILTERS: Array<"all" | AdminAssignableRole> = [
 const ALL_ROLES: AdminAssignableRole[] = [
   "user",
   "premium",
+  "creator",
   "support_admin",
   "moderator",
   "finance_admin",

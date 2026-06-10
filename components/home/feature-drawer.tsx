@@ -154,6 +154,9 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
   if (!open) return null;
 
   const isAdmin = role === "admin";
+  // Creator tools only show for creators (and admins). Role is granted from
+  // the admin Users screen.
+  const isCreator = role === "creator" || role === "admin";
   const handleNav = (item: FeatureLink) => {
     // Gated features never navigate — show an in-drawer blurb instead. Keeps
     // the drawer open (no broken back) and signals "coming soon" in context.
@@ -231,6 +234,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
 
           {GROUPS.map((group) => {
             if (group.title === "Admin" && !isAdmin) return null;
+            if (group.title === "Creator" && !isCreator) return null;
             return (
               <View key={group.title} className="px-4 pt-5">
                 <Text

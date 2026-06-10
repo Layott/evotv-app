@@ -97,6 +97,7 @@ export type Role =
   | "guest"
   | "user"
   | "premium"
+  | "creator"
   | "support_admin"
   | "moderator"
   | "finance_admin"

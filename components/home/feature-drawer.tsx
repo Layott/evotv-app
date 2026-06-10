@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import {
   Bell,
@@ -49,6 +50,11 @@ interface FeatureLink {
   Icon: LucideIcon;
   premium?: boolean;
   adminOnly?: boolean;
+  /** Gated for MVP — shows a "SOON" badge + an in-drawer blurb instead of
+   *  navigating to the feature (keeps drawer context, no broken back). */
+  gated?: boolean;
+  /** What this feature offers when it launches (shown in the gated sheet). */
+  blurb?: string;
 }
 
 interface FeatureGroup {
@@ -74,44 +80,44 @@ const GROUPS: FeatureGroup[] = [
     title: "Watch",
     items: [
       { label: "Live channel", href: "/channel", Icon: Radio },
-      { label: "Multi-stream", href: "/multi-stream", Icon: Layers },
-      { label: "Watch parties", href: "/watch-parties", Icon: UsersIcon },
-      { label: "Calendar", href: "/calendar", Icon: CalendarRange },
       { label: "Clips", href: "/clips", Icon: Film },
       { label: "Categories", href: "/categories", Icon: Gamepad2 },
       { label: "Teams", href: "/team", Icon: ShieldCheck },
+      { label: "Multi-stream", href: "/multi-stream", Icon: Layers, gated: true, blurb: "Watch up to four live streams side-by-side in one grid." },
+      { label: "Watch parties", href: "/watch-parties", Icon: UsersIcon, gated: true, blurb: "Watch together in sync with friends and live chat." },
+      { label: "Calendar", href: "/calendar", Icon: CalendarRange, gated: true, blurb: "A full calendar view of every match, premiere and event." },
     ],
   },
   {
     title: "Play",
     items: [
-      { label: "Pick'em", href: "/pickem", Icon: Target },
-      { label: "Predictions", href: "/predictions", Icon: LineChart },
-      { label: "Fantasy", href: "/fantasy", Icon: Star },
-      { label: "Tips", href: "/tips", Icon: PiggyBank },
-      { label: "Rewards", href: "/rewards", Icon: Gift },
-      { label: "Rewards store", href: "/rewards/store", Icon: Sparkles },
+      { label: "Pick'em", href: "/pickem", Icon: Target, gated: true, blurb: "Predict tournament brackets and climb the leaderboard." },
+      { label: "Predictions", href: "/predictions", Icon: LineChart, gated: true, blurb: "Stake EVO Coins on live match outcomes." },
+      { label: "Fantasy", href: "/fantasy", Icon: Star, gated: true, blurb: "Draft a roster of pro players and compete each week." },
+      { label: "Tips", href: "/tips", Icon: PiggyBank, gated: true, blurb: "Send and receive creator tips with EVO Coins." },
+      { label: "Rewards", href: "/rewards", Icon: Gift, gated: true, blurb: "Earn XP and unlock drops through daily quests." },
+      { label: "Rewards store", href: "/rewards/store", Icon: Sparkles, gated: true, blurb: "Spend your coins on exclusive digital + physical drops." },
     ],
   },
   {
     title: "Creator",
     items: [
-      { label: "Creator program", href: "/creator-program", Icon: Mic2 },
-      { label: "Dashboard", href: "/creator-dashboard", Icon: LayoutDashboard },
-      { label: "Earnings", href: "/creator-dashboard/earnings", Icon: Wallet },
-      { label: "Auto-clipper", href: "/auto-clipper", Icon: Clapperboard },
-      { label: "Integrations", href: "/integrations", Icon: Share2 },
-      { label: "USSD", href: "/ussd", Icon: Phone },
+      { label: "Creator program", href: "/creator-program", Icon: Mic2, gated: true, blurb: "Apply to stream on EVO TV and earn from your audience." },
+      { label: "Dashboard", href: "/creator-dashboard", Icon: LayoutDashboard, gated: true, blurb: "Track your viewers, hours streamed, followers and tips." },
+      { label: "Earnings", href: "/creator-dashboard/earnings", Icon: Wallet, gated: true, blurb: "See your revenue and request payouts." },
+      { label: "Auto-clipper", href: "/auto-clipper", Icon: Clapperboard, gated: true, blurb: "Auto-generate highlight clips from your live streams." },
+      { label: "Integrations", href: "/integrations", Icon: Share2, gated: true, blurb: "Connect Discord, Telegram and more to your channel." },
+      { label: "USSD", href: "/ussd", Icon: Phone, gated: true, blurb: "Pay and subscribe by dialling a code — no app needed." },
     ],
   },
   {
     title: "Discover",
     items: [
-      { label: "Apps & devices", href: "/apps", Icon: Tv },
       { label: "Upgrade to Premium", href: "/upgrade", Icon: Crown },
-      { label: "API access", href: "/api-access", Icon: Disc, premium: true },
-      { label: "Partners", href: "/partners", Icon: Globe },
-      { label: "Embed player", href: "/embed", Icon: Play, premium: true },
+      { label: "Apps & devices", href: "/apps", Icon: Tv, gated: true, blurb: "Get EVO TV on your TV, desktop and other devices." },
+      { label: "API access", href: "/api-access", Icon: Disc, premium: true, gated: true, blurb: "Build on EVO TV with our developer API." },
+      { label: "Partners", href: "/partners", Icon: Globe, gated: true, blurb: "Meet the brands and teams powering EVO TV." },
+      { label: "Embed player", href: "/embed", Icon: Play, premium: true, gated: true, blurb: "Embed EVO TV streams + clips on your own site." },
     ],
   },
   {
@@ -136,13 +142,27 @@ interface FeatureDrawerProps {
 export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
   const router = useRouter();
   const { user, role, login, logout } = useMockAuth();
+  const [gatedInfo, setGatedInfo] = React.useState<{
+    title: string;
+    blurb: string;
+  } | null>(null);
+
+  React.useEffect(() => {
+    if (!open) setGatedInfo(null);
+  }, [open]);
 
   if (!open) return null;
 
   const isAdmin = role === "admin";
-  const handleNav = (href: string) => {
+  const handleNav = (item: FeatureLink) => {
+    // Gated features never navigate — show an in-drawer blurb instead. Keeps
+    // the drawer open (no broken back) and signals "coming soon" in context.
+    if (item.gated) {
+      setGatedInfo({ title: item.label, blurb: item.blurb ?? "Launching soon." });
+      return;
+    }
     onClose();
-    setTimeout(() => router.push(href as never), 50);
+    setTimeout(() => router.push(item.href as never), 50);
   };
 
   return (
@@ -226,7 +246,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
                     return (
                       <Pressable
                         key={item.label}
-                        onPress={() => handleNav(item.href)}
+                        onPress={() => handleNav(item)}
                         className="flex-row items-center gap-3 px-3 py-3 active:bg-muted/40"
                         style={{
                           borderTopWidth: idx === 0 ? 0 : 1,
@@ -252,6 +272,19 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
                               style={{ color: "#EAB308" }}
                             >
                               PRO
+                            </Text>
+                          </View>
+                        ) : null}
+                        {item.gated ? (
+                          <View
+                            className="rounded px-1.5 py-0.5"
+                            style={{ backgroundColor: "rgba(168, 85, 247, 0.15)" }}
+                          >
+                            <Text
+                              className="text-[10px] font-semibold"
+                              style={{ color: "#A855F7" }}
+                            >
+                              SOON
                             </Text>
                           </View>
                         ) : null}
@@ -328,6 +361,55 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
           </View>
         </ScrollView>
       </View>
+
+      {gatedInfo ? (
+        <Pressable
+          onPress={() => setGatedInfo(null)}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            justifyContent: "flex-end",
+            backgroundColor: "rgba(0,0,0,0.6)",
+          }}
+          accessibilityLabel="Close"
+        >
+          <Animated.View entering={FadeInDown.duration(220)}>
+            <Pressable
+              onPress={(e) => e.stopPropagation()}
+              className="rounded-t-3xl border-t border-border bg-card px-6 pb-10 pt-6"
+            >
+              <View className="items-center">
+                <View
+                  className="h-14 w-14 items-center justify-center rounded-2xl border border-purple-500/30"
+                  style={{ backgroundColor: "rgba(168,85,247,0.10)" }}
+                >
+                  <Sparkles size={26} color="#A855F7" />
+                </View>
+                <Text className="mt-4 text-center text-xl font-bold text-foreground">
+                  {gatedInfo.title}
+                </Text>
+                <Text className="mt-1 text-[11px] font-semibold uppercase tracking-[3px] text-purple-400">
+                  Coming soon
+                </Text>
+                <Text className="mt-3 max-w-[300px] text-center text-sm text-muted-foreground">
+                  {gatedInfo.blurb}
+                </Text>
+                <Pressable
+                  onPress={() => setGatedInfo(null)}
+                  className="mt-6 w-full items-center rounded-xl border border-border bg-background py-3 active:opacity-70"
+                >
+                  <Text className="text-sm font-semibold text-foreground">
+                    Got it
+                  </Text>
+                </Pressable>
+              </View>
+            </Pressable>
+          </Animated.View>
+        </Pressable>
+      ) : null}
     </View>
   );
 }

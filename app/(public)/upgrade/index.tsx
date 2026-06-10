@@ -14,6 +14,8 @@ import {
   X,
 } from "lucide-react-native";
 
+import { toast } from "sonner-native";
+
 import { listTiers, type Tier } from "@/lib/api/subs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -74,6 +76,8 @@ interface PaymentMethodCardProps {
   iconFg: string;
   onPress: () => void;
   primary?: boolean;
+  /** Method not live yet — dims the card + shows "Coming soon". */
+  soon?: boolean;
 }
 
 function PaymentMethodCard({
@@ -85,6 +89,7 @@ function PaymentMethodCard({
   iconFg,
   onPress,
   primary,
+  soon,
 }: PaymentMethodCardProps) {
   return (
     <Pressable
@@ -92,6 +97,7 @@ function PaymentMethodCard({
       className={`rounded-2xl border bg-card p-5 gap-3 active:opacity-80 ${
         primary ? "border-brand" : "border-border"
       }`}
+      style={soon ? { opacity: 0.6 } : undefined}
     >
       <View className="flex-row items-start gap-3">
         <View
@@ -119,9 +125,15 @@ function PaymentMethodCard({
         <Text className="text-xs text-muted-foreground">
           Premium · {formatNgn(4500)}/mo
         </Text>
-        <Text style={{ color: "#2CD7E3", fontSize: 12, fontWeight: "600" }}>
-          Continue →
-        </Text>
+        {soon ? (
+          <Text style={{ color: "#A855F7", fontSize: 11, fontWeight: "700", letterSpacing: 1 }}>
+            COMING SOON
+          </Text>
+        ) : (
+          <Text style={{ color: "#2CD7E3", fontSize: 12, fontWeight: "600" }}>
+            Continue →
+          </Text>
+        )}
       </View>
     </Pressable>
   );
@@ -305,20 +317,30 @@ export default function UpgradeScreen() {
           <PaymentMethodCard
             badge="Mobile money"
             title="M-Pesa, MoMo, Airtel"
-            subtitle="STK push to your phone in seconds."
+            subtitle="STK push to your phone — launching soon."
             Icon={Phone}
             iconBg="rgba(16,185,129,0.15)"
             iconFg="#34d399"
-            onPress={onUpgrade}
+            soon
+            onPress={() =>
+              toast.info("Mobile money is coming soon", {
+                description: "Pay with card via Paystack for now.",
+              })
+            }
           />
           <PaymentMethodCard
             badge="USSD"
             title="Dial-to-pay"
-            subtitle="No app needed. Works on any phone."
+            subtitle="No app needed — launching soon."
             Icon={Ticket}
             iconBg="rgba(245,158,11,0.15)"
             iconFg="#fbbf24"
-            onPress={onUpgrade}
+            soon
+            onPress={() =>
+              toast.info("USSD payments are coming soon", {
+                description: "Pay with card via Paystack for now.",
+              })
+            }
           />
         </View>
 

@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   Award,
+  CalendarRange,
   ChartColumn,
   CircleDollarSign,
   ClipboardList,
@@ -158,6 +159,12 @@ export function OverviewPage() {
         metrics || streamsQ.data
           ? `${formatNumber(liveCount)} live now`
           : "-",
+    },
+    {
+      to: "/admin/schedule",
+      label: "Schedule",
+      icon: CalendarRange,
+      stat: "Programming guide",
     },
     {
       to: "/admin/content",

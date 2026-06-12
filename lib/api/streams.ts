@@ -142,6 +142,49 @@ export async function adminUpdateStreamSchedule(
   return api(`/api/admin/streams/${id}`, { method: "PATCH", body });
 }
 
+/** Mirrors the backend createSchema (EVOTV/app/api/admin/streams/route.ts). */
+export interface AdminCreateStreamPayload {
+  /** 3-200 chars. */
+  title: string;
+  /** Max 2000 chars. Backend defaults to "". */
+  description?: string;
+  gameId: string;
+  eventId?: string | null;
+  /** 1-100 chars. */
+  streamerName: string;
+  streamerAvatarUrl?: string;
+  /** Backend defaults to "en". */
+  language?: string;
+  tags?: string[];
+  isPremium?: boolean;
+  /** Backend defaults to "teen". */
+  maturityRating?: MaturityRating;
+  contentTags?: string[];
+}
+
+export interface AdminCreateStreamResult {
+  id: string;
+  /** Shown ONLY once. Surface to the admin immediately; never recoverable. */
+  streamKey: string;
+  ingestUrl: string;
+  warning: string;
+}
+
+/**
+ * POST /api/admin/streams - admin only. Creates an offline stream row with a
+ * fresh ingest key. The response streamKey is the only time the full key is
+ * visible (backend stores a hash) - callers MUST show it to the admin with a
+ * copy affordance before dropping it.
+ */
+export async function adminCreateStream(
+  payload: AdminCreateStreamPayload,
+): Promise<AdminCreateStreamResult> {
+  return api<AdminCreateStreamResult>("/api/admin/streams", {
+    method: "POST",
+    body: payload,
+  });
+}
+
 /** GET /api/admin/streams - admin only. All streams (live + offline). */
 export async function listAdminStreams(
   opts: ListAdminStreamsOpts = {},

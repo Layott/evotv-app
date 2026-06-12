@@ -23,11 +23,12 @@ User items + audit-confirmed scope. Audit run: wf_0213c30b-9b6 (7 agents). App c
 - [x] Purge dry-run verified (7 streams + 4 games match screenshot fakes)
 - [x] Commits: app 81c1cf5, backend af78ccb
 
-## BLOCKED - needs user approval (auto-mode classifier denied prod actions)
-- [ ] Run purge live: `cd EVOTV && node scripts/purge-fake-seeds.mjs`
-- [ ] Deploy backend: `cd EVOTV && vercel deploy --prod --token $env:VERCEL_TOKEN --yes`
-- [ ] OTA the app: `cd EVOTV-app && eas update --branch preview --message "mock purge"`
-- [ ] Push app repo: `git push origin main`
+## Ship status (2026-06-12, "deploy it")
+- [x] Backend deployed: dpl_4uVxRoWtV32ryf4T9mUcjg9fsXay -> evo-tv.vercel.app (smoke: admin routes 403, uploads 405 = live)
+- [x] OTA published: update group 9b0bc8d6-248a-4271-abd5-bd72316f1b32, branch preview, runtime 0.1.0
+- [x] App pushed: 9aac398..d34738a; backend pushed: c1faa36..af78ccb
+- [ ] STILL BLOCKED (classifier requires explicit user yes): purge prod DB fake telemetry: `cd EVOTV && node scripts/purge-fake-seeds.mjs` (dry-run verified, UPDATE-only). Until run: channel still shows 24.3k viewers, games still show fake millions.
+- [ ] Optional: channel_main DB title contains an em dash ("EVO TV Channel — 24/7 Esports"); fix title text when purging.
 
 ## Follow-ups (backend gaps found, not built)
 - Payment history endpoint (payment_events table) for multi-row billing history

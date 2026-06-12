@@ -12,7 +12,11 @@ import {
   CalendarClock,
   CalendarRange,
   Copy,
+  FileVideo,
+  Film,
+  HardDrive,
   KeyRound,
+  Megaphone,
   Pencil,
   Plus,
   Upload,
@@ -28,6 +32,13 @@ import {
   listAdminStreams,
 } from "@/lib/api/streams";
 import { listGames } from "@/lib/api/games";
+import {
+  getPlayoutConfig,
+  listPlayoutMedia,
+  savePlayoutConfig,
+  type PlayoutConfig,
+  type PlayoutMediaFile,
+} from "@/lib/api/playout";
 import { pickAndUploadImage, uploadErrorMessage } from "@/lib/api/uploads";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import {
@@ -50,14 +61,18 @@ import {
 
 import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
+import { timeAgo } from "./utils";
 
 const DEFAULT_STREAMER = "EVO TV Channel";
 const DEFAULT_DURATION = "60";
+/** Rows rendered before the "search to narrow down" hint kicks in. */
+const MEDIA_LIST_CAP = 30;
 
 /**
- * Schedule info recovered from the public EPG. Needed because the backend
- * GET /api/admin/streams select list omits scheduledStartAt and
- * scheduledDurationMin, so admin list rows never carry them at runtime.
+ * Schedule info recovered from the public EPG. The current backend
+ * GET /api/admin/streams select list DOES return scheduledStartAt,
+ * scheduledDurationMin, and playoutFilePath, so this is a fallback for
+ * older deploys whose select list omitted the schedule fields.
  * The /api/schedule feed IS built from streams.scheduledStartAt, so we map
  * its live_stream rows back to stream ids and merge.
  */
@@ -85,7 +100,7 @@ export function ScheduleManagerPage() {
     ingestUrl: string;
   } | null>(null);
 
-  // Form state (Section 3).
+  // Form state (Section: New scheduled show).
   const [title, setTitle] = React.useState("");
   const [streamerName, setStreamerName] = React.useState(DEFAULT_STREAMER);
   const [gameId, setGameId] = React.useState("");
@@ -94,6 +109,24 @@ export function ScheduleManagerPage() {
   const [duration, setDuration] = React.useState(DEFAULT_DURATION);
   const [thumbnailUrl, setThumbnailUrl] = React.useState("");
   const [uploadingThumb, setUploadingThumb] = React.useState(false);
+  /** Office-PC media file the new show should play out. Optional. */
+  const [playoutFilePath, setPlayoutFilePath] = React.useState<string | null>(
+    null,
+  );
+
+  // Playout-PC media search (Section: Files on the playout PC).
+  const [mediaSearch, setMediaSearch] = React.useState("");
+  const [debouncedMediaSearch, setDebouncedMediaSearch] = React.useState("");
+  React.useEffect(() => {
+    const t = setTimeout(() => setDebouncedMediaSearch(mediaSearch.trim()), 300);
+    return () => clearTimeout(t);
+  }, [mediaSearch]);
+
+  // Filler + ad config (Section: Filler and ad breaks). Hydrated once from
+  // the server, then edited locally until saved.
+  const [fillerFiles, setFillerFiles] = React.useState<string[]>([]);
+  const [adFiles, setAdFiles] = React.useState<string[]>([]);
+  const [configHydrated, setConfigHydrated] = React.useState(false);
 
   const guideQ = useQuery({
     queryKey: ["admin-schedule", "day", selectedDay],
@@ -118,6 +151,26 @@ export function ScheduleManagerPage() {
     queryFn: listGames,
     staleTime: 60_000,
   });
+
+  const mediaQ = useQuery({
+    queryKey: ["playout-media", debouncedMediaSearch],
+    queryFn: () => listPlayoutMedia(debouncedMediaSearch || undefined),
+    staleTime: 30_000,
+  });
+
+  const configQ = useQuery({
+    queryKey: ["playout-config"],
+    queryFn: getPlayoutConfig,
+    staleTime: 30_000,
+  });
+
+  React.useEffect(() => {
+    if (configQ.data && !configHydrated) {
+      setFillerFiles(configQ.data.fillerFiles);
+      setAdFiles(configQ.data.adFiles);
+      setConfigHydrated(true);
+    }
+  }, [configQ.data, configHydrated]);
 
   const invalidateScheduleData = React.useCallback(() => {
     // Guide (day + week share the "admin-schedule" prefix), admin stream
@@ -204,7 +257,21 @@ export function ScheduleManagerPage() {
     setStartTime("");
     setDuration(DEFAULT_DURATION);
     setThumbnailUrl("");
+    setPlayoutFilePath(null);
   }, [todayIso]);
+
+  /** "Schedule" on a playout-PC file: prefill the new-show form below. */
+  const prefillFromFile = React.useCallback((file: PlayoutMediaFile) => {
+    setTitle(titleFromFileName(file.fileName));
+    if (file.durationSec && file.durationSec > 0) {
+      setDuration(String(Math.max(1, Math.ceil(file.durationSec / 60))));
+    }
+    setPlayoutFilePath(file.filePath);
+    toast.success("File attached to the form", {
+      description:
+        "Scroll to New scheduled show, set the airtime, then create.",
+    });
+  }, []);
 
   async function handleUploadThumbnail() {
     try {
@@ -226,21 +293,25 @@ export function ScheduleManagerPage() {
       startAtIso: string;
       durationMin: number;
       thumbnailUrl: string | null;
+      playoutFilePath: string | null;
     }) => {
       const created = await adminCreateStream({
         title: args.title,
         gameId: args.gameId,
         streamerName: args.streamerName,
       });
-      // Schedule (and thumbnail, when uploaded) in a second call - POST
-      // /api/admin/streams has neither field. If this PATCH fails we still
-      // surface the one-time key.
+      // Schedule (plus thumbnail and playout file, when set) in a second
+      // call - POST /api/admin/streams has none of those fields. If this
+      // PATCH fails we still surface the one-time key.
       let scheduleError: string | null = null;
       try {
         await adminUpdateStreamSchedule(created.id, {
           scheduledStartAt: args.startAtIso,
           scheduledDurationMin: args.durationMin,
           ...(args.thumbnailUrl ? { thumbnailUrl: args.thumbnailUrl } : {}),
+          ...(args.playoutFilePath
+            ? { playoutFilePath: args.playoutFilePath }
+            : {}),
         });
       } catch (err) {
         scheduleError =
@@ -315,6 +386,7 @@ export function ScheduleManagerPage() {
       startAtIso: combined.toISOString(),
       durationMin: Math.round(d),
       thumbnailUrl: thumbnailUrl || null,
+      playoutFilePath,
     });
   }
 
@@ -322,6 +394,47 @@ export function ScheduleManagerPage() {
     await Clipboard.setStringAsync(text);
     toast.success(`${label} copied`);
   };
+
+  const configMut = useMutation({
+    mutationFn: (config: PlayoutConfig) => savePlayoutConfig(config),
+    onSuccess: (saved) => {
+      // Echoed server state is the new baseline.
+      setFillerFiles(saved.fillerFiles);
+      setAdFiles(saved.adFiles);
+      toast.success("Playout config saved", {
+        description: "The office playout box picks it up automatically.",
+      });
+      void queryClient.invalidateQueries({ queryKey: ["playout-config"] });
+    },
+    onError: (err) =>
+      toast.error("Couldn't save playout config", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const configDirty = React.useMemo(() => {
+    if (!configQ.data) return false;
+    return (
+      !sameStringArray(fillerFiles, configQ.data.fillerFiles) ||
+      !sameStringArray(adFiles, configQ.data.adFiles)
+    );
+  }, [configQ.data, fillerFiles, adFiles]);
+
+  const addConfigFile = React.useCallback(
+    (kind: "filler" | "ad", filePath: string) => {
+      const [list, set] =
+        kind === "filler"
+          ? ([fillerFiles, setFillerFiles] as const)
+          : ([adFiles, setAdFiles] as const);
+      if (list.includes(filePath)) return;
+      if (list.length >= 100) {
+        toast.error("Limit reached", { description: "Max 100 files per list." });
+        return;
+      }
+      set([...list, filePath]);
+    },
+    [fillerFiles, adFiles],
+  );
 
   const formIncomplete =
     title.trim().length < 3 ||
@@ -421,7 +534,86 @@ export function ScheduleManagerPage() {
           ))
         )}
 
-        {/* Section 2: Scheduled streams */}
+        {/* Section 2: Files on the playout PC */}
+        <SectionTitle
+          icon={HardDrive}
+          title="Files on the playout PC"
+          caption="Media the office playout box has reported. Tap Schedule to prefill the new-show form with a file: at airtime the office PC plays it out automatically."
+          className="mt-8"
+        />
+
+        <Input
+          value={mediaSearch}
+          onChangeText={setMediaSearch}
+          placeholder="Search files…"
+          autoCapitalize="none"
+          autoCorrect={false}
+          className="mb-3 bg-card"
+        />
+
+        {mediaQ.isLoading ? (
+          <View className="items-center py-10">
+            <ActivityIndicator color="#2CD7E3" />
+          </View>
+        ) : mediaQ.isError ? (
+          <Text className="py-6 text-center text-sm text-red-400">
+            Failed to load playout files.{" "}
+            {mediaQ.error instanceof Error ? mediaQ.error.message : ""}
+          </Text>
+        ) : (mediaQ.data?.files ?? []).length === 0 ? (
+          <Text className="py-6 text-center text-sm text-muted-foreground">
+            {debouncedMediaSearch
+              ? "No files match your search."
+              : "No files reported from the playout PC yet. Start the office media agent and they appear here."}
+          </Text>
+        ) : (
+          <>
+            {(mediaQ.data?.files ?? []).slice(0, MEDIA_LIST_CAP).map((f) => (
+              <View
+                key={f.id}
+                className="mb-2 flex-row items-center gap-3 rounded-xl border border-border bg-card/40 p-3"
+              >
+                <View className="min-w-0 flex-1">
+                  <Text
+                    numberOfLines={1}
+                    className="text-sm font-semibold text-foreground"
+                  >
+                    {f.fileName}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    className="text-[11px] text-muted-foreground"
+                  >
+                    {f.filePath}
+                  </Text>
+                  <Text
+                    className="mt-0.5 text-[11px] text-muted-foreground"
+                    style={{ fontVariant: ["tabular-nums"] }}
+                  >
+                    {mediaMetaLine(f)}
+                  </Text>
+                </View>
+                <Pressable
+                  onPress={() => prefillFromFile(f)}
+                  className="flex-row items-center gap-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+                >
+                  <CalendarClock size={12} color="#67e8f9" />
+                  <Text className="text-xs font-semibold text-cyan-300">
+                    Schedule
+                  </Text>
+                </Pressable>
+              </View>
+            ))}
+            {(mediaQ.data?.files ?? []).length > MEDIA_LIST_CAP ? (
+              <Text className="mb-2 text-center text-[11px] text-muted-foreground">
+                {(mediaQ.data?.files ?? []).length - MEDIA_LIST_CAP} more files.
+                Search to narrow down.
+              </Text>
+            ) : null}
+          </>
+        )}
+
+        {/* Section 3: Scheduled streams */}
         <SectionTitle
           icon={CalendarClock}
           title="Scheduled streams"
@@ -475,6 +667,17 @@ export function ScheduleManagerPage() {
               >
                 {formatDayTime(startAt)} · {durationMin} min
               </Text>
+              {stream.playoutFilePath ? (
+                <View className="mt-1.5 flex-row items-center gap-1 self-start rounded-full border border-border bg-card px-2 py-0.5">
+                  <FileVideo size={10} color="#A3A3A3" />
+                  <Text
+                    numberOfLines={1}
+                    className="max-w-[220px] text-[10px] text-muted-foreground"
+                  >
+                    {basename(stream.playoutFilePath)}
+                  </Text>
+                </View>
+              ) : null}
               <View className="mt-2 flex-row gap-2">
                 <Pressable
                   onPress={() => setEditing({ stream, startAt, durationMin })}
@@ -506,7 +709,7 @@ export function ScheduleManagerPage() {
           ))
         )}
 
-        {/* Section 3: New scheduled show */}
+        {/* Section 4: New scheduled show */}
         <SectionTitle
           icon={Plus}
           title="New scheduled show"
@@ -573,6 +776,29 @@ export function ScheduleManagerPage() {
         ) : null}
 
         <View className="rounded-xl border border-border bg-card/40 p-4">
+          {playoutFilePath ? (
+            <View className="mb-3">
+              <View className="flex-row items-center gap-2 self-start rounded-full border border-cyan-500/40 bg-cyan-500/10 py-1.5 pl-3 pr-2">
+                <FileVideo size={12} color="#67e8f9" />
+                <Text
+                  numberOfLines={1}
+                  className="max-w-[220px] text-xs font-medium text-cyan-300"
+                >
+                  {basename(playoutFilePath)}
+                </Text>
+                <Pressable
+                  onPress={() => setPlayoutFilePath(null)}
+                  hitSlop={8}
+                >
+                  <X size={12} color="#67e8f9" />
+                </Pressable>
+              </View>
+              <Text className="mt-1 text-[11px] text-muted-foreground">
+                The office PC plays this file out at the scheduled time.
+              </Text>
+            </View>
+          ) : null}
+
           <Field label="Title">
             <Input
               value={title}
@@ -712,6 +938,72 @@ export function ScheduleManagerPage() {
             </Text>
           </Button>
         </View>
+
+        {/* Section 5: Filler and ad breaks */}
+        <SectionTitle
+          icon={Film}
+          title="Filler and ad breaks"
+          caption="Filler files loop in the gaps between scheduled shows. Ad files rotate during ad breaks. The office playout box pulls this config automatically."
+          className="mt-8"
+        />
+
+        {configQ.isLoading ? (
+          <View className="items-center py-10">
+            <ActivityIndicator color="#2CD7E3" />
+          </View>
+        ) : configQ.isError ? (
+          <Text className="py-6 text-center text-sm text-red-400">
+            Failed to load the playout config.{" "}
+            {configQ.error instanceof Error ? configQ.error.message : ""}
+          </Text>
+        ) : (
+          <>
+            <ConfigFileBlock
+              icon={Film}
+              title="Filler content"
+              caption="Loops whenever nothing is scheduled."
+              selected={fillerFiles}
+              files={mediaQ.data?.files ?? []}
+              mediaLoading={mediaQ.isLoading}
+              searchActive={debouncedMediaSearch.length > 0}
+              onAdd={(p) => addConfigFile("filler", p)}
+              onRemove={(p) =>
+                setFillerFiles((prev) => prev.filter((x) => x !== p))
+              }
+            />
+            <ConfigFileBlock
+              icon={Megaphone}
+              title="Ad spots"
+              caption="Rotate during ad breaks."
+              selected={adFiles}
+              files={mediaQ.data?.files ?? []}
+              mediaLoading={mediaQ.isLoading}
+              searchActive={debouncedMediaSearch.length > 0}
+              onAdd={(p) => addConfigFile("ad", p)}
+              onRemove={(p) =>
+                setAdFiles((prev) => prev.filter((x) => x !== p))
+              }
+            />
+
+            <Button
+              disabled={!configDirty || configMut.isPending}
+              className="bg-cyan-500"
+              onPress={() => configMut.mutate({ fillerFiles, adFiles })}
+            >
+              {configMut.isPending ? (
+                <ActivityIndicator size="small" color="#000000" />
+              ) : null}
+              <Text className="text-sm font-medium text-black">
+                {configMut.isPending ? "Saving…" : "Save playout config"}
+              </Text>
+            </Button>
+            {configDirty ? (
+              <Text className="mt-2 text-center text-[11px] text-amber-400">
+                Unsaved changes.
+              </Text>
+            ) : null}
+          </>
+        )}
       </ScrollView>
 
       {/* Edit airtime modal (Section 2) */}
@@ -893,6 +1185,139 @@ function ScheduleEditorCard({
   );
 }
 
+/**
+ * One half of the "Filler and ad breaks" section: chips of the currently
+ * selected file paths plus an inline "Add from PC files" picker fed by the
+ * shared playout-media query (so the Section 2 search also filters it).
+ */
+function ConfigFileBlock({
+  icon: Icon,
+  title,
+  caption,
+  selected,
+  files,
+  mediaLoading,
+  searchActive,
+  onAdd,
+  onRemove,
+}: {
+  icon: LucideIcon;
+  title: string;
+  caption: string;
+  selected: string[];
+  files: PlayoutMediaFile[];
+  mediaLoading: boolean;
+  searchActive: boolean;
+  onAdd: (filePath: string) => void;
+  onRemove: (filePath: string) => void;
+}) {
+  const [pickerOpen, setPickerOpen] = React.useState(false);
+  const available = files.filter((f) => !selected.includes(f.filePath));
+
+  return (
+    <View className="mb-3 rounded-xl border border-border bg-card/40 p-3">
+      <View className="flex-row items-center gap-2">
+        <Icon size={14} color="#67e8f9" />
+        <Text className="text-sm font-semibold text-foreground">{title}</Text>
+        <Text className="ml-auto text-[11px] text-muted-foreground">
+          {selected.length} selected
+        </Text>
+      </View>
+      <Text className="mt-0.5 text-xs text-muted-foreground">{caption}</Text>
+
+      {selected.length === 0 ? (
+        <Text className="mt-3 text-xs text-muted-foreground">
+          None selected yet.
+        </Text>
+      ) : (
+        <View className="mt-3 flex-row flex-wrap gap-2">
+          {selected.map((p) => (
+            <View
+              key={p}
+              className="flex-row items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1.5"
+            >
+              <Text
+                numberOfLines={1}
+                className="max-w-[180px] text-xs text-foreground"
+              >
+                {basename(p)}
+              </Text>
+              <Pressable onPress={() => onRemove(p)} hitSlop={8}>
+                <X size={12} color="#A3A3A3" />
+              </Pressable>
+            </View>
+          ))}
+        </View>
+      )}
+
+      <Pressable
+        onPress={() => setPickerOpen((v) => !v)}
+        className="mt-3 flex-row items-center justify-center gap-1.5 rounded-md border border-dashed border-border bg-card px-3 py-2"
+      >
+        {pickerOpen ? (
+          <X size={12} color="#2CD7E3" />
+        ) : (
+          <Plus size={12} color="#2CD7E3" />
+        )}
+        <Text className="text-xs font-medium text-foreground">
+          {pickerOpen ? "Close picker" : "Add from PC files"}
+        </Text>
+      </Pressable>
+
+      {pickerOpen ? (
+        <View className="mt-2 rounded-lg border border-border bg-background p-2">
+          {searchActive ? (
+            <Text className="mb-1 px-1 text-[10px] text-muted-foreground">
+              Filtered by the search in Files on the playout PC.
+            </Text>
+          ) : null}
+          {mediaLoading ? (
+            <View className="items-center py-4">
+              <ActivityIndicator size="small" color="#2CD7E3" />
+            </View>
+          ) : available.length === 0 ? (
+            <Text className="py-3 text-center text-xs text-muted-foreground">
+              {files.length === 0
+                ? "No files reported from the playout PC yet."
+                : "Every reported file is already selected."}
+            </Text>
+          ) : (
+            available.slice(0, MEDIA_LIST_CAP).map((f) => (
+              <Pressable
+                key={f.id}
+                onPress={() => onAdd(f.filePath)}
+                className="flex-row items-center gap-2 rounded-md px-2 py-2"
+              >
+                <Plus size={12} color="#67e8f9" />
+                <View className="min-w-0 flex-1">
+                  <Text
+                    numberOfLines={1}
+                    className="text-xs font-medium text-foreground"
+                  >
+                    {f.fileName}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    className="text-[10px] text-muted-foreground"
+                  >
+                    {mediaMetaLine(f)}
+                  </Text>
+                </View>
+              </Pressable>
+            ))
+          )}
+          {available.length > MEDIA_LIST_CAP ? (
+            <Text className="py-1 text-center text-[10px] text-muted-foreground">
+              {available.length - MEDIA_LIST_CAP} more files. Search above to
+              narrow down.
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
 function SectionTitle({
   icon: Icon,
   title,
@@ -1051,6 +1476,46 @@ function formatDayTime(iso: string): string {
     month: "short",
     day: "numeric",
   })} · ${formatTime(iso)}`;
+}
+
+/** Path tail: "D:\\media\\shows\\ep1.mp4" or "/srv/media/ep1.mp4" -> "ep1.mp4". */
+function basename(filePath: string): string {
+  const parts = filePath.split(/[\\/]/);
+  return parts[parts.length - 1] || filePath;
+}
+
+/** "evo_prime-time.S01E02.mp4" -> "evo prime time S01E02". */
+function titleFromFileName(fileName: string): string {
+  const base = fileName.replace(/\.[A-Za-z0-9]{1,5}$/, "");
+  const cleaned = base.replace(/[._-]+/g, " ").replace(/\s+/g, " ").trim();
+  return cleaned || fileName;
+}
+
+/** Seconds -> "m:ss" or "h:mm:ss". */
+function formatDurationSec(sec: number): string {
+  const total = Math.max(0, Math.round(sec));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+
+/** "12:34 · 812.5 MB · seen 3m ago" - skips parts the agent didn't report. */
+function mediaMetaLine(f: PlayoutMediaFile): string {
+  const parts: string[] = [];
+  if (f.durationSec !== null && f.durationSec > 0) {
+    parts.push(formatDurationSec(f.durationSec));
+  }
+  if (f.sizeMb !== null && f.sizeMb > 0) {
+    parts.push(`${f.sizeMb.toFixed(1)} MB`);
+  }
+  parts.push(`seen ${timeAgo(f.lastSeenAt)}`);
+  return parts.join(" · ");
+}
+
+function sameStringArray(a: string[], b: string[]): boolean {
+  return a.length === b.length && a.every((v, i) => v === b[i]);
 }
 
 /** ISO string to "YYYY-MM-DDTHH:mm" in local time for the input. */

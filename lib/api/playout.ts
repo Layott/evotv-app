@@ -24,3 +24,30 @@ export function listPlayoutMedia(q?: string): Promise<ListPlayoutMediaResult> {
     query: q ? { q } : undefined,
   });
 }
+
+export interface PlayoutConfig {
+  /** File paths looped in gaps between scheduled shows. Max 100. */
+  fillerFiles: string[];
+  /** File paths rotated during ad breaks. Max 100. */
+  adFiles: string[];
+}
+
+/**
+ * GET /api/admin/playout-config - support_admin+.
+ * Filler + ad-break media the office playout box pulls automatically
+ * (it receives the same config via /api/internal/playout-resolve).
+ */
+export function getPlayoutConfig(): Promise<PlayoutConfig> {
+  return api<PlayoutConfig>("/api/admin/playout-config");
+}
+
+/**
+ * PUT /api/admin/playout-config - support_admin+.
+ * Replaces the whole config (both arrays) and echoes what was saved.
+ */
+export function savePlayoutConfig(config: PlayoutConfig): Promise<PlayoutConfig> {
+  return api<PlayoutConfig>("/api/admin/playout-config", {
+    method: "PUT",
+    body: config,
+  });
+}

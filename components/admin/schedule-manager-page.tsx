@@ -114,6 +114,19 @@ export function ScheduleManagerPage() {
     null,
   );
 
+  // Copy day (Section: Scheduled streams). Source defaults to the guide's
+  // selected day, target to the day after; both re-seed when the chip changes.
+  const [copySource, setCopySource] = React.useState(todayIso);
+  const [copyTarget, setCopyTarget] = React.useState(() =>
+    addDaysIso(todayIso, 1),
+  );
+  const [copying, setCopying] = React.useState(false);
+  const [copyProgress, setCopyProgress] = React.useState({ done: 0, total: 0 });
+  React.useEffect(() => {
+    setCopySource(selectedDay);
+    setCopyTarget(addDaysIso(selectedDay, 1));
+  }, [selectedDay]);
+
   // Playout-PC media search (Section: Files on the playout PC).
   const [mediaSearch, setMediaSearch] = React.useState("");
   const [debouncedMediaSearch, setDebouncedMediaSearch] = React.useState("");
@@ -225,6 +238,38 @@ export function ScheduleManagerPage() {
     rows.sort((a, b) => a.startAt.localeCompare(b.startAt));
     return rows;
   }, [streamsQ.data, epgByStreamId]);
+
+  /**
+   * Copy-day source rows: non-deleted admin streams whose scheduledStartAt
+   * lands on the source date in DEVICE-LOCAL time - the same local framing
+   * the new-show form uses when it composes `${date}T${time}`.
+   */
+  const copySourceRows = React.useMemo<Stream[]>(() => {
+    const src = parseLocalDay(copySource);
+    if (!src) return [];
+    const srcIso = isoDay(src);
+    const rows = (streamsQ.data?.streams ?? []).filter(
+      (s) =>
+        !s.deletedAt &&
+        !!s.scheduledStartAt &&
+        isoDay(new Date(s.scheduledStartAt)) === srcIso,
+    );
+    rows.sort((a, b) =>
+      (a.scheduledStartAt ?? "").localeCompare(b.scheduledStartAt ?? ""),
+    );
+    return rows;
+  }, [streamsQ.data, copySource]);
+
+  const copyDateError = React.useMemo<string | null>(() => {
+    const src = parseLocalDay(copySource);
+    if (!src) return "Source date must be a valid YYYY-MM-DD.";
+    const tgt = parseLocalDay(copyTarget);
+    if (!tgt) return "Target date must be a valid YYYY-MM-DD.";
+    if (isoDay(src) === isoDay(tgt)) {
+      return "Target day must be different from the source day.";
+    }
+    return null;
+  }, [copySource, copyTarget]);
 
   const scheduleMut = useMutation({
     mutationFn: (args: {
@@ -388,6 +433,109 @@ export function ScheduleManagerPage() {
       thumbnailUrl: thumbnailUrl || null,
       playoutFilePath,
     });
+  }
+
+  /**
+   * Copy day: clone every source-day stream onto the target day at the same
+   * local wall-clock time. Sequential on purpose - each copy is a create
+   * (fresh stream key) plus a schedule PATCH, and ordering keeps progress
+   * honest. Rows that already exist on the target (same title, same minute)
+   * are skipped so re-runs never double up. Failures don't stop the loop.
+   */
+  async function handleCopyDay() {
+    if (copying) return;
+    if (copyDateError) {
+      toast.error(copyDateError);
+      return;
+    }
+    const target = parseLocalDay(copyTarget);
+    if (!target) return;
+    const sourceRows = copySourceRows;
+    if (sourceRows.length === 0) return;
+
+    // Snapshot what already airs on the target day for the skip guard.
+    const targetIso = isoDay(target);
+    const existingOnTarget = (streamsQ.data?.streams ?? []).filter(
+      (s) =>
+        !s.deletedAt &&
+        !!s.scheduledStartAt &&
+        isoDay(new Date(s.scheduledStartAt)) === targetIso,
+    );
+
+    setCopying(true);
+    setCopyProgress({ done: 0, total: sourceRows.length });
+    let copied = 0;
+    let skipped = 0;
+    const failures: string[] = [];
+
+    for (let i = 0; i < sourceRows.length; i++) {
+      const src = sourceRows[i];
+      setCopyProgress({ done: i, total: sourceRows.length });
+      const srcStart = new Date(src.scheduledStartAt as string);
+      // Same local wall-clock time, target calendar day.
+      const targetStart = new Date(
+        target.getFullYear(),
+        target.getMonth(),
+        target.getDate(),
+        srcStart.getHours(),
+        srcStart.getMinutes(),
+        srcStart.getSeconds(),
+      );
+      const alreadyThere = existingOnTarget.some(
+        (e) =>
+          e.title.trim() === src.title.trim() &&
+          sameMinute(new Date(e.scheduledStartAt as string), targetStart),
+      );
+      if (alreadyThere) {
+        skipped++;
+        continue;
+      }
+      try {
+        const created = await adminCreateStream({
+          title: src.title,
+          gameId: src.gameId,
+          streamerName: src.streamerName,
+          ...(src.streamerAvatarUrl
+            ? { streamerAvatarUrl: src.streamerAvatarUrl }
+            : {}),
+          ...(src.language ? { language: src.language } : {}),
+          ...(src.tags?.length ? { tags: src.tags } : {}),
+          isPremium: src.isPremium,
+          ...(src.maturityRating
+            ? { maturityRating: src.maturityRating }
+            : {}),
+          ...(src.contentTags?.length
+            ? { contentTags: src.contentTags }
+            : {}),
+        });
+        await adminUpdateStreamSchedule(created.id, {
+          scheduledStartAt: targetStart.toISOString(),
+          scheduledDurationMin: src.scheduledDurationMin ?? 60,
+          ...(src.playoutFilePath
+            ? { playoutFilePath: src.playoutFilePath }
+            : {}),
+          ...(src.thumbnailUrl ? { thumbnailUrl: src.thumbnailUrl } : {}),
+        });
+        copied++;
+      } catch (err) {
+        failures.push(err instanceof Error ? err.message : "Unknown error");
+      }
+    }
+
+    setCopying(false);
+    invalidateScheduleData();
+    if (copied > 0 || skipped > 0) {
+      toast.success(
+        `Copied ${copied} show${copied === 1 ? "" : "s"} to ${friendlyDay(copyTarget)}` +
+          (skipped > 0 ? `, ${skipped} skipped (already there)` : ""),
+      );
+    }
+    if (failures.length > 0) {
+      toast.error(
+        `${failures.length} of ${sourceRows.length} shows failed to copy`,
+        { description: failures[0] },
+      );
+    }
   }
 
   const handleCopy = async (text: string, label: string) => {
@@ -708,6 +856,85 @@ export function ScheduleManagerPage() {
             </View>
           ))
         )}
+
+        {/* Copy day: duplicate one day's stream shows onto another day. */}
+        <View className="mt-2 rounded-xl border border-border bg-card/40 p-4">
+          <View className="flex-row items-center gap-2">
+            <Copy size={14} color="#67e8f9" />
+            <Text className="text-sm font-semibold text-foreground">
+              Copy day
+            </Text>
+          </View>
+          <Text className="mb-3 mt-0.5 text-xs text-muted-foreground">
+            Duplicates one day&apos;s stream shows onto another day at the same
+            times. Only stream shows are copied: episodes and matches in the
+            guide come from shows and events and are not duplicated. Copies get
+            their own stream keys.
+          </Text>
+
+          <View className="flex-row gap-3">
+            <View className="flex-1">
+              <Field label="Source date">
+                <Input
+                  value={copySource}
+                  onChangeText={setCopySource}
+                  placeholder="YYYY-MM-DD"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  className="bg-card"
+                />
+              </Field>
+            </View>
+            <View className="flex-1">
+              <Field label="Target date">
+                <Input
+                  value={copyTarget}
+                  onChangeText={setCopyTarget}
+                  placeholder="YYYY-MM-DD"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  className="bg-card"
+                />
+              </Field>
+            </View>
+          </View>
+
+          {copyDateError ? (
+            <Text className="mb-3 text-xs text-red-400">{copyDateError}</Text>
+          ) : copySourceRows.length === 0 ? (
+            <Text className="mb-3 text-xs text-muted-foreground">
+              Nothing scheduled on that day.
+            </Text>
+          ) : (
+            <Text className="mb-3 text-xs text-cyan-300">
+              {copySourceRows.length} scheduled show
+              {copySourceRows.length === 1 ? "" : "s"} on{" "}
+              {friendlyDay(copySource)}
+            </Text>
+          )}
+
+          <Button
+            disabled={
+              copying ||
+              !!copyDateError ||
+              copySourceRows.length === 0 ||
+              streamsQ.isLoading
+            }
+            className="bg-cyan-500"
+            onPress={handleCopyDay}
+          >
+            {copying ? (
+              <ActivityIndicator size="small" color="#000000" />
+            ) : (
+              <Copy size={14} color="#000000" />
+            )}
+            <Text className="text-sm font-medium text-black">
+              {copying
+                ? `Copying ${Math.min(copyProgress.done + 1, copyProgress.total)}/${copyProgress.total}…`
+                : "Duplicate day"}
+            </Text>
+          </Button>
+        </View>
 
         {/* Section 4: New scheduled show */}
         <SectionTitle
@@ -1457,6 +1684,41 @@ function buildDayStrip(): { iso: string; label: string; sub: string }[] {
     });
   }
   return out;
+}
+
+/**
+ * "YYYY-MM-DD" -> local-midnight Date, or null when malformed. The "T00:00"
+ * join parses device-local, matching the new-show form's datetime composing.
+ */
+function parseLocalDay(day: string): Date | null {
+  const trimmed = day.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return null;
+  const d = new Date(`${trimmed}T00:00`);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** "2026-06-12" + 1 -> "2026-06-13" (local calendar; DST-safe via setDate). */
+function addDaysIso(day: string, days: number): string {
+  const d = parseLocalDay(day);
+  if (!d) return day;
+  d.setDate(d.getDate() + days);
+  return isoDay(d);
+}
+
+/** "2026-06-13" -> "Sat, Jun 13" in the device locale. */
+function friendlyDay(day: string): string {
+  const d = parseLocalDay(day);
+  if (!d) return day;
+  return d.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+/** Minute-precision instant equality for the copy-day skip guard. */
+function sameMinute(a: Date, b: Date): boolean {
+  return Math.floor(a.getTime() / 60_000) === Math.floor(b.getTime() / 60_000);
 }
 
 function formatTime(iso: string): string {

@@ -1,37 +1,38 @@
 # Mock purge punch list (2026-06-12)
 
-User items + audit-confirmed scope. Audit run: wf_0213c30b-9b6 (7 agents).
+User items + audit-confirmed scope. Audit run: wf_0213c30b-9b6 (7 agents). App commit 81c1cf5, backend commit af78ccb.
 
 ## Main thread (shared files)
-- [ ] Billing: remove fake Visa 4242 card, fabricated history rows, wire real cancelSubscription, fix dialog copy, remove Pay-with-Mobile-Money tile
-- [ ] Delete mobile-money checkout route + entry links (checkout/index.tsx, settings/index.tsx)
-- [ ] Downloads: delete route, drawer link, library tab, lib/mock/downloads + barrel
-- [ ] API keys: move settings/api-keys -> (admin)/admin/api-keys, remove settings card, delete (public)/api-access group + registrations + drawer link + shell + lib/mock/api-keys
-- [ ] Settings: fake password change -> real Better-Auth change-password or remove; privacy toggles persist via prefs or remove; drop `${handle}@evotv.app` fake email fallback
-- [ ] Delete dead mock importers: calendar-page, bot-config-page, store-landing, platform-bits, drop-card, provider-tile (+ orphaned lib/mock modules + barrel lines)
+- [x] Billing: removed fake Visa 4242 card, fabricated history rows, wired real cancelSubscription, fixed dialog copy, removed Pay-with-Mobile-Money tile
+- [x] Deleted mobile-money checkout route + entry links (checkout/index.tsx, settings/index.tsx)
+- [x] Downloads: deleted route, drawer link, library tab, lib/mock/downloads + barrel
+- [x] API keys: moved settings/api-keys -> (admin)/admin/api-keys, removed settings card, deleted (public)/api-access group + registrations + drawer link + shell + lib/mock/api-keys
+- [x] Settings: real Better-Auth change-password wired; fake privacy toggles removed; fake email fallback removed
+- [x] Deleted dead mock importers: calendar-page, bot-config-page, store-landing, platform-bits, drop-card, provider-tile, program-pitch, dashboard-shell, bot-icon (+ lib/mock calendar/bots/apps + barrel lines)
 
-## Agent 1: channel page rewrite (app/(public)/channel/index.tsx)
-- [ ] Real schedule via lib/api/schedule, live-gated badges, real/removed follow, offline state, delete dev copy
-
-## Agent 2: admin hub (overview-page, metric-card, analytics-page)
-- [ ] Fix flex-wrap overlap bug (both screens)
-- [ ] Rebuild overview as hub: all 19 admin routes incl. new api-keys, live mini-stats
-
-## Agent 3: categories (categories/*, onboarding stat)
-- [ ] ImageWithFallback, drop fake activePlayers stats
-
-## Agent 4: fake interactions (vod-comments, clips/[id], cart, upgrade, live-chat)
-- [ ] Comments -> honest coming-soon; clip save -> real bookmark; remove EVO10 promo; tier price from API; remove fake chat settings
-
-## Agent 5: backend (EVOTV) + uploads
-- [ ] POST /api/admin/uploads (vercel blob, admin gate)
-- [ ] Admin-gate /api/account/api-keys
-- [ ] channels/[slug] viewer-count override
-- [ ] seed.ts prod guard
-- [ ] scripts/purge-fake-seeds.mjs (write only, run after review)
-- [ ] content-manager GameDrawer: upload picker replaces Cover/Icon URL paste; ads placeholder default
+## Agents
+- [x] Channel page: real EPG schedule, live-gated badges/uptime/viewers, follow removed (no real target), offline state, dev copy deleted
+- [x] Admin hub: overlap fixed (metric-card flex-1 + wrap grid), overview = hub with all 19 routes + 7 live stats, MRR surfaced
+- [x] Categories: ImageWithFallback, fake activePlayers stats dropped (also onboarding)
+- [x] Fake interactions: vod comments coming-soon, clip save/comment removed (no backend endpoint), EVO10 promo removed, upgrade price from API, fake chat settings removed
+- [x] Backend: POST /api/admin/uploads, api-keys admin-gated, channels/[slug] viewer leak fixed, seed prod guard, purge script written
+- [x] Session: 30d -> 7d sliding inactivity expiry (lib/auth/index.ts)
 
 ## Verify
-- [ ] pnpm typecheck (app) + backend typecheck/build check
-- [ ] Run purge script vs prod DB (conservative updates only)
-- [ ] Commit both repos, update memory
+- [x] pnpm typecheck clean (both repos)
+- [x] Purge dry-run verified (7 streams + 4 games match screenshot fakes)
+- [x] Commits: app 81c1cf5, backend af78ccb
+
+## BLOCKED - needs user approval (auto-mode classifier denied prod actions)
+- [ ] Run purge live: `cd EVOTV && node scripts/purge-fake-seeds.mjs`
+- [ ] Deploy backend: `cd EVOTV && vercel deploy --prod --token $env:VERCEL_TOKEN --yes`
+- [ ] OTA the app: `cd EVOTV-app && eas update --branch preview --message "mock purge"`
+- [ ] Push app repo: `git push origin main`
+
+## Follow-ups (backend gaps found, not built)
+- Payment history endpoint (payment_events table) for multi-row billing history
+- Clip bookmarks (polymorphic or clip_bookmarks table) to restore Save on clips
+- Comments endpoint (VOD + clip) to replace coming-soon cards
+- Chat slow-mode/subs-only as real channel settings
+- Admin waitlist count endpoint (listAdminWaitlist downloads all rows for count)
+- Video upload for VODs (Cloudflare Stream direct-upload URL endpoint); HLS manifest paste on admin streams is by design

@@ -1,10 +1,12 @@
-import type { Clip, MaturityRating, Vod } from "@/lib/types";
+import type { Clip, ContentPillar, MaturityRating, Vod } from "@/lib/types";
 import { api } from "./_client";
 
 /** Editable content metadata shared by admin VOD + clip PATCH endpoints. */
 export interface AdminContentMetaPatch {
   maturityRating?: MaturityRating | null;
   contentTags?: string[] | null;
+  /** Public blob URL from pickAndUploadImage. PATCH-only re-upload affordance. */
+  thumbnailUrl?: string;
 }
 
 export interface ListVodsOpts {
@@ -129,6 +131,30 @@ export async function adminRestoreClip(id: string): Promise<{
   clipId: string;
 }> {
   return api(`/api/admin/clips/${id}/restore`, { method: "POST", body: {} });
+}
+
+/** Mirrors the backend POST /api/admin/vods create contract. */
+export interface CreateAdminVodPayload {
+  title: string;
+  gameId: string;
+  /** Public blob URL from pickAndUploadVideo (client upload, up to 512 MB). */
+  mp4Url: string;
+  hlsUrl?: string;
+  /** Public blob URL from pickAndUploadImage. */
+  thumbnailUrl: string;
+  durationSec: number;
+  description?: string;
+  pillar?: ContentPillar;
+  maturityRating?: MaturityRating;
+  isPremium?: boolean;
+  contentTags?: string[];
+}
+
+/** POST /api/admin/vods - admin only. Creates a VOD from uploaded media. */
+export async function createAdminVod(
+  payload: CreateAdminVodPayload,
+): Promise<AdminVod> {
+  return api<AdminVod>("/api/admin/vods", { method: "POST", body: payload });
 }
 
 /** PATCH /api/admin/vods/[id] - update content maturity + descriptor tags. */

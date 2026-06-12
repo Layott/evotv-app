@@ -376,7 +376,7 @@ function AdForm({
       : {
           placement: "home_banner",
           mediaUrl: "",
-          clickUrl: "https://example.com",
+          clickUrl: "",
           advertiser: "",
           active: true,
           startAt: new Date().toISOString(),
@@ -400,7 +400,11 @@ function AdForm({
   }
 
   const disabled =
-    submitting || !form.advertiser.trim() || !form.clickUrl.trim();
+    submitting ||
+    uploading ||
+    !form.advertiser.trim() ||
+    !form.clickUrl.trim() ||
+    !form.mediaUrl.trim();
 
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose}>
@@ -447,15 +451,8 @@ function AdForm({
                 {uploading ? "Uploading…" : "Upload image"}
               </Text>
             </Pressable>
-            <Input
-              value={form.mediaUrl}
-              onChangeText={(v) => setForm({ ...form, mediaUrl: v })}
-              className="mb-3 bg-card"
-              placeholder="Or paste a media URL"
-              autoCapitalize="none"
-            />
 
-            <Text className="mb-1.5 text-xs text-muted-foreground">
+            <Text className="mb-1.5 mt-1 text-xs text-muted-foreground">
               Advertiser
             </Text>
             <Input
@@ -465,12 +462,16 @@ function AdForm({
             />
 
             <Text className="mb-1.5 text-xs text-muted-foreground">
-              Click URL
+              Destination link
             </Text>
             <Input
               value={form.clickUrl}
               onChangeText={(v) => setForm({ ...form, clickUrl: v })}
               className="mb-3 bg-card"
+              placeholder="Where tapping the ad takes the viewer"
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="url"
             />
 
             <Text className="mb-1.5 text-xs text-muted-foreground">

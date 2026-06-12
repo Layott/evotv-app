@@ -9,7 +9,18 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { CalendarClock, Film, Radio, RotateCcw, Search, X, Square, Trash2 } from "lucide-react-native";
+import {
+  CalendarClock,
+  Film,
+  Image as ImageIcon,
+  Radio,
+  RotateCcw,
+  Search,
+  Upload,
+  X,
+  Square,
+  Trash2,
+} from "lucide-react-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -23,6 +34,8 @@ import {
 import { listGames } from "@/lib/api/games";
 import { listEvents } from "@/lib/api/events";
 import { listPlayoutMedia } from "@/lib/api/playout";
+import { pickAndUploadImage, uploadErrorMessage } from "@/lib/api/uploads";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import type { Stream } from "@/lib/types";
 
 import { Input } from "@/components/ui/input";
@@ -112,6 +125,24 @@ export function StreamsManagerPage() {
     },
     onError: (err) =>
       toast.error("Couldn't update playback URL", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      }),
+  });
+
+  const thumbnailMut = useMutation({
+    mutationFn: (args: { id: string; thumbnailUrl: string }) =>
+      adminUpdateStreamSchedule(args.id, { thumbnailUrl: args.thumbnailUrl }),
+    onSuccess: (_res, args) => {
+      toast.success("Thumbnail updated");
+      queryClient.invalidateQueries({ queryKey: ["admin-streams"] });
+      setSelected((prev) =>
+        prev && prev.id === args.id
+          ? { ...prev, thumbnailUrl: args.thumbnailUrl }
+          : prev,
+      );
+    },
+    onError: (err) =>
+      toast.error("Couldn't update thumbnail", {
         description: err instanceof Error ? err.message : "Unknown error",
       }),
   });
@@ -486,6 +517,14 @@ export function StreamsManagerPage() {
                   }
                 />
 
+                <ThumbnailEditor
+                  stream={selected}
+                  isPending={thumbnailMut.isPending}
+                  onSave={(thumbnailUrl) =>
+                    thumbnailMut.mutate({ id: selected.id, thumbnailUrl })
+                  }
+                />
+
                 <PlayoutFileEditor
                   stream={selected}
                   isPending={playoutMut.isPending}
@@ -805,6 +844,84 @@ function HlsUrlEditor({
           </Pressable>
         ) : null}
       </View>
+    </View>
+  );
+}
+
+/**
+ * Upload a new cover image for this stream. Media is upload-only (no URL
+ * pasting): the picked image goes through /api/admin/uploads, then the public
+ * blob URL is persisted via PATCH /api/admin/streams/[id] { thumbnailUrl }.
+ */
+function ThumbnailEditor({
+  stream,
+  isPending,
+  onSave,
+}: {
+  stream: Stream;
+  isPending: boolean;
+  onSave: (thumbnailUrl: string) => void;
+}) {
+  const [uploading, setUploading] = React.useState(false);
+
+  async function handlePick() {
+    try {
+      setUploading(true);
+      const url = await pickAndUploadImage();
+      if (url) onSave(url);
+    } catch (err) {
+      toast.error("Upload failed", { description: uploadErrorMessage(err) });
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  const busy = uploading || isPending;
+
+  return (
+    <View className="mt-4 rounded-lg border border-border bg-card/40 p-3">
+      <View className="mb-3 flex-row items-center gap-2">
+        <ImageIcon size={14} color="#67e8f9" />
+        <Text className="text-sm font-semibold text-foreground">
+          Thumbnail
+        </Text>
+        {stream.thumbnailUrl ? (
+          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+            Set
+          </Text>
+        ) : (
+          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+            None
+          </Text>
+        )}
+      </View>
+
+      <View className="mb-3 overflow-hidden rounded-md border border-border bg-card">
+        <ImageWithFallback
+          source={stream.thumbnailUrl}
+          style={{ width: "100%", aspectRatio: 16 / 9 }}
+          contentFit="cover"
+          fallbackLabel={stream.title}
+          tintSeed={stream.id}
+        />
+      </View>
+
+      <Pressable
+        onPress={handlePick}
+        disabled={busy}
+        className={`flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+          busy ? "opacity-60" : ""
+        }`}
+      >
+        {busy ? (
+          <ActivityIndicator size="small" color="#2CD7E3" />
+        ) : (
+          <Upload size={14} color="#2CD7E3" />
+        )}
+        <Text className="text-sm text-foreground">
+          {busy ? "Uploading…" : "Upload thumbnail"}
+        </Text>
+      </Pressable>
     </View>
   );
 }

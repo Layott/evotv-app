@@ -128,6 +128,8 @@ export async function adminUpdateStreamSchedule(
     playoutFilePath?: string | null;
     maturityRating?: MaturityRating | null;
     contentTags?: string[] | null;
+    /** Public blob URL from pickAndUploadImage. */
+    thumbnailUrl?: string;
   },
 ): Promise<{
   ok: true;

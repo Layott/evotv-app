@@ -15,6 +15,7 @@ import {
   KeyRound,
   Pencil,
   Plus,
+  Upload,
   X,
   type LucideIcon,
 } from "lucide-react-native";
@@ -27,6 +28,8 @@ import {
   listAdminStreams,
 } from "@/lib/api/streams";
 import { listGames } from "@/lib/api/games";
+import { pickAndUploadImage, uploadErrorMessage } from "@/lib/api/uploads";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import {
   listScheduleForDay,
   listScheduleForWeek,
@@ -89,6 +92,8 @@ export function ScheduleManagerPage() {
   const [startDate, setStartDate] = React.useState(todayIso);
   const [startTime, setStartTime] = React.useState("");
   const [duration, setDuration] = React.useState(DEFAULT_DURATION);
+  const [thumbnailUrl, setThumbnailUrl] = React.useState("");
+  const [uploadingThumb, setUploadingThumb] = React.useState(false);
 
   const guideQ = useQuery({
     queryKey: ["admin-schedule", "day", selectedDay],
@@ -198,7 +203,20 @@ export function ScheduleManagerPage() {
     setStartDate(todayIso);
     setStartTime("");
     setDuration(DEFAULT_DURATION);
+    setThumbnailUrl("");
   }, [todayIso]);
+
+  async function handleUploadThumbnail() {
+    try {
+      setUploadingThumb(true);
+      const url = await pickAndUploadImage();
+      if (url) setThumbnailUrl(url);
+    } catch (err) {
+      toast.error("Upload failed", { description: uploadErrorMessage(err) });
+    } finally {
+      setUploadingThumb(false);
+    }
+  }
 
   const createMut = useMutation({
     mutationFn: async (args: {
@@ -207,19 +225,22 @@ export function ScheduleManagerPage() {
       gameId: string;
       startAtIso: string;
       durationMin: number;
+      thumbnailUrl: string | null;
     }) => {
       const created = await adminCreateStream({
         title: args.title,
         gameId: args.gameId,
         streamerName: args.streamerName,
       });
-      // Schedule in a second call - POST /api/admin/streams has no schedule
-      // fields. If this PATCH fails we still surface the one-time key.
+      // Schedule (and thumbnail, when uploaded) in a second call - POST
+      // /api/admin/streams has neither field. If this PATCH fails we still
+      // surface the one-time key.
       let scheduleError: string | null = null;
       try {
         await adminUpdateStreamSchedule(created.id, {
           scheduledStartAt: args.startAtIso,
           scheduledDurationMin: args.durationMin,
+          ...(args.thumbnailUrl ? { thumbnailUrl: args.thumbnailUrl } : {}),
         });
       } catch (err) {
         scheduleError =
@@ -293,6 +314,7 @@ export function ScheduleManagerPage() {
       gameId,
       startAtIso: combined.toISOString(),
       durationMin: Math.round(d),
+      thumbnailUrl: thumbnailUrl || null,
     });
   }
 
@@ -625,12 +647,58 @@ export function ScheduleManagerPage() {
             />
           </Field>
 
+          <Field label="Thumbnail (optional)">
+            {thumbnailUrl ? (
+              <View className="mb-2 flex-row items-center gap-3">
+                <View
+                  className="overflow-hidden rounded-md border border-border bg-card"
+                  style={{ height: 72, width: 128 }}
+                >
+                  <ImageWithFallback
+                    source={thumbnailUrl}
+                    tintSeed={thumbnailUrl}
+                  />
+                </View>
+                <Pressable
+                  onPress={() => setThumbnailUrl("")}
+                  hitSlop={8}
+                  className="flex-row items-center gap-1"
+                >
+                  <X size={14} color="#F87171" />
+                  <Text className="text-xs font-medium text-red-400">
+                    Remove
+                  </Text>
+                </Pressable>
+              </View>
+            ) : null}
+            <Pressable
+              onPress={handleUploadThumbnail}
+              disabled={uploadingThumb}
+              className={`flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+                uploadingThumb ? "opacity-60" : ""
+              }`}
+            >
+              {uploadingThumb ? (
+                <ActivityIndicator size="small" color="#2CD7E3" />
+              ) : (
+                <Upload size={14} color="#2CD7E3" />
+              )}
+              <Text className="text-sm text-foreground">
+                {uploadingThumb
+                  ? "Uploading…"
+                  : thumbnailUrl
+                    ? "Replace thumbnail"
+                    : "Upload thumbnail"}
+              </Text>
+            </Pressable>
+          </Field>
+
           <Text className="mb-3 text-[11px] text-muted-foreground">
             Times are entered in your device timezone and stored as UTC.
           </Text>
 
           <Button
-            disabled={formIncomplete || createMut.isPending}
+            disabled={formIncomplete || createMut.isPending || uploadingThumb}
             className="bg-cyan-500"
             onPress={handleCreate}
           >

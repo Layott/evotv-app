@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { CreditCard, Crown } from "lucide-react-native";
 import { toast } from "sonner-native";
@@ -19,21 +19,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useMockAuth } from "@/components/providers";
-import { getActiveSubscription } from "@/lib/api";
+import { cancelSubscription, getActiveSubscription } from "@/lib/api";
 import { formatNgn } from "@/components/profile/ngn";
 import type { Subscription } from "@/lib/types";
 
-interface HistoryRow {
-  date: string;
-  amount: number;
-  ref: string;
-}
+const PROVIDER_LABELS: Record<Subscription["provider"], string> = {
+  paystack: "Paystack",
+  stripe: "Stripe",
+  mock: "Test provider",
+};
 
 export default function BillingScreen() {
   const router = useRouter();
   const { user } = useMockAuth();
   const [sub, setSub] = React.useState<Subscription | null>(null);
   const [loading, setLoading] = React.useState(true);
+  const [cancelling, setCancelling] = React.useState(false);
 
   React.useEffect(() => {
     if (!user) return;
@@ -49,6 +50,21 @@ export default function BillingScreen() {
     };
   }, [user]);
 
+  const handleCancel = async () => {
+    setCancelling(true);
+    try {
+      await cancelSubscription();
+      setSub(null);
+      toast.success("Subscription cancelled");
+    } catch (err) {
+      toast.error("Couldn't cancel subscription", {
+        description: err instanceof Error ? err.message : String(err),
+      });
+    } finally {
+      setCancelling(false);
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -59,26 +75,6 @@ export default function BillingScreen() {
       </>
     );
   }
-
-  const history: HistoryRow[] = sub
-    ? [
-        {
-          date: new Date(sub.createdAt).toLocaleDateString(),
-          amount: sub.priceNgn,
-          ref: "PS_2026_02",
-        },
-        {
-          date: new Date(Date.now() - 31 * 86400000).toLocaleDateString(),
-          amount: sub.priceNgn,
-          ref: "PS_2026_01",
-        },
-        {
-          date: new Date(Date.now() - 62 * 86400000).toLocaleDateString(),
-          amount: sub.priceNgn,
-          ref: "PS_2025_12",
-        },
-      ]
-    : [];
 
   return (
     <>
@@ -152,23 +148,23 @@ export default function BillingScreen() {
                   {sub ? (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="outline">Cancel subscription</Button>
+                        <Button variant="outline" disabled={cancelling}>
+                          {cancelling ? "Cancelling…" : "Cancel subscription"}
+                        </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>Cancel Premium?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Your Premium benefits stay active until{" "}
-                            {new Date(sub.currentPeriodEnd).toLocaleDateString()}.
+                            Your Premium access ends immediately and your
+                            account returns to the Free plan.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Keep Premium</AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-destructive"
-                            onPress={() =>
-                              toast.success("Subscription cancelled")
-                            }
+                            onPress={() => void handleCancel()}
                           >
                             Confirm cancel
                           </AlertDialogAction>
@@ -183,37 +179,29 @@ export default function BillingScreen() {
         </View>
 
         {/* Payment method */}
-        <View className="mt-4 px-4">
-          <View className="rounded-2xl border border-border bg-card p-5">
-            <Text className="text-base font-semibold text-foreground">
-              Payment method
-            </Text>
-            <Text className="text-sm text-muted-foreground">
-              Managed securely via Paystack.
-            </Text>
-            <View className="mt-4 flex-row items-center gap-3 rounded-xl border border-border bg-background p-4">
-              <CreditCard size={24} color="#00C3F7" />
-              <View className="min-w-0 flex-1">
-                <Text className="text-sm font-semibold text-foreground">
-                  <Text style={{ color: "#00C3F7" }}>Paystack</Text> · Visa ····
-                  4242
-                </Text>
-                <Text className="text-xs text-muted-foreground">
-                  Expires 09 / 27
-                </Text>
+        {sub ? (
+          <View className="mt-4 px-4">
+            <View className="rounded-2xl border border-border bg-card p-5">
+              <Text className="text-base font-semibold text-foreground">
+                Payment method
+              </Text>
+              <Text className="text-sm text-muted-foreground">
+                Managed securely via {PROVIDER_LABELS[sub.provider]}.
+              </Text>
+              <View className="mt-4 flex-row items-center gap-3 rounded-xl border border-border bg-background p-4">
+                <CreditCard size={24} color="#00C3F7" />
+                <View className="min-w-0 flex-1">
+                  <Text className="text-sm font-semibold text-foreground">
+                    {PROVIDER_LABELS[sub.provider]}
+                  </Text>
+                  <Text className="text-xs text-muted-foreground">
+                    Billed automatically each period
+                  </Text>
+                </View>
               </View>
-              <Button
-                variant="outline"
-                size="sm"
-                onPress={() => toast("Paystack portal coming soon")}
-              >
-                <Text className="text-sm font-medium text-foreground">
-                  Update
-                </Text>
-              </Button>
             </View>
           </View>
-        </View>
+        ) : null}
 
         {/* History */}
         <View className="mt-4 px-4">
@@ -246,83 +234,53 @@ export default function BillingScreen() {
                   Status
                 </Text>
               </View>
-              {history.length === 0 ? (
+              {!sub ? (
                 <View className="px-3 py-6">
                   <Text className="text-sm text-muted-foreground">
                     No payments yet.
                   </Text>
                 </View>
               ) : (
-                history.map((h, i) => (
-                  <View
-                    key={h.ref}
-                    className={`flex-row items-center px-3 py-3 ${
-                      i > 0 ? "border-t border-border" : ""
-                    }`}
+                <View className="flex-row items-center px-3 py-3">
+                  <Text
+                    className="flex-1 text-xs text-foreground"
+                    numberOfLines={1}
                   >
-                    <Text
-                      className="flex-1 text-xs text-foreground"
-                      numberOfLines={1}
+                    {new Date(sub.createdAt).toLocaleDateString()}
+                  </Text>
+                  <Text
+                    className="font-mono text-[11px] text-muted-foreground"
+                    style={{ width: 110 }}
+                    numberOfLines={1}
+                  >
+                    {sub.providerSubId || PROVIDER_LABELS[sub.provider]}
+                  </Text>
+                  <Text
+                    className="text-xs font-semibold text-foreground text-right"
+                    style={{ width: 90 }}
+                  >
+                    {formatNgn(sub.priceNgn)}
+                  </Text>
+                  <View style={{ width: 60 }} className="items-end">
+                    <Badge
+                      className="border"
+                      style={{
+                        borderColor: "rgba(56,189,248,0.4)",
+                        backgroundColor: "rgba(56,189,248,0.15)",
+                      }}
                     >
-                      {h.date}
-                    </Text>
-                    <Text
-                      className="font-mono text-[11px] text-muted-foreground"
-                      style={{ width: 110 }}
-                      numberOfLines={1}
-                    >
-                      {h.ref}
-                    </Text>
-                    <Text
-                      className="text-xs font-semibold text-foreground text-right"
-                      style={{ width: 90 }}
-                    >
-                      {formatNgn(h.amount)}
-                    </Text>
-                    <View style={{ width: 60 }} className="items-end">
-                      <Badge
-                        className="border"
-                        style={{
-                          borderColor: "rgba(56,189,248,0.4)",
-                          backgroundColor: "rgba(56,189,248,0.15)",
-                        }}
+                      <Text
+                        className="text-[10px] font-medium"
+                        style={{ color: "#7dd3fc" }}
                       >
-                        <Text
-                          className="text-[10px] font-medium"
-                          style={{ color: "#7dd3fc" }}
-                        >
-                          Paid
-                        </Text>
-                      </Badge>
-                    </View>
+                        Paid
+                      </Text>
+                    </Badge>
                   </View>
-                ))
+                </View>
               )}
             </View>
           </View>
-        </View>
-
-        {/* Quick action: mobile money */}
-        <View className="mt-4 px-4">
-          <Pressable
-            onPress={() => router.push("/(authed)/checkout/mobile-money")}
-            className="flex-row items-center gap-3 rounded-2xl border border-border bg-card p-4 active:opacity-80"
-          >
-            <View
-              className="h-10 w-10 items-center justify-center rounded-lg"
-              style={{ backgroundColor: "rgba(44,215,227,0.12)" }}
-            >
-              <CreditCard size={18} color="#2CD7E3" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-sm font-semibold text-foreground">
-                Pay with Mobile Money
-              </Text>
-              <Text className="text-xs text-muted-foreground">
-                M-Pesa, MTN MoMo, Airtel Money - STK push
-              </Text>
-            </View>
-          </Pressable>
         </View>
       </ScrollView>
     </>

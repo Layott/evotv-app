@@ -9,7 +9,6 @@
  *   - Users list + role PATCH: /api/admin/users
  *
  * Still mock (no backend table yet, tracked in Phase 5+):
- *   - Email templates
  *   - Forensic marks (piracy/leak tracking)
  *   - Chat moderation log (banned users, chat reports)
  */

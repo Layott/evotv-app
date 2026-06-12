@@ -8,7 +8,6 @@ import {
   Clapperboard,
   Crown,
   Disc,
-  Download,
   Film,
   Gamepad2,
   Gift,
@@ -68,7 +67,6 @@ const GROUPS: FeatureGroup[] = [
     items: [
       { label: "Profile", href: "/profile", Icon: UserIcon },
       { label: "Library", href: "/library", Icon: Library },
-      { label: "Downloads", href: "/library/downloads", Icon: Download },
       { label: "Notifications", href: "/notifications", Icon: Bell },
       { label: "Cart", href: "/cart", Icon: ShoppingBag },
       { label: "Orders", href: "/profile/orders", Icon: ListChecks },
@@ -115,7 +113,6 @@ const GROUPS: FeatureGroup[] = [
     items: [
       { label: "Upgrade to Premium", href: "/upgrade", Icon: Crown },
       { label: "Apps & devices", href: "/apps", Icon: Tv, gated: true, blurb: "Get EVO TV on your TV, desktop and other devices." },
-      { label: "API access", href: "/api-access", Icon: Disc, premium: true, gated: true, blurb: "Build on EVO TV with our developer API." },
       { label: "Partners", href: "/partners", Icon: Globe, gated: true, blurb: "Meet the brands and teams powering EVO TV." },
       { label: "Embed player", href: "/embed", Icon: Play, premium: true, gated: true, blurb: "Embed EVO TV streams + clips on your own site." },
     ],
@@ -128,6 +125,7 @@ const GROUPS: FeatureGroup[] = [
       { label: "Content", href: "/admin/content", Icon: Film, adminOnly: true },
       { label: "Users", href: "/admin/users", Icon: UsersIcon, adminOnly: true },
       { label: "Analytics", href: "/admin/analytics", Icon: LineChart, adminOnly: true },
+      { label: "API keys", href: "/admin/api-keys", Icon: Disc, adminOnly: true },
       { label: "Moderation", href: "/admin/moderation", Icon: ShieldCheck, adminOnly: true },
       { label: "Forensic", href: "/admin/forensic", Icon: Headphones, adminOnly: true },
     ],

@@ -6,12 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 import {
   ArrowLeft,
-  Bookmark,
   ChevronDown,
   ChevronUp,
   Flag,
   Heart,
-  MessageCircle,
   Pause,
   Play,
   Share2,
@@ -189,7 +187,6 @@ export default function ClipDetailScreen() {
   const [muted, setMuted] = React.useState(true);
   const [liked, setLiked] = React.useState(false);
   const [likeCount, setLikeCount] = React.useState(0);
-  const [saved, setSaved] = React.useState(false);
 
   React.useEffect(() => {
     if (clip) setLikeCount(clip.likeCount);
@@ -335,29 +332,14 @@ export default function ClipDetailScreen() {
                 label={compact(likeCount)}
                 onPress={onLike}
               />
-              <ActionButton
-                icon={<MessageCircle size={22} color="#fff" />}
-                label="Comment"
-                onPress={() => toast("Comments opened")}
-              />
+              {/* No Comment or Save actions: the backend has no clip
+                  comments endpoint, and vod_bookmarks FKs to vods.id so
+                  watch-later rejects clip IDs. Re-add when clip-scoped
+                  endpoints land. */}
               <ActionButton
                 icon={<Share2 size={22} color="#fff" />}
                 label="Share"
                 onPress={onShare}
-              />
-              <ActionButton
-                icon={
-                  <Bookmark
-                    size={22}
-                    color={saved ? "#fcd34d" : "#fff"}
-                    fill={saved ? "#fcd34d" : "transparent"}
-                  />
-                }
-                label={saved ? "Saved" : "Save"}
-                onPress={() => {
-                  setSaved((v) => !v);
-                  toast.success(saved ? "Removed from saved" : "Saved");
-                }}
               />
               <ReportButton
                 targetType="clip"

@@ -29,7 +29,7 @@ export function MetricCard({
   return (
     <View
       className={cn(
-        "flex-1 rounded-xl border border-border bg-card/50 p-4",
+        "rounded-xl border border-border bg-card/50 p-4",
         className,
       )}
     >

@@ -41,3 +41,17 @@ export async function updateMyProfile(
   });
   return res.user;
 }
+
+/**
+ * POST /api/auth/change-password - Better-Auth built-in. Requires the current
+ * password; revokes other sessions so a leaked password can't keep a session.
+ */
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string,
+): Promise<void> {
+  await api("/api/auth/change-password", {
+    method: "POST",
+    body: { currentPassword, newPassword, revokeOtherSessions: true },
+  });
+}

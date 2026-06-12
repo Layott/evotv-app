@@ -3,28 +3,60 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner-native";
-import { Clock, Eye, Heart, Info, Radio } from "lucide-react-native";
+import { Clock, Eye, Info, Radio } from "lucide-react-native";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { getMainChannel, listLiveStreams } from "@/lib/api/streams";
 import { listTrendingClips } from "@/lib/api/vods";
 import { listEvents } from "@/lib/api/events";
+import { listScheduleForDay, type EpgRow } from "@/lib/api/schedule";
 
 function fmtViewers(n: number) {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
   return `${n}`;
 }
 
-const SCHEDULE = [
-  { slot: "00:00 – 02:00", title: "Weekly Recap: EVO Week 4", tag: "Recap" },
-  { slot: "02:00 – 04:00", title: "Film Room - Team Alpha", tag: "Analysis" },
-  { slot: "04:00 – 06:00", title: "Best Plays Mixtape", tag: "Highlights" },
-  { slot: "06:00 – 08:00", title: "Evo Talk S3 E12", tag: "Show" },
-  { slot: "08:00 – 10:00", title: "CoD Mobile Scrim Night", tag: "Live" },
-  { slot: "10:00 – 12:00", title: "Casters' Cut", tag: "Podcast" },
-];
+function isoDay(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function fmtTime(iso: string): string {
+  try {
+    return new Date(iso).toLocaleTimeString(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  } catch {
+    return "-";
+  }
+}
+
+function fmtSlot(row: EpgRow): string {
+  const start = fmtTime(row.airsAt);
+  if (!row.durationMin) return start;
+  const end = new Date(
+    new Date(row.airsAt).getTime() + row.durationMin * 60_000,
+  );
+  return `${start} - ${fmtTime(end.toISOString())}`;
+}
+
+function epgTag(row: EpgRow): string {
+  if (row.state === "live") return "Live";
+  if (row.kind === "match") return "Match";
+  if (row.kind === "episode") return "Episode";
+  return "Stream";
+}
+
+function fmtUptime(startedAt: string): string {
+  const ms = Math.max(0, Date.now() - new Date(startedAt).getTime());
+  const mins = Math.floor(ms / 60_000);
+  if (mins < 60) return `Live for ${Math.max(1, mins)}m`;
+  return `Live for ${Math.floor(mins / 60)}h`;
+}
 
 export default function ChannelScreen() {
   const router = useRouter();
@@ -44,8 +76,15 @@ export default function ChannelScreen() {
     queryKey: ["events", "upcoming"],
     queryFn: () => listEvents({ status: "scheduled" }),
   });
+  const todayIso = React.useMemo(() => isoDay(new Date()), []);
+  const scheduleQ = useQuery({
+    queryKey: ["schedule", "channel", todayIso],
+    queryFn: () => listScheduleForDay({ date: todayIso }),
+  });
 
   const channel = channelQ.data;
+  const isLive = !!channel?.isLive;
+  const scheduleRows = scheduleQ.data ?? [];
 
   return (
     <>
@@ -65,33 +104,55 @@ export default function ChannelScreen() {
         >
           <View className="p-6">
             <View className="mb-3 flex-row flex-wrap items-center gap-2">
-              <View
-                className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
-                style={{
-                  borderWidth: 1,
-                  borderColor: "rgba(239,68,68,0.3)",
-                  backgroundColor: "rgba(239,68,68,0.1)",
-                }}
-              >
+              {isLive ? (
                 <View
+                  className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
                   style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: 3,
-                    backgroundColor: "#ef4444",
-                  }}
-                />
-                <Text
-                  style={{
-                    fontSize: 10,
-                    fontWeight: "600",
-                    letterSpacing: 1,
-                    color: "#fca5a5",
+                    borderWidth: 1,
+                    borderColor: "rgba(239,68,68,0.3)",
+                    backgroundColor: "rgba(239,68,68,0.1)",
                   }}
                 >
-                  LIVE
-                </Text>
-              </View>
+                  <View
+                    style={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: 3,
+                      backgroundColor: "#ef4444",
+                    }}
+                  />
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      fontWeight: "600",
+                      letterSpacing: 1,
+                      color: "#fca5a5",
+                    }}
+                  >
+                    LIVE
+                  </Text>
+                </View>
+              ) : (
+                <View
+                  className="rounded-md px-2 py-0.5"
+                  style={{
+                    borderWidth: 1,
+                    borderColor: "#262626",
+                    backgroundColor: "rgba(15,15,15,0.8)",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      fontWeight: "600",
+                      letterSpacing: 1,
+                      color: "#a3a3a3",
+                    }}
+                  >
+                    OFFLINE
+                  </Text>
+                </View>
+              )}
               <View
                 className="rounded-md px-2 py-0.5"
                 style={{
@@ -109,25 +170,6 @@ export default function ChannelScreen() {
                   }}
                 >
                   FLAGSHIP
-                </Text>
-              </View>
-              <View
-                className="rounded-md px-2 py-0.5"
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#262626",
-                  backgroundColor: "rgba(15,15,15,0.8)",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 10,
-                    fontWeight: "600",
-                    letterSpacing: 1,
-                    color: "#a3a3a3",
-                  }}
-                >
-                  24 / 7
                 </Text>
               </View>
             </View>
@@ -163,18 +205,22 @@ export default function ChannelScreen() {
               </View>
             </View>
             <View className="mt-4 flex-row flex-wrap items-center gap-3">
-              <View className="flex-row items-center gap-1">
-                <Eye size={13} color="#a3a3a3" />
-                <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
-                  {channel ? fmtViewers(channel.viewerCount) : "…"} watching
-                </Text>
-              </View>
-              <View className="flex-row items-center gap-1">
-                <Clock size={13} color="#a3a3a3" />
-                <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
-                  Running 72h+
-                </Text>
-              </View>
+              {isLive && channel ? (
+                <View className="flex-row items-center gap-1">
+                  <Eye size={13} color="#a3a3a3" />
+                  <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+                    {fmtViewers(channel.viewerCount)} watching
+                  </Text>
+                </View>
+              ) : null}
+              {isLive && channel?.startedAt ? (
+                <View className="flex-row items-center gap-1">
+                  <Clock size={13} color="#a3a3a3" />
+                  <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+                    {fmtUptime(channel.startedAt)}
+                  </Text>
+                </View>
+              ) : null}
               <View className="flex-row items-center gap-1">
                 <Radio size={13} color="#67e8f9" />
                 <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
@@ -183,20 +229,21 @@ export default function ChannelScreen() {
               </View>
             </View>
             <View className="mt-6 flex-row gap-3">
-              <Button
-                onPress={() => router.push("/stream/channel_main")}
-                className="rounded-full bg-brand"
-                textClassName="text-black"
-              >
-                Watch now
-              </Button>
-              <Pressable
-                onPress={() => toast.success("Following EVO TV Channel")}
-                className="flex-row items-center gap-2 rounded-full border border-border px-5 py-2.5 active:opacity-80"
-              >
-                <Heart size={14} color="#e5e5e5" />
-                <Text className="text-sm text-foreground">Follow</Text>
-              </Pressable>
+              {isLive ? (
+                <Button
+                  onPress={() => router.push("/stream/channel_main")}
+                  className="rounded-full bg-brand"
+                  textClassName="text-black"
+                >
+                  Watch now
+                </Button>
+              ) : (
+                <View className="items-center justify-center rounded-full border border-border px-5 py-2.5">
+                  <Text className="text-sm text-muted-foreground">
+                    Channel offline
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         </View>
@@ -208,54 +255,68 @@ export default function ChannelScreen() {
               Today's schedule
             </Text>
             <Text style={{ fontSize: 11, color: "#737373" }}>
-              All times WAT
+              All times local
             </Text>
           </View>
-          <View className="overflow-hidden rounded-xl border border-border bg-card">
-            {SCHEDULE.map((row, i) => (
-              <View
-                key={row.slot}
-                className="flex-row items-center justify-between gap-3 px-4 py-3"
-                style={{
-                  backgroundColor: i % 2 === 0 ? "rgba(15,15,15,0.3)" : "transparent",
-                  borderBottomWidth: i < SCHEDULE.length - 1 ? 1 : 0,
-                  borderBottomColor: "#262626",
-                }}
-              >
-                <Text
-                  style={{ fontSize: 12, color: "#a3a3a3" }}
-                  className="shrink-0"
-                >
-                  {row.slot}
-                </Text>
-                <Text
-                  className="flex-1 text-sm text-foreground"
-                  numberOfLines={1}
-                >
-                  {row.title}
-                </Text>
+          {scheduleQ.isPending ? (
+            <View className="gap-2">
+              <Skeleton style={{ height: 44, borderRadius: 12 }} />
+              <Skeleton style={{ height: 44, borderRadius: 12 }} />
+              <Skeleton style={{ height: 44, borderRadius: 12 }} />
+            </View>
+          ) : scheduleRows.length === 0 ? (
+            <View className="rounded-xl border border-border bg-card p-6">
+              <Text className="text-center text-sm text-muted-foreground">
+                No programming scheduled today.
+              </Text>
+            </View>
+          ) : (
+            <View className="overflow-hidden rounded-xl border border-border bg-card">
+              {scheduleRows.map((row, i) => (
                 <View
-                  className="rounded-md px-2 py-0.5"
+                  key={row.id}
+                  className="flex-row items-center justify-between gap-3 px-4 py-3"
                   style={{
-                    borderWidth: 1,
-                    borderColor: "#262626",
-                    backgroundColor: "rgba(15,15,15,0.5)",
+                    backgroundColor: i % 2 === 0 ? "rgba(15,15,15,0.3)" : "transparent",
+                    borderBottomWidth: i < scheduleRows.length - 1 ? 1 : 0,
+                    borderBottomColor: "#262626",
                   }}
                 >
                   <Text
+                    style={{ fontSize: 12, color: "#a3a3a3" }}
+                    className="shrink-0"
+                  >
+                    {fmtSlot(row)}
+                  </Text>
+                  <Text
+                    className="flex-1 text-sm text-foreground"
+                    numberOfLines={1}
+                  >
+                    {row.title}
+                  </Text>
+                  <View
+                    className="rounded-md px-2 py-0.5"
                     style={{
-                      fontSize: 10,
-                      letterSpacing: 1,
-                      color: "#a3a3a3",
-                      textTransform: "uppercase",
+                      borderWidth: 1,
+                      borderColor: "#262626",
+                      backgroundColor: "rgba(15,15,15,0.5)",
                     }}
                   >
-                    {row.tag}
-                  </Text>
+                    <Text
+                      style={{
+                        fontSize: 10,
+                        letterSpacing: 1,
+                        color: "#a3a3a3",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {epgTag(row)}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            ))}
-          </View>
+              ))}
+            </View>
+          )}
         </View>
 
         {/* Live across EVO TV */}
@@ -483,11 +544,9 @@ export default function ChannelScreen() {
           <Text
             className="flex-1 text-xs leading-relaxed text-muted-foreground"
           >
-            The EVO TV Channel runs 24/7 on localhost during dev. In production,
-            this is the flagship broadcast feed - programmatic mix of simulcasts,
-            shows, highlights, and paid placements. Free viewers see pre-roll
-            ads; Premium subscribers get an ad-free feed with a higher bitrate
-            ladder.
+            The EVO TV Channel is our flagship broadcast feed: simulcasts,
+            shows, and highlights. Free viewers see pre-roll ads; Premium
+            subscribers get an ad-free feed.
           </Text>
         </View>
       </ScrollView>

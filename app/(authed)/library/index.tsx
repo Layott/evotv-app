@@ -63,7 +63,7 @@ export default function LibraryScreen() {
         <View className="px-4 pt-4 pb-2">
           <Text className="text-2xl font-bold text-foreground">Library</Text>
           <Text className="text-sm text-muted-foreground mt-1">
-            Continue watching, saved VODs, downloads, and history.
+            Continue watching, saved VODs, and history.
           </Text>
         </View>
         <View className="flex-1 px-4 pt-2">
@@ -72,11 +72,9 @@ export default function LibraryScreen() {
             history={history}
             watchLater={watchLater}
             defaultValue={
-              watchLater.length > 0
-                ? "watch-later"
-                : history.length > 0
-                  ? "history"
-                  : "downloads"
+              history.length > 0 && watchLater.length === 0
+                ? "history"
+                : "watch-later"
             }
           />
         </View>

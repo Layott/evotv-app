@@ -1,17 +1,24 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Users } from "lucide-react-native";
+import { ArrowRight } from "lucide-react-native";
 
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { Skeleton } from "@/components/ui/skeleton";
 import { listGames } from "@/lib/api/games";
 
-function formatPlayers(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
-  return String(n);
+function platformLabel(p: string): string {
+  switch (p) {
+    case "mobile":
+      return "Mobile";
+    case "pc":
+      return "PC";
+    case "console":
+      return "Console";
+    default:
+      return p.toUpperCase();
+  }
 }
 
 function categoryLabel(c: string): string {
@@ -74,10 +81,12 @@ export default function CategoriesScreen() {
                 <View
                   style={{ aspectRatio: 4 / 5, position: "relative" }}
                 >
-                  <Image
+                  <ImageWithFallback
                     source={g.coverUrl}
                     style={{ width: "100%", height: "100%" }}
                     contentFit="cover"
+                    fallbackLabel={g.name}
+                    tintSeed={g.id}
                   />
                   <View
                     className="absolute inset-x-0 bottom-0 h-1/2"
@@ -111,14 +120,10 @@ export default function CategoriesScreen() {
                       {g.shortName}
                     </Text>
                     <View className="mt-1 flex-row items-center justify-between">
-                      <View className="flex-row items-center gap-1">
-                        <Users size={12} color="#d4d4d4" />
-                        <Text
-                          style={{ fontSize: 11, color: "#d4d4d4" }}
-                        >
-                          {formatPlayers(g.activePlayers)} active
-                        </Text>
-                      </View>
+                      <Text style={{ fontSize: 11, color: "#d4d4d4" }}>
+                        {categoryLabel(g.category)} ·{" "}
+                        {platformLabel(g.platform)}
+                      </Text>
                       <View className="flex-row items-center gap-1">
                         <Text
                           style={{

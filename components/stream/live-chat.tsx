@@ -7,12 +7,11 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { Gauge, Send, Users } from "lucide-react-native";
+import { Send, Users } from "lucide-react-native";
 import { toast } from "sonner-native";
 
 import type { ChatMessage, Role } from "@/lib/types";
 import { useMockAuth } from "@/components/providers";
-import { Switch } from "@/components/ui/switch";
 import { useStreamChat } from "@/hooks/useStreamChat";
 import { ChatPostError } from "@/lib/api/chat";
 import { cn } from "@/lib/utils";
@@ -77,14 +76,11 @@ function MessageRow({ msg }: RowProps) {
 }
 
 export function LiveChat({ streamId, className }: LiveChatProps) {
-  const { user, role } = useMockAuth();
+  const { user } = useMockAuth();
   const { messages, send, status } = useStreamChat(streamId);
   const [input, setInput] = React.useState("");
-  const [subsOnly, setSubsOnly] = React.useState(false);
   const listRef = React.useRef<FlatList<ChatMessage>>(null);
   const stuckToBottom = React.useRef(true);
-
-  const canToggleSubs = role === "admin" || role === "premium";
 
   React.useEffect(() => {
     if (!stuckToBottom.current) return;
@@ -113,12 +109,6 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
     }
   };
 
-  const visibleMessages = subsOnly
-    ? messages.filter(
-        (m) => m.userRole === "premium" || m.userRole === "admin",
-      )
-    : messages;
-
   const statusLabel =
     status === "open"
       ? "Live"
@@ -141,36 +131,12 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
           </Text>
           <Text className="text-[10px] text-muted-foreground">· {statusLabel}</Text>
         </View>
-        <View className="flex-row items-center gap-3">
-          <View className="flex-row items-center gap-1">
-            <Gauge size={12} color="#737373" />
-            <Text className="text-[10px] text-muted-foreground">Slow: 2s</Text>
-          </View>
-          {canToggleSubs ? (
-            <View className="flex-row items-center gap-1.5">
-              <Text className="text-[10px] text-muted-foreground">
-                Subs only
-              </Text>
-              <Switch
-                checked={subsOnly}
-                onCheckedChange={(v) => {
-                  setSubsOnly(v);
-                  toast(
-                    v
-                      ? "Subscribers-only mode on"
-                      : "Subscribers-only mode off",
-                  );
-                }}
-              />
-            </View>
-          ) : null}
-        </View>
       </View>
 
       {/* Messages */}
       <FlatList
         ref={listRef}
-        data={visibleMessages}
+        data={messages}
         keyExtractor={(m) => m.id}
         renderItem={({ item }) => <MessageRow msg={item} />}
         contentContainerStyle={{ paddingVertical: 4 }}

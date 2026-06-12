@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { Plus, Search, X } from "lucide-react-native";
+import { Plus, Search, Upload, X } from "lucide-react-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -19,6 +19,8 @@ import {
   deleteGame,
   type CreateGamePayload,
 } from "@/lib/api/games";
+import { pickAndUploadImage, uploadErrorMessage } from "@/lib/api/uploads";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { listTeams } from "@/lib/api/teams";
 import { listPlayers } from "@/lib/api/players";
 import { listEvents } from "@/lib/api/events";
@@ -565,25 +567,23 @@ function GameDrawer({
               />
             </Field>
 
-            <Field label="Cover URL">
-              <Input
-                value={coverUrl}
-                onChangeText={setCoverUrl}
-                autoCapitalize="none"
-                placeholder="https://…/cover.jpg"
-                className="bg-card"
-              />
-            </Field>
+            <ImageUploadField
+              label="Cover image"
+              buttonLabel="Upload cover"
+              value={coverUrl}
+              onChange={setCoverUrl}
+              previewHeight={72}
+              previewWidth={128}
+            />
 
-            <Field label="Icon URL">
-              <Input
-                value={iconUrl}
-                onChangeText={setIconUrl}
-                autoCapitalize="none"
-                placeholder="https://…/icon.png"
-                className="bg-card"
-              />
-            </Field>
+            <ImageUploadField
+              label="Icon image"
+              buttonLabel="Upload icon"
+              value={iconUrl}
+              onChange={setIconUrl}
+              previewHeight={56}
+              previewWidth={56}
+            />
 
             <View className="mb-3 flex-row gap-3">
               <View className="flex-1">
@@ -728,6 +728,82 @@ function Field({
     <View className="mb-3">
       <Label className="mb-1.5 text-xs text-muted-foreground">{label}</Label>
       {children}
+    </View>
+  );
+}
+
+/**
+ * Drawer image field: picks from the device library, uploads via the
+ * admin-only /api/admin/uploads endpoint, and stores the resulting blob URL
+ * in the parent's string state. Shows a preview + Remove affordance when a
+ * URL is set. Validation and payload shape stay plain strings.
+ */
+function ImageUploadField({
+  label,
+  buttonLabel,
+  value,
+  onChange,
+  previewHeight,
+  previewWidth,
+}: {
+  label: string;
+  buttonLabel: string;
+  value: string;
+  onChange: (url: string) => void;
+  previewHeight: number;
+  previewWidth: number;
+}) {
+  const [uploading, setUploading] = React.useState(false);
+
+  async function handlePick() {
+    try {
+      setUploading(true);
+      const url = await pickAndUploadImage();
+      if (url) onChange(url);
+    } catch (err) {
+      toast.error("Upload failed", { description: uploadErrorMessage(err) });
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <View className="mb-3">
+      <Label className="mb-1.5 text-xs text-muted-foreground">{label}</Label>
+      {value ? (
+        <View className="mb-2 flex-row items-center gap-3">
+          <View
+            className="overflow-hidden rounded-md border border-border bg-card"
+            style={{ height: previewHeight, width: previewWidth }}
+          >
+            <ImageWithFallback source={value} tintSeed={value} />
+          </View>
+          <Pressable
+            onPress={() => onChange("")}
+            hitSlop={8}
+            className="flex-row items-center gap-1"
+          >
+            <X size={14} color="#F87171" />
+            <Text className="text-xs font-medium text-red-400">Remove</Text>
+          </Pressable>
+        </View>
+      ) : null}
+      <Pressable
+        onPress={handlePick}
+        disabled={uploading}
+        className={`flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+          uploading ? "opacity-60" : ""
+        }`}
+      >
+        {uploading ? (
+          <ActivityIndicator size="small" color="#2CD7E3" />
+        ) : (
+          <Upload size={14} color="#2CD7E3" />
+        )}
+        <Text className="text-sm text-foreground">
+          {uploading ? "Uploading…" : buttonLabel}
+        </Text>
+      </Pressable>
     </View>
   );
 }

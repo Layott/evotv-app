@@ -44,9 +44,8 @@ export * from "./rewards";
 //   import { sendTip, getCoinBalance as getWalletBalance } from "@/lib/api/tips";
 
 // Modules to mirror as backend routes land:
-//   - admin, chat, users
+//   - chat, users
 //   - predictions / lite-mode - collision, import directly with rename
-//   - feature-specific: pickem, fantasy, creators, payment-methods,
-//     ussd, downloads, apps, cast, embed, bots, sso, captions, ai-commentary,
-//     commentary-tracks, forensic, api-keys, calendar, auto-clips, partners,
-//     watch-parties
+//   - feature-specific: pickem, fantasy, creators, ussd, cast, embed, sso,
+//     captions, ai-commentary, commentary-tracks, forensic, auto-clips,
+//     partners, watch-parties

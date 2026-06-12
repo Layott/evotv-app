@@ -9,9 +9,9 @@ import {
   Clock,
   Eye,
   Trophy,
-  Users,
 } from "lucide-react-native";
 
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -163,10 +163,12 @@ export default function CategoryDetailScreen() {
       >
         <View className="mb-6 overflow-hidden border-b border-border">
           <View style={{ aspectRatio: 16 / 9, position: "relative" }}>
-            <Image
+            <ImageWithFallback
               source={game.coverUrl}
               style={{ width: "100%", height: "100%" }}
               contentFit="cover"
+              fallbackLabel={game.name}
+              tintSeed={game.id}
             />
             <View
               className="absolute inset-x-0 bottom-0 h-2/3"
@@ -183,7 +185,7 @@ export default function CategoryDetailScreen() {
                 </Text>
               </Pressable>
               <View className="flex-row items-center gap-3">
-                <Image
+                <ImageWithFallback
                   source={game.iconUrl}
                   style={{
                     width: 48,
@@ -193,6 +195,8 @@ export default function CategoryDetailScreen() {
                     borderColor: "#404040",
                   }}
                   contentFit="cover"
+                  fallbackLabel={game.shortName}
+                  tintSeed={`${game.id}-icon`}
                 />
                 <View>
                   <Text className="text-2xl font-bold text-white">
@@ -203,12 +207,14 @@ export default function CategoryDetailScreen() {
                   </Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-1">
-                <Users size={12} color="#d4d4d4" />
-                <Text style={{ fontSize: 11, color: "#d4d4d4" }}>
-                  {formatViewers(game.activePlayers)} active players
-                </Text>
-              </View>
+              {live.length > 0 ? (
+                <View className="flex-row items-center gap-1">
+                  <Eye size={12} color="#d4d4d4" />
+                  <Text style={{ fontSize: 11, color: "#d4d4d4" }}>
+                    {live.length} live now
+                  </Text>
+                </View>
+              ) : null}
             </View>
           </View>
         </View>

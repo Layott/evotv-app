@@ -126,8 +126,6 @@ const STEP_TITLES: ReadonlyArray<{
   },
 ];
 
-const compactNumber = new Intl.NumberFormat("en", { notation: "compact" });
-
 export default function OnboardingScreen() {
   const router = useRouter();
   const { completeOnboarding } = useMockAuth();
@@ -436,9 +434,6 @@ function StepGames({
                   </Text>
                 </View>
               </View>
-              <Text className="text-[11px] text-muted-foreground">
-                {compactNumber.format(g.activePlayers)} active players
-              </Text>
             </View>
           </Pressable>
         );

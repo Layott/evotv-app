@@ -111,10 +111,6 @@ export default function PublicLayout() {
       <Tabs.Screen name="apps/ios/index" options={{ href: null }} />
       <Tabs.Screen name="apps/desktop/index" options={{ href: null }} />
       <Tabs.Screen name="upgrade/index" options={{ href: null }} />
-      <Tabs.Screen name="api-access/index" options={{ href: null }} />
-      <Tabs.Screen name="api-access/keys/index" options={{ href: null }} />
-      <Tabs.Screen name="api-access/docs/index" options={{ href: null }} />
-      <Tabs.Screen name="api-access/usage/index" options={{ href: null }} />
       <Tabs.Screen name="calendar/index" options={{ href: null }} />
       <Tabs.Screen name="shop/index" options={{ href: null }} />
       <Tabs.Screen name="partners/index" options={{ href: null }} />

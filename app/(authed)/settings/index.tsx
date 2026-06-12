@@ -9,8 +9,6 @@ import {
   Eye,
   FileText,
   Globe,
-  KeyRound,
-  Lock,
   LogOut,
   Palette,
   ShieldCheck,
@@ -45,6 +43,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
 import { SectionCard, SettingRow } from "@/components/settings/section-card";
+import { changePassword } from "@/lib/api/me";
 import { exportOwnData } from "@/lib/api/profile";
 import { getMyPrefs, patchMyPrefs } from "@/lib/api/prefs";
 import { deleteOwnAccount } from "@/lib/api/profile";
@@ -75,12 +74,6 @@ const MATURITY = [
   { v: "mature", label: "Mature" },
 ];
 
-const VISIBILITIES = [
-  { v: "public", label: "Public" },
-  { v: "followers", label: "Followers only" },
-  { v: "private", label: "Private" },
-];
-
 const THEMES = [
   { v: "system", label: "Match system", icon: Palette },
   { v: "dark", label: "Dark", icon: Eye },
@@ -106,11 +99,6 @@ export default function SettingsScreen() {
   const [autoplay, setAutoplay] = React.useState(true);
 
   const [maturity, setMaturity] = React.useState<MaturityRating>("mature");
-
-  const [visibility, setVisibility] = React.useState<
-    "public" | "followers" | "private"
-  >("public");
-  const [historyVisible, setHistoryVisible] = React.useState(true);
 
   const [language, setLanguage] = React.useState("en");
 
@@ -159,12 +147,11 @@ export default function SettingsScreen() {
     [],
   );
 
-  const email =
-    accountEmail ?? (user ? `${user.handle}@evotv.app` : "guest@evotv.app");
+  const email = accountEmail ?? "";
 
   const handleChangePwd = React.useCallback(async () => {
     setPwdError(null);
-    if (pwd.current.length < 8) {
+    if (pwd.current.length === 0) {
       setPwdError("Enter your current password");
       return;
     }
@@ -177,10 +164,17 @@ export default function SettingsScreen() {
       return;
     }
     setSavingPwd(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setSavingPwd(false);
-    setPwd({ current: "", next: "", confirm: "" });
-    toast.success("Password changed");
+    try {
+      await changePassword(pwd.current, pwd.next);
+      setPwd({ current: "", next: "", confirm: "" });
+      toast.success("Password changed");
+    } catch (err) {
+      setPwdError(
+        err instanceof Error ? err.message : "Couldn't change password",
+      );
+    } finally {
+      setSavingPwd(false);
+    }
   }, [pwd]);
 
   const handleDeleteAccount = React.useCallback(async () => {
@@ -265,28 +259,6 @@ export default function SettingsScreen() {
               </Text>
               <Text className="text-xs text-muted-foreground">
                 Plan, payment method, receipts
-              </Text>
-            </View>
-            <ChevronRight size={18} color="#737373" />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/(authed)/settings/api-keys" as never)}
-            className="flex-row items-center gap-3 rounded-2xl border border-border bg-card p-4 active:opacity-80"
-            accessibilityRole="button"
-          >
-            <View
-              className="h-10 w-10 items-center justify-center rounded-lg"
-              style={{ backgroundColor: "rgba(168,85,247,0.12)" }}
-            >
-              <KeyRound size={18} color="#A855F7" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-sm font-semibold text-foreground">
-                API keys
-              </Text>
-              <Text className="text-xs text-muted-foreground">
-                Generate keys for scripts + integrations
               </Text>
             </View>
             <ChevronRight size={18} color="#737373" />
@@ -695,48 +667,9 @@ export default function SettingsScreen() {
           {/* Privacy */}
           <SectionCard
             title="Privacy"
-            description="Control what others can see about you."
+            description="Your data, your call."
           >
             <View>
-              <SettingRow
-                label="Profile visibility"
-                description="Who can view your profile page"
-              >
-                <View style={{ width: 160 }}>
-                  <Select
-                    value={visibility}
-                    onValueChange={(v) => {
-                      setVisibility(v as "public" | "followers" | "private");
-                      toast.success(`Visibility: ${v}`);
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {VISIBILITIES.map((v) => (
-                        <SelectItem key={v.v} value={v.v}>
-                          {v.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </View>
-              </SettingRow>
-              <View className="h-px bg-border" />
-              <SettingRow
-                label="Show watch history"
-                description="Let others see what you've been watching"
-              >
-                <Switch
-                  checked={historyVisible}
-                  onCheckedChange={(v) => {
-                    setHistoryVisible(v);
-                    toast.success(v ? "History visible" : "History hidden");
-                  }}
-                />
-              </SettingRow>
-              <View className="h-px bg-border" />
               <View className="flex-row items-center justify-between gap-3 py-3">
                 <View className="flex-1">
                   <Text className="text-sm font-semibold text-foreground">
@@ -856,23 +789,6 @@ export default function SettingsScreen() {
           {/* Quick links */}
           <SectionCard title="More" description="Other settings & actions.">
             <View className="gap-2">
-              <Pressable
-                onPress={() =>
-                  router.push("/(authed)/checkout/mobile-money")
-                }
-                className="flex-row items-center gap-3 rounded-xl border border-border bg-background p-3 active:opacity-80"
-              >
-                <Lock size={16} color="#A3A3A3" />
-                <View className="flex-1">
-                  <Text className="text-sm font-semibold text-foreground">
-                    Mobile money checkout
-                  </Text>
-                  <Text className="text-xs text-muted-foreground">
-                    M-Pesa, MTN MoMo, Airtel
-                  </Text>
-                </View>
-                <ChevronRight size={16} color="#737373" />
-              </Pressable>
               <Pressable
                 onPress={() => router.push("/(authed)/cart")}
                 className="flex-row items-center gap-3 rounded-xl border border-border bg-background p-3 active:opacity-80"

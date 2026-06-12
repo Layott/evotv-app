@@ -2,7 +2,7 @@ import * as React from "react";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { Bookmark, Download, History, Users } from "lucide-react-native";
+import { Bookmark, History, Users } from "lucide-react-native";
 
 import type { Vod } from "@/lib/types";
 import {
@@ -21,11 +21,10 @@ export interface FollowingItem {
 }
 
 interface LibraryTabsProps {
-  downloads?: Vod[];
   watchLater?: Vod[];
   history?: Vod[];
   following?: FollowingItem[];
-  defaultValue?: "downloads" | "watch-later" | "history" | "following";
+  defaultValue?: "watch-later" | "history" | "following";
 }
 
 function EmptyState({
@@ -159,29 +158,18 @@ function FollowingList({ items }: { items: FollowingItem[] }) {
 }
 
 export function LibraryTabs({
-  downloads = [],
   watchLater = [],
   history = [],
   following = [],
-  defaultValue = "downloads",
+  defaultValue = "watch-later",
 }: LibraryTabsProps) {
   return (
     <Tabs defaultValue={defaultValue} className="gap-4">
       <TabsList>
-        <TabsTrigger value="downloads">Downloads</TabsTrigger>
         <TabsTrigger value="watch-later">Watch Later</TabsTrigger>
         <TabsTrigger value="history">History</TabsTrigger>
         <TabsTrigger value="following">Following</TabsTrigger>
       </TabsList>
-
-      <TabsContent value="downloads">
-        <VodList
-          vods={downloads}
-          emptyIcon={<Download size={32} color="#525252" />}
-          emptyTitle="Nothing downloaded yet"
-          emptyBody='Tap "Download for offline" on any VOD page.'
-        />
-      </TabsContent>
 
       <TabsContent value="watch-later">
         <VodList

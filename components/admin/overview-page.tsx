@@ -1,22 +1,53 @@
 import * as React from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Award,
+  ChartColumn,
   CircleDollarSign,
+  ClipboardList,
+  CreditCard,
+  Film,
+  Fingerprint,
+  Gavel,
+  KeyRound,
+  LayoutGrid,
+  Megaphone,
   Radio,
+  Scissors,
+  ScrollText,
+  Settings,
+  ShieldAlert,
+  ShoppingCart,
   Sparkles,
+  Tv,
   UserPlus,
   Users,
+  Vote,
+  type LucideIcon,
 } from "lucide-react-native";
 
 import {
   getOverviewMetrics,
   getViewsOverTime,
+  listAdminOrders,
+  listAdminPolls,
+  listAdminSubscriptions,
   listAdminUsers,
+  listAllSanctions,
+  listCreatorApplications,
 } from "@/lib/api/admin";
+import { listAdminReports } from "@/lib/api/reports";
 import { listLiveStreams } from "@/lib/api/streams";
+import { listAdminWaitlist } from "@/lib/api/waitlist";
 
 import { MetricCard } from "./metric-card";
 import { PageHeader } from "./page-header";
@@ -56,6 +87,49 @@ export function OverviewPage() {
     staleTime: 60_000,
   });
 
+  // Hub stats. Cheap count-only reads (limit: 1, totals come from pagination).
+  const ordersCountQ = useQuery({
+    queryKey: ["admin", "hub", "orders-count"],
+    queryFn: () => listAdminOrders({ limit: 1 }),
+    staleTime: 60_000,
+  });
+
+  const subsCountQ = useQuery({
+    queryKey: ["admin", "hub", "subs-count"],
+    queryFn: () => listAdminSubscriptions({ limit: 1 }),
+    staleTime: 60_000,
+  });
+
+  const sanctionsCountQ = useQuery({
+    queryKey: ["admin", "hub", "sanctions-count"],
+    queryFn: () => listAllSanctions({ limit: 1 }),
+    staleTime: 60_000,
+  });
+
+  const pollsCountQ = useQuery({
+    queryKey: ["admin", "hub", "polls-count"],
+    queryFn: () => listAdminPolls({ limit: 1 }),
+    staleTime: 60_000,
+  });
+
+  const creatorAppsQ = useQuery({
+    queryKey: ["admin", "hub", "creator-apps-submitted"],
+    queryFn: () => listCreatorApplications("submitted"),
+    staleTime: 60_000,
+  });
+
+  const reportsCountQ = useQuery({
+    queryKey: ["admin", "hub", "open-reports-count"],
+    queryFn: () => listAdminReports({ status: "open", limit: 1 }),
+    staleTime: 60_000,
+  });
+
+  const waitlistQ = useQuery({
+    queryKey: ["admin", "hub", "waitlist-count"],
+    queryFn: listAdminWaitlist,
+    staleTime: 60_000,
+  });
+
   const metrics = metricsQ.data;
   const liveCount = metrics?.liveStreams ?? streamsQ.data?.length ?? 0;
   const totalViewers = (streamsQ.data ?? []).reduce(
@@ -70,6 +144,148 @@ export function OverviewPage() {
     [viewsQ.data],
   );
 
+  const hubItems: {
+    to: string;
+    label: string;
+    icon: LucideIcon;
+    stat: string;
+  }[] = [
+    {
+      to: "/admin/streams",
+      label: "Streams",
+      icon: Radio,
+      stat:
+        metrics || streamsQ.data
+          ? `${formatNumber(liveCount)} live now`
+          : "-",
+    },
+    {
+      to: "/admin/content",
+      label: "Content",
+      icon: LayoutGrid,
+      stat: "Games + ratings",
+    },
+    {
+      to: "/admin/users",
+      label: "Users",
+      icon: Users,
+      stat: signupsQ.data ? `${formatNumber(signupsQ.data.total)} users` : "-",
+    },
+    {
+      to: "/admin/orders",
+      label: "Orders",
+      icon: ShoppingCart,
+      stat: ordersCountQ.data
+        ? `${formatNumber(ordersCountQ.data.total)} orders`
+        : "-",
+    },
+    {
+      to: "/admin/billing",
+      label: "Billing",
+      icon: CreditCard,
+      stat: subsCountQ.data
+        ? `${formatNumber(subsCountQ.data.total)} subs`
+        : "-",
+    },
+    {
+      to: "/admin/analytics",
+      label: "Analytics",
+      icon: ChartColumn,
+      stat: "Views + revenue",
+    },
+    {
+      to: "/admin/moderation",
+      label: "Moderation",
+      icon: ShieldAlert,
+      stat: reportsCountQ.data
+        ? `${formatNumber(reportsCountQ.data.total)} open reports`
+        : "-",
+    },
+    {
+      to: "/admin/sanctions",
+      label: "Sanctions",
+      icon: Gavel,
+      stat: sanctionsCountQ.data
+        ? `${formatNumber(sanctionsCountQ.data.total)} sanctions`
+        : "-",
+    },
+    {
+      to: "/admin/audit-log",
+      label: "Audit log",
+      icon: ScrollText,
+      stat: "Admin actions",
+    },
+    {
+      to: "/admin/forensic",
+      label: "Forensic",
+      icon: Fingerprint,
+      stat: "Login events",
+    },
+    {
+      to: "/admin/channels",
+      label: "Channels",
+      icon: Tv,
+      stat: "Publisher channels",
+    },
+    {
+      to: "/admin/polls",
+      label: "Polls",
+      icon: Vote,
+      stat: pollsCountQ.data
+        ? `${formatNumber(pollsCountQ.data.total)} polls`
+        : "-",
+    },
+    {
+      to: "/admin/ads",
+      label: "Ads",
+      icon: Megaphone,
+      stat: "Campaigns + slots",
+    },
+    {
+      to: "/admin/creator-program",
+      label: "Creator program",
+      icon: Award,
+      stat: creatorAppsQ.data ? `${creatorAppsQ.data.length} pending` : "-",
+    },
+    {
+      to: "/admin/waitlist",
+      label: "Waitlist",
+      icon: ClipboardList,
+      stat: waitlistQ.data
+        ? `${formatNumber(waitlistQ.data.count)} signups`
+        : "-",
+    },
+    {
+      to: "/admin/vods",
+      label: "VODs",
+      icon: Film,
+      stat: "Video library",
+    },
+    {
+      to: "/admin/clips",
+      label: "Clips",
+      icon: Scissors,
+      stat: "Clip library",
+    },
+    {
+      to: "/admin/settings",
+      label: "Settings",
+      icon: Settings,
+      stat: "Platform config",
+    },
+    {
+      to: "/admin/api-keys",
+      label: "API keys",
+      icon: KeyRound,
+      stat: "Service keys",
+    },
+  ];
+
+  const hubRows: (typeof hubItems)[] = [];
+  for (let i = 0; i < hubItems.length; i += 2) {
+    hubRows.push(hubItems.slice(i, i + 2));
+  }
+
   return (
     <ScrollView
       className="flex-1 bg-background"
@@ -80,42 +296,52 @@ export function OverviewPage() {
         description="Operational snapshot across streams, subscriptions and revenue."
       />
 
-      <View className="flex-row flex-wrap gap-3">
-        <View className="min-w-[46%] flex-1">
-          <MetricCard
-            title="Live streams"
-            value={liveCount}
-            delta={undefined}
-            deltaLabel={metricsQ.isLoading ? "Loading…" : "Real-time"}
-            icon={Radio}
-          />
+      <View className="gap-3">
+        <View className="flex-row gap-3">
+          <View className="flex-1">
+            <MetricCard
+              title="Live streams"
+              value={liveCount}
+              delta={undefined}
+              deltaLabel={metricsQ.isLoading ? "Loading…" : "Real-time"}
+              icon={Radio}
+            />
+          </View>
+          <View className="flex-1">
+            <MetricCard
+              title="Signups today"
+              value={metrics?.todaySignups ?? 0}
+              delta={undefined}
+              deltaLabel={metricsQ.isLoading ? "Loading…" : "Since 00:00 UTC"}
+              icon={UserPlus}
+            />
+          </View>
         </View>
-        <View className="min-w-[46%] flex-1">
-          <MetricCard
-            title="Signups today"
-            value={metrics?.todaySignups ?? 0}
-            delta={undefined}
-            deltaLabel={metricsQ.isLoading ? "Loading…" : "Since 00:00 UTC"}
-            icon={UserPlus}
-          />
-        </View>
-        <View className="min-w-[46%] flex-1">
-          <MetricCard
-            title="Total viewers"
-            value={formatNumber(totalViewers)}
-            delta={undefined}
-            deltaLabel={metricsQ.isLoading ? "Loading…" : "Live now"}
-            icon={Users}
-          />
-        </View>
-        <View className="min-w-[46%] flex-1">
-          <MetricCard
-            title="Active premium"
-            value={formatNumber(metrics?.activePremiumSubs ?? 0)}
-            delta={undefined}
-            deltaLabel={metricsQ.isLoading ? "Loading…" : "Subscribers"}
-            icon={CircleDollarSign}
-          />
+        <View className="flex-row gap-3">
+          <View className="flex-1">
+            <MetricCard
+              title="Total viewers"
+              value={formatNumber(totalViewers)}
+              delta={undefined}
+              deltaLabel={metricsQ.isLoading ? "Loading…" : "Live now"}
+              icon={Users}
+            />
+          </View>
+          <View className="flex-1">
+            <MetricCard
+              title="Active premium"
+              value={formatNumber(metrics?.activePremiumSubs ?? 0)}
+              delta={undefined}
+              deltaLabel={
+                metricsQ.isLoading
+                  ? "Loading…"
+                  : metrics
+                    ? `${formatNgn(metrics.mrrNgn)} MRR`
+                    : "Subscribers"
+              }
+              icon={CircleDollarSign}
+            />
+          </View>
         </View>
       </View>
 
@@ -291,31 +517,51 @@ export function OverviewPage() {
         </View>
       </View>
 
-      <View className="mt-6 rounded-xl border border-border bg-card/40 p-4">
+      <View className="mt-6">
         <View className="flex-row items-center gap-2">
           <Sparkles size={14} color="#2CD7E3" />
-          <Text className="text-sm text-foreground">Quick actions</Text>
+          <Text className="text-sm font-semibold text-foreground">
+            All admin pages
+          </Text>
         </View>
-        <View className="mt-3 flex-row flex-wrap gap-2">
-          {[
-            { label: "Streams", to: "/admin/streams" },
-            { label: "VODs", to: "/admin/vods" },
-            { label: "Clips", to: "/admin/clips" },
-            { label: "Polls", to: "/admin/polls" },
-            { label: "Ads", to: "/admin/ads" },
-            { label: "Content", to: "/admin/content" },
-            { label: "Waitlist", to: "/admin/waitlist" },
-            { label: "Audit log", to: "/admin/audit-log" },
-            { label: "Sanctions", to: "/admin/sanctions" },
-            { label: "Channels", to: "/admin/channels" },
-          ].map((q) => (
-            <Text
-              key={q.to}
-              onPress={() => router.push(q.to as never)}
-              className="rounded-md border border-border bg-background px-3 py-1.5 text-xs text-foreground"
-            >
-              {q.label}
-            </Text>
+        <Text className="mt-0.5 text-xs text-muted-foreground">
+          Jump into any admin area.
+        </Text>
+        <View className="mt-3 gap-3">
+          {hubRows.map((row, rowIdx) => (
+            <View key={rowIdx} className="flex-row gap-3">
+              {row.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <View key={item.to} className="flex-1">
+                    <Pressable
+                      onPress={() => router.push(item.to as never)}
+                      className="rounded-xl border border-border bg-card/40 p-3 active:opacity-70"
+                    >
+                      <View className="flex-row items-center gap-2">
+                        <View className="rounded-md bg-muted p-1.5">
+                          <Icon size={14} color="#2CD7E3" />
+                        </View>
+                        <Text
+                          numberOfLines={1}
+                          className="flex-1 text-sm font-medium text-foreground"
+                        >
+                          {item.label}
+                        </Text>
+                      </View>
+                      <Text
+                        numberOfLines={1}
+                        className="mt-2 text-xs text-muted-foreground"
+                        style={{ fontVariant: ["tabular-nums"] }}
+                      >
+                        {item.stat}
+                      </Text>
+                    </Pressable>
+                  </View>
+                );
+              })}
+              {row.length === 1 ? <View className="flex-1" /> : null}
+            </View>
           ))}
         </View>
       </View>

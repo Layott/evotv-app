@@ -580,17 +580,6 @@ export default function CheckoutScreen() {
                   ? "Processing..."
                   : `Pay ${formatNgn(total)} with Paystack`}
               </Button>
-              <Pressable
-                disabled={processing}
-                onPress={() =>
-                  router.push("/(authed)/checkout/mobile-money")
-                }
-                className="h-9 flex-row items-center justify-center rounded-md border border-input bg-background px-4 active:opacity-80"
-              >
-                <Text className="text-sm font-medium text-foreground">
-                  Use mobile money instead
-                </Text>
-              </Pressable>
             </View>
 
             <View className="mt-3 flex-row items-center justify-center gap-1">

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { Plus, Search, Trash2, X } from "lucide-react-native";
+import { Plus, Search, Trash2, Upload, X } from "lucide-react-native";
 import { toast } from "sonner-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -12,6 +12,8 @@ import {
   deleteAd,
   type CreateAdPayload,
 } from "@/lib/api/ads";
+import { pickAndUploadImage, uploadErrorMessage } from "@/lib/api/uploads";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import type { Ad, AdPlacement } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
@@ -373,7 +375,7 @@ function AdForm({
         }
       : {
           placement: "home_banner",
-          mediaUrl: "/placeholder.svg?height=200&width=1200&text=New+Creative",
+          mediaUrl: "",
           clickUrl: "https://example.com",
           advertiser: "",
           active: true,
@@ -382,6 +384,20 @@ function AdForm({
           weight: 100,
         },
   );
+
+  const [uploading, setUploading] = React.useState(false);
+
+  async function handleUpload() {
+    try {
+      setUploading(true);
+      const url = await pickAndUploadImage();
+      if (url) setForm((f) => ({ ...f, mediaUrl: url }));
+    } catch (err) {
+      toast.error("Upload failed", { description: uploadErrorMessage(err) });
+    } finally {
+      setUploading(false);
+    }
+  }
 
   const disabled =
     submitting || !form.advertiser.trim() || !form.clickUrl.trim();
@@ -407,17 +423,36 @@ function AdForm({
               Creative
             </Text>
             <View className="mb-3 overflow-hidden rounded-lg border border-border bg-card">
-              <Image
+              <ImageWithFallback
                 source={form.mediaUrl}
                 style={{ width: "100%", aspectRatio: 6 }}
                 contentFit="cover"
+                fallbackLabel={form.advertiser || "Ad"}
+                tintSeed={form.advertiser || "ad-creative"}
               />
             </View>
+            <Pressable
+              onPress={handleUpload}
+              disabled={uploading}
+              className={`mb-2 flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+                uploading ? "opacity-60" : ""
+              }`}
+            >
+              {uploading ? (
+                <ActivityIndicator size="small" color="#2CD7E3" />
+              ) : (
+                <Upload size={14} color="#2CD7E3" />
+              )}
+              <Text className="text-sm text-foreground">
+                {uploading ? "Uploading…" : "Upload image"}
+              </Text>
+            </Pressable>
             <Input
               value={form.mediaUrl}
               onChangeText={(v) => setForm({ ...form, mediaUrl: v })}
               className="mb-3 bg-card"
-              placeholder="Media URL"
+              placeholder="Or paste a media URL"
+              autoCapitalize="none"
             />
 
             <Text className="mb-1.5 text-xs text-muted-foreground">

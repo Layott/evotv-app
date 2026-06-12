@@ -78,6 +78,8 @@ interface PaymentMethodCardProps {
   primary?: boolean;
   /** Method not live yet - dims the card + shows "Coming soon". */
   soon?: boolean;
+  /** Premium monthly price from the tiers API. Omitted while loading. */
+  priceNgn?: number;
 }
 
 function PaymentMethodCard({
@@ -90,6 +92,7 @@ function PaymentMethodCard({
   onPress,
   primary,
   soon,
+  priceNgn,
 }: PaymentMethodCardProps) {
   return (
     <Pressable
@@ -122,9 +125,13 @@ function PaymentMethodCard({
         </View>
       </View>
       <View className="flex-row items-center justify-between border-t border-border pt-3">
-        <Text className="text-xs text-muted-foreground">
-          Premium · {formatNgn(4500)}/mo
-        </Text>
+        {typeof priceNgn === "number" ? (
+          <Text className="text-xs text-muted-foreground">
+            Premium · {formatNgn(priceNgn)}/mo
+          </Text>
+        ) : (
+          <View />
+        )}
         {soon ? (
           <Text style={{ color: "#A855F7", fontSize: 11, fontWeight: "700", letterSpacing: 1 }}>
             COMING SOON
@@ -239,6 +246,13 @@ export default function UpgradeScreen() {
     [tiersQ.data],
   );
 
+  // Real premium price from the tiers API. Undefined until loaded, so the
+  // payment cards never show a made-up number.
+  const premiumPriceNgn = React.useMemo(
+    () => tiersQ.data?.find((t) => t.id === "premium")?.priceNgn,
+    [tiersQ.data],
+  );
+
   const onUpgrade = () => {
     router.push("/(authed)/checkout?plan=premium" as never);
   };
@@ -312,6 +326,7 @@ export default function UpgradeScreen() {
             iconBg="rgba(56,189,248,0.15)"
             iconFg="#7dd3fc"
             primary
+            priceNgn={premiumPriceNgn}
             onPress={onUpgrade}
           />
           <PaymentMethodCard
@@ -322,6 +337,7 @@ export default function UpgradeScreen() {
             iconBg="rgba(16,185,129,0.15)"
             iconFg="#34d399"
             soon
+            priceNgn={premiumPriceNgn}
             onPress={() =>
               toast.info("Mobile money is coming soon", {
                 description: "Pay with card via Paystack for now.",
@@ -336,6 +352,7 @@ export default function UpgradeScreen() {
             iconBg="rgba(245,158,11,0.15)"
             iconFg="#fbbf24"
             soon
+            priceNgn={premiumPriceNgn}
             onPress={() =>
               toast.info("USSD payments are coming soon", {
                 description: "Pay with card via Paystack for now.",

@@ -2,11 +2,10 @@ import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
-import { ShoppingBag, Tag, Trash2 } from "lucide-react-native";
+import { ShoppingBag, Trash2 } from "lucide-react-native";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { QtyStepper } from "@/components/shop/qty-stepper";
 import {
@@ -35,8 +34,6 @@ export default function CartScreen() {
   const [lines, setLines] = React.useState<CartLine[]>([]);
   const [products, setProducts] = React.useState<Record<string, Product>>({});
   const [loading, setLoading] = React.useState(true);
-  const [promo, setPromo] = React.useState("");
-  const [discount, setDiscount] = React.useState(0);
 
   const refresh = React.useCallback(() => {
     setLines(getCart());
@@ -90,18 +87,7 @@ export default function CartScreen() {
   const subtotal = resolved.reduce((sum, r) => sum + r.subtotal, 0);
   const shipping =
     subtotal === 0 ? 0 : subtotal >= FREE_SHIPPING_MIN ? 0 : SHIPPING;
-  const promoAmount = Math.round(subtotal * discount);
-  const total = Math.max(0, subtotal - promoAmount + shipping);
-
-  function applyPromo() {
-    if (promo.trim().toUpperCase() === "EVO10") {
-      setDiscount(0.1);
-      toast.success("Promo EVO10 applied - 10% off");
-    } else {
-      setDiscount(0);
-      toast.error("Invalid promo code");
-    }
-  }
+  const total = subtotal + shipping;
 
   if (loading && lines.length > 0) {
     return (
@@ -226,16 +212,6 @@ export default function CartScreen() {
                   {formatNgn(subtotal)}
                 </Text>
               </View>
-              {promoAmount > 0 ? (
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-sm" style={{ color: "#2CD7E3" }}>
-                    Promo EVO10
-                  </Text>
-                  <Text className="text-sm" style={{ color: "#2CD7E3" }}>
-                    -{formatNgn(promoAmount)}
-                  </Text>
-                </View>
-              ) : null}
               <View className="flex-row items-center justify-between">
                 <Text className="text-sm text-muted-foreground">Shipping</Text>
                 <Text className="text-sm text-foreground">
@@ -254,26 +230,6 @@ export default function CartScreen() {
                   {formatNgn(total)}
                 </Text>
               </View>
-            </View>
-
-            <View className="mt-4 flex-row gap-2">
-              <View className="relative flex-1">
-                <View
-                  className="absolute left-3 top-0 z-10 h-9 justify-center"
-                  pointerEvents="none"
-                >
-                  <Tag size={14} color="#737373" />
-                </View>
-                <Input
-                  placeholder="Promo code"
-                  value={promo}
-                  onChangeText={setPromo}
-                  className="pl-9"
-                />
-              </View>
-              <Button variant="outline" onPress={applyPromo}>
-                Apply
-              </Button>
             </View>
 
             <Button

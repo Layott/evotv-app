@@ -291,8 +291,12 @@ header.hero .rv{transition-delay:calc(var(--i,0)*70ms)}
         Nothing is live. Nobody is using it. So there is no cutover, no TTL lowering, no 3am write window,
         no rollback plan. Build the whole stack on DO, move the one table that matters, delete the Vercel project.
       </p>
-      <div class="hairline rv" style="--i:3"></div>
-      <div class="chips rv" style="--i:4">
+      <div class="note rv" style="--i:3;margin-top:26px">
+        <span class="tag">Status · 2026-08-07</span>
+        <p><strong>Step 3 is done and committed.</strong> Backend on branch <code>feat/digitalocean</code>: postgres-js driver, Spaces adapter, Valkey bus. App on branch <code>feat/digitalocean-uploads</code>: presigned PUT. Both typecheck, the backend suite passes (46) and builds, and the bus was tested cross-process against a real Valkey. Spaces and Managed Postgres are wired but have never been pointed at real DO resources, so <a class="inline" href="#provision">step 1</a> is the next thing that needs you.</p>
+      </div>
+      <div class="hairline rv" style="--i:4"></div>
+      <div class="chips rv" style="--i:5">
         <span class="chip">Rewritten <b>2026-08-06</b></span>
         <span class="chip hot"><b>evotv.co</b> primary</span>
         <span class="chip"><b>evotv.africa</b> redirects</span>

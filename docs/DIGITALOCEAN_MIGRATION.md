@@ -8,6 +8,8 @@ Written 2026-08-05. Rewritten 2026-08-06 for **`evotv.co`** (primary) and **`evo
 
 **One focused day.** Roughly 4 hours of code, 2 hours of infrastructure, 1 hour of data, 1 hour of walking the app.
 
+> **Status, 2026-08-07.** Step 3 is done and committed. Backend on branch `feat/digitalocean` (`EVOTV`): postgres-js driver, Spaces adapter, Valkey bus. App on branch `feat/digitalocean-uploads` (`EVOTV-app`): presigned PUT. Both typecheck, the backend suite passes (46) and builds, and the bus was tested cross-process against a real Valkey. Spaces and Managed Postgres are wired but have never been pointed at real DO resources, so step 1 is the next thing that needs you.
+
 ---
 
 ## What has to survive

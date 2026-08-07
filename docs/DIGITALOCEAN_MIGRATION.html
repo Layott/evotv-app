@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EVO TV on DigitalOcean · Cold Build</title>
+<meta name="description" content="Nothing is live, so this is not a migration, it is a build. One day: droplet, Managed Postgres, Spaces, Valkey. Then delete Vercel." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080A0B;--panel:#0E1213;--panel-2:#121718;
+  --line:rgba(44,215,227,.13);--line-soft:rgba(255,255,255,.07);
+  --cyan:#2CD7E3;--cyan-dim:#1B8E97;--ink:#E9EFF0;--muted:#8B9A9C;--muted-2:#5F6E70;
+  --warn:#FFC163;--danger:#FF6B6B;--ok:#5FD98A;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif;
+  --display:"Chakra Petch","IBM Plex Sans",sans-serif;
+  --rail:272px;--maxw:880px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;font-size:16.5px;line-height:1.72;letter-spacing:.004em;overflow-x:hidden}
+
+.bg-grid,.bg-glow,.bg-noise{position:fixed;inset:0;pointer-events:none;z-index:0}
+.bg-grid{
+  background-image:
+    linear-gradient(to right,rgba(255,255,255,.028) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(255,255,255,.028) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse 120% 80% at 50% 0%,#000 20%,transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse 120% 80% at 50% 0%,#000 20%,transparent 78%);
+}
+.bg-glow{background:radial-gradient(680px 460px at 8% -6%,rgba(44,215,227,.14),transparent 62%),radial-gradient(760px 520px at 96% 4%,rgba(44,215,227,.06),transparent 64%)}
+.bg-noise{opacity:.5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E")}
+
+#progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:60;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));box-shadow:0 0 14px rgba(44,215,227,.7);transition:width .1s linear}
+
+.shell{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 24px}
+.cols{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:56px;align-items:start}
+main{max-width:var(--maxw);padding-bottom:120px}
+
+header.hero{padding:78px 0 44px;position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);border:1px solid var(--line);background:rgba(44,215,227,.05);border-radius:999px;padding:6px 14px 6px 11px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2.6s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(44,215,227,.55)}70%{box-shadow:0 0 0 9px rgba(44,215,227,0)}100%{box-shadow:0 0 0 0 rgba(44,215,227,0)}}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.9rem,7.2vw,5.4rem);line-height:.94;letter-spacing:-.03em;margin:26px 0 0;text-wrap:balance}
+h1 .fade{background:linear-gradient(96deg,var(--cyan) 6%,#9BEFF5 42%,var(--ink) 88%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{margin:22px 0 0;max-width:62ch;font-size:1.2rem;line-height:1.6;color:#BFCBCC;font-weight:300}
+.hairline{height:1px;background:linear-gradient(90deg,var(--cyan),rgba(44,215,227,.12) 44%,transparent);margin:36px 0 26px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--panel);border:1px solid var(--line-soft);padding:7px 12px;border-radius:6px}
+.chip b{color:var(--ink);font-weight:600}
+.chip.hot{border-color:rgba(44,215,227,.32);color:var(--cyan)}
+.chip.hot b{color:var(--cyan)}
+
+.rail{position:sticky;top:0;height:100vh;padding:78px 0 40px;overflow-y:auto;scrollbar-width:thin}
+.rail::-webkit-scrollbar{width:4px}
+.rail::-webkit-scrollbar-thumb{background:rgba(44,215,227,.2);border-radius:9px}
+.rail h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted-2);margin:0 0 16px;font-weight:500}
+.rail nav{display:flex;flex-direction:column;gap:1px;border-left:1px solid var(--line-soft)}
+.rail .grp{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2);padding:16px 0 6px 16px}
+.rail .grp:first-child{padding-top:2px}
+.rail a{position:relative;display:flex;gap:12px;align-items:baseline;padding:7px 0 7px 16px;text-decoration:none;color:var(--muted);font-size:13.6px;line-height:1.35;transition:color .18s ease}
+.rail a span.n{font-family:var(--mono);font-size:11px;color:var(--muted-2);min-width:14px}
+.rail a::before{content:"";position:absolute;left:-1px;top:6px;bottom:6px;width:2px;background:var(--cyan);transform:scaleY(0);transform-origin:top;transition:transform .22s ease}
+.rail a:hover{color:var(--ink)}
+.rail a.active{color:var(--cyan)}
+.rail a.active span.n{color:var(--cyan)}
+.rail a.active::before{transform:scaleY(1)}
+.rail .foot{margin-top:26px;padding-top:18px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:10.5px;color:var(--muted-2);line-height:1.9}
+.mobile-nav{display:none}
+
+section{padding:52px 0 8px;scroll-margin-top:96px}
+.sec-head{display:flex;align-items:flex-start;gap:18px;margin-bottom:8px}
+.sec-num{font-family:var(--display);font-weight:700;font-size:2.1rem;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(44,215,227,.42);margin-top:2px;user-select:none}
+h2{font-family:var(--display);font-weight:600;letter-spacing:-.015em;font-size:clamp(1.6rem,3.1vw,2.15rem);line-height:1.1;margin:0}
+h3{font-family:var(--display);font-weight:600;font-size:1.08rem;letter-spacing:.01em;margin:34px 0 12px;color:var(--ink)}
+p{margin:0 0 18px;max-width:70ch}
+a.inline{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(44,215,227,.35)}
+strong{font-weight:600;color:#fff}
+em{font-style:normal;color:var(--muted)}
+ul{margin:0 0 18px;padding-left:0;list-style:none;max-width:70ch}
+ul li{position:relative;padding-left:22px;margin-bottom:11px}
+ul li::before{content:"";position:absolute;left:2px;top:.72em;width:6px;height:1px;background:var(--cyan);opacity:.75}
+code:not(pre code){font-family:var(--mono);font-size:.855em;background:rgba(44,215,227,.075);border:1px solid rgba(44,215,227,.15);color:#9BEFF5;padding:1.5px 6px;border-radius:4px;white-space:nowrap}
+
+/* survive banner */
+.survive{
+  position:relative;margin:0 0 26px;padding:22px 24px;border-radius:14px;
+  border:1px solid rgba(255,107,107,.3);
+  background:linear-gradient(135deg,rgba(255,107,107,.1),rgba(255,107,107,.02) 60%);
+  overflow:hidden;
+}
+.survive::after{
+  content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,107,107,.16),transparent 65%);pointer-events:none;
+}
+.survive .tag{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--danger);margin-bottom:10px}
+.survive .big{font-family:var(--display);font-weight:600;font-size:1.35rem;line-height:1.3;margin:0 0 10px;color:#fff}
+.survive p{margin:0;max-width:62ch;color:#D3DCDD}
+
+.tw{overflow-x:auto;margin:0 0 24px;border:1px solid var(--line-soft);border-radius:12px;background:linear-gradient(180deg,var(--panel),rgba(14,18,19,.55))}
+table{border-collapse:collapse;width:100%;font-size:14.6px;min-width:460px}
+th{text-align:left;font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2);padding:14px 18px;border-bottom:1px solid var(--line-soft);background:rgba(255,255,255,.018);white-space:nowrap}
+td{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:top;color:#C6D1D2;line-height:1.6}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .16s ease}
+tbody tr:hover{background:rgba(44,215,227,.035)}
+td strong{color:var(--cyan);font-weight:600}
+td.num{font-family:var(--mono);font-size:13.5px;white-space:nowrap;color:var(--ink)}
+tr.total td{background:rgba(44,215,227,.055);border-top:1px solid var(--line)}
+tr.total td strong{color:var(--cyan)}
+tr.zero td{color:var(--muted-2)}
+tr.zero td strong{color:var(--ok)}
+tr.critical td{background:rgba(255,107,107,.07)}
+tr.critical td strong{color:var(--danger)}
+tr.dim td{color:var(--muted-2)}
+
+.code{position:relative;margin:0 0 26px;border:1px solid var(--line-soft);border-radius:12px;background:#0B0F10;overflow:hidden}
+.code::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(44,215,227,.05),transparent 22%)}
+.code-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px 9px 16px;border-bottom:1px solid var(--line-soft);background:rgba(255,255,255,.02)}
+.code-lang{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2)}
+.copy{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid var(--line-soft);border-radius:5px;padding:4px 10px;cursor:pointer;transition:all .18s ease}
+.copy:hover{color:var(--cyan);border-color:rgba(44,215,227,.4);background:rgba(44,215,227,.07)}
+.copy.done{color:var(--ok);border-color:rgba(95,217,138,.4)}
+pre{margin:0;padding:16px 18px;overflow-x:auto;position:relative;z-index:1}
+pre code{font-family:var(--mono);font-size:13px;line-height:1.72;color:#C8D6D7;white-space:pre;display:block;font-weight:400}
+pre code .c{color:#4E6567;font-style:italic}
+pre code .k{color:var(--cyan)}
+pre code .s{color:#9FD8A6}
+
+.ba{display:grid;gap:14px;margin:0 0 26px}
+@media (min-width:820px){.ba{grid-template-columns:1fr 1fr}}
+.ba .code{margin:0}
+.ba .code.was .code-bar{background:rgba(255,107,107,.05)}
+.ba .code.was .code-lang{color:rgba(255,107,107,.75)}
+.ba .code.now .code-bar{background:rgba(95,217,138,.05)}
+.ba .code.now .code-lang{color:rgba(95,217,138,.8)}
+
+.opt{display:grid;gap:14px;margin:0 0 26px}
+@media (min-width:820px){.opt{grid-template-columns:1fr 1fr}}
+.opt>div{padding:18px 20px;border-radius:12px;border:1px solid var(--line-soft);background:var(--panel)}
+.opt>div.pick{border-color:rgba(44,215,227,.34);background:linear-gradient(165deg,rgba(44,215,227,.06),var(--panel))}
+.opt h4{margin:0 0 8px;font-family:var(--display);font-weight:600;font-size:1rem;color:var(--ink)}
+.opt .pick h4{color:var(--cyan)}
+.opt p{font-size:14.2px;color:var(--muted);margin:0 0 12px}
+.opt .code{margin:0}
+
+.note{position:relative;margin:0 0 26px;padding:18px 20px 18px 22px;border-radius:10px;background:linear-gradient(90deg,rgba(44,215,227,.07),rgba(44,215,227,.02));border:1px solid var(--line)}
+.note::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--cyan);border-radius:2px 0 0 2px}
+.note p:last-child,.note ul:last-child{margin-bottom:0}
+.note .tag{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:7px}
+.note.warn{background:linear-gradient(90deg,rgba(255,193,99,.075),rgba(255,193,99,.02));border-color:rgba(255,193,99,.2)}
+.note.warn::before{background:var(--warn)}
+.note.warn .tag{color:var(--warn)}
+.note.danger{background:linear-gradient(90deg,rgba(255,107,107,.075),rgba(255,107,107,.02));border-color:rgba(255,107,107,.22)}
+.note.danger::before{background:var(--danger)}
+.note.danger .tag{color:var(--danger)}
+
+.stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin:0 0 26px}
+.card{position:relative;padding:20px;border-radius:12px;border:1px solid var(--line-soft);background:linear-gradient(165deg,var(--panel-2),rgba(11,15,16,.7));transition:transform .22s cubic-bezier(.2,.7,.3,1),border-color .22s ease}
+.card:hover{transform:translateY(-3px);border-color:rgba(44,215,227,.3)}
+.card .where{font-family:var(--display);font-weight:600;font-size:1rem;color:var(--cyan);letter-spacing:.01em}
+.card .state{float:right;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);border:1px solid var(--line-soft);border-radius:999px;padding:2px 8px}
+.card.dead{opacity:.6}
+.card.dead .where{color:var(--muted)}
+.card p{margin:10px 0 0;font-size:14.2px;line-height:1.6;color:var(--muted)}
+
+ol.steps{list-style:none;counter-reset:s;margin:0 0 24px;padding:0;max-width:70ch}
+ol.steps>li{counter-increment:s;position:relative;padding-left:44px;margin-bottom:18px}
+ol.steps>li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:1px;font-family:var(--mono);font-size:11px;color:var(--cyan);border:1px solid var(--line);border-radius:6px;width:28px;height:28px;display:grid;place-items:center;background:rgba(44,215,227,.05)}
+ol.steps .code{margin-top:12px}
+
+.hazards{display:grid;gap:10px;margin:0 0 26px}
+.haz{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:10px;border:1px solid var(--line-soft);background:var(--panel);transition:border-color .2s ease,background .2s ease}
+.haz:hover{border-color:rgba(255,193,99,.3);background:var(--panel-2)}
+.haz.top{border-color:rgba(255,107,107,.32);background:linear-gradient(90deg,rgba(255,107,107,.06),var(--panel))}
+.haz.top .mark{color:var(--danger)}
+.haz .mark{font-family:var(--mono);font-size:11px;color:var(--warn);line-height:1.9;flex:none}
+.haz div{font-size:14.8px;line-height:1.6;color:#C6D1D2}
+.haz b{color:#fff;font-weight:600}
+
+footer{margin-top:70px;padding:30px 0 60px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--cyan)}
+
+.rv{opacity:0;transform:translateY(14px);transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1)}
+.rv.in{opacity:1;transform:none}
+header.hero .rv{transition-delay:calc(var(--i,0)*70ms)}
+
+@media (max-width:1080px){
+  .cols{grid-template-columns:1fr;gap:0}
+  .rail{display:none}
+  .mobile-nav{display:block;position:sticky;top:0;z-index:40;margin:0 -24px 8px;background:rgba(8,10,11,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-soft)}
+  .mobile-nav .scroller{display:flex;gap:8px;overflow-x:auto;padding:11px 24px;scrollbar-width:none}
+  .mobile-nav .scroller::-webkit-scrollbar{display:none}
+  .mobile-nav a{flex:none;text-decoration:none;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line-soft);border-radius:999px;padding:6px 13px;white-space:nowrap}
+  .mobile-nav a.active{color:var(--cyan);border-color:rgba(44,215,227,.42);background:rgba(44,215,227,.08)}
+  header.hero{padding:52px 0 30px}
+  main{padding-bottom:70px}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .shell{padding:0 18px}
+  .mobile-nav{margin:0 -18px 8px}
+  .mobile-nav .scroller{padding:11px 18px}
+  .sec-head{gap:12px}
+  .sec-num{font-size:1.5rem}
+  pre code{font-size:12px}
+  section{padding:40px 0 4px}
+  .survive{padding:18px}
+  .survive .big{font-size:1.15rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rv{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
+@media print{
+  .bg-grid,.bg-glow,.bg-noise,.rail,.mobile-nav,#progress,.copy{display:none}
+  body{background:#fff;color:#111}
+  .cols{display:block}
+  .card,.tw,.code,.note,.haz,.survive{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div><div class="bg-glow"></div><div class="bg-noise"></div>
+<div id="progress"></div>
+
+<div class="shell">
+<div class="cols">
+
+  <aside class="rail">
+    <h4>Cold build</h4>
+    <nav id="toc">
+      <div class="grp">Before anything</div>
+      <a href="#survive"><span class="n">!!</span> What has to survive</a>
+      <a href="#properly"><span class="n">//</span> Do it properly</a>
+      <a href="#end"><span class="n">//</span> The end state</a>
+      <div class="grp">The day</div>
+      <a href="#provision"><span class="n">01</span> Provision all three</a>
+      <a href="#droplet"><span class="n">02</span> Droplet setup</a>
+      <a href="#code"><span class="n">03</span> The code changes</a>
+      <a href="#files"><span class="n">04</span> The files</a>
+      <a href="#data"><span class="n">05</span> Move the data</a>
+      <a href="#dns"><span class="n">06</span> DNS</a>
+      <a href="#live"><span class="n">07</span> Go live</a>
+      <a href="#crons"><span class="n">08</span> Crons</a>
+      <a href="#kill"><span class="n">09</span> Delete Vercel</a>
+      <a href="#after"><span class="n">10</span> Deploying, after</a>
+      <div class="grp">Reference</div>
+      <a href="#watch"><span class="n">!!</span> Watch out for</a>
+      <a href="#env"><span class="n">::</span> Env, end state</a>
+    </nav>
+    <div class="foot">
+      EVO TV · infra<br>
+      evotv.co primary<br>
+      Rewritten 2026-08-06<br>
+      Status: plan only
+    </div>
+  </aside>
+
+  <div>
+    <div class="mobile-nav">
+      <div class="scroller" id="toc-m">
+        <a href="#survive">Survive</a>
+        <a href="#properly">Properly</a>
+        <a href="#end">End state</a>
+        <a href="#provision">01 Provision</a>
+        <a href="#droplet">02 Droplet</a>
+        <a href="#code">03 Code</a>
+        <a href="#files">04 Files</a>
+        <a href="#data">05 Data</a>
+        <a href="#dns">06 DNS</a>
+        <a href="#live">07 Go live</a>
+        <a href="#crons">08 Crons</a>
+        <a href="#kill">09 Kill Vercel</a>
+        <a href="#after">10 After</a>
+        <a href="#watch">Watch out</a>
+        <a href="#env">Env</a>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="eyebrow rv" style="--i:0"><span class="dot"></span> Cold build runbook</div>
+      <h1 class="rv" style="--i:1">Not a migration.<br><span class="fade">A build.</span></h1>
+      <p class="lede rv" style="--i:2">
+        Nothing is live. Nobody is using it. So there is no cutover, no TTL lowering, no 3am write window,
+        no rollback plan. Build the whole stack on DO, move the one table that matters, delete the Vercel project.
+      </p>
+      <div class="hairline rv" style="--i:3"></div>
+      <div class="chips rv" style="--i:4">
+        <span class="chip">Rewritten <b>2026-08-06</b></span>
+        <span class="chip hot"><b>evotv.co</b> primary</span>
+        <span class="chip"><b>evotv.africa</b> redirects</span>
+        <span class="chip"><b>1</b> focused day</span>
+        <span class="chip">~<b>54 USD</b> / month</span>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- ============ SURVIVE ============ -->
+      <section id="survive">
+        <div class="sec-head rv"><div class="sec-num">!!</div><h2>What has to survive</h2></div>
+
+        <div class="survive rv">
+          <span class="tag">The entire risk surface</span>
+          <p class="big">The waitlist is real people. Everything else is rebuildable.</p>
+          <p>Double opt-in signups with verified emails and reserved usernames. You cannot re-collect them. Dump the database before step 1, not after.</p>
+        </div>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">bash · do this first</span><button class="copy">copy</button></div>
+<pre><code>pg_dump --no-owner --no-acl -Fc "$NEON_URL" -f evotv-preflight.dump</code></pre>
+        </div>
+
+        <p class="rv">Put it somewhere that is not the droplet you are about to build. That single file is the entire rollback plan, and it is enough, because there is no live traffic to reconcile against.</p>
+
+        <div class="tw rv">
+          <table>
+            <thead><tr><th>Thing</th><th>Why</th><th>If lost</th></tr></thead>
+            <tbody>
+              <tr class="critical"><td><strong><code>waitlist</code> rows</strong></td><td>Real pre-launch signups. Double opt-in, verified emails, reserved usernames</td><td><strong>Irreplaceable.</strong> Cannot re-collect</td></tr>
+              <tr class="critical"><td><strong><code>PLAYOUT_SECRET</code></strong></td><td>Office media agent and the schedule page file browser authenticate with it</td><td><strong>Office playout box goes dark</strong> until you update it there too</td></tr>
+              <tr><td>Admin accounts</td><td>Your own logins</td><td>Annoying. Re-creatable via seed</td></tr>
+              <tr><td>Shows / schedule config</td><td>Playout scheduling, filler and ad-break config from <code>/admin/schedule</code></td><td>Re-enterable by hand, but it is real work</td></tr>
+              <tr class="dim"><td>Everything else</td><td>Schema lives in drizzle migrations. Content rows were purged in June</td><td>Nothing. Let it go</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ PROPERLY ============ -->
+      <section id="properly">
+        <div class="sec-head rv"><div class="sec-num">//</div><h2>Do it properly the first time</h2></div>
+
+        <p class="rv">The old plan carried a permanent constraint: <strong>one <code>api</code> container, ever</strong>, because <code>lib/sse/bus.ts</code> is an in-process <code>EventEmitter</code> and a second container cannot see the first's events. That constraint exists only to avoid rewriting the bus during a live migration.</p>
+
+        <div class="note rv">
+          <span class="tag">There is no live migration</span>
+          <p>So rewrite the bus now, in the same day, and never live with it. Two hours of work buys two <code>api</code> containers and zero-downtime deploys from day one, instead of a footgun you have to defuse later under pressure.</p>
+        </div>
+
+        <p class="rv">Same logic for Spaces and Managed Postgres. Do not stand up Neon-and-Blob-on-a-droplet and promise yourself you will finish later. Build the end state.</p>
+      </section>
+
+      <!-- ============ END STATE ============ -->
+      <section id="end">
+        <div class="sec-head rv"><div class="sec-num">//</div><h2>The end state</h2></div>
+
+        <div class="stack rv">
+          <div class="card">
+            <span class="state">compute</span>
+            <div class="where">DO droplet</div>
+            <p>2 x <code>api</code>, <code>caddy</code>, <code>valkey</code>, marketing site, app web SPA, TLS.</p>
+          </div>
+          <div class="card">
+            <span class="state">data</span>
+            <div class="where">Managed Postgres</div>
+            <p>Daily backups, 7 day point in time restore. Where the waitlist lives.</p>
+          </div>
+          <div class="card">
+            <span class="state">media</span>
+            <div class="where">Spaces + CDN</div>
+            <p>Uploads, avatars, thumbnails, VOD files.</p>
+          </div>
+          <div class="card dead">
+            <span class="state">deleted</span>
+            <div class="where">Vercel</div>
+            <p>Project, Blob store, and eventually Neon. All gone.</p>
+          </div>
+        </div>
+
+        <div class="tw rv">
+          <table>
+            <thead><tr><th>Runs where</th><th>What</th><th>USD / month</th></tr></thead>
+            <tbody>
+              <tr><td><strong>DO droplet</strong></td><td>2 x <code>api</code>, <code>caddy</code>, <code>valkey</code>, both static sites, TLS</td><td class="num">28 + 6 backups</td></tr>
+              <tr><td><strong>DO Managed Postgres</strong></td><td>database, daily backups, 7 day PITR</td><td class="num">15</td></tr>
+              <tr><td><strong>DO Spaces + CDN</strong></td><td>uploads, avatars, thumbnails, VOD files</td><td class="num">5</td></tr>
+              <tr class="zero"><td><strong>Vercel</strong></td><td>nothing. Project deleted</td><td class="num">0</td></tr>
+              <tr class="total"><td colspan="2"><strong>Total</strong></td><td class="num"><strong>~54</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="rv">About 39 if you run Postgres in a container on the droplet instead, at the cost of owning backups forever. Managed is worth 15 here specifically because the waitlist lives in it.</p>
+
+        <p class="rv">Native iOS / Android are unaffected. They ship via EAS regardless of host. Only <code>EXPO_PUBLIC_API_BASE_URL</code> changes.</p>
+      </section>
+
+      <!-- ============ 1 PROVISION ============ -->
+      <section id="provision">
+        <div class="sec-head rv"><div class="sec-num">01</div><h2>Provision all three at once</h2></div>
+
+        <p class="rv">Same region, same VPC, same afternoon. Managed Postgres over the VPC private network is free bandwidth and sub-millisecond. Over the public endpoint it is neither.</p>
+
+        <h3>Droplet</h3>
+        <div class="tw rv">
+          <table>
+            <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td>Size</td><td><strong>2 vCPU / 4 GB / 80 GB</strong>, Premium AMD (<code>s-2vcpu-4gb-amd</code>), roughly 28 USD per month</td></tr>
+              <tr><td>Region</td><td><strong>FRA1</strong>. DO has no African region. Around 100 ms from Lagos, same as everything else you have</td></tr>
+              <tr><td>OS</td><td><strong>Ubuntu 24.04 LTS</strong></td></tr>
+              <tr><td>Auth</td><td><strong>SSH key</strong>, added at create time. Never a root password</td></tr>
+              <tr><td>Enable</td><td>Monitoring, IPv6, weekly backups, <strong>VPC</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="rv">4 GB plus the swap file in step 2 is enough. Next 16 builds peak around 3 GB. Two <code>api</code> containers idle at maybe 300 MB each, so the ceiling is the build, not the runtime.</p>
+        <p class="rv">Add a <strong>Reserved IP</strong> and point DNS at that, so you can rebuild the droplet without touching DNS.</p>
+
+        <h3>Managed Postgres</h3>
+        <p class="rv">Smallest tier, 1 vCPU / 1 GB / 10 GB, same VPC. Grab both connection strings: direct (25060) and pool (25061). You want the pool.</p>
+
+        <h3>Spaces</h3>
+        <p class="rv">Bucket <code>evotv-media</code>, same region, <strong>CDN enabled</strong>. Generate a Spaces access key and secret. Spaces is S3-compatible, so everything downstream is the AWS SDK.</p>
+      </section>
+
+      <!-- ============ 2 DROPLET ============ -->
+      <section id="droplet">
+        <div class="sec-head rv"><div class="sec-num">02</div><h2>Droplet setup</h2></div>
+
+        <p class="rv">On Windows, generate a key and create the droplet with it:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">powershell</span><button class="copy">copy</button></div>
+<pre><code>ssh-keygen -t ed25519 -C "evotv-prod" -f $env:USERPROFILE\.ssh\evotv_prod
+Get-Content $env:USERPROFILE\.ssh\evotv_prod.pub | Set-Clipboard</code></pre>
+        </div>
+
+        <p class="rv">Paste into the DO create screen. Then <code>C:\Users\Sweez\.ssh\config</code>:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">ssh config</span><button class="copy">copy</button></div>
+<pre><code>Host evotv
+    HostName &lt;RESERVED_IP&gt;
+    User root
+    IdentityFile ~/.ssh/evotv_prod
+    ServerAliveInterval 30</code></pre>
+        </div>
+
+        <p class="rv"><code>ssh evotv</code>, then run this once:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">bash · on the box</span><button class="copy">copy</button></div>
+<pre><code><span class="c"># patch, timezone, swap</span>
+apt update &amp;&amp; apt -y full-upgrade
+timedatectl set-timezone Africa/Lagos
+fallocate -l 4G /swapfile &amp;&amp; chmod 600 /swapfile &amp;&amp; mkswap /swapfile &amp;&amp; swapon /swapfile
+echo '/swapfile none swap sw 0 0' &gt;&gt; /etc/fstab
+
+<span class="c"># docker</span>
+curl -fsSL https://get.docker.com | sh
+
+<span class="c"># lock down ssh: keys only, no root password login</span>
+cat &gt;/etc/ssh/sshd_config.d/99-evotv.conf &lt;&lt;'EOF'
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitEmptyPasswords no
+MaxAuthTries 3
+EOF
+sshd -t &amp;&amp; systemctl restart ssh
+
+<span class="c"># auto security updates</span>
+apt -y install unattended-upgrades
+
+<span class="c"># postgres client, for the data move in step 5</span>
+apt -y install postgresql-client-16</code></pre>
+        </div>
+
+        <div class="note rv">
+          <span class="tag">Firewall</span>
+          <p>A <strong>DO Cloud Firewall</strong> in the control panel: inbound TCP 22, 80, 443 only. That is the firewall, no <code>ufw</code> needed on top. With password auth off, brute force cannot succeed, so <code>fail2ban</code> is optional noise-reduction rather than security.</p>
+        </div>
+
+        <p class="rv">Working as root here on purpose. A separate <code>deploy</code> user is better hygiene but is one more thing to get wrong, and this box has exactly one operator.</p>
+      </section>
+
+      <!-- ============ 3 CODE ============ -->
+      <section id="code">
+        <div class="sec-head rv"><div class="sec-num">03</div><h2>The code changes</h2></div>
+
+        <p class="rv">Do these on a branch, before any data moves. Verify locally against the real DO Postgres and the real Spaces bucket. This is the only genuinely difficult part of the day, and it is much easier when no production traffic depends on getting it right first try.</p>
+
+        <h3>3a. Postgres driver</h3>
+        <p class="rv">Neon's HTTP driver is Neon-specific. DO Managed Postgres speaks the wire protocol, so this is <code>postgres-js</code>.</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">bash</span><button class="copy">copy</button></div>
+<pre><code>pnpm add postgres &amp;&amp; pnpm remove @neondatabase/serverless</code></pre>
+        </div>
+
+        <div class="ba">
+          <div class="code was rv">
+            <div class="code-bar"><span class="code-lang">was · lib/db/index.ts</span><button class="copy">copy</button></div>
+<pre><code>import { neon, neonConfig } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
+
+neonConfig.fetchConnectionCache = true;
+const sql = neon(DATABASE_URL);</code></pre>
+          </div>
+          <div class="code now rv">
+            <div class="code-bar"><span class="code-lang">now · lib/db/index.ts</span><button class="copy">copy</button></div>
+<pre><code>import postgres from "postgres";
+import { drizzle } from "drizzle-orm/postgres-js";
+
+const sql = postgres(DATABASE_URL,
+  { ssl: "require", prepare: false, max: 10 });</code></pre>
+          </div>
+        </div>
+
+        <div class="note danger rv">
+          <span class="tag">prepare: false</span>
+          <p>Required on the pooler port (25061, transaction mode). The <code>POSTGRES_URL ?? DATABASE_URL</code> fallback and the <code>globalThis.__evo_db</code> singleton both stay exactly as they are.</p>
+        </div>
+
+        <p class="rv">Six more files do the same import and need the same two-line swap:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">files</span><button class="copy">copy</button></div>
+<pre><code>db/migrate.ts                <span class="c">also: neon-http/migrator -&gt; postgres-js/migrator</span>
+db/seed.ts
+db/seed-channel-keys.ts
+db/backfill-tenancy.ts
+scripts/purge-fake-content.ts
+scripts/inventory-fake-seeds.ts</code></pre>
+        </div>
+
+        <div class="note rv">
+          <span class="tag">Free upgrade</span>
+          <p><code>postgres-js</code> supports real interactive transactions. <code>scripts/purge-fake-content.ts</code> carries a comment working around what the Neon driver could not do. Delete the workaround.</p>
+        </div>
+
+        <h3>3b. Spaces storage</h3>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">bash</span><button class="copy">copy</button></div>
+<pre><code>pnpm add @aws-sdk/client-s3 @aws-sdk/s3-request-presigner</code></pre>
+        </div>
+
+        <p class="rv">The seam already exists. <code>lib/storage/index.ts</code> picks an adapter by env, and <code>lib/storage/local.ts</code> defines the <code>StorageAdapter</code> interface that <code>lib/storage/blob.ts</code> implements.</p>
+
+        <div class="tw rv">
+          <table>
+            <thead><tr><th>File</th><th>Change</th></tr></thead>
+            <tbody>
+              <tr><td><code>lib/storage/spaces.ts</code></td><td><strong>new.</strong> Implement <code>StorageAdapter</code> against S3: <code>PutObjectCommand</code>, <code>DeleteObjectCommand</code>, <code>HeadObjectCommand</code>, <code>ListObjectsV2Command</code>. Public URL is <code>${SPACES_CDN_URL}/${pathname}</code></td></tr>
+              <tr><td><code>lib/storage/index.ts</code></td><td>select <code>spacesStorage</code> on <code>SPACES_KEY</code>. Delete the <code>blob.ts</code> branch entirely once the copy in step 5 is verified</td></tr>
+              <tr><td><code>app/api/admin/uploads/route.ts</code></td><td><code>put()</code> becomes <code>storage.put()</code></td></tr>
+              <tr><td><code>app/api/admin/uploads/client/route.ts</code></td><td><code>handleUpload()</code> from <code>@vercel/blob/client</code> has no S3 equivalent. Replace the token exchange with a presigned <code>PUT</code> from <code>getSignedUrl()</code>. Keep the admin gate, the <code>MAX_BYTES</code> cap, and the response field names</td></tr>
+              <tr><td><code>app/api/users/me/avatar/route.ts</code></td><td><code>put()</code> and <code>del()</code> become <code>storage.*</code>. The two <code>prev.includes("public.blob.vercel-storage.com")</code> guards can just go, since nothing will hold a blob URL after step 5</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="rv">App side, <code>EVOTV-app/lib/api/uploads.ts</code> hand-rolls the Vercel Blob client protocol: a token exchange against <code>/api/admin/uploads/client</code>, then a <code>PUT</code> with Vercel's headers. Presigned S3 is strictly simpler. Ask the backend for a URL, <code>PUT</code> the bytes at it, done. Keep the <code>pickAndUploadVideo</code> return shape identical and <code>components/admin/vods-manager-page.tsx</code> needs no change at all.</p>
+
+        <p class="rv">One hardcoded Vercel Blob logo URL is pasted into five files across three repos:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">paths</span><button class="copy">copy</button></div>
+<pre><code>EVOTV-app/components/home/top-navbar.tsx
+EVOTV/components/home/top-navbar.tsx
+EVOTV-WEBSITE/src/components/ui/waitlist-hero.tsx
+EVOTV-WEBSITE/src/components/ui/legal-page.tsx
+EVOTV-WEBSITE/src/components/landing.tsx</code></pre>
+        </div>
+
+        <p class="rv">Commit the logo to each repo as a local asset and delete the constant. Serving a static logo from object storage was never right, and this is the cheapest moment to fix it.</p>
+
+        <h3>3c. SSE bus on Valkey</h3>
+
+        <p class="rv"><code>lib/sse/bus.ts</code> is a module-level <code>EventEmitter</code> behind a <code>globalThis.__evo_bus</code> singleton, feeding four SSE routes: chat, stream, party, notifications. One process only.</p>
+
+        <p class="rv">Valkey is the Redis fork DO ships. Run it as a service in the same <code>docker-compose.yml</code>, on the internal Docker network, never published to a host port. Keep the exported <code>emit</code> and <code>subscribe</code> signatures byte-identical and no call site changes:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">shape</span><button class="copy">copy</button></div>
+<pre><code>publisher:   one client, publish(topic, JSON.stringify(payload))
+subscriber:  one client, psubscribe, fan out to local listeners
+             exactly as the EventEmitter does today</code></pre>
+        </div>
+
+        <div class="note rv">
+          <span class="tag">Also a bug fix</span>
+          <p>On Vercel these four routes were already broken across instances, because an emit on one lambda was invisible to a subscriber on another. This is what allows two <code>api</code> containers, which is what allows deploys with no downtime.</p>
+        </div>
+      </section>
+
+      <!-- ============ 4 FILES ============ -->
+      <section id="files">
+        <div class="sec-head rv"><div class="sec-num">04</div><h2>The files</h2></div>
+
+        <p class="rv">All live in the backend repo under <code>deploy/</code>, so they are version controlled and arrive with a <code>git pull</code>. The Dockerfile sits at the repo root.</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">bash · on the box</span><button class="copy">copy</button></div>
+<pre><code>mkdir -p /srv/evotv &amp;&amp; cd /srv/evotv
+git clone https://github.com/&lt;you&gt;/EVOTV.git api
+mkdir -p web app
+cp api/deploy/docker-compose.yml api/deploy/Caddyfile api/deploy/cron.sh api/deploy/deploy.sh .
+chmod +x cron.sh deploy.sh</code></pre>
+        </div>
+
+        <div class="tw rv">
+          <table>
+            <thead><tr><th>File</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>Dockerfile</code> <em>(repo root)</em></td><td>full <code>node:22</code>, not slim, because <code>better-sqlite3</code> compiles native code</td></tr>
+              <tr><td><code>docker-compose.yml</code></td><td><code>api</code> x2 on loopback, <code>caddy</code> on 80/443, <code>valkey</code> internal only</td></tr>
+              <tr><td><code>Caddyfile</code></td><td>TLS, both static sites, load balance across both <code>api</code> containers, SSE handling, <code>evotv.africa</code> redirect</td></tr>
+              <tr><td><code>cron.sh</code></td><td>replaces Vercel Cron, six jobs</td></tr>
+              <tr><td><code>deploy.sh</code></td><td>pull, build, migrate, rolling restart, health check</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note danger rv">
+          <span class="tag">Two Caddy settings matter</span>
+          <ul>
+            <li><strong><code>flush_interval -1</code></strong> on the SSE route. Without it Caddy buffers the stream and live chat looks frozen.</li>
+            <li><strong><code>health_uri /api/health</code></strong> on the reverse proxy upstreams, so a restarting container is taken out of rotation instead of serving 502s.</li>
+          </ul>
+        </div>
+
+        <h3>Environment</h3>
+
+        <p class="rv">The <code>.env</code> is now built by hand rather than pulled, since most values are changing and the Vercel project is about to be deleted. Pull once for the secrets worth keeping:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">bash · on your laptop</span><button class="copy">copy</button></div>
+<pre><code>vercel env pull .env.vercel-archive</code></pre>
+        </div>
+
+        <p class="rv">Keep from it: <code>PLAYOUT_SECRET</code>, <code>CRON_SECRET</code>, <code>BETTER_AUTH_SECRET</code>, SMTP credentials, any OAuth client secrets. Discard <code>DATABASE_URL</code>, <code>POSTGRES_URL</code>, <code>BLOB_READ_WRITE_TOKEN</code>.</p>
+
+        <p class="rv">Archive that file somewhere safe and off the droplet. Then write <code>/srv/evotv/.env</code> from <a class="inline" href="#env">the reference at the end</a>, and <code>chmod 600</code> it.</p>
+
+        <div class="note warn rv">
+          <span class="tag">Trap</span>
+          <p>Do not shell-source <code>.env</code>. Values like <code>SMTP_FROM=EVO TV &lt;noreply@evotv.co&gt;</code> are unquoted, which Docker reads literally but bash parses as a redirect.</p>
+        </div>
+      </section>
+
+      <!-- ============ 5 DATA ============ -->
+      <section id="data">
+        <div class="sec-head rv"><div class="sec-num">05</div><h2>Move the data</h2></div>
+
+        <p class="rv">Nothing is writing anywhere, so this is a copy, not a cutover. No stopping containers, no maintenance window, no reconciliation.</p>
+
+        <h3>Database</h3>
+
+        <div class="opt">
+          <div class="pick rv">
+            <h4>Option A · full transplant</h4>
+            <p>Keeps admin accounts, API keys, channel stream keys, and everything configured in <code>/admin/schedule</code>. Take this unless you have a reason.</p>
+            <div class="code">
+              <div class="code-bar"><span class="code-lang">bash · inside the VPC</span><button class="copy">copy</button></div>
+<pre><code>pg_dump --no-owner --no-acl -Fc "$NEON_URL" \
+  -f /root/evotv.dump
+pg_restore --no-owner --no-acl \
+  -d "$DO_POOL_URL" /root/evotv.dump</code></pre>
+            </div>
+          </div>
+          <div class="rv">
+            <h4>Option B · clean room</h4>
+            <p>Fresh schema, waitlist only. Worth it if the current database has accumulated test junk you would rather not carry into launch.</p>
+            <div class="code">
+              <div class="code-bar"><span class="code-lang">bash</span><button class="copy">copy</button></div>
+<pre><code>pnpm db:migrate   <span class="c"># against DO, empty schema</span>
+pg_dump --no-owner --no-acl -t waitlist \
+  "$NEON_URL" | psql "$DO_POOL_URL"</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <p class="rv">Verify either way, table by table, before trusting it:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">sql</span><button class="copy">copy</button></div>
+<pre><code><span class="k">SELECT</span> relname, n_live_tup <span class="k">FROM</span> pg_stat_user_tables
+<span class="k">ORDER BY</span> n_live_tup <span class="k">DESC</span>;</code></pre>
+        </div>
+
+        <p class="rv">Count <code>waitlist</code> on both sides explicitly. That is the number that matters.</p>
+
+        <h3>Objects</h3>
+
+        <p class="rv">Vercel Blob has no S3 API, so <code>rclone</code> cannot see it. Check how much is actually in there before building any tooling:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">bash</span><button class="copy">copy</button></div>
+<pre><code>node -e "require('@vercel/blob').list().then(r=&gt;console.log(r.blobs.length))"</code></pre>
+        </div>
+
+        <p class="rv">If it holds nothing but the logo and a handful of test uploads, skip the script entirely. Re-upload the few real files through the admin UI once the app is running, and delete the rows pointing at the rest. Otherwise, a one-shot script in the backend repo:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">shape</span><button class="copy">copy</button></div>
+<pre><code>list() from @vercel/blob  -&gt;  fetch each url  -&gt;  PutObjectCommand to Spaces, same pathname</code></pre>
+        </div>
+
+        <p class="rv">Same pathname on both sides is what makes the database rewrite a pure host swap. Find the columns first, do not guess:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">sql</span><button class="copy">copy</button></div>
+<pre><code><span class="k">SELECT</span> table_name, column_name <span class="k">FROM</span> information_schema.columns
+<span class="k">WHERE</span> column_name <span class="k">LIKE</span> <span class="s">'%url%'</span> <span class="k">AND</span> table_schema = <span class="s">'public'</span>;</code></pre>
+        </div>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">sql · one per column</span><button class="copy">copy</button></div>
+<pre><code><span class="k">UPDATE</span> vods <span class="k">SET</span> thumbnail_url = replace(thumbnail_url,
+  <span class="s">'https://&lt;storeId&gt;.public.blob.vercel-storage.com/'</span>,
+  <span class="s">'https://evotv-media.fra1.cdn.digitaloceanspaces.com/'</span>);</code></pre>
+        </div>
+      </section>
+
+      <!-- ============ 6 DNS ============ -->
+      <section id="dns">
+        <div class="sec-head rv"><div class="sec-num">06</div><h2>DNS</h2></div>
+
+        <p class="rv">Two domains, two Cloudflare zones. <strong><code>evotv.co</code> is primary</strong> and serves everything. <strong><code>evotv.africa</code> only redirects</strong>, so the brand is protected without splitting SEO.</p>
+
+        <h3>Zone <code>evotv.co</code></h3>
+        <div class="tw rv">
+          <table>
+            <thead><tr><th>Record</th><th>Type</th><th>Value</th><th>Cloudflare proxy</th></tr></thead>
+            <tbody>
+              <tr><td><code>evotv.co</code></td><td>A</td><td>Reserved IP</td><td>proxied</td></tr>
+              <tr><td><code>www</code></td><td>A</td><td>Reserved IP</td><td>proxied</td></tr>
+              <tr><td><code>app</code></td><td>A</td><td>Reserved IP</td><td>proxied</td></tr>
+              <tr><td><code>api</code></td><td>A</td><td>Reserved IP</td><td><strong>DNS only (grey)</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Zone <code>evotv.africa</code></h3>
+        <div class="tw rv">
+          <table>
+            <thead><tr><th>Record</th><th>Type</th><th>Value</th><th>Cloudflare proxy</th></tr></thead>
+            <tbody>
+              <tr><td><code>evotv.africa</code></td><td>A</td><td>Reserved IP</td><td>proxied</td></tr>
+              <tr><td><code>www</code></td><td>A</td><td>Reserved IP</td><td>proxied</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="rv">Both <code>evotv.africa</code> records point at the same droplet. Caddy answers them with a permanent redirect, which also means Caddy issues certificates for them, which is required: a redirect still has to complete a TLS handshake first.</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">caddyfile</span><button class="copy">copy</button></div>
+<pre><code>evotv.africa, www.evotv.africa {
+    redir https://evotv.co{uri} permanent
+}</code></pre>
+        </div>
+
+        <div class="note danger rv">
+          <span class="tag">Keep api grey</span>
+          <p>Cloudflare's free tier drops idle proxied connections at around 100 seconds, which would silently kill every SSE stream on a 100-second loop.</p>
+        </div>
+
+        <p class="rv">Wait for DNS to resolve <strong>before</strong> starting Caddy, or certificate issuance fails and backs off. Six hostnames across two zones. Set them all now, then go do step 7 while they propagate.</p>
+      </section>
+
+      <!-- ============ 7 GO LIVE ============ -->
+      <section id="live">
+        <div class="sec-head rv"><div class="sec-num">07</div><h2>Go live</h2></div>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">bash · on the box</span><button class="copy">copy</button></div>
+<pre><code>cd /srv/evotv
+docker compose up -d --build
+docker compose logs -f caddy      <span class="c"># watch six certificates issue</span></code></pre>
+        </div>
+
+        <p class="rv">Static sites, built on your laptop and copied up:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">powershell · on your laptop</span><button class="copy">copy</button></div>
+<pre><code>pnpm --dir "C:\...\EVOTV-WEBSITE" build
+scp -r "C:\...\EVOTV-WEBSITE\dist\*" evotv:/srv/evotv/web/
+
+pnpm --dir "C:\...\EVOTV-app" expo export --platform web
+scp -r "C:\...\EVOTV-app\dist\*" evotv:/srv/evotv/app/</code></pre>
+        </div>
+
+        <p class="rv">Then walk it, on desktop <strong>and</strong> on a phone viewport:</p>
+
+        <ol class="steps rv">
+          <li><code>https://evotv.co</code> loads. <code>https://evotv.africa</code> redirects to it.</li>
+          <li>Log in as admin. Session survives a refresh.</li>
+          <li>Admin hub, then <code>/admin/schedule</code>. The playout file browser lists files from the office box, which proves <code>PLAYOUT_SECRET</code> survived.</li>
+          <li>Upload a thumbnail. Confirm the resulting URL is on the Spaces CDN host.</li>
+          <li>Open live chat in two browsers. A message in one appears in the other. That proves Valkey, and it is the check that would have been impossible to trust with a single container.</li>
+          <li><code>docker compose restart api</code> mid-chat. The stream reconnects and nothing 502s, which proves the health check and both containers.</li>
+          <li>Waitlist signup on the marketing site, and confirm the mail actually arrives.</li>
+          <li><code>SELECT count(*) FROM waitlist;</code> matches the pre-flight number.</li>
+        </ol>
+      </section>
+
+      <!-- ============ 8 CRONS ============ -->
+      <section id="crons">
+        <div class="sec-head rv"><div class="sec-num">08</div><h2>Crons</h2></div>
+
+        <p class="rv"><code>vercel.json</code> scheduled four jobs. Two more routes exist and have never run. Wire all six.</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">bash · /srv/evotv/cron.sh</span><button class="copy">copy</button></div>
+<pre><code>#!/bin/bash
+set -a; . /srv/evotv/.env; set +a
+curl -fsS -m 600 -H "Authorization: Bearer $CRON_SECRET" \
+  "http://127.0.0.1:3060/api/cron/$1"</code></pre>
+        </div>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">crontab</span><button class="copy">copy</button></div>
+<pre><code>0  2 * * *  /srv/evotv/cron.sh analytics
+0  3 * * 0  /srv/evotv/cron.sh payouts
+0  4 * * 0  /srv/evotv/cron.sh gdpr-purge
+0  5 * * *  /srv/evotv/cron.sh fantasy-score
+*/5 * * * * /srv/evotv/cron.sh viewer-count
+*/15 * * * * /srv/evotv/cron.sh reminders</code></pre>
+        </div>
+
+        <p class="rv">Cron uses box time (Africa/Lagos). Vercel Cron used UTC, so these fire an hour earlier in absolute terms. Fine for all six, but know it.</p>
+      </section>
+
+      <!-- ============ 9 KILL ============ -->
+      <section id="kill">
+        <div class="sec-head rv"><div class="sec-num">09</div><h2>Delete Vercel</h2></div>
+
+        <p class="rv">Once step 7 passes, in this order:</p>
+
+        <ol class="steps rv">
+          <li>Delete <code>vercel.json</code> and push. Nothing is scheduling those crons but the droplet now.</li>
+          <li>Remove <code>@vercel/blob</code> and <code>@neondatabase/serverless</code> from <code>package.json</code>.</li>
+          <li>Delete the Vercel project.</li>
+          <li>Delete the Blob store, once you have confirmed nothing 404s.</li>
+          <li>Delete the Neon project <strong>last</strong>, and not on the same day.</li>
+        </ol>
+
+        <div class="note danger rv">
+          <span class="tag">Not on the same day</span>
+          <p>It costs nothing to leave a free-tier database sitting there for a fortnight, and it is the only copy of your data that is not on hardware you set up this week. Keep <code>evotv-preflight.dump</code> forever. It is 12 MB and it is the waitlist.</p>
+        </div>
+      </section>
+
+      <!-- ============ 10 AFTER ============ -->
+      <section id="after">
+        <div class="sec-head rv"><div class="sec-num">10</div><h2>Deploying, after</h2></div>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">bash</span><button class="copy">copy</button></div>
+<pre><code>ssh evotv /srv/evotv/deploy.sh</code></pre>
+        </div>
+
+        <p class="rv">Pull, build, migrate, restart one <code>api</code> container, wait for its health check, restart the other. No downtime, because the bus is shared and Caddy takes the restarting container out of rotation.</p>
+
+        <p class="rv">Backups:</p>
+        <ul class="rv">
+          <li><strong>Managed Postgres</strong>: daily, 7 day point in time restore. Automatic.</li>
+          <li><strong>DO weekly droplet backups</strong>: enabled at create time.</li>
+          <li><strong>The <code>.env</code> file</strong>: the only thing on the box that is not in git. Copy it somewhere safe once. Losing it means re-collecting a dozen secrets.</li>
+        </ul>
+        <p class="rv">The droplet holds no data.</p>
+      </section>
+
+      <!-- ============ WATCH ============ -->
+      <section id="watch">
+        <div class="sec-head rv"><div class="sec-num">!!</div><h2>Watch out for</h2></div>
+
+        <div class="hazards">
+          <div class="haz top rv"><span class="mark">01</span><div><b>Dump the waitlist before you touch anything.</b> It is the only irreplaceable thing in this document.</div></div>
+          <div class="haz top rv"><span class="mark">02</span><div><b><code>PLAYOUT_SECRET</code> must not change</b>, or the office media agent and the schedule page file browser break.</div></div>
+          <div class="haz rv"><span class="mark">03</span><div><b><code>flush_interval -1</code></b> in the Caddyfile or SSE buffers and chat looks frozen.</div></div>
+          <div class="haz rv"><span class="mark">04</span><div><b><code>api</code> stays grey-clouded</b> on Cloudflare, or SSE dies every 100 seconds.</div></div>
+          <div class="haz rv"><span class="mark">05</span><div><b>DNS before Caddy</b>, or certificate issuance backs off. Six hostnames across two zones.</div></div>
+          <div class="haz rv"><span class="mark">06</span><div><b><code>prepare: false</code></b> on the Postgres pooler port, or prepared statements break under transaction pooling.</div></div>
+          <div class="haz rv"><span class="mark">07</span><div><b>Droplet, Spaces, and Postgres in one VPC</b>, or you pay for bandwidth and eat latency.</div></div>
+          <div class="haz rv"><span class="mark">08</span><div><b>Same object pathnames</b> across the Blob to Spaces copy, or the URL rewrite stops being a host swap.</div></div>
+          <div class="haz rv"><span class="mark">09</span><div><b>Two <code>api</code> containers only after the Valkey bus lands.</b> Order matters: bus first, then scale.</div></div>
+          <div class="haz rv"><span class="mark">10</span><div><b>Swap file matters.</b> Next 16 builds peak near 3 GB on a 4 GB box.</div></div>
+          <div class="haz rv"><span class="mark">11</span><div><b>Delete Neon last</b>, and later than everything else.</div></div>
+          <div class="haz rv"><span class="mark">12</span><div>Ubuntu 24.04 socket-activates SSH, so if you ever move off port 22 you must override <code>ssh.socket</code>, not just <code>sshd_config</code>.</div></div>
+        </div>
+      </section>
+
+      <!-- ============ ENV ============ -->
+      <section id="env">
+        <div class="sec-head rv"><div class="sec-num">::</div><h2>Env reference, end state</h2></div>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">ini · /srv/evotv/.env</span><button class="copy">copy</button></div>
+<pre><code><span class="c"># core</span>
+<span class="k">BETTER_AUTH_URL</span>=https://api.evotv.co
+<span class="k">BETTER_AUTH_SECRET</span>=&lt;from the vercel archive&gt;
+<span class="k">ALLOWED_ORIGINS</span>=https://app.evotv.co,https://evotv.co,https://www.evotv.co
+<span class="k">PLAYOUT_SECRET</span>=&lt;from the vercel archive, unchanged, ever&gt;
+<span class="k">CRON_SECRET</span>=&lt;from the vercel archive&gt;
+
+<span class="c"># database, private VPC host, pooler port</span>
+<span class="k">DATABASE_URL</span>=postgresql://...@private-db-...:25061/defaultdb?sslmode=require
+
+<span class="c"># object storage</span>
+<span class="k">SPACES_REGION</span>=fra1
+<span class="k">SPACES_BUCKET</span>=evotv-media
+<span class="k">SPACES_KEY</span>=...
+<span class="k">SPACES_SECRET</span>=...
+<span class="k">SPACES_CDN_URL</span>=https://evotv-media.fra1.cdn.digitaloceanspaces.com
+
+<span class="c"># sse bus</span>
+<span class="k">REDIS_URL</span>=redis://valkey:6379
+
+<span class="c"># smtp, carried over unchanged</span>
+<span class="k">SMTP_HOST</span>=...
+<span class="k">SMTP_USER</span>=...
+<span class="k">SMTP_PASS</span>=...
+<span class="k">SMTP_FROM</span>=EVO TV &lt;noreply@evotv.co&gt;</code></pre>
+        </div>
+
+        <p class="rv"><code>evotv.africa</code> is a redirect, so it never originates a browser request and does not belong in <code>ALLOWED_ORIGINS</code>.</p>
+
+        <div class="note rv">
+          <span class="tag">Gone</span>
+          <p>No <code>BLOB_READ_WRITE_TOKEN</code>. No <code>POSTGRES_URL</code>. Nothing points at Vercel.</p>
+        </div>
+      </section>
+
+      <footer>
+        <span>EVO TV · DigitalOcean cold build · v3 · evotv.co</span>
+        <span><a href="#survive">Back to top</a></span>
+      </footer>
+
+    </main>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  document.querySelectorAll('.copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var code = btn.closest('.code').querySelector('pre code');
+      var text = code.innerText;
+      var done = function(){
+        btn.textContent = 'copied';
+        btn.classList.add('done');
+        setTimeout(function(){ btn.textContent = 'copy'; btn.classList.remove('done'); }, 1600);
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch(e){ btn.textContent = 'failed'; }
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  var bar = document.getElementById('progress');
+  var ticking = false;
+  function progress(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if (!ticking) { ticking = true; requestAnimationFrame(progress); }
+  }, {passive:true});
+  progress();
+
+  var rvs = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window) {
+    var ro = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); }
+      });
+    }, {rootMargin:'0px 0px -8% 0px', threshold:0.06});
+    rvs.forEach(function(el){ ro.observe(el); });
+  } else {
+    rvs.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  var links = [].slice.call(document.querySelectorAll('#toc a, #toc-m a'));
+  var sections = [].slice.call(document.querySelectorAll('section[id]'));
+  function setActive(id){
+    links.forEach(function(a){
+      var on = a.getAttribute('href') === '#' + id;
+      a.classList.toggle('active', on);
+      if (on && a.parentElement.classList.contains('scroller')) {
+        a.parentElement.scrollTo({left: a.offsetLeft - 24, behavior:'smooth'});
+      }
+    });
+  }
+  if ('IntersectionObserver' in window) {
+    var visible = {};
+    var so = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ visible[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0; });
+      var best = null, bestV = 0;
+      sections.forEach(function(s){
+        var v = visible[s.id] || 0;
+        if (v > bestV) { bestV = v; best = s.id; }
+      });
+      if (best) setActive(best);
+    }, {rootMargin:'-90px 0px -55% 0px', threshold:[0,.15,.4,.8]});
+    sections.forEach(function(s){ so.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>

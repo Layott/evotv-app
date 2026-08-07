@@ -94,15 +94,34 @@ export async function pickAndUploadImage(): Promise<string | null> {
 }
 
 /**
- * Exchange a Vercel Blob client-upload token with the backend.
+ * Direct-upload credential, whichever backend the API is running.
  *
- * Replicates `retrieveClientToken` from @vercel/blob/client: POST the
- * `blob.generate-client-token` event to our handleUpload route, get back
- * `{ clientToken }`. The token itself encodes the pathname plus the server's
- * constraints (allowed content types, 512 MB cap, random suffix), so the
+ * - `presigned`: DO Spaces. PUT the bytes at `uploadUrl` with exactly
+ *   `headers`, and the final URL is `publicUrl` (S3 answers with an empty
+ *   body, so there is nothing to parse out of the response).
+ * - `blob`: legacy Vercel Blob. PUT via the Blob API with a client token and
+ *   read the URL back out of the JSON response.
+ */
+type DirectUpload =
+  | { kind: "presigned"; uploadUrl: string; publicUrl: string; headers: Record<string, string> }
+  | { kind: "blob"; clientToken: string };
+
+/**
+ * Ask the backend for a direct-upload credential.
+ *
+ * The request body carries both shapes at once: `pathname` + `contentType`
+ * for the Spaces branch, and the `blob.generate-client-token` event for the
+ * Blob branch. The server reads whichever it needs, so this is one round trip
+ * either way and the client does not need to know which store is live.
+ *
+ * Server-side constraints (allowed content types, 512 MB cap, `admin-uploads/`
+ * prefix, random suffix) are applied when the credential is minted, so the
  * client cannot widen them.
  */
-async function requestClientUploadToken(pathname: string): Promise<string> {
+async function requestDirectUpload(
+  pathname: string,
+  contentType: string,
+): Promise<DirectUpload> {
   const token = await getToken();
   const res = await fetch(`${BASE_URL}/api/admin/uploads/client`, {
     method: "POST",
@@ -113,15 +132,72 @@ async function requestClientUploadToken(pathname: string): Promise<string> {
     body: JSON.stringify({
       type: "blob.generate-client-token",
       payload: { pathname, clientPayload: null, multipart: false },
+      pathname,
+      contentType,
     }),
   });
   if (!res.ok) {
     const body = await res.json().catch(() => null);
     throw new ApiError(res.status, body, `Token exchange failed (${res.status})`);
   }
-  const data = (await res.json()) as { clientToken?: string };
+  const data = (await res.json()) as {
+    type?: string;
+    uploadUrl?: string;
+    publicUrl?: string;
+    headers?: Record<string, string>;
+    clientToken?: string;
+  };
+
+  if (data.type === "presigned-put") {
+    if (!data.uploadUrl || !data.publicUrl) throw new Error("token_exchange_failed");
+    return {
+      kind: "presigned",
+      uploadUrl: data.uploadUrl,
+      publicUrl: data.publicUrl,
+      headers: data.headers ?? { "Content-Type": contentType },
+    };
+  }
+
   if (!data.clientToken) throw new Error("token_exchange_failed");
-  return data.clientToken;
+  return { kind: "blob", clientToken: data.clientToken };
+}
+
+/**
+ * PUT the file bytes at a presigned S3 URL.
+ *
+ * No Authorization header: the signature lives in the query string, and adding
+ * one makes S3 reject the request. Headers must match what was signed exactly.
+ * Native uses FileSystem.uploadAsync because RN fetch cannot stream a file
+ * body; web fetches the picker's blob: URI into a Blob.
+ */
+async function putFileToPresignedUrl(
+  fileUri: string,
+  upload: Extract<DirectUpload, { kind: "presigned" }>,
+): Promise<string> {
+  if (Platform.OS === "web") {
+    const fileBlob = await (await fetch(fileUri)).blob();
+    const res = await fetch(upload.uploadUrl, {
+      method: "PUT",
+      headers: upload.headers,
+      body: fileBlob,
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => null);
+      throw new ApiError(res.status, body, `Upload failed (${res.status})`);
+    }
+    return upload.publicUrl;
+  }
+
+  const result = await FileSystem.uploadAsync(upload.uploadUrl, fileUri, {
+    httpMethod: "PUT",
+    uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+    headers: upload.headers,
+  });
+  if (result.status < 200 || result.status >= 300) {
+    // S3 errors are XML, not JSON, so keep the raw body for the message.
+    throw new ApiError(result.status, result.body, `Upload failed (${result.status})`);
+  }
+  return upload.publicUrl;
 }
 
 /**
@@ -229,8 +305,11 @@ export async function pickAndUploadVideo(): Promise<{
   // Server enforces this prefix and appends a random suffix (no collisions).
   const pathname = `${CLIENT_UPLOAD_PREFIX}${filename}`;
 
-  const clientToken = await requestClientUploadToken(pathname);
-  const url = await putFileToBlobApi(asset.uri, pathname, mimeType, clientToken);
+  const upload = await requestDirectUpload(pathname, mimeType);
+  const url =
+    upload.kind === "presigned"
+      ? await putFileToPresignedUrl(asset.uri, upload)
+      : await putFileToBlobApi(asset.uri, pathname, mimeType, upload.clientToken);
 
   // ImagePickerAsset.duration is milliseconds (null for non-videos).
   const durationSec =

@@ -34,7 +34,7 @@ import { useMockAuth } from "@/components/providers";
 import { toggleFollow as apiToggleFollow } from "@/lib/api/follows";
 
 const BRAND = "#46E3CE";
-const BRAND_RGBA = (a: number) => `rgba(44,215,227,${a})`;
+const BRAND_RGBA = (a: number) => `rgba(70,227,206,${a})`;
 
 function formatCount(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;

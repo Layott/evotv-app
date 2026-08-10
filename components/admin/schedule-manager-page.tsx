@@ -924,9 +924,9 @@ export function ScheduleManagerPage() {
             onPress={handleCopyDay}
           >
             {copying ? (
-              <ActivityIndicator size="small" color="#000000" />
+              <ActivityIndicator size="small" color="#05191B" />
             ) : (
-              <Copy size={14} color="#000000" />
+              <Copy size={14} color="#05191B" />
             )}
             <Text className="text-sm font-medium text-black">
               {copying
@@ -980,7 +980,7 @@ export function ScheduleManagerPage() {
                 onPress={() => handleCopy(reveal.streamKey, "Stream key")}
                 className="flex-1 flex-row items-center justify-center gap-2 rounded-md border border-brand bg-brand px-3 py-2"
               >
-                <Copy size={14} color="#000000" />
+                <Copy size={14} color="#05191B" />
                 <Text className="text-sm font-semibold text-black">
                   Copy key
                 </Text>
@@ -1156,9 +1156,9 @@ export function ScheduleManagerPage() {
             onPress={handleCreate}
           >
             {createMut.isPending ? (
-              <ActivityIndicator size="small" color="#000000" />
+              <ActivityIndicator size="small" color="#05191B" />
             ) : (
-              <Plus size={14} color="#000000" />
+              <Plus size={14} color="#05191B" />
             )}
             <Text className="text-sm font-medium text-black">
               {createMut.isPending ? "Scheduling…" : "Create and schedule"}
@@ -1218,7 +1218,7 @@ export function ScheduleManagerPage() {
               onPress={() => configMut.mutate({ fillerFiles, adFiles })}
             >
               {configMut.isPending ? (
-                <ActivityIndicator size="small" color="#000000" />
+                <ActivityIndicator size="small" color="#05191B" />
               ) : null}
               <Text className="text-sm font-medium text-black">
                 {configMut.isPending ? "Saving…" : "Save playout config"}

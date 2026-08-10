@@ -5,7 +5,7 @@ export default function EmbedLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: "#000000" },
+        contentStyle: { backgroundColor: "#05191B" },
         animation: "fade",
       }}
     />

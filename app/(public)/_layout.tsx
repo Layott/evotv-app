@@ -15,7 +15,7 @@ export default function PublicLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#000000",
+          backgroundColor: "#05191B",
           borderTopColor: "#1F1F1F",
           borderTopWidth: 1,
           height: 64,

@@ -29,7 +29,7 @@ export default function RootLayout() {
                   every screen so app content never renders under the device
                   clock/battery/network. iOS ignores these (handled by safe-area
                   insets); Android gets a solid black bar. */}
-              <StatusBar style="light" backgroundColor="#000000" translucent={false} />
+              <StatusBar style="light" backgroundColor="#05191B" translucent={false} />
               <View style={{ flex: 1 }}>
                 <GlobalBanner />
                 <Stack

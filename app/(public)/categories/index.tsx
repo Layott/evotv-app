@@ -97,8 +97,8 @@ export default function CategoriesScreen() {
                       className="self-start rounded-md px-2 py-0.5"
                       style={{
                         borderWidth: 1,
-                        borderColor: "rgba(44,215,227,0.3)",
-                        backgroundColor: "rgba(44,215,227,0.1)",
+                        borderColor: "rgba(70,227,206,0.3)",
+                        backgroundColor: "rgba(70,227,206,0.1)",
                       }}
                     >
                       <Text

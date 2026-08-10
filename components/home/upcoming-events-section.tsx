@@ -38,8 +38,8 @@ function tierStyle(t: string): {
     case "a":
     case "b":
       return {
-        borderColor: "rgba(44,215,227,0.4)",
-        backgroundColor: "rgba(44,215,227,0.1)",
+        borderColor: "rgba(70,227,206,0.4)",
+        backgroundColor: "rgba(70,227,206,0.1)",
         color: "#67e8f9",
       };
     default:

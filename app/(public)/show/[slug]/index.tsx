@@ -19,7 +19,7 @@ import { PILLAR_LABELS } from "@/lib/types";
 import { formatDateOnly } from "@/lib/utils";
 
 const BRAND = "#46E3CE";
-const BRAND_RGBA = (a: number) => `rgba(44,215,227,${a})`;
+const BRAND_RGBA = (a: number) => `rgba(70,227,206,${a})`;
 
 function formatRuntime(sec: number): string {
   const m = Math.floor(sec / 60);

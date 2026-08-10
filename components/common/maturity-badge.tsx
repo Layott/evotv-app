@@ -19,8 +19,8 @@ const TONE: Record<
     text: "#86efac",
   },
   pg: {
-    border: "rgba(44,215,227,0.35)",
-    bg: "rgba(44,215,227,0.12)",
+    border: "rgba(70,227,206,0.35)",
+    bg: "rgba(70,227,206,0.12)",
     text: "#67e8f9",
   },
   teen: {

@@ -282,7 +282,7 @@ export function AnalyticsPage() {
                         backgroundColor:
                           v == null
                             ? "transparent"
-                            : `rgba(44,215,227,${(v / 100) * 0.7 + 0.05})`,
+                            : `rgba(70,227,206,${(v / 100) * 0.7 + 0.05})`,
                         borderRadius: 4,
                       }}
                       className="items-center justify-center"

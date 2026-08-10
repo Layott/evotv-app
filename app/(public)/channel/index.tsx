@@ -98,7 +98,7 @@ export default function ChannelScreen() {
           className="overflow-hidden rounded-2xl"
           style={{
             borderWidth: 1,
-            borderColor: "rgba(44,215,227,0.2)",
+            borderColor: "rgba(70,227,206,0.2)",
             backgroundColor: "#05091a",
           }}
         >
@@ -157,8 +157,8 @@ export default function ChannelScreen() {
                 className="rounded-md px-2 py-0.5"
                 style={{
                   borderWidth: 1,
-                  borderColor: "rgba(44,215,227,0.3)",
-                  backgroundColor: "rgba(44,215,227,0.1)",
+                  borderColor: "rgba(70,227,206,0.3)",
+                  backgroundColor: "rgba(70,227,206,0.1)",
                 }}
               >
                 <Text
@@ -180,7 +180,7 @@ export default function ChannelScreen() {
                   height: 56,
                   borderRadius: 16,
                   borderWidth: 1,
-                  borderColor: "rgba(44,215,227,0.3)",
+                  borderColor: "rgba(70,227,206,0.3)",
                   alignItems: "center",
                   justifyContent: "center",
                   padding: 6,
@@ -493,8 +493,8 @@ export default function ChannelScreen() {
                     className="rounded-md px-1.5 py-0.5"
                     style={{
                       borderWidth: 1,
-                      borderColor: "rgba(44,215,227,0.3)",
-                      backgroundColor: "rgba(44,215,227,0.1)",
+                      borderColor: "rgba(70,227,206,0.3)",
+                      backgroundColor: "rgba(70,227,206,0.1)",
                     }}
                   >
                     <Text

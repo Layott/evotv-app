@@ -24,7 +24,7 @@ function Row({
     <View
       className="flex-row items-center gap-2 px-3 py-2"
       style={{
-        backgroundColor: win ? "rgba(44,215,227,0.05)" : "transparent",
+        backgroundColor: win ? "rgba(70,227,206,0.05)" : "transparent",
       }}
     >
       {team ? (

@@ -109,7 +109,7 @@ function SplashScreenView() {
     <View
       style={{
         flex: 1,
-        backgroundColor: "#000000",
+        backgroundColor: "#05191B",
         alignItems: "center",
         justifyContent: "center",
       }}

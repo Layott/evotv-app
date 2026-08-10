@@ -80,8 +80,8 @@ function pillarStyle(p: EpgPillar): {
     case "esports":
     default:
       return {
-        borderColor: "rgba(44,215,227,0.4)",
-        backgroundColor: "rgba(44,215,227,0.1)",
+        borderColor: "rgba(70,227,206,0.4)",
+        backgroundColor: "rgba(70,227,206,0.1)",
         color: "#67e8f9",
         label: "Esports",
       };
@@ -156,7 +156,7 @@ function ReminderBell({
       disabled={reminder.isPending}
       className="absolute right-2 top-2 rounded-md border bg-card/70 px-1.5 py-1 active:opacity-70"
       style={{
-        borderColor: reminder.active ? "rgba(44,215,227,0.4)" : "#103133",
+        borderColor: reminder.active ? "rgba(70,227,206,0.4)" : "#103133",
         opacity: reminder.isPending ? 0.5 : 1,
       }}
       accessibilityRole="button"
@@ -289,10 +289,10 @@ function Chip({
       className="rounded-full border px-3 py-1 active:opacity-70"
       style={{
         borderColor: active
-          ? toneActive?.borderColor ?? "rgba(44,215,227,0.5)"
+          ? toneActive?.borderColor ?? "rgba(70,227,206,0.5)"
           : "#103133",
         backgroundColor: active
-          ? toneActive?.backgroundColor ?? "rgba(44,215,227,0.1)"
+          ? toneActive?.backgroundColor ?? "rgba(70,227,206,0.1)"
           : "rgba(15,15,15,0.6)",
       }}
     >
@@ -325,9 +325,9 @@ function DayChip({
       onPress={onPress}
       className="items-center rounded-xl border px-4 py-2 active:opacity-70"
       style={{
-        borderColor: active ? "rgba(44,215,227,0.5)" : "#103133",
+        borderColor: active ? "rgba(70,227,206,0.5)" : "#103133",
         backgroundColor: active
-          ? "rgba(44,215,227,0.1)"
+          ? "rgba(70,227,206,0.1)"
           : "rgba(15,15,15,0.6)",
         minWidth: 76,
       }}

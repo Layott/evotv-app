@@ -320,7 +320,7 @@ export default function SignupScreen() {
             >
               {submitting ? (
                 <View className="flex-row items-center gap-2">
-                  <Spinner color="#000000" />
+                  <Spinner color="#05191B" />
                   <Text className="font-semibold text-black">
                     Creating account...
                   </Text>

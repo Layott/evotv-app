@@ -142,7 +142,7 @@ export default function TeamDetailScreen() {
           <View
             style={{
               minHeight: 240,
-              backgroundColor: "rgba(44,215,227,0.05)",
+              backgroundColor: "rgba(70,227,206,0.05)",
               position: "relative",
             }}
           >
@@ -226,10 +226,10 @@ export default function TeamDetailScreen() {
               style={{
                 borderWidth: 1,
                 borderColor: following
-                  ? "rgba(44,215,227,0.5)"
+                  ? "rgba(70,227,206,0.5)"
                   : "transparent",
                 backgroundColor: following
-                  ? "rgba(44,215,227,0.1)"
+                  ? "rgba(70,227,206,0.1)"
                   : "#46E3CE",
               }}
             >
@@ -460,7 +460,7 @@ export default function TeamDetailScreen() {
                         className="rounded px-2 py-0.5"
                         style={{
                           backgroundColor: won
-                            ? "rgba(44,215,227,0.1)"
+                            ? "rgba(70,227,206,0.1)"
                             : "rgba(244,63,94,0.1)",
                         }}
                       >

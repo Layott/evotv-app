@@ -228,7 +228,7 @@ export function OrderView({ id }: OrderViewProps) {
                   style={
                     active
                       ? {
-                          borderColor: "rgba(44,215,227,0.4)",
+                          borderColor: "rgba(70,227,206,0.4)",
                         }
                       : undefined
                   }

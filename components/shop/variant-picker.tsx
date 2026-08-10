@@ -50,7 +50,7 @@ export function VariantPicker({
               )}
               style={{
                 minWidth: 48,
-                backgroundColor: selected ? "rgba(44,215,227,0.15)" : undefined,
+                backgroundColor: selected ? "rgba(70,227,206,0.15)" : undefined,
               }}
             >
               <Text

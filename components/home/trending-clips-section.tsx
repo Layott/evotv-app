@@ -134,7 +134,7 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
                     style={{
                       width: 40,
                       height: 40,
-                      backgroundColor: "rgba(44,215,227,0.85)",
+                      backgroundColor: "rgba(70,227,206,0.85)",
                     }}
                   >
                     <Play size={18} color="#05191B" fill="#05191B" />

@@ -190,8 +190,8 @@ export function ProfileHeader({
             <Badge
               className="border"
               style={{
-                borderColor: "rgba(44,215,227,0.4)",
-                backgroundColor: "rgba(44,215,227,0.15)",
+                borderColor: "rgba(70,227,206,0.4)",
+                backgroundColor: "rgba(70,227,206,0.15)",
               }}
             >
               <ShieldCheck size={10} color="#67e8f9" />

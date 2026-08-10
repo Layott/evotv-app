@@ -249,7 +249,7 @@ export default function SettingsScreen() {
           >
             <View
               className="h-10 w-10 items-center justify-center rounded-lg"
-              style={{ backgroundColor: "rgba(44,215,227,0.12)" }}
+              style={{ backgroundColor: "rgba(70,227,206,0.12)" }}
             >
               <CreditCard size={18} color="#46E3CE" />
             </View>

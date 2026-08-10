@@ -326,18 +326,18 @@ export default function OnboardingScreen() {
           >
             {submitting ? (
               <View className="flex-row items-center gap-2">
-                <Spinner color="#000000" />
+                <Spinner color="#05191B" />
                 <Text className="font-semibold text-black">Finishing...</Text>
               </View>
             ) : step === 4 ? (
               <View className="flex-row items-center gap-2">
                 <Text className="font-semibold text-black">Finish</Text>
-                <Check color="#000000" size={16} />
+                <Check color="#05191B" size={16} />
               </View>
             ) : (
               <View className="flex-row items-center gap-2">
                 <Text className="font-semibold text-black">Continue</Text>
-                <ArrowRight color="#000000" size={16} />
+                <ArrowRight color="#05191B" size={16} />
               </View>
             )}
           </Button>
@@ -416,7 +416,7 @@ function StepGames({
                 <View
                   className="absolute right-2 top-2 h-6 w-6 items-center justify-center rounded-full bg-brand"
                 >
-                  <Check color="#000000" size={14} />
+                  <Check color="#05191B" size={14} />
                 </View>
               ) : null}
             </View>
@@ -541,7 +541,7 @@ function StepTeams({
                 backgroundColor: isSelected ? "#46E3CE" : "transparent",
               }}
             >
-              {isSelected ? <Check color="#000000" size={12} /> : null}
+              {isSelected ? <Check color="#05191B" size={12} /> : null}
             </View>
           </Pressable>
         );
@@ -701,9 +701,9 @@ function StepPreferences({
       <View
         className="flex-row items-start gap-2 rounded-lg p-3"
         style={{
-          backgroundColor: "rgba(44,215,227,0.05)",
+          backgroundColor: "rgba(70,227,206,0.05)",
           borderWidth: 1,
-          borderColor: "rgba(44,215,227,0.20)",
+          borderColor: "rgba(70,227,206,0.20)",
         }}
       >
         <Checkbox

@@ -178,10 +178,10 @@ export default function EventDetailScreen() {
               className="flex-row items-center gap-2 rounded-md border px-4 py-2 active:opacity-80"
               style={{
                 borderColor: reminded
-                  ? "rgba(44,215,227,0.5)"
+                  ? "rgba(70,227,206,0.5)"
                   : "#103133",
                 backgroundColor: reminded
-                  ? "rgba(44,215,227,0.1)"
+                  ? "rgba(70,227,206,0.1)"
                   : "rgba(15,15,15,0.6)",
                 opacity: event.status === "completed" ? 0.5 : 1,
               }}

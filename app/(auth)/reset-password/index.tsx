@@ -112,9 +112,9 @@ export default function ResetPasswordScreen() {
             <View
               className="h-14 w-14 items-center justify-center rounded-2xl"
               style={{
-                backgroundColor: "rgba(44,215,227,0.10)",
+                backgroundColor: "rgba(70,227,206,0.10)",
                 borderWidth: 1,
-                borderColor: "rgba(44,215,227,0.30)",
+                borderColor: "rgba(70,227,206,0.30)",
               }}
             >
               <ShieldCheck color="#46E3CE" size={26} />
@@ -204,7 +204,7 @@ export default function ResetPasswordScreen() {
             >
               {submitting ? (
                 <View className="flex-row items-center gap-2">
-                  <Spinner color="#000000" />
+                  <Spinner color="#05191B" />
                   <Text className="font-semibold text-black">
                     Updating...
                   </Text>

@@ -52,7 +52,7 @@ const Checkbox = React.forwardRef<
         )}
         {...props}
       >
-        {current ? <Check size={14} color="#000000" /> : null}
+        {current ? <Check size={14} color="#05191B" /> : null}
       </Pressable>
     );
   },

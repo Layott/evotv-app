@@ -125,7 +125,7 @@ export default function ApiKeysScreen() {
                 onPress={() => handleCopy(revealedKey)}
                 className="flex-1 flex-row items-center justify-center gap-2 rounded-md border border-brand bg-brand px-3 py-2"
               >
-                <Copy size={14} color="#000000" />
+                <Copy size={14} color="#05191B" />
                 <Text className="text-sm font-semibold text-black">Copy key</Text>
               </Pressable>
               <Pressable
@@ -158,7 +158,7 @@ export default function ApiKeysScreen() {
             disabled={!newKeyName.trim() || createMut.isPending}
             className="mt-3 h-10"
           >
-            {createMut.isPending ? <Spinner color="#000000" /> : null}
+            {createMut.isPending ? <Spinner color="#05191B" /> : null}
             <Text className="text-sm font-semibold text-black">
               {createMut.isPending ? "Creating…" : "Create key"}
             </Text>

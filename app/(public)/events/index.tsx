@@ -38,8 +38,8 @@ function tierStyle(t: string): {
     case "a":
     case "b":
       return {
-        borderColor: "rgba(44,215,227,0.4)",
-        backgroundColor: "rgba(44,215,227,0.1)",
+        borderColor: "rgba(70,227,206,0.4)",
+        backgroundColor: "rgba(70,227,206,0.1)",
         color: "#67e8f9",
       };
     default:
@@ -192,10 +192,10 @@ function Chip({
       className="rounded-full border px-3 py-1 active:opacity-70"
       style={{
         borderColor: active
-          ? toneActive?.borderColor ?? "rgba(44,215,227,0.5)"
+          ? toneActive?.borderColor ?? "rgba(70,227,206,0.5)"
           : "#103133",
         backgroundColor: active
-          ? toneActive?.backgroundColor ?? "rgba(44,215,227,0.1)"
+          ? toneActive?.backgroundColor ?? "rgba(70,227,206,0.1)"
           : "rgba(15,15,15,0.6)",
       }}
     >

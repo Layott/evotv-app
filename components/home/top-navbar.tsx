@@ -45,9 +45,9 @@ export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
       <View
         style={{
           paddingTop: insets.top,
-          backgroundColor: "#000000",
+          backgroundColor: "#05191B",
           borderBottomWidth: 1,
-          borderBottomColor: "rgba(44, 215, 227, 0.2)",
+          borderBottomColor: "rgba(70,227,206, 0.2)",
         }}
       >
         <View className="flex-row items-center justify-between px-4 py-3">

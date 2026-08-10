@@ -194,7 +194,7 @@ export function HlsPlayer({
               style={{
                 width: 64,
                 height: 64,
-                backgroundColor: "rgba(44,215,227,0.9)",
+                backgroundColor: "rgba(70,227,206,0.9)",
               }}
             >
               <Play size={28} color="#05191B" fill="#05191B" />

@@ -12,7 +12,7 @@ import type { ContentPillar, Show } from "@/lib/types";
 import { PILLAR_LABELS } from "@/lib/types";
 
 const BRAND = "#46E3CE";
-const BRAND_RGBA = (a: number) => `rgba(44,215,227,${a})`;
+const BRAND_RGBA = (a: number) => `rgba(70,227,206,${a})`;
 
 const PILLAR_TINT: Record<ContentPillar, string> = {
   esports: "#a78bfa",

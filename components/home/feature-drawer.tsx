@@ -207,7 +207,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
             <View className="flex-row items-center gap-3">
               <View
                 className="h-10 w-10 rounded-full items-center justify-center"
-                style={{ backgroundColor: "rgba(44, 215, 227, 0.15)" }}
+                style={{ backgroundColor: "rgba(70,227,206, 0.15)" }}
               >
                 <UserIcon size={18} color="#46E3CE" />
               </View>
@@ -257,7 +257,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
                       >
                         <View
                           className="h-8 w-8 rounded-md items-center justify-center"
-                          style={{ backgroundColor: "rgba(44, 215, 227, 0.10)" }}
+                          style={{ backgroundColor: "rgba(70,227,206, 0.10)" }}
                         >
                           <Icon size={16} color="#46E3CE" />
                         </View>
@@ -333,7 +333,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
               >
                 <View
                   className="h-8 w-8 rounded-md items-center justify-center"
-                  style={{ backgroundColor: "rgba(44, 215, 227, 0.12)" }}
+                  style={{ backgroundColor: "rgba(70,227,206, 0.12)" }}
                 >
                   <LogIn size={16} color="#46E3CE" />
                 </View>

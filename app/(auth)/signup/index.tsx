@@ -27,7 +27,10 @@ import {
 } from "@/components/auth/country-select";
 import { useMockAuth } from "@/components/providers";
 
-const EVO_LOGO = "https://evotv.vercel.app/evo-logo/evo-tv-152.png";
+// Bundled, not fetched. A login screen should not need a network round trip
+// to draw its own logo, and the old URL pointed at a Vercel deployment that
+// is being deleted.
+const EVO_LOGO = require("@/assets/brand/evo-tv-152.png");
 
 const countryCodes = AFRICAN_COUNTRIES.map((c) => c.code) as [
   string,
@@ -145,7 +148,7 @@ export default function SignupScreen() {
         >
           <View className="mb-6 items-center">
             <Image
-              source={{ uri: EVO_LOGO }}
+              source={EVO_LOGO}
               style={{ width: 56, height: 56, borderRadius: 14 }}
               contentFit="contain"
               transition={200}

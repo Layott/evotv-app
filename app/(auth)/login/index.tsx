@@ -20,7 +20,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { FormField } from "@/components/auth/form-field";
 import { useMockAuth } from "@/components/providers";
 
-const EVO_LOGO = "https://evotv.vercel.app/evo-logo/evo-tv-152.png";
+// Bundled, not fetched. A login screen should not need a network round trip
+// to draw its own logo, and the old URL pointed at a Vercel deployment that
+// is being deleted.
+const EVO_LOGO = require("@/assets/brand/evo-tv-152.png");
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -103,7 +106,7 @@ export default function LoginScreen() {
         >
           <View className="items-center mb-10">
             <Image
-              source={{ uri: EVO_LOGO }}
+              source={EVO_LOGO}
               style={{ width: 64, height: 64, borderRadius: 16 }}
               contentFit="contain"
               transition={200}

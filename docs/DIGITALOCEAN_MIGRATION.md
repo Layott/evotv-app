@@ -9,6 +9,19 @@ Written 2026-08-05. Rewritten 2026-08-06 for **`evotv.co`** (primary) and **`evo
 **One focused day.** Roughly 4 hours of code, 2 hours of infrastructure, 1 hour of data, 1 hour of walking the app.
 
 > **Status, 2026-08-07.** Step 3 is done and committed. Backend on branch `feat/digitalocean` (`EVOTV`): postgres-js driver, Spaces adapter, Valkey bus. App on branch `feat/digitalocean-uploads` (`EVOTV-app`): presigned PUT. Both typecheck, the backend suite passes (46) and builds, and the bus was tested cross-process against a real Valkey. Spaces and Managed Postgres are wired but have never been pointed at real DO resources, so step 1 is the next thing that needs you.
+>
+> **Status, 2026-08-10.** Step 4's files caught up with step 3's code. `deploy/` had been written on 2026-08-05 and still described the pre-Valkey world: hostnames hardcoded to a domain that never existed, no `valkey` service, one `api` container with a "never scale this" comment. It is now four services (`api-1`, `api-2`, `valkey`, `caddy`), a rolling restart in `deploy.sh`, and hostnames read from `.env` so the staging-to-production flip costs one edit. `caddy validate`, `docker compose config` and `shellcheck` all pass. Provisioning is still the next thing that needs you.
+>
+> **Status, 2026-08-10, later.** Droplet built (`s-2vcpu-4gb-120gb-intel`, FRA1, Reserved IP `138.68.126.199`), hardened, Docker running, repo cloned. Both Cloudflare zones were already live, so DNS went straight in and **`sslip.io` was never needed**: all six hostnames resolve to the Reserved IP, grey-clouded. Backend branch pushed. Still outstanding: Managed Postgres, Spaces, Cloud Firewall.
+>
+> **Four silent-failure traps found and fixed** while assembling the `.env`, each of which boots cleanly and misbehaves quietly:
+>
+> 1. **The auth secret is `AUTH_SECRET`, not `BETTER_AUTH_SECRET`.** This document said the wrong one. `lib/auth/index.ts` falls back to the literal `"dev_secret"`, and the same value derives signed storage URLs and channel stream keys.
+> 2. **`POSTGRES_URL` used to beat `DATABASE_URL`.** A `.env` copied from `vercel env pull` would have kept the droplet talking to Neon forever, with the site working and nothing logged. Precedence flipped in all five live-path files.
+> 3. **`WAITLIST_SITE_URL` was unset**, defaulting to `https://evotv.vercel.app`, so every waitlist confirmation link would have 404'd after the Vercel project is deleted.
+> 4. **`LOGIN_HASH_SALT` was unset**, so login IPs were hashed with a salt hardcoded in a public repo. IPv4 is 4 billion values: that is not anonymisation.
+>
+> Corrected: `ALLOWED_ORIGINS` **is** consumed, by `proxy.ts` (Next 16's renamed middleware), which already does specific-origin CORS with credentials. The only real cross-origin gap was Better-Auth's `trustedOrigins`, now fed from the same variable.
 
 ---
 
@@ -67,7 +80,7 @@ Same region, same VPC, same afternoon. Managed Postgres over the VPC private net
 
 | Setting | Value |
 |---|---|
-| Size | **2 vCPU / 4 GB / 80 GB**, Premium AMD (`s-2vcpu-4gb-amd`), roughly 28 USD per month |
+| Size | **2 vCPU / 4 GB**, Premium NVMe. AMD (`s-2vcpu-4gb-amd`, 80 GB, 28 USD) if the region has stock, otherwise Premium Intel (`s-2vcpu-4gb-120gb-intel`, 120 GB, 32 USD). FRA1 had no Basic AMD capacity on 2026-08-10, so this build runs Intel. Same NVMe, same shared-CPU tier, and the vendor is irrelevant to a Node workload. **Do not** drop to Regular, that is SATA rather than NVMe |
 | Region | **FRA1**. DO has no African region. Around 100 ms from Lagos, same as everything else you have |
 | OS | **Ubuntu 24.04 LTS** |
 | Auth | **SSH key**, added at create time. Never a root password |
@@ -125,13 +138,28 @@ KbdInteractiveAuthentication no
 PermitEmptyPasswords no
 MaxAuthTries 3
 EOF
+# mkdir is not optional. /run is a tmpfs and the openssh-server upgrade in the
+# full-upgrade above removes the directory, which ssh.service normally recreates
+# at start. Without it `sshd -t` fails with "Missing privilege separation
+# directory: /run/sshd" and exits 255, with a config that is perfectly valid.
+mkdir -p /run/sshd
 sshd -t && systemctl restart ssh
 
 # auto security updates
 apt -y install unattended-upgrades
 
-# postgres client, for the data move in step 5
-apt -y install postgresql-client-16
+# postgres client, for the data move in step 5.
+#
+# NOT the distro's postgresql-client-16. Neon runs 17.10 and pg_dump refuses to
+# dump a server whose major version is newer than its own, so the client has to
+# come from PGDG. Match or exceed the SOURCE server, not the destination.
+install -d /usr/share/postgresql-common/pgdg
+curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+	https://www.postgresql.org/media/keys/ACCC4CF8.asc
+. /etc/os-release
+echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" \
+	> /etc/apt/sources.list.d/pgdg.list
+apt update && apt -y install postgresql-client-17
 ```
 
 Then a **DO Cloud Firewall** in the control panel: inbound TCP 22, 80, 443 only. That is the firewall, no `ufw` needed on top. With password auth off, brute force cannot succeed, so `fail2ban` is optional noise-reduction rather than security.
@@ -252,15 +280,27 @@ chmod +x cron.sh deploy.sh
 | File | What it does |
 |---|---|
 | `Dockerfile` (repo root) | full `node:22`, not slim, because `better-sqlite3` compiles native code |
-| `docker-compose.yml` | `api` x2 on loopback, `caddy` on 80/443, `valkey` internal only |
+| `docker-compose.yml` | `api-1` (publishes loopback 3060 for cron) + `api-2`, `caddy` on 80/443, `valkey` internal only |
 | `Caddyfile` | TLS, both static sites, load balance across both `api` containers, SSE handling, `evotv.africa` redirect |
+| `env.production.example` | every value the stack reads, annotated. Copy up as `.env`, fill in, `chmod 600` |
 | `cron.sh` | replaces Vercel Cron, six jobs |
-| `deploy.sh` | pull, build, migrate, rolling restart, health check |
+| `deploy.sh` | pull, build, migrate, rolling restart one container at a time |
 
 Two Caddy settings matter:
 
 - **`flush_interval -1`** on the SSE route. Without it Caddy buffers the stream and live chat looks frozen.
 - **`health_uri /api/health`** on the reverse proxy upstreams, so a restarting container is taken out of rotation instead of serving 502s.
+
+The four hostnames come from `.env` rather than the Caddyfile, because the first build runs on a staging hostname and the flip to `evotv.co` should not be a file edit on a live box:
+
+```ini
+API_HOST=api.evotv.co
+WEB_HOSTS=evotv.co, www.evotv.co
+APP_HOST=app.evotv.co
+REDIRECT_HOSTS=evotv.africa, www.evotv.africa
+```
+
+`REDIRECT_HOSTS` defaults to a placeholder on the reserved `.invalid` TLD, with an explicit `http://` scheme so Caddy never asks Let's Encrypt for a certificate it could not validate. Leave it unset until `evotv.africa` resolves.
 
 ### Environment
 
@@ -271,7 +311,7 @@ The `.env` is now built by hand rather than pulled, since most values are changi
 vercel env pull .env.vercel-archive
 ```
 
-Keep from it: `PLAYOUT_SECRET`, `CRON_SECRET`, `BETTER_AUTH_SECRET`, SMTP credentials, any OAuth client secrets. Discard `DATABASE_URL`, `POSTGRES_URL`, `BLOB_READ_WRITE_TOKEN`.
+Keep from it: `PLAYOUT_SECRET`, `CRON_SECRET`, `AUTH_SECRET`, `LOGIN_HASH_SALT`, SMTP credentials, any OAuth client secrets. It is `AUTH_SECRET`, not `BETTER_AUTH_SECRET`: see the warning in the env reference. Discard `DATABASE_URL`, `POSTGRES_URL`, `BLOB_READ_WRITE_TOKEN`.
 
 Archive that file somewhere safe and off the droplet. Then write `/srv/evotv/.env` from the reference at the end of this document, and `chmod 600` it.
 
@@ -344,6 +384,24 @@ node -e "require('@vercel/blob').list().then(r=>console.log(r.blobs.length))"
 ---
 
 ## 6. DNS
+
+### No DNS yet
+
+A droplet gives you a bare IP and nothing else. There is no free `*.vercel.app` equivalent, and Let's Encrypt will not certify an IP address, so running on `http://<ip>` means Better Auth's `secure` cookies never set and login does not work at all. iOS ATS and Android's cleartext policy block the native app from calling it too.
+
+`sslip.io` solves this for free. It is public wildcard DNS: anything of the form `<label>.1-2-3-4.sslip.io` resolves to `1.2.3.4`. One Reserved IP therefore gives three real hostnames that Caddy can get real certificates for, so the entire stack including login and SSE can be verified before the domain moves.
+
+```ini
+API_HOST=api.203-0-113-7.sslip.io
+WEB_HOSTS=203-0-113-7.sslip.io
+APP_HOST=app.203-0-113-7.sslip.io
+BETTER_AUTH_URL=https://api.203-0-113-7.sslip.io
+ALLOWED_ORIGINS=https://app.203-0-113-7.sslip.io,https://203-0-113-7.sslip.io
+```
+
+The flip to production later is those five lines plus `REDIRECT_HOSTS`, then `docker compose up -d caddy`. `BETTER_AUTH_URL` and `ALLOWED_ORIGINS` must move in the same edit or login breaks the moment the hostname changes. Certificates for the new names issue on first request; the old sslip.io certs just go unused.
+
+### The real thing
 
 Two domains, two Cloudflare zones. **`evotv.co` is primary** and serves everything. **`evotv.africa` only redirects**, so the brand is protected without splitting SEO.
 
@@ -479,12 +537,16 @@ The droplet holds no data.
 - **`api` stays grey-clouded** on Cloudflare, or SSE dies every 100 seconds.
 - **DNS before Caddy**, or certificate issuance backs off. Six hostnames across two zones.
 - **`prepare: false`** on the Postgres pooler port, or prepared statements break under transaction pooling.
+- **Never put `POSTGRES_URL` in the droplet `.env`.** It is the Vercel Marketplace Neon injection and five files used to check it before `DATABASE_URL`. Precedence is fixed now, but a stray `POSTGRES_URL` is still a second connection string that nothing warns you about.
+- **The auth secret is `AUTH_SECRET`.** Nothing reads `BETTER_AUTH_SECRET`. The fallback is the literal `"dev_secret"`, published in a public repo, and it also derives signed storage URLs and channel stream keys.
+- **`ALLOWED_ORIGINS` defaults to `*`**, and `proxy.ts` then echoes back whatever origin asked while still sending `Allow-Credentials: true`. Any website could make credentialed calls. Set it explicitly in production.
 - **Droplet, Spaces, and Postgres in one VPC**, or you pay for bandwidth and eat latency.
 - **Same object pathnames** across the Blob to Spaces copy, or the URL rewrite stops being a host swap.
 - **Two `api` containers only after the Valkey bus lands.** Order matters: bus first, then scale.
 - **Swap file matters.** Next 16 builds peak near 3 GB on a 4 GB box.
 - **Delete Neon last**, and later than everything else.
 - Ubuntu 24.04 socket-activates SSH, so if you ever move off port 22 you must override `ssh.socket`, not just `sshd_config`.
+- **`sshd -t` fails right after a `full-upgrade`** with "Missing privilege separation directory: /run/sshd" and exits 255. The openssh-server package upgrade removes the directory and `ssh.service` only recreates it at start. `mkdir -p /run/sshd` first. Under `set -e` this kills the whole setup script and looks exactly like a dropped connection.
 
 ---
 
@@ -493,7 +555,7 @@ The droplet holds no data.
 ```ini
 # core
 BETTER_AUTH_URL=https://api.evotv.co
-BETTER_AUTH_SECRET=<from the vercel archive>
+AUTH_SECRET=<from the vercel archive. THIS name, not BETTER_AUTH_SECRET>
 ALLOWED_ORIGINS=https://app.evotv.co,https://evotv.co,https://www.evotv.co
 PLAYOUT_SECRET=<from the vercel archive, unchanged, ever>
 CRON_SECRET=<from the vercel archive>

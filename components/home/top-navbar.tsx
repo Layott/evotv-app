@@ -10,8 +10,10 @@ import { FeatureDrawer } from "./feature-drawer";
 import { useAuth } from "@/components/providers";
 import { getNotificationsSummary } from "@/lib/api/notifications";
 
-const LOGO_URL =
-  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/evotv%20colored-cLVxaAns95OoPRdSwAHZUktQ6y8MTs.png";
+// Bundled rather than fetched. This lived on Vercel Blob, which is being
+// deleted, and a wordmark in the top nav of every screen has no business
+// being a network request in the first place.
+const LOGO_URL = require("@/assets/brand/evo-tv-wordmark.png");
 
 interface TopNavbarProps {
   onSearchPress?: () => void;

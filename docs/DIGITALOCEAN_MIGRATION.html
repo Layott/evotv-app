@@ -618,10 +618,11 @@ chmod +x cron.sh deploy.sh</code></pre>
             <thead><tr><th>File</th><th>What it does</th></tr></thead>
             <tbody>
               <tr><td><code>Dockerfile</code> <em>(repo root)</em></td><td>full <code>node:22</code>, not slim, because <code>better-sqlite3</code> compiles native code</td></tr>
-              <tr><td><code>docker-compose.yml</code></td><td><code>api</code> x2 on loopback, <code>caddy</code> on 80/443, <code>valkey</code> internal only</td></tr>
+              <tr><td><code>docker-compose.yml</code></td><td><code>api-1</code> (publishes loopback 3060 for cron) + <code>api-2</code>, <code>caddy</code> on 80/443, <code>valkey</code> internal only</td></tr>
               <tr><td><code>Caddyfile</code></td><td>TLS, both static sites, load balance across both <code>api</code> containers, SSE handling, <code>evotv.africa</code> redirect</td></tr>
+              <tr><td><code>env.production.example</code></td><td>every value the stack reads, annotated. Copy up as <code>.env</code>, fill in, <code>chmod 600</code></td></tr>
               <tr><td><code>cron.sh</code></td><td>replaces Vercel Cron, six jobs</td></tr>
-              <tr><td><code>deploy.sh</code></td><td>pull, build, migrate, rolling restart, health check</td></tr>
+              <tr><td><code>deploy.sh</code></td><td>pull, build, migrate, rolling restart one container at a time</td></tr>
             </tbody>
           </table>
         </div>
@@ -634,6 +635,18 @@ chmod +x cron.sh deploy.sh</code></pre>
           </ul>
         </div>
 
+        <p class="rv">The four hostnames come from <code>.env</code> rather than the Caddyfile, because the first build runs on a staging hostname and the flip to <code>evotv.co</code> should not be a file edit on a live box:</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">ini · /srv/evotv/.env</span><button class="copy">copy</button></div>
+<pre><code>API_HOST=api.evotv.co
+WEB_HOSTS=evotv.co, www.evotv.co
+APP_HOST=app.evotv.co
+REDIRECT_HOSTS=evotv.africa, www.evotv.africa</code></pre>
+        </div>
+
+        <p class="rv"><code>REDIRECT_HOSTS</code> defaults to a placeholder on the reserved <code>.invalid</code> TLD, with an explicit <code>http://</code> scheme so Caddy never asks Let's Encrypt for a certificate it could not validate. Leave it unset until <code>evotv.africa</code> resolves.</p>
+
         <h3>Environment</h3>
 
         <p class="rv">The <code>.env</code> is now built by hand rather than pulled, since most values are changing and the Vercel project is about to be deleted. Pull once for the secrets worth keeping:</p>
@@ -643,7 +656,7 @@ chmod +x cron.sh deploy.sh</code></pre>
 <pre><code>vercel env pull .env.vercel-archive</code></pre>
         </div>
 
-        <p class="rv">Keep from it: <code>PLAYOUT_SECRET</code>, <code>CRON_SECRET</code>, <code>BETTER_AUTH_SECRET</code>, SMTP credentials, any OAuth client secrets. Discard <code>DATABASE_URL</code>, <code>POSTGRES_URL</code>, <code>BLOB_READ_WRITE_TOKEN</code>.</p>
+        <p class="rv">Keep from it: <code>PLAYOUT_SECRET</code>, <code>CRON_SECRET</code>, <code>AUTH_SECRET</code>, SMTP credentials, any OAuth client secrets. Discard <code>DATABASE_URL</code>, <code>POSTGRES_URL</code>, <code>BLOB_READ_WRITE_TOKEN</code>.</p>
 
         <p class="rv">Archive that file somewhere safe and off the droplet. Then write <code>/srv/evotv/.env</code> from <a class="inline" href="#env">the reference at the end</a>, and <code>chmod 600</code> it.</p>
 
@@ -730,6 +743,28 @@ pg_dump --no-owner --no-acl -t waitlist \
       <!-- ============ 6 DNS ============ -->
       <section id="dns">
         <div class="sec-head rv"><div class="sec-num">06</div><h2>DNS</h2></div>
+
+        <h3>No DNS yet</h3>
+
+        <p class="rv">A droplet gives you a bare IP and nothing else. There is no free <code>*.vercel.app</code> equivalent, and Let's Encrypt will not certify an IP address, so running on <code>http://&lt;ip&gt;</code> means Better Auth's <code>secure</code> cookies never set and login does not work at all. iOS ATS and Android's cleartext policy block the native app from calling it too.</p>
+
+        <p class="rv"><code>sslip.io</code> solves this for free. It is public wildcard DNS: anything of the form <code>&lt;label&gt;.1-2-3-4.sslip.io</code> resolves to <code>1.2.3.4</code>. One Reserved IP therefore gives three real hostnames that Caddy can get real certificates for, so the whole stack including login and SSE can be verified before the domain moves.</p>
+
+        <div class="code rv">
+          <div class="code-bar"><span class="code-lang">ini · staging, no DNS required</span><button class="copy">copy</button></div>
+<pre><code>API_HOST=api.203-0-113-7.sslip.io
+WEB_HOSTS=203-0-113-7.sslip.io
+APP_HOST=app.203-0-113-7.sslip.io
+BETTER_AUTH_URL=https://api.203-0-113-7.sslip.io
+ALLOWED_ORIGINS=https://app.203-0-113-7.sslip.io,https://203-0-113-7.sslip.io</code></pre>
+        </div>
+
+        <div class="note warn rv">
+          <span class="tag">Move all five together</span>
+          <p>The flip to production is those five lines plus <code>REDIRECT_HOSTS</code>, then <code>docker compose up -d caddy</code>. <code>BETTER_AUTH_URL</code> and <code>ALLOWED_ORIGINS</code> must move in the same edit or login breaks the moment the hostname changes. Certificates for the new names issue on first request; the old sslip.io certs just go unused.</p>
+        </div>
+
+        <h3>The real thing</h3>
 
         <p class="rv">Two domains, two Cloudflare zones. <strong><code>evotv.co</code> is primary</strong> and serves everything. <strong><code>evotv.africa</code> only redirects</strong>, so the brand is protected without splitting SEO.</p>
 
@@ -905,7 +940,7 @@ curl -fsS -m 600 -H "Authorization: Bearer $CRON_SECRET" \
           <div class="code-bar"><span class="code-lang">ini · /srv/evotv/.env</span><button class="copy">copy</button></div>
 <pre><code><span class="c"># core</span>
 <span class="k">BETTER_AUTH_URL</span>=https://api.evotv.co
-<span class="k">BETTER_AUTH_SECRET</span>=&lt;from the vercel archive&gt;
+<span class="k">AUTH_SECRET</span>=&lt;from the vercel archive. THIS name, not BETTER_AUTH_SECRET&gt;
 <span class="k">ALLOWED_ORIGINS</span>=https://app.evotv.co,https://evotv.co,https://www.evotv.co
 <span class="k">PLAYOUT_SECRET</span>=&lt;from the vercel archive, unchanged, ever&gt;
 <span class="k">CRON_SECRET</span>=&lt;from the vercel archive&gt;

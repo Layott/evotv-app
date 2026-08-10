@@ -6,6 +6,26 @@ Written 2026-08-09. Companion to `DIGITALOCEAN_MIGRATION.md`, which is the plan.
 
 ---
 
+## Update, 2026-08-10
+
+Two decisions and one repair.
+
+**Decisions.** Provision the full end state (droplet, backups, Managed Postgres, Spaces), roughly 54 USD per month, not a staged cheap start. And `evotv.co` is bought but **DNS stays put for now**, so the first build runs on a free `sslip.io` hostname with a real Let's Encrypt certificate. That matters more than it sounds: a bare droplet IP cannot get a certificate, and without HTTPS Better Auth's `secure` cookies never set, so login simply does not work. sslip.io buys a fully working stack to verify against before the domain moves.
+
+**Repair.** `deploy/` was written on 2026-08-05 and never caught up with the code that landed on 08-07. Three real defects, all of which would have cost an hour each on the box:
+
+1. `Caddyfile` served `evotv.tv`, a domain that never existed and was corrected in the plan on 08-06. Caddy would have sat in ACME backoff for hostnames nobody owns.
+2. `docker-compose.yml` had **no `valkey` service**, so `REDIS_URL=redis://valkey:6379` pointed at nothing. It also still carried the "DO NOT add replicas" comment that commit `bb4d565` made obsolete.
+3. One `api` container, so `deploy.sh` restarted in place and every deploy was a downtime window. The entire point of the Valkey work was two containers.
+
+Now: four services (`api-1`, `api-2`, `valkey`, `caddy`), rolling restart in `deploy.sh` that waits on Docker health per container, and **hostnames read from `.env`** so the sslip.io to evotv.co flip is one edit plus `docker compose up -d caddy` rather than editing a file on a live box. Added `deploy/env.production.example` as the annotated source of truth for every value.
+
+Verified, not assumed: `caddy validate` passes on both hostname sets; the adapted JSON shows all six certificate subjects, `health_uri /api/health` and `least_conn` on both routes, `flush_interval -1` on `/api/sse/*` only, and the `evotv.africa` 301; `docker compose config` resolves four services with caddy receiving only the six hostname vars and none of the secrets; `shellcheck` clean on both scripts; the runbook HTML checks clean at 15 sections, 29 code blocks each with exactly one copy button, 33 internal links resolving, no em dashes.
+
+Still uncommitted, working tree only.
+
+---
+
 ## Branches
 
 Both repos are on a feature branch with a clean working tree. Nothing is pushed to any remote.
@@ -69,9 +89,12 @@ Nothing further can be proven without these. Roughly 30 minutes in the DO contro
 3. **Managed Postgres**, smallest tier, **same VPC**. Copy both connection strings: direct (25060) and pool (25061).
 4. **Spaces bucket** `evotv-media`, same region, **CDN enabled**. Generate an access key + secret.
 5. **Cloud Firewall**: inbound TCP 22, 80, 443 only.
-6. **DNS**, two Cloudflare zones. `evotv.co` (apex, `www`, `app` proxied; `api` grey) and `evotv.africa` (apex + `www`, proxied, redirect only).
+6. **Trusted Sources** on the database: add the droplet, so nothing else on the internet can reach it.
+7. **DNS, deferred.** Build on `sslip.io` first. When the domain moves it is two Cloudflare zones: `evotv.co` (apex, `www`, `app` proxied; `api` grey) and `evotv.africa` (apex + `www`, proxied, redirect only).
 
 Then hand over: the Reserved IP, the Postgres pool URI, and the four `SPACES_*` values.
+
+One thing to check while you are in there: **which PostgreSQL major version Neon runs.** The droplet's `pg_dump` has to be at least that version or it refuses to dump, and Ubuntu 24.04 ships the 16 client by default.
 
 ---
 
@@ -97,7 +120,7 @@ cd GAMEEVO/EVOTV-app && pnpm typecheck
 
 ## Environment
 
-Carried over unchanged from the Vercel project, via `vercel env pull` once, then archived off the droplet: `PLAYOUT_SECRET` (**must not change**), `CRON_SECRET`, `BETTER_AUTH_SECRET`, SMTP credentials, OAuth client secrets.
+Carried over unchanged from the Vercel project, via `vercel env pull` once, then archived off the droplet: `PLAYOUT_SECRET` (**must not change**), `CRON_SECRET`, `AUTH_SECRET` (that name, not `BETTER_AUTH_SECRET`), SMTP credentials, OAuth client secrets.
 
 New or changed:
 
@@ -188,6 +211,17 @@ app/api/users/me/avatar/route.ts         storage.*, ownedKeyFromUrl()
 lib/sse/bus.ts                           Valkey pub/sub + sseStream leak fix
 package.json                             +postgres +ioredis +@aws-sdk/client-s3
                                          +@aws-sdk/s3-request-presigner
+```
+
+Backend `deploy/`, 2026-08-10, uncommitted:
+
+```
+deploy/docker-compose.yml                api-1 + api-2 + valkey + caddy
+deploy/Caddyfile                         hostnames from env, lb + health_uri
+deploy/deploy.sh                         rolling restart, per-container health
+deploy/env.production.example            NEW, annotated env template
+deploy/cron.sh                           comment only (evotv.tv -> evotv.co)
+deploy/README.md                         rewritten for the four-service stack
 ```
 
 App (`EVOTV-app`):

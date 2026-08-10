@@ -188,9 +188,7 @@ export default function ChannelScreen() {
                 }}
               >
                 <Image
-                  source={
-                    "https://evotv.vercel.app/evo-logo/evo-tv-152.png"
-                  }
+                  source={require("@/assets/brand/evo-tv-152.png")}
                   style={{ width: "100%", height: "100%" }}
                   contentFit="contain"
                 />

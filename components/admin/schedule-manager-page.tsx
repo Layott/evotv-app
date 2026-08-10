@@ -630,7 +630,7 @@ export function ScheduleManagerPage() {
 
         {guideQ.isLoading ? (
           <View className="items-center py-10">
-            <ActivityIndicator color="#2CD7E3" />
+            <ActivityIndicator color="#46E3CE" />
           </View>
         ) : guideQ.isError ? (
           <Text className="py-6 text-center text-sm text-red-400">
@@ -701,7 +701,7 @@ export function ScheduleManagerPage() {
 
         {mediaQ.isLoading ? (
           <View className="items-center py-10">
-            <ActivityIndicator color="#2CD7E3" />
+            <ActivityIndicator color="#46E3CE" />
           </View>
         ) : mediaQ.isError ? (
           <Text className="py-6 text-center text-sm text-red-400">
@@ -771,7 +771,7 @@ export function ScheduleManagerPage() {
 
         {streamsQ.isLoading || weekQ.isLoading ? (
           <View className="items-center py-10">
-            <ActivityIndicator color="#2CD7E3" />
+            <ActivityIndicator color="#46E3CE" />
           </View>
         ) : streamsQ.isError ? (
           <Text className="py-6 text-center text-sm text-red-400">
@@ -817,7 +817,7 @@ export function ScheduleManagerPage() {
               </Text>
               {stream.playoutFilePath ? (
                 <View className="mt-1.5 flex-row items-center gap-1 self-start rounded-full border border-border bg-card px-2 py-0.5">
-                  <FileVideo size={10} color="#A3A3A3" />
+                  <FileVideo size={10} color="#9FBDBD" />
                   <Text
                     numberOfLines={1}
                     className="max-w-[220px] text-[10px] text-muted-foreground"
@@ -947,7 +947,7 @@ export function ScheduleManagerPage() {
         {reveal ? (
           <View className="mb-3 rounded-xl border border-brand bg-brand/10 p-4">
             <View className="mb-2 flex-row items-center gap-2">
-              <KeyRound size={14} color="#2CD7E3" />
+              <KeyRound size={14} color="#46E3CE" />
               <Text className="text-sm font-bold text-brand">
                 Copy the stream key now
               </Text>
@@ -989,7 +989,7 @@ export function ScheduleManagerPage() {
                 onPress={() => handleCopy(reveal.ingestUrl, "Ingest URL")}
                 className="flex-row items-center justify-center gap-2 rounded-md border border-border bg-card px-3 py-2"
               >
-                <Copy size={14} color="#FAFAFA" />
+                <Copy size={14} color="#EAF6F5" />
                 <Text className="text-sm text-foreground">Copy URL</Text>
               </Pressable>
               <Pressable
@@ -1132,9 +1132,9 @@ export function ScheduleManagerPage() {
               }`}
             >
               {uploadingThumb ? (
-                <ActivityIndicator size="small" color="#2CD7E3" />
+                <ActivityIndicator size="small" color="#46E3CE" />
               ) : (
-                <Upload size={14} color="#2CD7E3" />
+                <Upload size={14} color="#46E3CE" />
               )}
               <Text className="text-sm text-foreground">
                 {uploadingThumb
@@ -1176,7 +1176,7 @@ export function ScheduleManagerPage() {
 
         {configQ.isLoading ? (
           <View className="items-center py-10">
-            <ActivityIndicator color="#2CD7E3" />
+            <ActivityIndicator color="#46E3CE" />
           </View>
         ) : configQ.isError ? (
           <Text className="py-6 text-center text-sm text-red-400">
@@ -1263,7 +1263,7 @@ export function ScheduleManagerPage() {
                     </Text>
                   </View>
                   <Pressable onPress={() => setEditing(null)} hitSlop={8}>
-                    <X size={20} color="#A3A3A3" />
+                    <X size={20} color="#9FBDBD" />
                   </Pressable>
                 </View>
 
@@ -1470,7 +1470,7 @@ function ConfigFileBlock({
                 {basename(p)}
               </Text>
               <Pressable onPress={() => onRemove(p)} hitSlop={8}>
-                <X size={12} color="#A3A3A3" />
+                <X size={12} color="#9FBDBD" />
               </Pressable>
             </View>
           ))}
@@ -1482,9 +1482,9 @@ function ConfigFileBlock({
         className="mt-3 flex-row items-center justify-center gap-1.5 rounded-md border border-dashed border-border bg-card px-3 py-2"
       >
         {pickerOpen ? (
-          <X size={12} color="#2CD7E3" />
+          <X size={12} color="#46E3CE" />
         ) : (
-          <Plus size={12} color="#2CD7E3" />
+          <Plus size={12} color="#46E3CE" />
         )}
         <Text className="text-xs font-medium text-foreground">
           {pickerOpen ? "Close picker" : "Add from PC files"}
@@ -1500,7 +1500,7 @@ function ConfigFileBlock({
           ) : null}
           {mediaLoading ? (
             <View className="items-center py-4">
-              <ActivityIndicator size="small" color="#2CD7E3" />
+              <ActivityIndicator size="small" color="#46E3CE" />
             </View>
           ) : available.length === 0 ? (
             <Text className="py-3 text-center text-xs text-muted-foreground">
@@ -1559,7 +1559,7 @@ function SectionTitle({
   return (
     <View className={`mb-3 ${className ?? ""}`}>
       <View className="flex-row items-center gap-2">
-        <Icon size={14} color="#2CD7E3" />
+        <Icon size={14} color="#46E3CE" />
         <Text className="text-sm font-semibold text-foreground">{title}</Text>
       </View>
       {caption ? (

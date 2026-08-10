@@ -96,16 +96,16 @@ function Row({
           </View>
         ) : (
           <View className="h-12 w-12 items-center justify-center rounded-lg bg-muted">
-            <Icon size={20} color="#2CD7E3" />
+            <Icon size={20} color="#46E3CE" />
           </View>
         )}
         {unread ? (
           <View
             className="absolute -right-1 -top-1 h-3 w-3 rounded-full"
             style={{
-              backgroundColor: "#2CD7E3",
+              backgroundColor: "#46E3CE",
               borderWidth: 2,
-              borderColor: "#0A0A0A",
+              borderColor: "#05191B",
             }}
           />
         ) : null}
@@ -281,7 +281,7 @@ export default function NotificationsScreen() {
               onPress={handleMarkAll}
               disabled={unread.length === 0}
             >
-              <CheckCheck size={14} color="#FAFAFA" />
+              <CheckCheck size={14} color="#EAF6F5" />
               <Text className="text-sm font-medium text-foreground">
                 Mark all read
               </Text>

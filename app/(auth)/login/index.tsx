@@ -189,9 +189,9 @@ export default function LoginScreen() {
                 className="h-11 w-full"
               >
                 {socialBusy === "google" ? (
-                  <Spinner color="#FAFAFA" />
+                  <Spinner color="#EAF6F5" />
                 ) : (
-                  <ChromeIcon color="#FAFAFA" size={18} />
+                  <ChromeIcon color="#EAF6F5" size={18} />
                 )}
                 <Text className="text-sm font-medium text-foreground">
                   {socialBusy === "google" ? "Opening Google…" : "Continue with Google"}
@@ -203,7 +203,7 @@ export default function LoginScreen() {
                 disabled={submitting || socialBusy !== null}
                 className="h-11 w-full"
               >
-                <Apple color="#FAFAFA" size={18} />
+                <Apple color="#EAF6F5" size={18} />
                 <Text className="text-sm font-medium text-foreground">Continue with Apple</Text>
               </Button>
             </View>

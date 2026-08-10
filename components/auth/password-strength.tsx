@@ -44,11 +44,11 @@ const FILLED: Record<PasswordStrength, number> = {
 };
 
 const COLOR: Record<PasswordStrength, string> = {
-  empty: "#404040",
+  empty: "#17454A",
   weak: "#ef4444",
   medium: "#f59e0b",
   strong: "#22c55e",
-  "very-strong": "#2CD7E3",
+  "very-strong": "#46E3CE",
 };
 
 interface PasswordStrengthMeterProps {
@@ -77,7 +77,7 @@ export function PasswordStrengthMeter({
               flex: 1,
               height: 4,
               borderRadius: 2,
-              backgroundColor: i < filled ? color : "#262626",
+              backgroundColor: i < filled ? color : "#103133",
             }}
           />
         ))}

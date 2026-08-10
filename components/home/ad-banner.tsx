@@ -66,7 +66,7 @@ export function AdBanner({ placement = "home_banner" }: AdBannerProps) {
               fontSize: 10,
               fontWeight: "500",
               letterSpacing: 1,
-              color: "#a3a3a3",
+              color: "#9FBDBD",
             }}
           >
             AD &middot; {ad.advertiser.toUpperCase()}

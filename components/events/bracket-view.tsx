@@ -36,7 +36,7 @@ function Row({
               height: 24,
               borderRadius: 4,
               borderWidth: 1,
-              borderColor: "#262626",
+              borderColor: "#103133",
             }}
             contentFit="cover"
           />
@@ -51,7 +51,7 @@ function Row({
           >
             {team.name}
           </Text>
-          <Text style={{ fontSize: 11, color: "#a3a3a3" }}>{team.tag}</Text>
+          <Text style={{ fontSize: 11, color: "#9FBDBD" }}>{team.tag}</Text>
           <Text
             style={{
               fontSize: 13,
@@ -138,7 +138,7 @@ function MatchCard({
           win={aWin}
           played={completed || match.state === "live"}
         />
-        <View style={{ height: 1, backgroundColor: "#262626" }} />
+        <View style={{ height: 1, backgroundColor: "#103133" }} />
         <Row
           team={b}
           score={match.scoreB}

@@ -69,8 +69,8 @@ export default function EventBracketScreen() {
             }
             className="flex-row items-center gap-1 self-start active:opacity-70"
           >
-            <ArrowLeft size={12} color="#a3a3a3" />
-            <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+            <ArrowLeft size={12} color="#9FBDBD" />
+            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
               Back to event
             </Text>
           </Pressable>

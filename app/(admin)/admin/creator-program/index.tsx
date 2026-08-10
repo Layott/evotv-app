@@ -26,7 +26,7 @@ function statusColor(s: CreatorAppStatus): string {
   if (s === "approved") return "#34D399";
   if (s === "rejected") return "#EF4444";
   if (s === "in_review") return "#F59E0B";
-  return "#2CD7E3";
+  return "#46E3CE";
 }
 
 function fmtDate(iso: string | null): string {
@@ -75,7 +75,7 @@ export default function AdminCreatorProgramScreen() {
       <ScrollView className="flex-1 bg-background" contentContainerClassName="pb-12">
         <View className="px-4 pt-4 pb-2 gap-2 border-b border-border">
           <View className="flex-row items-center gap-2">
-            <Sparkles size={18} color="#2CD7E3" />
+            <Sparkles size={18} color="#46E3CE" />
             <Text className="text-xl font-bold text-foreground">
               Creator applications
             </Text>
@@ -201,7 +201,7 @@ function ApplicationCard({
 
         <View className="mt-2 flex-row items-center gap-3">
           <View className="flex-row items-center gap-1">
-            <Clock size={11} color="#A3A3A3" />
+            <Clock size={11} color="#9FBDBD" />
             <Text className="text-[10px] text-muted-foreground">
               Submitted {fmtDate(row.submittedAt)}
             </Text>

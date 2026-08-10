@@ -127,7 +127,7 @@ export function WaitlistPage() {
               className="flex-row items-center gap-1.5 rounded-md border border-cyan-500/40 bg-cyan-500/10 px-3 py-2"
               style={{ opacity: entries.length === 0 ? 0.4 : 1 }}
             >
-              <Download size={14} color="#2CD7E3" />
+              <Download size={14} color="#46E3CE" />
               <Text className="text-xs font-semibold text-cyan-300">
                 Export CSV
               </Text>
@@ -146,7 +146,7 @@ export function WaitlistPage() {
         </View>
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
-          <Search size={14} color="#A3A3A3" />
+          <Search size={14} color="#9FBDBD" />
           <Input
             value={search}
             onChangeText={setSearch}

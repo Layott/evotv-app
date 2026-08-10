@@ -84,7 +84,7 @@ export function ForensicPage() {
         </Pressable>
 
         <View className="mt-5 flex-row items-center gap-2">
-          <ShieldCheck size={14} color="#2CD7E3" />
+          <ShieldCheck size={14} color="#46E3CE" />
           <Text className="text-sm font-semibold text-foreground">
             Latest admin activity
           </Text>

@@ -146,7 +146,7 @@ const DialogContent = React.forwardRef<View, DialogContentProps>(
                 className="absolute top-4 right-4"
                 hitSlop={8}
               >
-                <X size={16} color="#FAFAFA" />
+                <X size={16} color="#EAF6F5" />
               </Pressable>
             ) : null}
           </Pressable>

@@ -73,15 +73,15 @@ export function AdminSettingsPage() {
         <Tabs defaultValue="flags">
           <TabsList className="mb-4">
             <TabsTrigger value="flags">
-              <ToggleLeft size={12} color="#A3A3A3" />
+              <ToggleLeft size={12} color="#9FBDBD" />
               Flags
             </TabsTrigger>
             <TabsTrigger value="branding">
-              <Palette size={12} color="#A3A3A3" />
+              <Palette size={12} color="#9FBDBD" />
               Brand
             </TabsTrigger>
             <TabsTrigger value="email">
-              <Mail size={12} color="#A3A3A3" />
+              <Mail size={12} color="#9FBDBD" />
               Email
             </TabsTrigger>
           </TabsList>
@@ -163,7 +163,7 @@ function BrandingSection() {
   const [tagline, setTagline] = React.useState(
     "African esports, live everywhere.",
   );
-  const [primary, setPrimary] = React.useState("#2CD7E3");
+  const [primary, setPrimary] = React.useState("#46E3CE");
 
   return (
     <View className="rounded-xl border border-border bg-card/40 p-4">
@@ -201,7 +201,7 @@ function BrandingSection() {
       </View>
 
       <View className="mt-3 flex-row flex-wrap gap-2">
-        {["#2CD7E3", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"].map((c) => (
+        {["#46E3CE", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"].map((c) => (
           <Pressable
             key={c}
             onPress={() => setPrimary(c)}
@@ -211,7 +211,7 @@ function BrandingSection() {
               height: 32,
               borderRadius: 6,
               borderWidth: primary === c ? 2 : 0,
-              borderColor: "#FAFAFA",
+              borderColor: "#EAF6F5",
             }}
           />
         ))}

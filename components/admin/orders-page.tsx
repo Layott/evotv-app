@@ -66,7 +66,7 @@ export function OrdersPage() {
         />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
-          <Search size={14} color="#A3A3A3" />
+          <Search size={14} color="#9FBDBD" />
           <Input
             value={search}
             onChangeText={setSearch}
@@ -125,7 +125,7 @@ export function OrdersPage() {
 
         {ordersQuery.isLoading ? (
           <View className="items-center py-12">
-            <ActivityIndicator color="#2CD7E3" />
+            <ActivityIndicator color="#46E3CE" />
           </View>
         ) : ordersQuery.isError ? (
           <Text className="py-6 text-center text-sm text-red-400">
@@ -209,7 +209,7 @@ export function OrdersPage() {
                     </Text>
                   </View>
                   <Pressable onPress={() => setSelected(null)} hitSlop={8}>
-                    <X size={20} color="#A3A3A3" />
+                    <X size={20} color="#9FBDBD" />
                   </Pressable>
                 </View>
 

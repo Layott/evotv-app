@@ -19,7 +19,7 @@ import { useMockAuth } from "@/components/providers";
 import { getMyProfile, updateMyProfile } from "@/lib/api/me";
 import { ApiError } from "@/lib/api/_client";
 
-const BRAND = "#2CD7E3";
+const BRAND = "#46E3CE";
 
 const HANDLE_RE = /^[a-zA-Z0-9_]+$/;
 
@@ -138,7 +138,7 @@ export default function ProfileEditScreen() {
             className="mt-6 rounded-xl px-4 py-2.5"
             style={{ backgroundColor: BRAND }}
           >
-            <Text style={{ color: "#0a0a0a", fontWeight: "700", fontSize: 13 }}>
+            <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
               Back
             </Text>
           </Pressable>
@@ -162,7 +162,7 @@ export default function ProfileEditScreen() {
             accessibilityLabel="Back"
             hitSlop={8}
           >
-            <ArrowLeft color="#FAFAFA" size={18} />
+            <ArrowLeft color="#EAF6F5" size={18} />
           </Pressable>
           <Text className="text-2xl font-bold text-foreground">
             Edit profile
@@ -257,11 +257,11 @@ export default function ProfileEditScreen() {
               }}
             >
               {saveMutation.isPending ? (
-                <Loader2 size={16} color="#0a0a0a" />
+                <Loader2 size={16} color="#05191B" />
               ) : (
-                <Save size={16} color="#0a0a0a" />
+                <Save size={16} color="#05191B" />
               )}
-              <Text style={{ color: "#0a0a0a", fontWeight: "700", fontSize: 14 }}>
+              <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 14 }}>
                 {saveMutation.isPending ? "Saving…" : "Save changes"}
               </Text>
             </Pressable>
@@ -303,6 +303,6 @@ const inputStyle = {
   borderRadius: 12,
   paddingHorizontal: 14,
   paddingVertical: 12,
-  color: "#fafafa",
+  color: "#EAF6F5",
   fontSize: 14,
 } as const;

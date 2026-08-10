@@ -29,10 +29,10 @@ export default function OAuthLandingScreen() {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#0A0A0A",
+          backgroundColor: "#05191B",
         }}
       >
-        <ActivityIndicator size="large" color="#2CD7E3" />
+        <ActivityIndicator size="large" color="#46E3CE" />
       </View>
     </>
   );

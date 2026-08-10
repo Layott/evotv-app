@@ -88,7 +88,7 @@ export function Recommendations({
                 {v.title}
               </Text>
               {game ? (
-                <Text style={{ fontSize: 11, color: "#2CD7E3" }}>
+                <Text style={{ fontSize: 11, color: "#46E3CE" }}>
                   {game.shortName}
                 </Text>
               ) : null}
@@ -111,7 +111,7 @@ export function Recommendations({
     <View className="gap-3">
       <View className="flex-row items-center justify-between px-4">
         <View className="flex-row items-center gap-2">
-          <Sparkles size={16} color="#2CD7E3" />
+          <Sparkles size={16} color="#46E3CE" />
           <Text className="text-xl font-semibold text-foreground">
             Recommended for you
           </Text>
@@ -120,7 +120,7 @@ export function Recommendations({
           onPress={() => router.push("/discover")}
           className="active:opacity-70"
         >
-          <Text className="text-xs font-medium" style={{ color: "#2CD7E3" }}>
+          <Text className="text-xs font-medium" style={{ color: "#46E3CE" }}>
             See all
           </Text>
         </Pressable>

@@ -145,7 +145,7 @@ export function ContentTagsEditor({
             >
               <Text className="text-[11px] text-foreground">{t}</Text>
               <Pressable onPress={() => removeTag(t)} hitSlop={6} disabled={isPending}>
-                <X size={11} color="#A3A3A3" />
+                <X size={11} color="#9FBDBD" />
               </Pressable>
             </View>
           ))}

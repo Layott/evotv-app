@@ -16,11 +16,11 @@ export default function AuthedLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: "#0A0A0A" },
-        headerTintColor: "#FAFAFA",
-        headerTitleStyle: { color: "#FAFAFA", fontFamily: "GeistSemiBold" },
+        headerStyle: { backgroundColor: "#05191B" },
+        headerTintColor: "#EAF6F5",
+        headerTitleStyle: { color: "#EAF6F5", fontFamily: "GeistSemiBold" },
         headerBackTitle: "Back",
-        contentStyle: { backgroundColor: "#0A0A0A" },
+        contentStyle: { backgroundColor: "#05191B" },
         animation: "slide_from_right",
       }}
     />

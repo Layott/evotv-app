@@ -164,7 +164,7 @@ export function HlsPlayer({
                 backgroundColor: "rgba(44,215,227,0.9)",
               }}
             >
-              <Play size={28} color="#0A0A0A" fill="#0A0A0A" />
+              <Play size={28} color="#05191B" fill="#05191B" />
             </View>
           </View>
         </Pressable>

@@ -104,9 +104,9 @@ export default function ForgotPasswordScreen() {
               }}
             >
               {sent ? (
-                <CheckCircle2 color="#2CD7E3" size={26} />
+                <CheckCircle2 color="#46E3CE" size={26} />
               ) : (
-                <KeyRound color="#2CD7E3" size={26} />
+                <KeyRound color="#46E3CE" size={26} />
               )}
             </View>
             <Text className="text-center text-2xl font-bold text-foreground">

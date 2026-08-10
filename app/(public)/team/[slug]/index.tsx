@@ -167,8 +167,8 @@ export default function TeamDetailScreen() {
               onPress={() => router.push("/team")}
               className="flex-row items-center gap-1 self-start"
             >
-              <ArrowLeft size={12} color="#a3a3a3" />
-              <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+              <ArrowLeft size={12} color="#9FBDBD" />
+              <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
                 All teams
               </Text>
             </Pressable>
@@ -192,7 +192,7 @@ export default function TeamDetailScreen() {
                   </Text>
                   <View
                     className="rounded px-2 py-0.5"
-                    style={{ backgroundColor: "#262626" }}
+                    style={{ backgroundColor: "#103133" }}
                   >
                     <Text
                       style={{
@@ -207,8 +207,8 @@ export default function TeamDetailScreen() {
                 </View>
                 <View className="mt-1 flex-row flex-wrap items-center gap-3">
                   <View className="flex-row items-center gap-1">
-                    <MapPin size={11} color="#a3a3a3" />
-                    <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+                    <MapPin size={11} color="#9FBDBD" />
+                    <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
                       {team.country} · {team.region}
                     </Text>
                   </View>
@@ -230,7 +230,7 @@ export default function TeamDetailScreen() {
                   : "transparent",
                 backgroundColor: following
                   ? "rgba(44,215,227,0.1)"
-                  : "#2CD7E3",
+                  : "#46E3CE",
               }}
             >
               {following ? (
@@ -357,7 +357,7 @@ export default function TeamDetailScreen() {
                         height: 48,
                         borderRadius: 24,
                         borderWidth: 1,
-                        borderColor: "#262626",
+                        borderColor: "#103133",
                       }}
                       contentFit="cover"
                     />
@@ -369,7 +369,7 @@ export default function TeamDetailScreen() {
                         {p.handle}
                       </Text>
                       <Text
-                        style={{ fontSize: 11, color: "#a3a3a3" }}
+                        style={{ fontSize: 11, color: "#9FBDBD" }}
                         numberOfLines={1}
                       >
                         {p.realName}
@@ -418,7 +418,7 @@ export default function TeamDetailScreen() {
                       style={{
                         marginLeft: "auto",
                         fontSize: 11,
-                        color: "#a3a3a3",
+                        color: "#9FBDBD",
                       }}
                     >
                       {new Date(m.scheduledAt).toLocaleString([], {

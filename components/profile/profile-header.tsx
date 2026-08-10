@@ -91,9 +91,9 @@ export function ProfileHeader({
                 height: 88,
                 borderRadius: 44,
                 borderWidth: 3,
-                borderColor: "#0A0A0A",
+                borderColor: "#05191B",
                 overflow: "hidden",
-                backgroundColor: "#262626",
+                backgroundColor: "#103133",
               }}
             >
               <Image
@@ -121,12 +121,12 @@ export function ProfileHeader({
               <View
                 className="absolute -bottom-0.5 -right-0.5 rounded-full p-1.5"
                 style={{
-                  backgroundColor: "#262626",
+                  backgroundColor: "#103133",
                   borderWidth: 1,
-                  borderColor: "#404040",
+                  borderColor: "#17454A",
                 }}
               >
-                <Edit size={14} color="#2CD7E3" />
+                <Edit size={14} color="#46E3CE" />
               </View>
             ) : null}
           </Pressable>
@@ -139,7 +139,7 @@ export function ProfileHeader({
                 onPress={onEdit}
                 className="border-border"
               >
-                <Edit size={14} color="#2CD7E3" />
+                <Edit size={14} color="#46E3CE" />
                 <Text className="text-sm font-medium text-foreground">
                   Edit
                 </Text>
@@ -153,7 +153,7 @@ export function ProfileHeader({
               >
                 <Text
                   className="text-sm font-medium"
-                  style={{ color: isFollowing ? "#FAFAFA" : "#0A0A0A" }}
+                  style={{ color: isFollowing ? "#EAF6F5" : "#05191B" }}
                 >
                   {isFollowing ? "Following" : "Follow"}
                 </Text>
@@ -228,9 +228,9 @@ export function ProfileHeader({
         {stats ? (
           <View className="mt-4 flex-row rounded-xl border border-border bg-background py-3">
             <StatCell label="Followers" value={stats.followers} />
-            <View style={{ width: 1, backgroundColor: "#262626" }} />
+            <View style={{ width: 1, backgroundColor: "#103133" }} />
             <StatCell label="Following" value={stats.following} />
-            <View style={{ width: 1, backgroundColor: "#262626" }} />
+            <View style={{ width: 1, backgroundColor: "#103133" }} />
             <StatCell label="Videos" value={stats.videos} />
           </View>
         ) : null}

@@ -251,7 +251,7 @@ export default function SettingsScreen() {
               className="h-10 w-10 items-center justify-center rounded-lg"
               style={{ backgroundColor: "rgba(44,215,227,0.12)" }}
             >
-              <CreditCard size={18} color="#2CD7E3" />
+              <CreditCard size={18} color="#46E3CE" />
             </View>
             <View className="flex-1">
               <Text className="text-sm font-semibold text-foreground">
@@ -515,8 +515,8 @@ export default function SettingsScreen() {
               onPress={() => router.push("/(authed)/notifications")}
               className="mt-3 flex-row items-center gap-1 self-start active:opacity-70"
             >
-              <Bell size={14} color="#2CD7E3" />
-              <Text className="text-sm font-medium" style={{ color: "#2CD7E3" }}>
+              <Bell size={14} color="#46E3CE" />
+              <Text className="text-sm font-medium" style={{ color: "#46E3CE" }}>
                 Open notification inbox
               </Text>
             </Pressable>
@@ -685,7 +685,7 @@ export default function SettingsScreen() {
                   onPress={handleExport}
                   disabled={exporting}
                 >
-                  <Download size={14} color="#FAFAFA" />
+                  <Download size={14} color="#EAF6F5" />
                   <Text className="text-sm font-medium text-foreground">
                     {exporting ? "Queueing..." : "Request"}
                   </Text>
@@ -754,11 +754,11 @@ export default function SettingsScreen() {
                   >
                     <View
                       className="h-8 w-8 items-center justify-center rounded-full"
-                      style={{ backgroundColor: selected ? "#2CD7E322" : "#1f1f1f" }}
+                      style={{ backgroundColor: selected ? "#46E3CE22" : "#1f1f1f" }}
                     >
                       <Icon
                         size={14}
-                        color={selected ? "#2CD7E3" : "#A3A3A3"}
+                        color={selected ? "#46E3CE" : "#9FBDBD"}
                       />
                     </View>
                     <View className="flex-1">
@@ -793,7 +793,7 @@ export default function SettingsScreen() {
                 onPress={() => router.push("/(authed)/cart")}
                 className="flex-row items-center gap-3 rounded-xl border border-border bg-background p-3 active:opacity-80"
               >
-                <Globe size={16} color="#A3A3A3" />
+                <Globe size={16} color="#9FBDBD" />
                 <View className="flex-1">
                   <Text className="text-sm font-semibold text-foreground">
                     Cart & shop
@@ -808,7 +808,7 @@ export default function SettingsScreen() {
                 onPress={() => router.push("/(authed)/profile/orders")}
                 className="flex-row items-center gap-3 rounded-xl border border-border bg-background p-3 active:opacity-80"
               >
-                <UserCog size={16} color="#A3A3A3" />
+                <UserCog size={16} color="#9FBDBD" />
                 <View className="flex-1">
                   <Text className="text-sm font-semibold text-foreground">
                     Orders

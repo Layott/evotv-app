@@ -243,7 +243,7 @@ const CarouselPrevious = React.forwardRef<View, CarouselNavProps>(
             !ctx.canScrollPrev && "opacity-50",
           )}
         >
-          <ArrowLeft size={16} color="#FAFAFA" />
+          <ArrowLeft size={16} color="#EAF6F5" />
         </Pressable>
       </View>
     );
@@ -274,7 +274,7 @@ const CarouselNext = React.forwardRef<View, CarouselNavProps>(
             !ctx.canScrollNext && "opacity-50",
           )}
         >
-          <ArrowRight size={16} color="#FAFAFA" />
+          <ArrowRight size={16} color="#EAF6F5" />
         </Pressable>
       </View>
     );

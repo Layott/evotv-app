@@ -17,9 +17,9 @@ const Switch = React.forwardRef<RNSwitch, SwitchProps>(
         value={checked}
         onValueChange={onCheckedChange}
         disabled={disabled}
-        trackColor={{ false: "#262626", true: "#2CD7E3" }}
-        thumbColor={checked ? "#FAFAFA" : "#A3A3A3"}
-        ios_backgroundColor="#262626"
+        trackColor={{ false: "#103133", true: "#46E3CE" }}
+        thumbColor={checked ? "#EAF6F5" : "#9FBDBD"}
+        ios_backgroundColor="#103133"
         className={cn(disabled ? "opacity-50" : "", className)}
         {...props}
       />

@@ -25,9 +25,9 @@ const ROLES: RoleEntry[] = [
   { value: "admin", label: "Admin", Icon: Shield },
 ];
 
-const BRAND = "#2CD7E3";
-const FG = "#FAFAFA";
-const MUTED = "#A3A3A3";
+const BRAND = "#46E3CE";
+const FG = "#EAF6F5";
+const MUTED = "#9FBDBD";
 
 export function RoleSwitcher() {
   const { role, login, logout } = useAuth();

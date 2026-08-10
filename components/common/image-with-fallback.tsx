@@ -35,7 +35,7 @@ interface ImageWithFallbackProps {
 
 const TINTS = [
   ["#0f172a", "#1e293b"],
-  ["#0a0a0a", "#1f2937"],
+  ["#05191B", "#1f2937"],
   ["#1a1a2e", "#16213e"],
   ["#1f1147", "#2d1b69"],
   ["#0a3d62", "#1e6091"],

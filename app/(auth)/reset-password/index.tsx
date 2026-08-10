@@ -117,7 +117,7 @@ export default function ResetPasswordScreen() {
                 borderColor: "rgba(44,215,227,0.30)",
               }}
             >
-              <ShieldCheck color="#2CD7E3" size={26} />
+              <ShieldCheck color="#46E3CE" size={26} />
             </View>
             <Text className="text-center text-2xl font-bold text-foreground">
               Set a new password

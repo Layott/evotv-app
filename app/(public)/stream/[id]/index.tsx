@@ -114,7 +114,7 @@ export default function StreamScreen() {
               </EmptyDescription>
             </EmptyHeader>
             <Button variant="outline" onPress={() => router.back()}>
-              <ArrowLeft color="#FAFAFA" size={16} />
+              <ArrowLeft color="#EAF6F5" size={16} />
               <Text className="text-foreground text-sm font-medium">Go back</Text>
             </Button>
           </Empty>
@@ -151,7 +151,7 @@ export default function StreamScreen() {
       </Text>
       <View className="flex-row items-center gap-3">
         <View className="flex-row items-center gap-1">
-          <Eye color="#A3A3A3" size={14} />
+          <Eye color="#9FBDBD" size={14} />
           <Text className="text-xs text-muted-foreground">
             {formatViewers(stream.viewerCount)} watching
           </Text>
@@ -238,11 +238,11 @@ export default function StreamScreen() {
           <View className="px-4 pt-3">
             <TabsList>
               <TabsTrigger value="chat">
-                <MessageSquare color="#A3A3A3" size={14} />
+                <MessageSquare color="#9FBDBD" size={14} />
                 <Text className="text-sm font-medium text-foreground">Chat</Text>
               </TabsTrigger>
               <TabsTrigger value="about">
-                <Info color="#A3A3A3" size={14} />
+                <Info color="#9FBDBD" size={14} />
                 <Text className="text-sm font-medium text-foreground">About</Text>
               </TabsTrigger>
             </TabsList>

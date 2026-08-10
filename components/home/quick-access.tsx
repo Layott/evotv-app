@@ -23,7 +23,7 @@ interface QuickTile {
 }
 
 const TILES: QuickTile[] = [
-  { label: "Pick'em", href: "/pickem", Icon: Target, tint: "#2CD7E3" },
+  { label: "Pick'em", href: "/pickem", Icon: Target, tint: "#46E3CE" },
   { label: "Fantasy", href: "/fantasy", Icon: Star, tint: "#EAB308" },
   { label: "Predictions", href: "/predictions", Icon: LineChart, tint: "#A855F7" },
   { label: "Rewards", href: "/rewards", Icon: Gift, tint: "#F97316" },

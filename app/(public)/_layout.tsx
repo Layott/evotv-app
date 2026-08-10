@@ -22,7 +22,7 @@ export default function PublicLayout() {
           paddingBottom: 8,
           paddingTop: 8,
         },
-        tabBarActiveTintColor: "#2CD7E3",
+        tabBarActiveTintColor: "#46E3CE",
         tabBarInactiveTintColor: "#666666",
         tabBarLabelStyle: {
           fontSize: 11,

@@ -48,7 +48,7 @@ export function LegalDoc({ title, body }: LegalDocProps) {
             <View
               key={idx}
               className="my-4 h-px"
-              style={{ backgroundColor: "#262626" }}
+              style={{ backgroundColor: "#103133" }}
             />
           );
         }

@@ -8,7 +8,7 @@ export interface TextareaProps extends TextInputProps {
 }
 
 const Textarea = React.forwardRef<TextInput, TextareaProps>(
-  ({ className, placeholderTextColor = "#A3A3A3", ...props }, ref) => {
+  ({ className, placeholderTextColor = "#9FBDBD", ...props }, ref) => {
     return (
       <TextInput
         ref={ref}

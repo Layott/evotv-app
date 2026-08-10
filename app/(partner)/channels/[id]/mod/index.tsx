@@ -123,7 +123,7 @@ function StreamStatusBanner({
       {loading ? (
         <CircleDot size={14} color="#737373" />
       ) : isLive ? (
-        <Wifi size={14} color="#2CD7E3" />
+        <Wifi size={14} color="#46E3CE" />
       ) : (
         <WifiOff size={14} color="#737373" />
       )}
@@ -253,7 +253,7 @@ function ModMessageRow({
           <Text className="text-xs font-semibold text-foreground">
             @{message.userHandle}
           </Text>
-          {message.isPinned ? <Pin size={12} color="#2CD7E3" /> : null}
+          {message.isPinned ? <Pin size={12} color="#46E3CE" /> : null}
           <Text className="text-[10px] text-muted-foreground">
             {formatTime(message.createdAt)}
           </Text>
@@ -262,7 +262,7 @@ function ModMessageRow({
           <ActionButton
             onPress={handlePin}
             disabled={pinning}
-            icon={<Pin size={13} color={message.isPinned ? "#2CD7E3" : "#FAFAFA"} />}
+            icon={<Pin size={13} color={message.isPinned ? "#46E3CE" : "#EAF6F5"} />}
             label={message.isPinned ? "Unpin" : "Pin"}
           />
           <ActionButton

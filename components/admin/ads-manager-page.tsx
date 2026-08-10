@@ -143,7 +143,7 @@ export function AdsManagerPage() {
         />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
-          <Search size={14} color="#A3A3A3" />
+          <Search size={14} color="#9FBDBD" />
           <Input
             value={search}
             onChangeText={setSearch}
@@ -202,7 +202,7 @@ export function AdsManagerPage() {
 
         {adsQuery.isLoading ? (
           <View className="items-center py-12">
-            <ActivityIndicator color="#2CD7E3" />
+            <ActivityIndicator color="#46E3CE" />
           </View>
         ) : adsQuery.isError ? (
           <Text className="py-6 text-center text-sm text-red-400">
@@ -275,7 +275,7 @@ export function AdsManagerPage() {
                         onPress={() => setConfirmDelete(row)}
                         hitSlop={8}
                       >
-                        <Trash2 size={16} color="#A3A3A3" />
+                        <Trash2 size={16} color="#9FBDBD" />
                       </Pressable>
                     </View>
                   </View>
@@ -419,7 +419,7 @@ function AdForm({
                 {initial ? "Edit ad" : "New ad"}
               </Text>
               <Pressable onPress={onClose} hitSlop={8}>
-                <X size={20} color="#A3A3A3" />
+                <X size={20} color="#9FBDBD" />
               </Pressable>
             </View>
 
@@ -443,9 +443,9 @@ function AdForm({
               }`}
             >
               {uploading ? (
-                <ActivityIndicator size="small" color="#2CD7E3" />
+                <ActivityIndicator size="small" color="#46E3CE" />
               ) : (
-                <Upload size={14} color="#2CD7E3" />
+                <Upload size={14} color="#46E3CE" />
               )}
               <Text className="text-sm text-foreground">
                 {uploading ? "Uploading…" : "Upload image"}

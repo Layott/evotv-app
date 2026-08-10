@@ -84,7 +84,7 @@ function ClipCard({ clip }: { clip: Clip }) {
             <Text style={{ fontSize: 10, color: "#d4d4d4" }} numberOfLines={1}>
               @{clip.creatorHandle}
             </Text>
-            <Text style={{ fontSize: 10, color: "#a3a3a3" }}>
+            <Text style={{ fontSize: 10, color: "#9FBDBD" }}>
               {relTime(clip.createdAt)}
             </Text>
           </View>

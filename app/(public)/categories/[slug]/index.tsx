@@ -179,8 +179,8 @@ export default function CategoryDetailScreen() {
                 onPress={() => router.push("/categories")}
                 className="flex-row items-center gap-1 self-start"
               >
-                <ArrowLeft size={12} color="#a3a3a3" />
-                <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+                <ArrowLeft size={12} color="#9FBDBD" />
+                <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
                   All categories
                 </Text>
               </Pressable>
@@ -192,7 +192,7 @@ export default function CategoryDetailScreen() {
                     height: 48,
                     borderRadius: 8,
                     borderWidth: 1,
-                    borderColor: "#404040",
+                    borderColor: "#17454A",
                   }}
                   contentFit="cover"
                   fallbackLabel={game.shortName}
@@ -331,9 +331,9 @@ export default function CategoryDetailScreen() {
                           {ev.title}
                         </Text>
                         <View className="mt-1 flex-row items-center gap-1">
-                          <Calendar size={11} color="#a3a3a3" />
+                          <Calendar size={11} color="#9FBDBD" />
                           <Text
-                            style={{ fontSize: 11, color: "#a3a3a3" }}
+                            style={{ fontSize: 11, color: "#9FBDBD" }}
                           >
                             {new Date(ev.startsAt).toLocaleDateString()}
                           </Text>
@@ -383,7 +383,7 @@ export default function CategoryDetailScreen() {
                           height: 48,
                           borderRadius: 6,
                           borderWidth: 1,
-                          borderColor: "#262626",
+                          borderColor: "#103133",
                         }}
                         contentFit="cover"
                       />
@@ -394,7 +394,7 @@ export default function CategoryDetailScreen() {
                         >
                           {t.name}
                         </Text>
-                        <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+                        <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
                           #{t.ranking} · {t.wins}-{t.losses}
                         </Text>
                       </View>
@@ -429,7 +429,7 @@ export default function CategoryDetailScreen() {
                           height: 48,
                           borderRadius: 24,
                           borderWidth: 1,
-                          borderColor: "#262626",
+                          borderColor: "#103133",
                         }}
                         contentFit="cover"
                       />
@@ -440,7 +440,7 @@ export default function CategoryDetailScreen() {
                         >
                           {p.handle}
                         </Text>
-                        <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+                        <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
                           {p.role} · KDA {p.kda.toFixed(2)}
                         </Text>
                       </View>

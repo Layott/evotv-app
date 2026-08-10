@@ -137,7 +137,7 @@ function PaymentMethodCard({
             COMING SOON
           </Text>
         ) : (
-          <Text style={{ color: "#2CD7E3", fontSize: 12, fontWeight: "600" }}>
+          <Text style={{ color: "#46E3CE", fontSize: 12, fontWeight: "600" }}>
             Continue →
           </Text>
         )}
@@ -169,7 +169,7 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
         >
           <View
             className="rounded-full px-3 py-1"
-            style={{ backgroundColor: "#2CD7E3" }}
+            style={{ backgroundColor: "#46E3CE" }}
           >
             <Text
               style={{
@@ -207,7 +207,7 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
           <View key={f} className="flex-row gap-2 items-start">
             <Check
               size={15}
-              color={highlight ? "#2CD7E3" : "#737373"}
+              color={highlight ? "#46E3CE" : "#737373"}
               style={{ marginTop: 2 }}
             />
             <Text className="text-sm text-foreground flex-1">{f}</Text>
@@ -217,7 +217,7 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
       <View className="mt-3">
         {current ? (
           <Button variant="outline" disabled className="w-full">
-            <X size={14} color="#a3a3a3" />
+            <X size={14} color="#9FBDBD" />
             {tier.cta}
           </Button>
         ) : (
@@ -269,7 +269,7 @@ export default function UpgradeScreen() {
             onPress={() => router.back()}
             className="flex-row items-center gap-1 active:opacity-70"
           >
-            <ArrowLeft size={13} color="#a3a3a3" />
+            <ArrowLeft size={13} color="#9FBDBD" />
             <Text className="text-xs text-muted-foreground">Back</Text>
           </Pressable>
         </View>

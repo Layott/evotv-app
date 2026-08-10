@@ -11,16 +11,16 @@ function Toaster(props: ToasterProps) {
       duration={3500}
       closeButton
       style={{
-        backgroundColor: "#0A0A0A",
+        backgroundColor: "#05191B",
       }}
       toastOptions={{
         style: {
-          backgroundColor: "#0A0A0A",
-          borderColor: "#262626",
+          backgroundColor: "#05191B",
+          borderColor: "#103133",
           borderWidth: 1,
         },
-        titleStyle: { color: "#FAFAFA" },
-        descriptionStyle: { color: "#A3A3A3" },
+        titleStyle: { color: "#EAF6F5" },
+        descriptionStyle: { color: "#9FBDBD" },
       }}
       {...props}
     />

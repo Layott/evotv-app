@@ -88,7 +88,7 @@ function pillarStyle(p: EpgPillar): {
   }
 }
 
-function KindIcon({ kind, size = 13, color = "#a3a3a3" }: { kind: EpgRow["kind"]; size?: number; color?: string }) {
+function KindIcon({ kind, size = 13, color = "#9FBDBD" }: { kind: EpgRow["kind"]; size?: number; color?: string }) {
   if (kind === "live_stream") return <Radio size={size} color={color} />;
   if (kind === "match") return <Trophy size={size} color={color} />;
   return <Film size={size} color={color} />;
@@ -156,7 +156,7 @@ function ReminderBell({
       disabled={reminder.isPending}
       className="absolute right-2 top-2 rounded-md border bg-card/70 px-1.5 py-1 active:opacity-70"
       style={{
-        borderColor: reminder.active ? "rgba(44,215,227,0.4)" : "#262626",
+        borderColor: reminder.active ? "rgba(44,215,227,0.4)" : "#103133",
         opacity: reminder.isPending ? 0.5 : 1,
       }}
       accessibilityRole="button"
@@ -234,8 +234,8 @@ function EpgCard({
           />
         ) : null}
         <View className="flex-row items-center gap-1 pr-7">
-          <Clock size={11} color="#a3a3a3" />
-          <Text style={{ fontSize: 11, color: "#a3a3a3", fontWeight: "500" }}>
+          <Clock size={11} color="#9FBDBD" />
+          <Text style={{ fontSize: 11, color: "#9FBDBD", fontWeight: "500" }}>
             {formatTime(row.airsAt)}
           </Text>
           <Text style={{ fontSize: 11, color: "#525252" }}>
@@ -251,7 +251,7 @@ function EpgCard({
         </Text>
 
         <Text
-          style={{ fontSize: 12, color: "#a3a3a3" }}
+          style={{ fontSize: 12, color: "#9FBDBD" }}
           numberOfLines={1}
         >
           {row.subtitle}
@@ -290,7 +290,7 @@ function Chip({
       style={{
         borderColor: active
           ? toneActive?.borderColor ?? "rgba(44,215,227,0.5)"
-          : "#262626",
+          : "#103133",
         backgroundColor: active
           ? toneActive?.backgroundColor ?? "rgba(44,215,227,0.1)"
           : "rgba(15,15,15,0.6)",
@@ -300,7 +300,7 @@ function Chip({
         style={{
           fontSize: 12,
           fontWeight: "500",
-          color: active ? toneActive?.color ?? "#67e8f9" : "#a3a3a3",
+          color: active ? toneActive?.color ?? "#67e8f9" : "#9FBDBD",
         }}
       >
         {label}
@@ -325,7 +325,7 @@ function DayChip({
       onPress={onPress}
       className="items-center rounded-xl border px-4 py-2 active:opacity-70"
       style={{
-        borderColor: active ? "rgba(44,215,227,0.5)" : "#262626",
+        borderColor: active ? "rgba(44,215,227,0.5)" : "#103133",
         backgroundColor: active
           ? "rgba(44,215,227,0.1)"
           : "rgba(15,15,15,0.6)",

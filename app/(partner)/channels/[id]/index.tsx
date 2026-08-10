@@ -30,12 +30,12 @@ export default function ChannelHomeScreen() {
       <ScrollView className="flex-1 bg-background">
         <View className="px-5 py-6">
           <View className="flex-row items-center gap-2">
-            <Radio size={22} color="#2CD7E3" />
+            <Radio size={22} color="#46E3CE" />
             <Text className="text-2xl font-bold text-foreground" numberOfLines={1}>
               {match.name}
             </Text>
             {match.isVerified ? (
-              <ShieldCheck size={16} color="#2CD7E3" />
+              <ShieldCheck size={16} color="#46E3CE" />
             ) : null}
           </View>
           <Text className="mt-1 text-xs text-muted-foreground">
@@ -45,19 +45,19 @@ export default function ChannelHomeScreen() {
           <View className="mt-5 gap-2">
             <NavRow
               href={`/(partner)/channels/${id}/stream-key` as never}
-              icon={<Key size={16} color="#FAFAFA" />}
+              icon={<Key size={16} color="#EAF6F5" />}
               title="Stream key"
               subtitle="View status, rotate to issue a new RTMP key"
             />
             <NavRow
               href={`/(partner)/channels/${id}/analytics` as never}
-              icon={<ShieldCheck size={16} color="#FAFAFA" />}
+              icon={<ShieldCheck size={16} color="#EAF6F5" />}
               title="Analytics"
               subtitle="Daily rollup - views, watch time, tips"
             />
             <NavRow
               href={`/(partner)/channels/${id}/mod` as never}
-              icon={<MessageSquare size={16} color="#FAFAFA" />}
+              icon={<MessageSquare size={16} color="#EAF6F5" />}
               title="Chat moderation"
               subtitle="Pin, delete, timeout - live during broadcasts"
             />

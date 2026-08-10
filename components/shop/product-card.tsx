@@ -27,7 +27,7 @@ export function ProductCard({ product }: { product: Product }) {
       <View
         style={{
           aspectRatio: 1,
-          backgroundColor: "#262626",
+          backgroundColor: "#103133",
           position: "relative",
         }}
       >

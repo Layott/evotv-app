@@ -139,7 +139,7 @@ export function ClipsManagerPage() {
         />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
-          <Search size={14} color="#A3A3A3" />
+          <Search size={14} color="#9FBDBD" />
           <Input
             value={search}
             onChangeText={setSearch}
@@ -246,7 +246,7 @@ export function ClipsManagerPage() {
                     </Text>
                   </View>
                   <Pressable onPress={() => setSelected(null)} hitSlop={8}>
-                    <X size={20} color="#A3A3A3" />
+                    <X size={20} color="#9FBDBD" />
                   </Pressable>
                 </View>
 

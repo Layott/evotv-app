@@ -163,7 +163,7 @@ export function UsersRolesPage() {
         />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
-          <Search size={14} color="#A3A3A3" />
+          <Search size={14} color="#9FBDBD" />
           <Input
             value={search}
             onChangeText={setSearch}
@@ -199,7 +199,7 @@ export function UsersRolesPage() {
 
         {usersQuery.isLoading ? (
           <View className="items-center py-12">
-            <ActivityIndicator color="#2CD7E3" />
+            <ActivityIndicator color="#46E3CE" />
           </View>
         ) : usersQuery.isError ? (
           <Text className="py-6 text-center text-sm text-red-400">
@@ -279,7 +279,7 @@ export function UsersRolesPage() {
                     </Text>
                   </View>
                   <Pressable onPress={() => setSelected(null)} hitSlop={8}>
-                    <X size={20} color="#A3A3A3" />
+                    <X size={20} color="#9FBDBD" />
                   </Pressable>
                 </View>
                 <View className="flex-row items-center gap-3">
@@ -356,7 +356,7 @@ export function UsersRolesPage() {
                     </Text>
                   </View>
                   {sanctionsQuery.isLoading ? (
-                    <ActivityIndicator color="#2CD7E3" />
+                    <ActivityIndicator color="#46E3CE" />
                   ) : activeSanctions.length > 0 ? (
                     <View className="gap-2">
                       {activeSanctions.map((s) => (
@@ -390,7 +390,7 @@ export function UsersRolesPage() {
                               className="rounded-md border border-border bg-background px-2.5 py-1"
                             >
                               <View className="flex-row items-center gap-1">
-                                <ShieldOff size={11} color="#FAFAFA" />
+                                <ShieldOff size={11} color="#EAF6F5" />
                                 <Text className="text-[11px] text-foreground">
                                   Revert
                                 </Text>
@@ -455,7 +455,7 @@ export function UsersRolesPage() {
                         router.push(`/profile/${selected.handle}` as never)
                       }
                     >
-                      <ExternalLink size={14} color="#FAFAFA" />
+                      <ExternalLink size={14} color="#EAF6F5" />
                       <Text className="text-sm text-foreground">View profile</Text>
                     </Button>
                   ) : null}

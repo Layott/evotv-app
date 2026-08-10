@@ -9,50 +9,62 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // EVO brand
+        // EVO brand, sampled from the wordmark rather than picked: it is a
+        // gradient from blue #42ACE8 to mint #46E3CE, and evo-tv-hero.png sits
+        // on the dark teal used for `background` below. Kept in lockstep with
+        // the web tokens in EVOTV/app/globals.css — the two must not drift.
         brand: {
-          DEFAULT: "#2CD7E3",
-          50: "#EAFAFC",
-          100: "#C9F2F6",
-          200: "#9AE7EE",
-          300: "#6BDCE5",
-          400: "#3CD1DD",
-          500: "#2CD7E3",
-          600: "#1FAFB9",
-          700: "#16878E",
-          800: "#0E5F64",
-          900: "#06373A",
+          DEFAULT: "#46E3CE",
+          50: "#EAFAF8",
+          100: "#C9F3EE",
+          200: "#9AE9DF",
+          300: "#6CE0D2",
+          400: "#46E3CE",
+          500: "#2FC9BE",
+          600: "#22A3A4",
+          700: "#1B7F88",
+          800: "#175F68",
+          900: "#134A52",
         },
-        // shadcn semantic tokens (mirrored from web globals.css, dark theme — app is dark-first)
-        background: "#0A0A0A",
-        foreground: "#FAFAFA",
-        card: "#0A0A0A",
-        "card-foreground": "#FAFAFA",
-        popover: "#0A0A0A",
-        "popover-foreground": "#FAFAFA",
-        primary: "#FAFAFA",
-        "primary-foreground": "#0A0A0A",
-        secondary: "#262626",
-        "secondary-foreground": "#FAFAFA",
-        muted: "#262626",
-        "muted-foreground": "#A3A3A3",
-        accent: "#262626",
-        "accent-foreground": "#FAFAFA",
-        destructive: "#7F1D1D",
-        "destructive-foreground": "#FCA5A5",
-        border: "#262626",
-        input: "#262626",
-        ring: "#525252",
+        // The blue end of the wordmark gradient, for the rare place that needs
+        // to sit apart from the mint without inventing a new hue.
+        "brand-blue": "#42ACE8",
+
+        // Semantic tokens, dark-first. Warm neutral greys replaced by the teal
+        // family so surfaces sit in the same world as the wordmark.
+        background: "#05191B",
+        foreground: "#EAF6F5",
+        card: "#0A2426",
+        "card-foreground": "#EAF6F5",
+        popover: "#0A2426",
+        "popover-foreground": "#EAF6F5",
+        primary: "#46E3CE",
+        "primary-foreground": "#05191B",
+        secondary: "#103133",
+        "secondary-foreground": "#EAF6F5",
+        muted: "#103133",
+        "muted-foreground": "#9FBDBD",
+        accent: "#103133",
+        "accent-foreground": "#EAF6F5",
+        destructive: "#FF4A38",
+        "destructive-foreground": "#FFE6E2",
+        // Barely there on purpose. The old #262626 outlined every card, which
+        // is the hairline-box look being removed across the product.
+        border: "#12383A",
+        input: "#17454A",
+        ring: "#46E3CE",
       },
       fontFamily: {
         sans: ["Geist", "System"],
         mono: ["GeistMono", "Menlo"],
       },
+      // Tighter than before (6/8/10/14). Big soft radii on every element is
+      // part of the generic look; matches --radius: 0.3rem on the web.
       borderRadius: {
-        sm: "6px",
-        md: "8px",
-        lg: "10px",
-        xl: "14px",
+        sm: "3px",
+        md: "5px",
+        lg: "7px",
+        xl: "10px",
       },
     },
   },

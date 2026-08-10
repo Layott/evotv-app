@@ -107,7 +107,7 @@ export default function ApiKeysScreen() {
         {revealedKey ? (
           <View className="mt-5 rounded-xl border border-brand bg-brand/10 p-4">
             <View className="mb-2 flex-row items-center gap-2">
-              <KeyRound size={14} color="#2CD7E3" />
+              <KeyRound size={14} color="#46E3CE" />
               <Text className="text-sm font-bold text-brand">
                 Copy this key now
               </Text>

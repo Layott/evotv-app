@@ -125,7 +125,7 @@ export default function ShopProductScreen() {
           onPress={() => router.push("/shop")}
           className="mb-4 flex-row items-center gap-1 self-start active:opacity-70"
         >
-          <ArrowLeft size={14} color="#a3a3a3" />
+          <ArrowLeft size={14} color="#9FBDBD" />
           <Text className="text-sm text-muted-foreground">Back to shop</Text>
         </Pressable>
 
@@ -204,7 +204,7 @@ export default function ShopProductScreen() {
                   fontSize: 11,
                   fontWeight: "600",
                   letterSpacing: 0.5,
-                  color: "#a3a3a3",
+                  color: "#9FBDBD",
                   textTransform: "uppercase",
                 }}
               >

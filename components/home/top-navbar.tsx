@@ -58,7 +58,7 @@ export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
             hitSlop={8}
             className="rounded-lg p-1 active:opacity-70"
           >
-            <Menu size={24} color="#FAFAFA" />
+            <Menu size={24} color="#EAF6F5" />
           </Pressable>
 
           <Pressable
@@ -88,7 +88,7 @@ export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
                 className="relative rounded-lg p-1 active:opacity-70"
                 hitSlop={8}
               >
-                <Bell size={22} color="#FAFAFA" />
+                <Bell size={22} color="#EAF6F5" />
                 {unread > 0 ? (
                   <View
                     className="absolute items-center justify-center rounded-full bg-brand"
@@ -116,7 +116,7 @@ export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
               accessibilityLabel="Search"
               className="rounded-lg p-1 active:opacity-70"
             >
-              <Search size={24} color="#2CD7E3" />
+              <Search size={24} color="#46E3CE" />
             </Pressable>
           </View>
         </View>

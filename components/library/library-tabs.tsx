@@ -60,7 +60,7 @@ function VodRow({ vod }: { vod: Vod }) {
     >
       <View
         className="overflow-hidden rounded-md"
-        style={{ width: 120, aspectRatio: 16 / 9, backgroundColor: "#262626" }}
+        style={{ width: 120, aspectRatio: 16 / 9, backgroundColor: "#103133" }}
       >
         <Image
           source={vod.thumbnailUrl}
@@ -126,7 +126,7 @@ function FollowingList({ items }: { items: FollowingItem[] }) {
               height: 44,
               borderRadius: 22,
               overflow: "hidden",
-              backgroundColor: "#262626",
+              backgroundColor: "#103133",
             }}
           >
             <Image

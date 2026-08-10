@@ -52,7 +52,7 @@ export class ErrorBoundary extends React.Component<
         <View
           style={{
             flex: 1,
-            backgroundColor: "#0A0A0A",
+            backgroundColor: "#05191B",
             alignItems: "center",
             justifyContent: "center",
             padding: 24,
@@ -60,7 +60,7 @@ export class ErrorBoundary extends React.Component<
         >
           <Text
             style={{
-              color: "#FAFAFA",
+              color: "#EAF6F5",
               fontSize: 18,
               fontWeight: "700",
               marginBottom: 8,
@@ -85,7 +85,7 @@ export class ErrorBoundary extends React.Component<
               paddingHorizontal: 20,
               paddingVertical: 10,
               borderRadius: 8,
-              backgroundColor: "#2CD7E3",
+              backgroundColor: "#46E3CE",
             }}
           >
             <Text style={{ color: "#000", fontWeight: "700", fontSize: 14 }}>

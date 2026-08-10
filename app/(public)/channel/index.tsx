@@ -137,7 +137,7 @@ export default function ChannelScreen() {
                   className="rounded-md px-2 py-0.5"
                   style={{
                     borderWidth: 1,
-                    borderColor: "#262626",
+                    borderColor: "#103133",
                     backgroundColor: "rgba(15,15,15,0.8)",
                   }}
                 >
@@ -146,7 +146,7 @@ export default function ChannelScreen() {
                       fontSize: 10,
                       fontWeight: "600",
                       letterSpacing: 1,
-                      color: "#a3a3a3",
+                      color: "#9FBDBD",
                     }}
                   >
                     OFFLINE
@@ -205,23 +205,23 @@ export default function ChannelScreen() {
             <View className="mt-4 flex-row flex-wrap items-center gap-3">
               {isLive && channel ? (
                 <View className="flex-row items-center gap-1">
-                  <Eye size={13} color="#a3a3a3" />
-                  <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+                  <Eye size={13} color="#9FBDBD" />
+                  <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
                     {fmtViewers(channel.viewerCount)} watching
                   </Text>
                 </View>
               ) : null}
               {isLive && channel?.startedAt ? (
                 <View className="flex-row items-center gap-1">
-                  <Clock size={13} color="#a3a3a3" />
-                  <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+                  <Clock size={13} color="#9FBDBD" />
+                  <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
                     {fmtUptime(channel.startedAt)}
                   </Text>
                 </View>
               ) : null}
               <View className="flex-row items-center gap-1">
                 <Radio size={13} color="#67e8f9" />
-                <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+                <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
                   Simulcast on app + web
                 </Text>
               </View>
@@ -277,11 +277,11 @@ export default function ChannelScreen() {
                   style={{
                     backgroundColor: i % 2 === 0 ? "rgba(15,15,15,0.3)" : "transparent",
                     borderBottomWidth: i < scheduleRows.length - 1 ? 1 : 0,
-                    borderBottomColor: "#262626",
+                    borderBottomColor: "#103133",
                   }}
                 >
                   <Text
-                    style={{ fontSize: 12, color: "#a3a3a3" }}
+                    style={{ fontSize: 12, color: "#9FBDBD" }}
                     className="shrink-0"
                   >
                     {fmtSlot(row)}
@@ -296,7 +296,7 @@ export default function ChannelScreen() {
                     className="rounded-md px-2 py-0.5"
                     style={{
                       borderWidth: 1,
-                      borderColor: "#262626",
+                      borderColor: "#103133",
                       backgroundColor: "rgba(15,15,15,0.5)",
                     }}
                   >
@@ -304,7 +304,7 @@ export default function ChannelScreen() {
                       style={{
                         fontSize: 10,
                         letterSpacing: 1,
-                        color: "#a3a3a3",
+                        color: "#9FBDBD",
                         textTransform: "uppercase",
                       }}
                     >

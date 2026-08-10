@@ -289,7 +289,7 @@ export function StreamsManagerPage() {
 
         <View className="mb-3 flex-row items-center gap-2">
           <View className="flex-1 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
-            <Search size={14} color="#A3A3A3" />
+            <Search size={14} color="#9FBDBD" />
             <Input
               value={search}
               onChangeText={setSearch}
@@ -352,7 +352,7 @@ export function StreamsManagerPage() {
 
         {streamsQ.isLoading ? (
           <View className="items-center py-12">
-            <ActivityIndicator color="#2CD7E3" />
+            <ActivityIndicator color="#46E3CE" />
           </View>
         ) : streamsQ.isError ? (
           <Text className="py-6 text-center text-sm text-red-400">
@@ -441,7 +441,7 @@ export function StreamsManagerPage() {
                     </Text>
                   </View>
                   <Pressable onPress={() => setSelected(null)} hitSlop={8}>
-                    <X size={20} color="#A3A3A3" />
+                    <X size={20} color="#9FBDBD" />
                   </Pressable>
                 </View>
 
@@ -914,9 +914,9 @@ function ThumbnailEditor({
         }`}
       >
         {busy ? (
-          <ActivityIndicator size="small" color="#2CD7E3" />
+          <ActivityIndicator size="small" color="#46E3CE" />
         ) : (
-          <Upload size={14} color="#2CD7E3" />
+          <Upload size={14} color="#46E3CE" />
         )}
         <Text className="text-sm text-foreground">
           {busy ? "Uploading…" : "Upload thumbnail"}

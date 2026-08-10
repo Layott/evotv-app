@@ -78,7 +78,7 @@ export function ReportButton({
           accessibilityLabel="Report content"
           className="flex-row items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1.5"
         >
-          <Flag size={12} color="#A3A3A3" />
+          <Flag size={12} color="#9FBDBD" />
           <Text className="text-xs text-muted-foreground">Report</Text>
         </Pressable>
       )}
@@ -102,7 +102,7 @@ export function ReportButton({
                 Report this {targetType.replace("_", " ")}
               </Text>
               <Pressable onPress={() => setOpen(false)} hitSlop={8}>
-                <X size={20} color="#A3A3A3" />
+                <X size={20} color="#9FBDBD" />
               </Pressable>
             </View>
 

@@ -10,7 +10,7 @@ export function VodComments(_props: { vodId: string }) {
   return (
     <View>
       <View className="mb-3 flex-row items-center gap-2">
-        <MessageCircle size={16} color="#a3a3a3" />
+        <MessageCircle size={16} color="#9FBDBD" />
         <Text className="text-lg font-semibold text-foreground">Comments</Text>
       </View>
       <View className="items-center gap-2 rounded-xl border border-border bg-card/40 p-5">

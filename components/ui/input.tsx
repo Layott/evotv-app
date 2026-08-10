@@ -8,7 +8,7 @@ export interface InputProps extends TextInputProps {
 }
 
 const Input = React.forwardRef<TextInput, InputProps>(
-  ({ className, placeholderTextColor = "#A3A3A3", ...props }, ref) => {
+  ({ className, placeholderTextColor = "#9FBDBD", ...props }, ref) => {
     return (
       <TextInput
         ref={ref}

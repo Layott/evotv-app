@@ -12,10 +12,10 @@ export default function PartnerLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: "#0A0A0A" },
-        headerTintColor: "#FAFAFA",
-        headerTitleStyle: { color: "#FAFAFA", fontWeight: "700" },
-        contentStyle: { backgroundColor: "#0A0A0A" },
+        headerStyle: { backgroundColor: "#05191B" },
+        headerTintColor: "#EAF6F5",
+        headerTitleStyle: { color: "#EAF6F5", fontWeight: "700" },
+        contentStyle: { backgroundColor: "#05191B" },
         animation: "slide_from_right",
       }}
     >

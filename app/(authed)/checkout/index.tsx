@@ -407,7 +407,7 @@ export default function CheckoutScreen() {
                   <Text className="text-sm text-muted-foreground">Shipping</Text>
                   <Text className="text-sm text-foreground">
                     {shipping === 0 ? (
-                      <Text style={{ color: "#2CD7E3" }}>Free</Text>
+                      <Text style={{ color: "#46E3CE" }}>Free</Text>
                     ) : (
                       formatNgn(shipping)
                     )}
@@ -583,7 +583,7 @@ export default function CheckoutScreen() {
             </View>
 
             <View className="mt-3 flex-row items-center justify-center gap-1">
-              <ShieldCheck size={12} color="#2CD7E3" />
+              <ShieldCheck size={12} color="#46E3CE" />
               <Text className="text-[11px] text-muted-foreground">
                 256-bit secure. No card data leaves Paystack.
               </Text>

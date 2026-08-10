@@ -42,8 +42,8 @@ function tierStyle(t: string): {
       };
     default:
       return {
-        borderColor: "#404040",
-        backgroundColor: "#262626",
+        borderColor: "#17454A",
+        backgroundColor: "#103133",
         color: "#d4d4d4",
       };
   }
@@ -82,8 +82,8 @@ export function EventHero({ event, game }: EventHeroProps) {
             onPress={() => router.push("/events")}
             className="flex-row items-center gap-1 self-start"
           >
-            <ArrowLeft size={12} color="#a3a3a3" />
-            <Text style={{ fontSize: 11, color: "#a3a3a3" }}>All events</Text>
+            <ArrowLeft size={12} color="#9FBDBD" />
+            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>All events</Text>
           </Pressable>
           <View className="flex-row items-center gap-2">
             <View
@@ -139,8 +139,8 @@ export function EventHero({ event, game }: EventHeroProps) {
                 className="rounded-md px-2 py-0.5"
                 style={{
                   borderWidth: 1,
-                  borderColor: "#404040",
-                  backgroundColor: "#262626",
+                  borderColor: "#17454A",
+                  backgroundColor: "#103133",
                 }}
               >
                 <Text
@@ -148,7 +148,7 @@ export function EventHero({ event, game }: EventHeroProps) {
                     fontSize: 10,
                     fontWeight: "600",
                     letterSpacing: 1,
-                    color: "#a3a3a3",
+                    color: "#9FBDBD",
                   }}
                 >
                   CONCLUDED

@@ -25,7 +25,7 @@ export function VariantPicker({
           fontSize: 11,
           fontWeight: "600",
           letterSpacing: 0.5,
-          color: "#a3a3a3",
+          color: "#9FBDBD",
           textTransform: "uppercase",
         }}
       >

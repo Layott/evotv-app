@@ -34,7 +34,7 @@ function TeamCard({ team }: { team: Team }) {
           height: 56,
           borderRadius: 6,
           borderWidth: 1,
-          borderColor: "#262626",
+          borderColor: "#103133",
         }}
         contentFit="cover"
       />
@@ -48,7 +48,7 @@ function TeamCard({ team }: { team: Team }) {
           </Text>
           <View
             className="rounded px-1.5 py-0.5"
-            style={{ backgroundColor: "#262626" }}
+            style={{ backgroundColor: "#103133" }}
           >
             <Text
               style={{
@@ -63,7 +63,7 @@ function TeamCard({ team }: { team: Team }) {
           </View>
         </View>
         <Text
-          style={{ fontSize: 11, color: "#a3a3a3", marginTop: 2 }}
+          style={{ fontSize: 11, color: "#9FBDBD", marginTop: 2 }}
         >
           {team.country} · {team.region}
         </Text>
@@ -75,8 +75,8 @@ function TeamCard({ team }: { team: Team }) {
             </Text>
           </View>
           <View className="flex-row items-center gap-1">
-            <Users size={11} color="#a3a3a3" />
-            <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+            <Users size={11} color="#9FBDBD" />
+            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
               {formatFollowers(team.followers)}
             </Text>
           </View>

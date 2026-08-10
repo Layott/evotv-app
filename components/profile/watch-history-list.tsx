@@ -64,7 +64,7 @@ export function WatchHistoryList({
               <View
                 style={{
                   height: 1,
-                  backgroundColor: "#262626",
+                  backgroundColor: "#103133",
                 }}
               />
             ) : null}
@@ -77,7 +77,7 @@ export function WatchHistoryList({
                 style={{
                   width: 112,
                   aspectRatio: 16 / 9,
-                  backgroundColor: "#262626",
+                  backgroundColor: "#103133",
                 }}
               >
                 <Image
@@ -88,13 +88,13 @@ export function WatchHistoryList({
                 {typeof v.progressPct === "number" ? (
                   <View
                     className="absolute inset-x-0 bottom-0"
-                    style={{ height: 3, backgroundColor: "#262626" }}
+                    style={{ height: 3, backgroundColor: "#103133" }}
                   >
                     <View
                       style={{
                         height: "100%",
                         width: `${Math.max(0, Math.min(100, v.progressPct))}%`,
-                        backgroundColor: "#2CD7E3",
+                        backgroundColor: "#46E3CE",
                       }}
                     />
                   </View>

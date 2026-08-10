@@ -14,7 +14,7 @@ import {
 } from "@/lib/api/shows";
 import { useAuth } from "@/components/providers";
 
-const BRAND = "#2CD7E3";
+const BRAND = "#46E3CE";
 const BRAND_RGBA = (a: number) => `rgba(44,215,227,${a})`;
 
 function formatRuntime(sec: number): string {
@@ -133,7 +133,7 @@ export default function EpisodePlayerScreen() {
           className="mt-6 rounded-xl px-4 py-2.5"
           style={{ backgroundColor: BRAND }}
         >
-          <Text style={{ color: "#0a0a0a", fontWeight: "700", fontSize: 13 }}>
+          <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
             Go back
           </Text>
         </Pressable>

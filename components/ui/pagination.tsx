@@ -92,7 +92,7 @@ const PaginationPrevious = React.forwardRef<
     className={cn("gap-1 px-2.5", className)}
     {...props}
   >
-    <ChevronLeft size={16} color="#FAFAFA" />
+    <ChevronLeft size={16} color="#EAF6F5" />
     <Text className="text-sm font-medium text-foreground">Previous</Text>
   </PaginationLink>
 ));
@@ -109,7 +109,7 @@ const PaginationNext = React.forwardRef<
     {...props}
   >
     <Text className="text-sm font-medium text-foreground">Next</Text>
-    <ChevronRight size={16} color="#FAFAFA" />
+    <ChevronRight size={16} color="#EAF6F5" />
   </PaginationLink>
 ));
 PaginationNext.displayName = "PaginationNext";
@@ -122,7 +122,7 @@ const PaginationEllipsis = React.forwardRef<View, ViewProps & { className?: stri
       className={cn("h-9 w-9 items-center justify-center", className)}
       {...props}
     >
-      <MoreHorizontal size={16} color="#A3A3A3" />
+      <MoreHorizontal size={16} color="#9FBDBD" />
     </View>
   ),
 );

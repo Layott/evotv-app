@@ -191,15 +191,15 @@ export function ProfileTabs({
     <Tabs defaultValue={defaultValue} className="gap-4">
       <TabsList>
         <TabsTrigger value="videos">
-          <Video size={14} color="#a3a3a3" />
+          <Video size={14} color="#9FBDBD" />
           <Text className="text-sm font-medium">Videos</Text>
         </TabsTrigger>
         <TabsTrigger value="clips">
-          <Film size={14} color="#a3a3a3" />
+          <Film size={14} color="#9FBDBD" />
           <Text className="text-sm font-medium">Clips</Text>
         </TabsTrigger>
         <TabsTrigger value="about">
-          <Info size={14} color="#a3a3a3" />
+          <Info size={14} color="#9FBDBD" />
           <Text className="text-sm font-medium">About</Text>
         </TabsTrigger>
       </TabsList>

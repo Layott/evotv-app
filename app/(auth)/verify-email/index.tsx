@@ -60,13 +60,13 @@ function OtpInput({
                 key={i}
                 className="h-12 w-10 items-center justify-center rounded-md"
                 style={{
-                  backgroundColor: "#0A0A0A",
+                  backgroundColor: "#05191B",
                   borderWidth: 1,
                   borderColor: hasError
                     ? "#ef4444"
                     : isActive
-                      ? "#2CD7E3"
-                      : "#262626",
+                      ? "#46E3CE"
+                      : "#103133",
                 }}
               >
                 <Text className="text-lg font-semibold text-foreground">
@@ -202,7 +202,7 @@ export default function VerifyEmailScreen() {
                 borderColor: "rgba(44,215,227,0.30)",
               }}
             >
-              <Mail color="#2CD7E3" size={26} />
+              <Mail color="#46E3CE" size={26} />
             </View>
             <Text className="text-center text-2xl font-bold text-foreground">
               Verify your email

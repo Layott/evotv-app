@@ -21,7 +21,7 @@ const ACCENT_COLORS: Record<MetricAccent, string> = {
   emerald: "#6EE7B7",
   fuchsia: "#F0ABFC",
   rose: "#FDA4AF",
-  brand: "#2CD7E3",
+  brand: "#46E3CE",
 };
 
 interface MetricCardProps {

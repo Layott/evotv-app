@@ -30,7 +30,7 @@ function roleColor(role: Role): string {
     case "premium":
       return "#fcd34d";
     default:
-      return "#FAFAFA";
+      return "#EAF6F5";
   }
 }
 
@@ -47,7 +47,7 @@ function MessageRow({ msg }: RowProps) {
           height: 24,
           borderRadius: 12,
           overflow: "hidden",
-          backgroundColor: "#262626",
+          backgroundColor: "#103133",
         }}
       >
         {msg.userAvatarUrl ? (
@@ -125,7 +125,7 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
         className="flex-row items-center justify-between border-b border-border px-3 py-2"
       >
         <View className="flex-row items-center gap-2">
-          <Users size={16} color="#FAFAFA" />
+          <Users size={16} color="#EAF6F5" />
           <Text className="text-sm font-semibold text-foreground">
             Stream Chat
           </Text>
@@ -178,9 +178,9 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
               "h-9 w-9 items-center justify-center rounded-md",
               !user || !input.trim() ? "opacity-50" : "active:opacity-80",
             )}
-            style={{ backgroundColor: "#2CD7E3" }}
+            style={{ backgroundColor: "#46E3CE" }}
           >
-            <Send size={16} color="#0A0A0A" />
+            <Send size={16} color="#05191B" />
           </Pressable>
         </View>
         <Text

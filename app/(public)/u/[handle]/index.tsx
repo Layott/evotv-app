@@ -33,7 +33,7 @@ import {
 import { useMockAuth } from "@/components/providers";
 import { toggleFollow as apiToggleFollow } from "@/lib/api/follows";
 
-const BRAND = "#2CD7E3";
+const BRAND = "#46E3CE";
 const BRAND_RGBA = (a: number) => `rgba(44,215,227,${a})`;
 
 function formatCount(n: number): string {
@@ -89,7 +89,7 @@ function NotFound({ handle, onBack }: { handle: string; onBack: () => void }) {
         className="mt-6 rounded-xl px-4 py-2.5"
         style={{ backgroundColor: BRAND }}
       >
-        <Text style={{ color: "#0a0a0a", fontWeight: "700", fontSize: 13 }}>
+        <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
           Back home
         </Text>
       </Pressable>
@@ -310,20 +310,20 @@ export default function PublicProfileScreen() {
                 </Text>
                 <View className="mt-1.5 flex-row items-center gap-3 flex-wrap">
                   <View className="flex-row items-center gap-1">
-                    <Users size={11} color="#a3a3a3" />
+                    <Users size={11} color="#9FBDBD" />
                     <Text className="text-xs text-muted-foreground">
                       {formatCount(profileQ.data.followerCount)} followers
                     </Text>
                   </View>
                   <View className="flex-row items-center gap-1">
-                    <Calendar size={11} color="#a3a3a3" />
+                    <Calendar size={11} color="#9FBDBD" />
                     <Text className="text-xs text-muted-foreground">
                       Joined {formatJoined(profileQ.data.joinedAt)}
                     </Text>
                   </View>
                   {profileQ.data.country ? (
                     <View className="flex-row items-center gap-1">
-                      <MapPin size={11} color="#a3a3a3" />
+                      <MapPin size={11} color="#9FBDBD" />
                       <Text className="text-xs text-muted-foreground">
                         {profileQ.data.country}
                       </Text>
@@ -389,8 +389,8 @@ export default function PublicProfileScreen() {
                     </>
                   ) : (
                     <>
-                      <UserPlus size={14} color="#0a0a0a" />
-                      <Text style={{ color: "#0a0a0a", fontWeight: "700", fontSize: 13 }}>
+                      <UserPlus size={14} color="#05191B" />
+                      <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
                         {viewerId ? "Follow" : "Sign in to follow"}
                       </Text>
                     </>
@@ -406,7 +406,7 @@ export default function PublicProfileScreen() {
                   }
                   className="flex-row items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2.5 active:opacity-70"
                 >
-                  <Flag size={13} color="#a3a3a3" />
+                  <Flag size={13} color="#9FBDBD" />
                   <Text className="text-xs text-muted-foreground">Report</Text>
                 </Pressable>
               ) : null}

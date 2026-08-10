@@ -180,7 +180,7 @@ const AccordionTrigger = React.forwardRef<
           transform: [{ rotate: item.open ? "180deg" : "0deg" }],
         }}
       >
-        <ChevronDown size={16} color="#A3A3A3" />
+        <ChevronDown size={16} color="#9FBDBD" />
       </View>
     </Pressable>
   );

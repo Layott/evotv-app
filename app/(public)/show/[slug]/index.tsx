@@ -18,7 +18,7 @@ import type { Episode, Season, Show, WatchlistStatus } from "@/lib/types";
 import { PILLAR_LABELS } from "@/lib/types";
 import { formatDateOnly } from "@/lib/utils";
 
-const BRAND = "#2CD7E3";
+const BRAND = "#46E3CE";
 const BRAND_RGBA = (a: number) => `rgba(44,215,227,${a})`;
 
 function formatRuntime(sec: number): string {
@@ -171,7 +171,7 @@ export default function ShowLandingScreen() {
           className="mt-6 rounded-xl px-4 py-2.5"
           style={{ backgroundColor: BRAND }}
         >
-          <Text style={{ color: "#0a0a0a", fontWeight: "700", fontSize: 13 }}>
+          <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
             Back to Originals
           </Text>
         </Pressable>
@@ -294,8 +294,8 @@ export default function ShowLandingScreen() {
               className="flex-1 flex-row items-center justify-center gap-1.5 rounded-xl py-3 active:opacity-80"
               style={{ backgroundColor: BRAND }}
             >
-              <Play size={16} color="#0a0a0a" fill="#0a0a0a" />
-              <Text style={{ color: "#0a0a0a", fontWeight: "700", fontSize: 14 }}>
+              <Play size={16} color="#05191B" fill="#05191B" />
+              <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 14 }}>
                 Watch S{(episodesQ.data?.[0]?.seasonNumber ?? 1)}·E
                 {episodesQ.data?.[0]?.episodeNumber ?? 1}
               </Text>
@@ -309,7 +309,7 @@ export default function ShowLandingScreen() {
               {onWatchlist ? (
                 <BookmarkCheck size={16} color={BRAND} />
               ) : (
-                <Bookmark size={16} color="#a3a3a3" />
+                <Bookmark size={16} color="#9FBDBD" />
               )}
               <Text className="text-sm font-medium text-foreground">
                 {onWatchlist ? "On watchlist" : "Watchlist"}
@@ -337,7 +337,7 @@ export default function ShowLandingScreen() {
                     onPress={() => setActiveSeasonId(s.id)}
                     className="rounded-full border px-3 py-1.5"
                     style={{
-                      borderColor: active ? BRAND_RGBA(0.5) : "#262626",
+                      borderColor: active ? BRAND_RGBA(0.5) : "#103133",
                       backgroundColor: active
                         ? BRAND_RGBA(0.1)
                         : "rgba(15,15,15,0.6)",
@@ -345,7 +345,7 @@ export default function ShowLandingScreen() {
                   >
                     <Text
                       className="text-xs font-medium"
-                      style={{ color: active ? BRAND : "#a3a3a3" }}
+                      style={{ color: active ? BRAND : "#9FBDBD" }}
                     >
                       Season {s.seasonNumber} · {s.title}
                     </Text>

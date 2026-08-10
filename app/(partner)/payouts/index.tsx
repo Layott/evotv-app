@@ -37,7 +37,7 @@ export default function PayoutsScreen() {
       <ScrollView className="flex-1 bg-background">
         <View className="px-5 py-6">
           <View className="flex-row items-center gap-2">
-            <Banknote size={22} color="#2CD7E3" />
+            <Banknote size={22} color="#46E3CE" />
             <Text className="text-2xl font-bold text-foreground">Payouts</Text>
           </View>
           <Text className="mt-1 text-sm text-muted-foreground">

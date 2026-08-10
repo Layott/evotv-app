@@ -34,10 +34,10 @@ export default function RootLayout() {
                 <GlobalBanner />
                 <Stack
                   screenOptions={{
-                    headerStyle: { backgroundColor: "#0A0A0A" },
-                    headerTintColor: "#FAFAFA",
-                    headerTitleStyle: { color: "#FAFAFA" },
-                    contentStyle: { backgroundColor: "#0A0A0A" },
+                    headerStyle: { backgroundColor: "#05191B" },
+                    headerTintColor: "#EAF6F5",
+                    headerTitleStyle: { color: "#EAF6F5" },
+                    contentStyle: { backgroundColor: "#05191B" },
                     animation: "slide_from_right",
                   }}
                 >

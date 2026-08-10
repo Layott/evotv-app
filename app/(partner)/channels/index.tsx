@@ -32,7 +32,7 @@ export default function ChannelsListScreen() {
                   className="h-10 w-10 items-center justify-center rounded-md"
                   style={{ backgroundColor: "#1f1f1f" }}
                 >
-                  <Radio size={18} color="#2CD7E3" />
+                  <Radio size={18} color="#46E3CE" />
                 </View>
                 <View className="flex-1">
                   <Text

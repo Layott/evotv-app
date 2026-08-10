@@ -8,7 +8,7 @@ export interface SpinnerProps extends ActivityIndicatorProps {
 }
 
 const Spinner = React.forwardRef<ActivityIndicator, SpinnerProps>(
-  ({ className, color = "#2CD7E3", size = "small", ...props }, ref) => {
+  ({ className, color = "#46E3CE", size = "small", ...props }, ref) => {
     return (
       <ActivityIndicator
         ref={ref}

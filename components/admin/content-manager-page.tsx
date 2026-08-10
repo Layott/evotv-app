@@ -191,7 +191,7 @@ export function ContentManagerPage() {
           </TabsList>
 
           <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
-            <Search size={14} color="#A3A3A3" />
+            <Search size={14} color="#9FBDBD" />
             <Input
               value={search}
               onChangeText={setSearch}
@@ -535,7 +535,7 @@ function GameDrawer({
                 {editingGame ? "Edit game" : "New game"}
               </Text>
               <Pressable onPress={onClose} hitSlop={8}>
-                <X size={20} color="#A3A3A3" />
+                <X size={20} color="#9FBDBD" />
               </Pressable>
             </View>
 
@@ -796,9 +796,9 @@ function ImageUploadField({
         }`}
       >
         {uploading ? (
-          <ActivityIndicator size="small" color="#2CD7E3" />
+          <ActivityIndicator size="small" color="#46E3CE" />
         ) : (
-          <Upload size={14} color="#2CD7E3" />
+          <Upload size={14} color="#46E3CE" />
         )}
         <Text className="text-sm text-foreground">
           {uploading ? "Uploading…" : buttonLabel}
@@ -826,7 +826,7 @@ function TabBody({
   if (loading) {
     return (
       <View className="items-center py-12">
-        <ActivityIndicator color="#2CD7E3" />
+        <ActivityIndicator color="#46E3CE" />
       </View>
     );
   }

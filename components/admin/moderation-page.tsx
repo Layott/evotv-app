@@ -79,7 +79,7 @@ function ReportCard({
           Target:{" "}
           <Text className="font-mono text-foreground">{report.targetId}</Text>
         </Text>
-        <ExternalLink size={11} color="#2CD7E3" />
+        <ExternalLink size={11} color="#46E3CE" />
       </Pressable>
       <Text className="mt-1 text-xs text-muted-foreground">
         Reporter:{" "}
@@ -144,7 +144,7 @@ function ReportCard({
               className="flex-1 border-border bg-card"
               onPress={() => onDismiss(notes)}
             >
-              <X size={12} color="#FAFAFA" />
+              <X size={12} color="#EAF6F5" />
               <Text className="text-xs text-foreground">Dismiss</Text>
             </Button>
           </View>

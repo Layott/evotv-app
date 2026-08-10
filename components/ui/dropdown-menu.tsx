@@ -236,7 +236,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
         {...props}
       >
         <View className="absolute left-2 h-3.5 w-3.5 items-center justify-center">
-          {checked ? <Check size={14} color="#2CD7E3" /> : null}
+          {checked ? <Check size={14} color="#46E3CE" /> : null}
         </View>
         {React.Children.map(children, (child) => {
           if (typeof child === "string" || typeof child === "number") {
@@ -319,7 +319,7 @@ const DropdownMenuRadioItem = React.forwardRef<
       {...props}
     >
       <View className="absolute left-2 h-3.5 w-3.5 items-center justify-center">
-        {checked ? <Circle size={8} color="#2CD7E3" fill="#2CD7E3" /> : null}
+        {checked ? <Circle size={8} color="#46E3CE" fill="#46E3CE" /> : null}
       </View>
       {React.Children.map(children, (child) => {
         if (typeof child === "string" || typeof child === "number") {
@@ -415,7 +415,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
       return child;
     })}
     <View className="ml-auto">
-      <ChevronRight size={16} color="#A3A3A3" />
+      <ChevronRight size={16} color="#9FBDBD" />
     </View>
   </Pressable>
 ));

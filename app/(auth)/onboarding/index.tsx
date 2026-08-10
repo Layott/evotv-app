@@ -261,7 +261,7 @@ export default function OnboardingScreen() {
 
         <View className="mt-6 mb-4">
           <View className="flex-row items-center gap-2">
-            <Icon color="#2CD7E3" size={20} />
+            <Icon color="#46E3CE" size={20} />
             <Text className="text-2xl font-bold text-foreground">
               {current.title}
             </Text>
@@ -315,7 +315,7 @@ export default function OnboardingScreen() {
             disabled={step === 1 || submitting}
             className="h-11 flex-1"
           >
-            <ArrowLeft color="#FAFAFA" size={16} />
+            <ArrowLeft color="#EAF6F5" size={16} />
             <Text className="text-sm font-medium text-foreground">Back</Text>
           </Button>
           <Button
@@ -390,7 +390,7 @@ function StepGames({
             style={
               isSelected
                 ? {
-                    borderColor: "#2CD7E3",
+                    borderColor: "#46E3CE",
                     borderWidth: 2,
                   }
                 : undefined
@@ -494,7 +494,7 @@ function StepTeams({
             )}
             style={
               isSelected
-                ? { borderColor: "#2CD7E3", borderWidth: 2 }
+                ? { borderColor: "#46E3CE", borderWidth: 2 }
                 : undefined
             }
           >
@@ -503,7 +503,7 @@ function StepTeams({
               style={{
                 width: 40,
                 height: 40,
-                backgroundColor: "#262626",
+                backgroundColor: "#103133",
               }}
             >
               <Image
@@ -537,8 +537,8 @@ function StepTeams({
               className="h-5 w-5 items-center justify-center rounded-full"
               style={{
                 borderWidth: 1,
-                borderColor: isSelected ? "#2CD7E3" : "#404040",
-                backgroundColor: isSelected ? "#2CD7E3" : "transparent",
+                borderColor: isSelected ? "#46E3CE" : "#17454A",
+                backgroundColor: isSelected ? "#46E3CE" : "transparent",
               }}
             >
               {isSelected ? <Check color="#000000" size={12} /> : null}
@@ -622,7 +622,7 @@ function StepPreferences({
                   active ? "border-brand" : "border-border",
                 )}
                 style={
-                  active ? { borderColor: "#2CD7E3", borderWidth: 2 } : undefined
+                  active ? { borderColor: "#46E3CE", borderWidth: 2 } : undefined
                 }
               >
                 <Text
@@ -681,7 +681,7 @@ function StepPreferences({
                   active ? "border-brand" : "border-border",
                 )}
                 style={
-                  active ? { borderColor: "#2CD7E3", borderWidth: 2 } : undefined
+                  active ? { borderColor: "#46E3CE", borderWidth: 2 } : undefined
                 }
               >
                 <Text

@@ -20,7 +20,7 @@ export default function PartnerDashboard() {
       <ScrollView className="flex-1 bg-background">
         <View className="px-5 py-6">
           <View className="flex-row items-center gap-2">
-            <Radio size={22} color="#2CD7E3" />
+            <Radio size={22} color="#46E3CE" />
             <Text className="text-2xl font-bold text-foreground">
               Partner dashboard
             </Text>
@@ -31,12 +31,12 @@ export default function PartnerDashboard() {
 
           <View className="mt-5 flex-row gap-3">
             <SummaryCard
-              icon={<Building2 size={16} color="#FAFAFA" />}
+              icon={<Building2 size={16} color="#EAF6F5" />}
               label="Publishers"
               value={publisherMemberships.length}
             />
             <SummaryCard
-              icon={<Radio size={16} color="#FAFAFA" />}
+              icon={<Radio size={16} color="#EAF6F5" />}
               label="Channels"
               value={channelCount}
             />
@@ -48,7 +48,7 @@ export default function PartnerDashboard() {
                 className="h-9 w-9 items-center justify-center rounded-md"
                 style={{ backgroundColor: "#1f1f1f" }}
               >
-                <Banknote size={16} color="#2CD7E3" />
+                <Banknote size={16} color="#46E3CE" />
               </View>
               <View className="flex-1">
                 <Text className="text-sm font-semibold text-foreground">
@@ -73,7 +73,7 @@ export default function PartnerDashboard() {
                     {m.publisher.name}
                   </Text>
                   {m.publisher.isEvotvOwned ? (
-                    <BadgeCheck size={14} color="#2CD7E3" />
+                    <BadgeCheck size={14} color="#46E3CE" />
                   ) : null}
                 </View>
                 <View className="flex-row items-center gap-2">
@@ -111,7 +111,7 @@ export default function PartnerDashboard() {
                         className="h-9 w-9 items-center justify-center rounded-md"
                         style={{ backgroundColor: "#1f1f1f" }}
                       >
-                        <Radio size={16} color="#2CD7E3" />
+                        <Radio size={16} color="#46E3CE" />
                       </View>
                       <View className="flex-1">
                         <Text

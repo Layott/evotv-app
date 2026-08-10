@@ -257,7 +257,7 @@ export default function ClipDetailScreen() {
               </EmptyDescription>
             </EmptyHeader>
             <Button variant="outline" onPress={() => router.back()}>
-              <ArrowLeft size={16} color="#FAFAFA" />
+              <ArrowLeft size={16} color="#EAF6F5" />
               <Text className="text-foreground text-sm font-medium">
                 Go back
               </Text>

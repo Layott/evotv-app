@@ -39,7 +39,7 @@ export function MetricCard({
         </Text>
         {Icon ? (
           <View className="rounded-md bg-muted p-1.5">
-            <Icon size={14} color="#A3A3A3" />
+            <Icon size={14} color="#9FBDBD" />
           </View>
         ) : null}
       </View>
@@ -53,7 +53,7 @@ export function MetricCard({
         {showDelta ? (
           <View className="flex-row items-center gap-0.5">
             {isPositive ? (
-              <ArrowUpRight size={12} color="#2CD7E3" />
+              <ArrowUpRight size={12} color="#46E3CE" />
             ) : (
               <ArrowDownRight size={12} color="#F87171" />
             )}

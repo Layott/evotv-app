@@ -46,7 +46,7 @@ export function CountdownTimer({
             marginBottom: 8,
             fontSize: 11,
             letterSpacing: 1,
-            color: "#a3a3a3",
+            color: "#9FBDBD",
             textTransform: "uppercase",
           }}
         >

@@ -22,7 +22,7 @@ export function TeamRoster({ team, players }: TeamRosterProps) {
             height: 40,
             borderRadius: 6,
             borderWidth: 1,
-            borderColor: "#262626",
+            borderColor: "#103133",
           }}
           contentFit="cover"
         />
@@ -38,7 +38,7 @@ export function TeamRoster({ team, players }: TeamRosterProps) {
               {team.name}
             </Text>
           </Pressable>
-          <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+          <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
             {team.tag} · #{team.ranking}
           </Text>
         </View>
@@ -63,7 +63,7 @@ export function TeamRoster({ team, players }: TeamRosterProps) {
                   height: 32,
                   borderRadius: 16,
                   borderWidth: 1,
-                  borderColor: "#262626",
+                  borderColor: "#103133",
                 }}
                 contentFit="cover"
               />
@@ -75,7 +75,7 @@ export function TeamRoster({ team, players }: TeamRosterProps) {
                   {p.handle}
                 </Text>
                 <Text
-                  style={{ fontSize: 10, color: "#a3a3a3" }}
+                  style={{ fontSize: 10, color: "#9FBDBD" }}
                   numberOfLines={1}
                 >
                   {p.role}

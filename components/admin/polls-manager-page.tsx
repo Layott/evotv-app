@@ -108,7 +108,7 @@ export function PollsManagerPage() {
 
         {pollsQuery.isLoading ? (
           <View className="items-center py-12">
-            <ActivityIndicator color="#2CD7E3" />
+            <ActivityIndicator color="#46E3CE" />
           </View>
         ) : pollsQuery.isError ? (
           <Text className="py-6 text-center text-sm text-red-400">
@@ -186,7 +186,7 @@ export function PollsManagerPage() {
                     </Text>
                   </View>
                   <Pressable onPress={() => setSelected(null)} hitSlop={8}>
-                    <X size={20} color="#A3A3A3" />
+                    <X size={20} color="#9FBDBD" />
                   </Pressable>
                 </View>
 
@@ -313,13 +313,13 @@ function CreatePollDrawer({
                 New poll
               </Text>
               <Pressable onPress={onClose} hitSlop={8}>
-                <X size={20} color="#A3A3A3" />
+                <X size={20} color="#9FBDBD" />
               </Pressable>
             </View>
 
             <Text className="mb-1.5 text-xs text-muted-foreground">Stream</Text>
             {loading ? (
-              <ActivityIndicator color="#2CD7E3" />
+              <ActivityIndicator color="#46E3CE" />
             ) : liveStreams.length === 0 ? (
               <Text className="mb-3 text-xs text-amber-400">
                 No live streams. Start a stream before creating a poll.
@@ -383,7 +383,7 @@ function CreatePollDrawer({
                     }
                     className="h-9 w-9 items-center justify-center rounded-md border border-border bg-card"
                   >
-                    <X size={14} color="#A3A3A3" />
+                    <X size={14} color="#9FBDBD" />
                   </Pressable>
                 ) : null}
               </View>
@@ -395,7 +395,7 @@ function CreatePollDrawer({
                 className="self-start"
                 onPress={() => setOptions((p) => [...p, ""])}
               >
-                <Plus size={12} color="#FAFAFA" />
+                <Plus size={12} color="#EAF6F5" />
                 <Text className="text-xs text-foreground">Add option</Text>
               </Button>
             ) : null}

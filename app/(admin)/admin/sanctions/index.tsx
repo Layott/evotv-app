@@ -24,7 +24,7 @@ const KIND_TABS: { value: SanctionKind | "all"; label: string }[] = [
 function kindColor(kind: SanctionKind): string {
   if (kind === "banned") return "#EF4444";
   if (kind === "suspended") return "#F59E0B";
-  return "#2CD7E3";
+  return "#46E3CE";
 }
 
 function fmtDate(iso: string | null): string {
@@ -146,7 +146,7 @@ export default function SanctionsListScreen() {
                     className="rounded-md border border-border bg-background px-2.5 py-1"
                   >
                     <View className="flex-row items-center gap-1">
-                      <ShieldOff size={11} color="#FAFAFA" />
+                      <ShieldOff size={11} color="#EAF6F5" />
                       <Text className="text-[11px] text-foreground">Revert</Text>
                     </View>
                   </Pressable>

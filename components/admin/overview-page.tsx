@@ -372,7 +372,7 @@ export function OverviewPage() {
           </Text>
           {viewsQ.isLoading ? (
             <View className="mt-3 items-center" style={{ height: 80 }}>
-              <ActivityIndicator color="#2CD7E3" />
+              <ActivityIndicator color="#46E3CE" />
             </View>
           ) : viewsQ.isError ? (
             <Text className="mt-3 text-xs text-red-400">
@@ -414,7 +414,7 @@ export function OverviewPage() {
         <View>
           {streamsQ.isLoading ? (
             <View className="p-4">
-              <ActivityIndicator color="#2CD7E3" />
+              <ActivityIndicator color="#46E3CE" />
             </View>
           ) : streamsQ.isError ? (
             <Text className="p-4 text-xs text-red-400">
@@ -483,7 +483,7 @@ export function OverviewPage() {
         <View>
           {signupsQ.isLoading ? (
             <View className="p-4">
-              <ActivityIndicator color="#2CD7E3" />
+              <ActivityIndicator color="#46E3CE" />
             </View>
           ) : signupsQ.isError ? (
             <Text className="p-4 text-xs text-red-400">
@@ -526,7 +526,7 @@ export function OverviewPage() {
 
       <View className="mt-6">
         <View className="flex-row items-center gap-2">
-          <Sparkles size={14} color="#2CD7E3" />
+          <Sparkles size={14} color="#46E3CE" />
           <Text className="text-sm font-semibold text-foreground">
             All admin pages
           </Text>
@@ -547,7 +547,7 @@ export function OverviewPage() {
                     >
                       <View className="flex-row items-center gap-2">
                         <View className="rounded-md bg-muted p-1.5">
-                          <Icon size={14} color="#2CD7E3" />
+                          <Icon size={14} color="#46E3CE" />
                         </View>
                         <Text
                           numberOfLines={1}

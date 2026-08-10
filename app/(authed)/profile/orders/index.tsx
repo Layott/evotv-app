@@ -29,7 +29,7 @@ const STATUS_COLORS: Record<
   pending: {
     bg: "rgba(38,38,38,1)",
     border: "rgba(64,64,64,1)",
-    text: "#A3A3A3",
+    text: "#9FBDBD",
   },
   paid: {
     bg: "rgba(56,189,248,0.15)",
@@ -59,7 +59,7 @@ const STATUS_COLORS: Record<
   refunded: {
     bg: "rgba(38,38,38,1)",
     border: "rgba(64,64,64,1)",
-    text: "#A3A3A3",
+    text: "#9FBDBD",
   },
 };
 

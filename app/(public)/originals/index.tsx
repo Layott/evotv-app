@@ -11,7 +11,7 @@ import { listShows, listContinueWatching } from "@/lib/api/shows";
 import type { ContentPillar, Show } from "@/lib/types";
 import { PILLAR_LABELS } from "@/lib/types";
 
-const BRAND = "#2CD7E3";
+const BRAND = "#46E3CE";
 const BRAND_RGBA = (a: number) => `rgba(44,215,227,${a})`;
 
 const PILLAR_TINT: Record<ContentPillar, string> = {

@@ -44,8 +44,8 @@ function tierStyle(t: string): {
       };
     default:
       return {
-        borderColor: "#404040",
-        backgroundColor: "#262626",
+        borderColor: "#17454A",
+        backgroundColor: "#103133",
         color: "#d4d4d4",
       };
   }
@@ -147,8 +147,8 @@ function EventCard({
         ) : null}
         <View className="flex-row items-center gap-3">
           <View className="flex-row items-center gap-1">
-            <Calendar size={11} color="#a3a3a3" />
-            <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+            <Calendar size={11} color="#9FBDBD" />
+            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
               {new Date(event.startsAt).toLocaleDateString(undefined, {
                 month: "short",
                 day: "numeric",
@@ -156,8 +156,8 @@ function EventCard({
             </Text>
           </View>
           <View className="flex-row items-center gap-1">
-            <MapPin size={11} color="#a3a3a3" />
-            <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+            <MapPin size={11} color="#9FBDBD" />
+            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
               {event.region}
             </Text>
           </View>
@@ -193,7 +193,7 @@ function Chip({
       style={{
         borderColor: active
           ? toneActive?.borderColor ?? "rgba(44,215,227,0.5)"
-          : "#262626",
+          : "#103133",
         backgroundColor: active
           ? toneActive?.backgroundColor ?? "rgba(44,215,227,0.1)"
           : "rgba(15,15,15,0.6)",
@@ -205,7 +205,7 @@ function Chip({
           fontWeight: "500",
           color: active
             ? toneActive?.color ?? "#67e8f9"
-            : "#a3a3a3",
+            : "#9FBDBD",
         }}
       >
         {label}

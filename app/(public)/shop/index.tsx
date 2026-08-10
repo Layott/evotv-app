@@ -39,7 +39,7 @@ function Chip({
       onPress={onPress}
       className="rounded-full border px-3 py-1.5 active:opacity-70"
       style={{
-        borderColor: active ? "rgba(44,215,227,0.5)" : "#262626",
+        borderColor: active ? "rgba(44,215,227,0.5)" : "#103133",
         backgroundColor: active
           ? "rgba(44,215,227,0.15)"
           : "rgba(15,15,15,0.6)",

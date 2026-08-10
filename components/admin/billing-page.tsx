@@ -126,9 +126,9 @@ export function AdminBillingPage() {
               disabled={subsQ.isFetching}
             >
               {subsQ.isFetching ? (
-                <Loader2 size={14} color="#A3A3A3" />
+                <Loader2 size={14} color="#9FBDBD" />
               ) : (
-                <RefreshCw size={14} color="#FAFAFA" />
+                <RefreshCw size={14} color="#EAF6F5" />
               )}
               <Text className="text-xs text-foreground">Refresh</Text>
             </Button>
@@ -167,7 +167,7 @@ export function AdminBillingPage() {
           </Text>
           {revenueQ.isLoading ? (
             <View className="items-center py-6">
-              <ActivityIndicator color="#2CD7E3" />
+              <ActivityIndicator color="#46E3CE" />
             </View>
           ) : (
             <View className="mt-3 gap-2">
@@ -236,7 +236,7 @@ export function AdminBillingPage() {
           <View className="mt-3">
             {subsQ.isLoading ? (
               <View className="items-center py-8">
-                <ActivityIndicator color="#2CD7E3" />
+                <ActivityIndicator color="#46E3CE" />
               </View>
             ) : subsQ.isError ? (
               <Text className="py-6 text-center text-sm text-red-400">
@@ -325,7 +325,7 @@ function SubscriptionRow({
           }
           onPress={onExtend}
         >
-          <CalendarPlus size={12} color="#FAFAFA" />
+          <CalendarPlus size={12} color="#EAF6F5" />
           <Text className="text-xs text-foreground">Extend 30d</Text>
         </Button>
         <Button

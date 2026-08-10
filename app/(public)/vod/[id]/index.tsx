@@ -125,7 +125,7 @@ function VodChapters({ vod }: ChaptersProps) {
   return (
     <View className="rounded-xl border border-border bg-card p-3">
       <View className="flex-row items-center gap-2 mb-2">
-        <Clock size={14} color="#a3a3a3" />
+        <Clock size={14} color="#9FBDBD" />
         <Text className="text-sm font-semibold text-foreground">Chapters</Text>
       </View>
       <View className="gap-1.5">
@@ -287,7 +287,7 @@ export default function VodScreen() {
               </EmptyDescription>
             </EmptyHeader>
             <Button variant="outline" onPress={() => router.back()}>
-              <ArrowLeft size={16} color="#FAFAFA" />
+              <ArrowLeft size={16} color="#EAF6F5" />
               <Text className="text-foreground text-sm font-medium">
                 Go back
               </Text>
@@ -400,7 +400,7 @@ export default function VodScreen() {
             </Text>
             <View className="mt-2 flex-row flex-wrap items-center gap-2">
               <View className="flex-row items-center gap-1">
-                <Eye size={13} color="#a3a3a3" />
+                <Eye size={13} color="#9FBDBD" />
                 <Text className="text-xs text-muted-foreground">
                   {compact(vod.viewCount)} views
                 </Text>
@@ -428,8 +428,8 @@ export default function VodScreen() {
               >
                 <ThumbsUp
                   size={14}
-                  color={liked ? "#2CD7E3" : "#FAFAFA"}
-                  fill={liked ? "#2CD7E3" : "transparent"}
+                  color={liked ? "#46E3CE" : "#EAF6F5"}
+                  fill={liked ? "#46E3CE" : "transparent"}
                 />
                 <Text className="text-sm text-foreground">
                   {compact(likes)}
@@ -442,7 +442,7 @@ export default function VodScreen() {
               >
                 <ThumbsDown
                   size={14}
-                  color={disliked ? "#f87171" : "#FAFAFA"}
+                  color={disliked ? "#f87171" : "#EAF6F5"}
                   fill={disliked ? "#f87171" : "transparent"}
                 />
                 {dislikes > 0 ? (
@@ -453,7 +453,7 @@ export default function VodScreen() {
               </Pressable>
             </View>
             <Button variant="outline" size="sm" onPress={onShare}>
-              <Share2 size={14} color="#FAFAFA" />
+              <Share2 size={14} color="#EAF6F5" />
               Share
             </Button>
             <Button
@@ -465,7 +465,7 @@ export default function VodScreen() {
             >
               <BookmarkPlus
                 size={14}
-                color={saved ? "#000" : "#FAFAFA"}
+                color={saved ? "#000" : "#EAF6F5"}
               />
               {saved ? "Saved" : "Save"}
             </Button>

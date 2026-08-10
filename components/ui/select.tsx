@@ -128,7 +128,7 @@ const SelectTrigger = React.forwardRef<
       {...props}
     >
       <View className="flex-row items-center gap-2 flex-1">{children}</View>
-      <ChevronDown size={16} color="#A3A3A3" />
+      <ChevronDown size={16} color="#9FBDBD" />
     </Pressable>
   );
 });
@@ -251,7 +251,7 @@ const SelectItem = React.forwardRef<
       </View>
       {selected ? (
         <View className="absolute right-2">
-          <Check size={16} color="#2CD7E3" />
+          <Check size={16} color="#46E3CE" />
         </View>
       ) : null}
     </Pressable>

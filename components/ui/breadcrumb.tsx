@@ -109,7 +109,7 @@ const BreadcrumbSeparator = React.forwardRef<
     className={cn("flex-row items-center", className)}
     {...props}
   >
-    {children ?? <ChevronRight size={14} color="#A3A3A3" />}
+    {children ?? <ChevronRight size={14} color="#9FBDBD" />}
   </View>
 ));
 BreadcrumbSeparator.displayName = "BreadcrumbSeparator";
@@ -124,7 +124,7 @@ const BreadcrumbEllipsis = React.forwardRef<
     className={cn("h-9 w-9 items-center justify-center", className)}
     {...props}
   >
-    <MoreHorizontal size={16} color="#A3A3A3" />
+    <MoreHorizontal size={16} color="#9FBDBD" />
   </View>
 ));
 BreadcrumbEllipsis.displayName = "BreadcrumbEllipsis";

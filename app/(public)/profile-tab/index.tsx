@@ -19,5 +19,5 @@ export default function ProfileTabRedirect() {
       router.replace("/profile" as never);
     }, [router]),
   );
-  return <View style={{ flex: 1, backgroundColor: "#0A0A0A" }} />;
+  return <View style={{ flex: 1, backgroundColor: "#05191B" }} />;
 }

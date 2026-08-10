@@ -34,7 +34,7 @@ const STATUS_COLORS: Record<OrderStatus, { bg: string; border: string; text: str
   pending: {
     bg: "rgba(38,38,38,1)",
     border: "rgba(64,64,64,1)",
-    text: "#A3A3A3",
+    text: "#9FBDBD",
   },
   paid: {
     bg: "rgba(56,189,248,0.15)",
@@ -64,7 +64,7 @@ const STATUS_COLORS: Record<OrderStatus, { bg: string; border: string; text: str
   refunded: {
     bg: "rgba(38,38,38,1)",
     border: "rgba(64,64,64,1)",
-    text: "#A3A3A3",
+    text: "#9FBDBD",
   },
 };
 
@@ -237,10 +237,10 @@ export function OrderView({ id }: OrderViewProps) {
                     <View
                       className="h-8 w-8 items-center justify-center rounded-full"
                       style={{
-                        backgroundColor: active ? "#2CD7E3" : "#262626",
+                        backgroundColor: active ? "#46E3CE" : "#103133",
                       }}
                     >
-                      <Icon size={14} color={active ? "#0A0A0A" : "#737373"} />
+                      <Icon size={14} color={active ? "#05191B" : "#737373"} />
                     </View>
                     <View className="flex-1">
                       <Text className="text-sm font-semibold text-foreground">
@@ -392,14 +392,14 @@ export function OrderView({ id }: OrderViewProps) {
           onPress={() => toast("Receipt download is desktop-only")}
           className="flex-1"
         >
-          <Printer size={14} color="#FAFAFA" />
+          <Printer size={14} color="#EAF6F5" />
           <Text className="text-sm font-medium text-foreground">Receipt</Text>
         </Button>
         <Pressable
           onPress={() => router.push("/(public)/shop")}
           className="flex-1 h-9 flex-row items-center justify-center gap-2 rounded-md bg-brand px-4 active:opacity-80"
         >
-          <ShoppingBag size={14} color="#0A0A0A" />
+          <ShoppingBag size={14} color="#05191B" />
           <Text className="text-sm font-medium text-black">Continue</Text>
         </Pressable>
       </View>

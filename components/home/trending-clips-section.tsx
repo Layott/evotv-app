@@ -47,7 +47,7 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
           onPress={() => router.push("/discover")}
           className="active:opacity-70"
         >
-          <Text className="text-xs font-medium" style={{ color: "#2CD7E3" }}>
+          <Text className="text-xs font-medium" style={{ color: "#46E3CE" }}>
             See all
           </Text>
         </Pressable>
@@ -137,7 +137,7 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
                       backgroundColor: "rgba(44,215,227,0.85)",
                     }}
                   >
-                    <Play size={18} color="#0A0A0A" fill="#0A0A0A" />
+                    <Play size={18} color="#05191B" fill="#05191B" />
                   </View>
                 </View>
 

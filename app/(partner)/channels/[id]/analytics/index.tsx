@@ -45,7 +45,7 @@ export default function ChannelAnalyticsScreen() {
       <ScrollView className="flex-1 bg-background">
         <View className="px-5 py-6">
           <View className="flex-row items-center gap-2">
-            <BarChart3 size={22} color="#2CD7E3" />
+            <BarChart3 size={22} color="#46E3CE" />
             <Text className="text-2xl font-bold text-foreground">Analytics</Text>
           </View>
           <Text className="mt-1 text-sm text-muted-foreground">
@@ -92,22 +92,22 @@ export default function ChannelAnalyticsScreen() {
             <View className="mt-5 gap-4">
               <View className="flex-row flex-wrap gap-3">
                 <SummaryCard
-                  icon={<Eye size={14} color="#FAFAFA" />}
+                  icon={<Eye size={14} color="#EAF6F5" />}
                   label="Views"
                   value={analyticsQ.data.totals.views.toLocaleString()}
                 />
                 <SummaryCard
-                  icon={<Users size={14} color="#FAFAFA" />}
+                  icon={<Users size={14} color="#EAF6F5" />}
                   label="Unique"
                   value={analyticsQ.data.totals.uniqueViewers.toLocaleString()}
                 />
                 <SummaryCard
-                  icon={<TrendingUp size={14} color="#FAFAFA" />}
+                  icon={<TrendingUp size={14} color="#EAF6F5" />}
                   label="Watch min"
                   value={analyticsQ.data.totals.watchMinutes.toLocaleString()}
                 />
                 <SummaryCard
-                  icon={<Radio size={14} color="#FAFAFA" />}
+                  icon={<Radio size={14} color="#EAF6F5" />}
                   label="Peak"
                   value={analyticsQ.data.totals.peakConcurrent.toLocaleString()}
                 />
@@ -127,7 +127,7 @@ export default function ChannelAnalyticsScreen() {
                 title="Views per day"
                 rows={analyticsQ.data.rows}
                 accessor={(r) => r.views}
-                color="#2CD7E3"
+                color="#46E3CE"
               />
               <SparkSection
                 title="Watch minutes per day"

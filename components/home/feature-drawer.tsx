@@ -197,7 +197,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
           bottom: 0,
           width: "85%",
           maxWidth: 360,
-          backgroundColor: "#0A0A0A",
+          backgroundColor: "#05191B",
           borderLeftWidth: 1,
           borderLeftColor: "#1F1F1F",
         }}
@@ -209,7 +209,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
                 className="h-10 w-10 rounded-full items-center justify-center"
                 style={{ backgroundColor: "rgba(44, 215, 227, 0.15)" }}
               >
-                <UserIcon size={18} color="#2CD7E3" />
+                <UserIcon size={18} color="#46E3CE" />
               </View>
               <View>
                 <Text className="text-sm font-semibold text-foreground">
@@ -226,7 +226,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
               accessibilityLabel="Close menu"
               className="p-1"
             >
-              <X size={20} color="#A3A3A3" />
+              <X size={20} color="#9FBDBD" />
             </Pressable>
           </View>
 
@@ -259,7 +259,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
                           className="h-8 w-8 rounded-md items-center justify-center"
                           style={{ backgroundColor: "rgba(44, 215, 227, 0.10)" }}
                         >
-                          <Icon size={16} color="#2CD7E3" />
+                          <Icon size={16} color="#46E3CE" />
                         </View>
                         <Text className="flex-1 text-sm text-foreground">
                           {item.label}
@@ -335,7 +335,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
                   className="h-8 w-8 rounded-md items-center justify-center"
                   style={{ backgroundColor: "rgba(44, 215, 227, 0.12)" }}
                 >
-                  <LogIn size={16} color="#2CD7E3" />
+                  <LogIn size={16} color="#46E3CE" />
                 </View>
                 <Text className="text-sm font-medium text-brand">Sign in</Text>
               </Pressable>

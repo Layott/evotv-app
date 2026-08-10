@@ -42,7 +42,7 @@ function actionColor(action: string): string {
   if (action.endsWith(".delete") || action.endsWith(".force_end")) return "#EF4444";
   if (action.startsWith("user.sanction")) return "#F59E0B";
   if (action.startsWith("role.")) return "#A855F7";
-  return "#2CD7E3";
+  return "#46E3CE";
 }
 
 function AuditRow({ row }: { row: AuditLogEntry }) {
@@ -189,7 +189,7 @@ export default function AuditLogScreen() {
                 : "border-border bg-card"
             }`}
           >
-            <SlidersHorizontal size={11} color={showAdvanced ? "#2CD7E3" : "#FAFAFA"} />
+            <SlidersHorizontal size={11} color={showAdvanced ? "#46E3CE" : "#EAF6F5"} />
             <Text
               className={`text-xs font-semibold ${
                 showAdvanced ? "text-brand" : "text-foreground"
@@ -274,7 +274,7 @@ export default function AuditLogScreen() {
             <RefreshControl
               refreshing={isFetching && !isLoading}
               onRefresh={refetch}
-              tintColor="#2CD7E3"
+              tintColor="#46E3CE"
             />
           }
           ListEmptyComponent={

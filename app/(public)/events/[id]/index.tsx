@@ -179,7 +179,7 @@ export default function EventDetailScreen() {
               style={{
                 borderColor: reminded
                   ? "rgba(44,215,227,0.5)"
-                  : "#262626",
+                  : "#103133",
                 backgroundColor: reminded
                   ? "rgba(44,215,227,0.1)"
                   : "rgba(15,15,15,0.6)",
@@ -285,8 +285,8 @@ export default function EventDetailScreen() {
                   className="self-start rounded-md px-2.5 py-1"
                   style={{
                     borderWidth: 1,
-                    borderColor: "#404040",
-                    backgroundColor: "#262626",
+                    borderColor: "#17454A",
+                    backgroundColor: "#103133",
                   }}
                 >
                   <Text
@@ -294,7 +294,7 @@ export default function EventDetailScreen() {
                       fontSize: 11,
                       fontWeight: "600",
                       letterSpacing: 1,
-                      color: "#a3a3a3",
+                      color: "#9FBDBD",
                     }}
                   >
                     CONCLUDED

@@ -216,7 +216,7 @@ export default function CartScreen() {
                 <Text className="text-sm text-muted-foreground">Shipping</Text>
                 <Text className="text-sm text-foreground">
                   {shipping === 0 && subtotal >= FREE_SHIPPING_MIN ? (
-                    <Text style={{ color: "#2CD7E3" }}>Free</Text>
+                    <Text style={{ color: "#46E3CE" }}>Free</Text>
                   ) : (
                     formatNgn(shipping)
                   )}

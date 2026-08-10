@@ -212,7 +212,7 @@ export function VodsManagerPage() {
         />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
-          <Search size={14} color="#A3A3A3" />
+          <Search size={14} color="#9FBDBD" />
           <Input
             value={search}
             onChangeText={setSearch}
@@ -321,7 +321,7 @@ export function VodsManagerPage() {
                     </Text>
                   </View>
                   <Pressable onPress={() => setSelected(null)} hitSlop={8}>
-                    <X size={20} color="#A3A3A3" />
+                    <X size={20} color="#9FBDBD" />
                   </Pressable>
                 </View>
 
@@ -527,14 +527,14 @@ function NewVodDrawer({
                 New VOD
               </Text>
               <Pressable onPress={onClose} hitSlop={8}>
-                <X size={20} color="#A3A3A3" />
+                <X size={20} color="#9FBDBD" />
               </Pressable>
             </View>
 
             <FormField label="Video">
               {mp4Url ? (
                 <View className="mb-2 flex-row items-center gap-2 rounded-md border border-cyan-500/30 bg-cyan-500/10 px-3 py-2.5">
-                  <CheckCircle2 size={14} color="#2CD7E3" />
+                  <CheckCircle2 size={14} color="#46E3CE" />
                   <View className="min-w-0 flex-1">
                     <Text className="text-xs font-medium text-cyan-200">
                       Video uploaded
@@ -568,9 +568,9 @@ function NewVodDrawer({
                 }`}
               >
                 {uploadingVideo ? (
-                  <ActivityIndicator size="small" color="#2CD7E3" />
+                  <ActivityIndicator size="small" color="#46E3CE" />
                 ) : (
-                  <Film size={14} color="#2CD7E3" />
+                  <Film size={14} color="#46E3CE" />
                 )}
                 <Text className="text-sm text-foreground">
                   {uploadingVideo
@@ -784,9 +784,9 @@ function UploadImageButton({
       }`}
     >
       {busy ? (
-        <ActivityIndicator size="small" color="#2CD7E3" />
+        <ActivityIndicator size="small" color="#46E3CE" />
       ) : (
-        <Upload size={14} color="#2CD7E3" />
+        <Upload size={14} color="#46E3CE" />
       )}
       <Text className="text-sm text-foreground">
         {busy ? "Uploading…" : label}

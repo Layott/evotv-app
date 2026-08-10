@@ -80,7 +80,7 @@ export function LiveNow({ streams, games, loading }: LiveNowProps) {
           onPress={() => router.push("/discover")}
           className="active:opacity-70"
         >
-          <Text className="text-xs font-medium" style={{ color: "#2CD7E3" }}>
+          <Text className="text-xs font-medium" style={{ color: "#46E3CE" }}>
             See all
           </Text>
         </Pressable>
@@ -152,7 +152,7 @@ export function LiveNow({ streams, games, loading }: LiveNowProps) {
                     {s.streamerName}
                   </Text>
                   {game ? (
-                    <Text style={{ fontSize: 11, color: "#2CD7E3" }}>
+                    <Text style={{ fontSize: 11, color: "#46E3CE" }}>
                       {game.shortName}
                     </Text>
                   ) : null}

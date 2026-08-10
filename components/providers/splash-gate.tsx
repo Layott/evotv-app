@@ -19,7 +19,7 @@ void SplashScreen.preventAutoHideAsync().catch(() => {
  * Loops until min delay + auth-load complete, then fades children in.
  */
 
-const CYAN = "#2CD7E3";
+const CYAN = "#46E3CE";
 
 interface SplashGateProps {
   children: React.ReactNode;
@@ -118,7 +118,7 @@ function SplashScreenView() {
       <Text
         style={{
           marginTop: 32,
-          color: "#FAFAFA",
+          color: "#EAF6F5",
           fontSize: 16,
           fontWeight: "700",
           letterSpacing: 4,
@@ -162,7 +162,7 @@ function FadingChildren({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0A0A0A", opacity }}>
+    <View style={{ flex: 1, backgroundColor: "#05191B", opacity }}>
       {children}
     </View>
   );

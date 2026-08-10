@@ -80,7 +80,7 @@ export default function ProfileScreen() {
               accessibilityLabel="Open settings"
               hitSlop={8}
             >
-              <Settings color="#FAFAFA" size={18} />
+              <Settings color="#EAF6F5" size={18} />
             </Pressable>
           </View>
 

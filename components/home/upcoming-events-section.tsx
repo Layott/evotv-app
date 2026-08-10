@@ -44,8 +44,8 @@ function tierStyle(t: string): {
       };
     default:
       return {
-        borderColor: "#404040",
-        backgroundColor: "#262626",
+        borderColor: "#17454A",
+        backgroundColor: "#103133",
         color: "#d4d4d4",
       };
   }
@@ -92,7 +92,7 @@ export function UpcomingEvents({
           onPress={() => router.push("/events")}
           className="active:opacity-70"
         >
-          <Text className="text-xs font-medium" style={{ color: "#2CD7E3" }}>
+          <Text className="text-xs font-medium" style={{ color: "#46E3CE" }}>
             See all
           </Text>
         </Pressable>
@@ -163,18 +163,18 @@ export function UpcomingEvents({
                     {ev.title}
                   </Text>
                   <View className="flex-row items-center gap-2">
-                    <Calendar size={12} color="#a3a3a3" />
+                    <Calendar size={12} color="#9FBDBD" />
                     <Text
-                      style={{ fontSize: 11, color: "#a3a3a3" }}
+                      style={{ fontSize: 11, color: "#9FBDBD" }}
                     >
                       {formatDateShort(ev.startsAt)}
                     </Text>
                     <Text
-                      style={{ fontSize: 11, color: "#a3a3a3" }}
+                      style={{ fontSize: 11, color: "#9FBDBD" }}
                     >
                       &middot;
                     </Text>
-                    <Text style={{ fontSize: 11, color: "#a3a3a3" }}>
+                    <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
                       {countdownLabel(ev.startsAt)}
                     </Text>
                     {game ? (
@@ -182,7 +182,7 @@ export function UpcomingEvents({
                         style={{
                           marginLeft: "auto",
                           fontSize: 11,
-                          color: "#2CD7E3",
+                          color: "#46E3CE",
                         }}
                       >
                         {game.shortName}

@@ -90,7 +90,7 @@ function Chip({
       onPress={onPress}
       className="rounded-full border px-3 py-1 active:opacity-70"
       style={{
-        borderColor: active ? "rgba(44,215,227,0.5)" : "#262626",
+        borderColor: active ? "rgba(44,215,227,0.5)" : "#103133",
         backgroundColor: active
           ? "rgba(44,215,227,0.1)"
           : "rgba(15,15,15,0.6)",
@@ -100,7 +100,7 @@ function Chip({
         style={{
           fontSize: 12,
           fontWeight: "500",
-          color: active ? "#67e8f9" : "#a3a3a3",
+          color: active ? "#67e8f9" : "#9FBDBD",
           textTransform: "capitalize",
         }}
       >
@@ -371,7 +371,7 @@ export default function DiscoverScreen() {
                             {s.title}
                           </Text>
                           <Text
-                            style={{ fontSize: 11, color: "#a3a3a3" }}
+                            style={{ fontSize: 11, color: "#9FBDBD" }}
                           >
                             {s.streamerName}
                           </Text>
@@ -479,7 +479,7 @@ export default function DiscoverScreen() {
                             height: 48,
                             borderRadius: 6,
                             borderWidth: 1,
-                            borderColor: "#262626",
+                            borderColor: "#103133",
                           }}
                           contentFit="cover"
                         />
@@ -491,7 +491,7 @@ export default function DiscoverScreen() {
                             {t.name}
                           </Text>
                           <Text
-                            style={{ fontSize: 11, color: "#a3a3a3" }}
+                            style={{ fontSize: 11, color: "#9FBDBD" }}
                           >
                             {t.tag} · {game?.shortName}
                           </Text>
@@ -532,7 +532,7 @@ export default function DiscoverScreen() {
                             height: 48,
                             borderRadius: 24,
                             borderWidth: 1,
-                            borderColor: "#262626",
+                            borderColor: "#103133",
                           }}
                           contentFit="cover"
                         />
@@ -544,7 +544,7 @@ export default function DiscoverScreen() {
                             {p.handle}
                           </Text>
                           <Text
-                            style={{ fontSize: 11, color: "#a3a3a3" }}
+                            style={{ fontSize: 11, color: "#9FBDBD" }}
                             numberOfLines={1}
                           >
                             {p.role} · {game?.shortName}

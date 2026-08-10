@@ -89,7 +89,7 @@ export default function ChannelPublicPage() {
         <View className="flex-1 items-center justify-center bg-background px-6">
           <Empty className="border-0">
             <EmptyHeader>
-              <Radio size={28} color="#A3A3A3" />
+              <Radio size={28} color="#9FBDBD" />
               <EmptyTitle>Channel not found</EmptyTitle>
               <EmptyDescription>
                 @{slug} doesn't exist or has been removed. The handle may have changed.
@@ -97,7 +97,7 @@ export default function ChannelPublicPage() {
             </EmptyHeader>
             <View className="flex-row items-center gap-2">
               <Button variant="outline" onPress={() => router.back()}>
-                <ArrowLeft color="#FAFAFA" size={16} />
+                <ArrowLeft color="#EAF6F5" size={16} />
                 <Text className="text-foreground text-sm font-medium">Go back</Text>
               </Button>
               <Button
@@ -124,7 +124,7 @@ export default function ChannelPublicPage() {
         <View
           style={{
             height: 120,
-            backgroundColor: channel.brandColor || "#2CD7E3",
+            backgroundColor: channel.brandColor || "#46E3CE",
             opacity: 0.5,
           }}
         />
@@ -141,7 +141,7 @@ export default function ChannelPublicPage() {
                   contentFit="cover"
                 />
               ) : (
-                <Radio size={28} color="#2CD7E3" />
+                <Radio size={28} color="#46E3CE" />
               )}
             </View>
             <View className="flex-1 pb-1">
@@ -153,7 +153,7 @@ export default function ChannelPublicPage() {
                   {channel.name}
                 </Text>
                 {channel.isVerified ? (
-                  <ShieldCheck size={16} color="#2CD7E3" />
+                  <ShieldCheck size={16} color="#46E3CE" />
                 ) : null}
               </View>
               <Text className="text-xs text-muted-foreground">

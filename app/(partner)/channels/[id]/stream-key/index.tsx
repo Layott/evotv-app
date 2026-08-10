@@ -74,7 +74,7 @@ export default function StreamKeyScreen() {
       <ScrollView className="flex-1 bg-background">
         <View className="px-5 py-6">
           <View className="flex-row items-center gap-2">
-            <Key size={20} color="#2CD7E3" />
+            <Key size={20} color="#46E3CE" />
             <Text className="text-2xl font-bold text-foreground">Stream key</Text>
           </View>
           <Text className="mt-1 text-sm text-muted-foreground">
@@ -96,7 +96,7 @@ export default function StreamKeyScreen() {
                 onPress={() => onCopy(RTMP_INGEST_URL, "Ingest URL")}
                 className="h-8 w-8 items-center justify-center rounded-md border border-neutral-800 bg-neutral-950 active:opacity-80"
               >
-                <Copy size={14} color="#FAFAFA" />
+                <Copy size={14} color="#EAF6F5" />
               </Pressable>
             </View>
           </View>

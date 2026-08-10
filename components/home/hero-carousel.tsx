@@ -157,14 +157,14 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
               </Text>
               <View
                 className="mt-1 flex-row items-center gap-2 self-start rounded-md px-3 py-1.5"
-                style={{ backgroundColor: "#2CD7E3" }}
+                style={{ backgroundColor: "#46E3CE" }}
               >
-                <Play size={14} color="#0A0A0A" fill="#0A0A0A" />
+                <Play size={14} color="#05191B" fill="#05191B" />
                 <Text
                   style={{
                     fontSize: 12,
                     fontWeight: "600",
-                    color: "#0A0A0A",
+                    color: "#05191B",
                   }}
                 >
                   Watch now
@@ -190,7 +190,7 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
               width: i === index ? 24 : 6,
               borderRadius: 3,
               backgroundColor:
-                i === index ? "#2CD7E3" : "rgba(115,115,115,0.6)",
+                i === index ? "#46E3CE" : "rgba(115,115,115,0.6)",
             }}
           />
         ))}

@@ -486,7 +486,7 @@ export default function TeamDetailScreen() {
                           color: "#e5e5e5",
                         }}
                       >
-                        {ourScore} – {theirScore}
+                        {ourScore} - {theirScore}
                       </Text>
                     </View>
                   );

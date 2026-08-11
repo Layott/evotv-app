@@ -7,9 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
-## Project — at a glance
+## Project - at a glance
 
-EVO TV native app — iOS / Android / Android TV + web SPA. Sibling of the web repo at `../EVOTV/`; mirrors the same brand, data shapes, screens, and flows.
+EVO TV native app - iOS / Android / Android TV + web SPA. Sibling of the web repo at `../EVOTV/`; mirrors the same brand, data shapes, screens, and flows.
 
 Stack: **Expo SDK 52** (RN 0.76, New Architecture on) · **Expo Router 4** (typed routes, file-based) · **NativeWind v4** (Tailwind in RN) · **TanStack Query** · **Zustand** · **expo-video** (HLS) · **expo-font** (Geist) · **AsyncStorage / expo-secure-store** · **pnpm** with `node-linker=hoisted` (Metro needs it).
 
@@ -31,7 +31,7 @@ No test runner is wired up. `pnpm check` (typecheck) is the green-light gate. Th
 
 ---
 
-## Layer 1 — CLAUDE.md (Memory)
+## Layer 1 - CLAUDE.md (Memory)
 
 > *Always loaded. Always active. The project's constitution.*
 
@@ -52,11 +52,11 @@ This file is the project memory layer. It must capture what future Claude can't 
 
 Expo Router 4 with `expo-router/entry`. Routes are file-based; route groups use parentheses and don't show in URLs.
 
-- **`(public)/`** — `Tabs` host. The 6 visible tabs are wired in `app/(public)/_layout.tsx`: `home`, `events`, `discover`, `shop`, `library-tab`, `profile-tab`. **All other public sub-routes** (stream, vod, clip, event detail, channel, apps, calendar, api-access, etc.) are registered as `<Tabs.Screen ... options={{ href: null }} />` so they exist as routes but stay out of the tab bar. **When you add a new public route, you MUST also register it with `href: null` in this layout** or it auto-injects a tab. See the `route-register` skill for the recipe.
-- **`(auth)/`** — login / signup / forgot / reset / verify / onboarding. Header hidden, slide-from-bottom.
-- **`(authed)/`** — gated by `useMockAuth()`; redirects unauthenticated visitors to `/(auth)/login`. `Stack` navigator. Houses profile, library, watch-parties, fantasy, pickem, predictions, creator-dashboard, settings, cart, checkout, multi-stream, rewards, integrations, notifications, etc.
-- **`(admin)/`** — same gate plus `user.role !== "admin"` redirect to `/`.
-- **`(embed)/`** — iframe-style player screens; black background, fade animation.
+- **`(public)/`** - `Tabs` host. The 6 visible tabs are wired in `app/(public)/_layout.tsx`: `home`, `events`, `discover`, `shop`, `library-tab`, `profile-tab`. **All other public sub-routes** (stream, vod, clip, event detail, channel, apps, calendar, api-access, etc.) are registered as `<Tabs.Screen ... options={{ href: null }} />` so they exist as routes but stay out of the tab bar. **When you add a new public route, you MUST also register it with `href: null` in this layout** or it auto-injects a tab. See the `route-register` skill for the recipe.
+- **`(auth)/`** - login / signup / forgot / reset / verify / onboarding. Header hidden, slide-from-bottom.
+- **`(authed)/`** - gated by `useMockAuth()`; redirects unauthenticated visitors to `/(auth)/login`. `Stack` navigator. Houses profile, library, watch-parties, fantasy, pickem, predictions, creator-dashboard, settings, cart, checkout, multi-stream, rewards, integrations, notifications, etc.
+- **`(admin)/`** - same gate plus `user.role !== "admin"` redirect to `/`.
+- **`(embed)/`** - iframe-style player screens; black background, fade animation.
 
 `app/_layout.tsx` is the root: `GestureHandlerRootView` → `SafeAreaProvider` → `Providers` → `SplashGate` → `KeyboardAvoidingView` → root `Stack`. `app/index.tsx` redirects to `/(public)/home`.
 
@@ -64,33 +64,33 @@ Expo Router 4 with `expo-router/entry`. Routes are file-based; route groups use 
 
 Order matters. `Providers` composes (outer → inner): `ThemeProvider` → `QueryProvider` → `MockAuthProvider` → children + `<Toaster>` + dev-only `<RoleSwitcher>`.
 
-- **`MockAuthProvider`** — currently the only auth. Picks a profile from `lib/mock/users.ts` by role (`guest|user|premium|admin`), persists `{role,userId}` to AsyncStorage under `evotv:current-user`. Also owns the follows set (`evotv:follows`) and onboarding flag (`evotv:onboarded`). Exposes `useMockAuth()` with `login/logout/switchRole/toggleFollow/isFollowing/updateProfile/completeOnboarding`.
-- **`SplashGate`** — holds the splash screen until fonts AND auth hydration finish.
-- **`RoleSwitcher`** — `__DEV__`-only floating widget for swapping roles without a real login.
+- **`MockAuthProvider`** - currently the only auth. Picks a profile from `lib/mock/users.ts` by role (`guest|user|premium|admin`), persists `{role,userId}` to AsyncStorage under `evotv:current-user`. Also owns the follows set (`evotv:follows`) and onboarding flag (`evotv:onboarded`). Exposes `useMockAuth()` with `login/logout/switchRole/toggleFollow/isFollowing/updateProfile/completeOnboarding`.
+- **`SplashGate`** - holds the splash screen until fonts AND auth hydration finish.
+- **`RoleSwitcher`** - `__DEV__`-only floating widget for swapping roles without a real login.
 
-#### Data layer — `lib/mock/`
+#### Data layer - `lib/mock/`
 
-Every screen reads from `lib/mock/<feature>.ts`. Functions return plain objects (or pagination wrappers from `paginate()` in `_util.ts`). `lib/mock/index.ts` is a barrel — but **three modules are deliberately not re-exported**:
+Every screen reads from `lib/mock/<feature>.ts`. Functions return plain objects (or pagination wrappers from `paginate()` in `_util.ts`). `lib/mock/index.ts` is a barrel - but **three modules are deliberately not re-exported**:
 
 - `predictions` and `tips` both export `getCoinBalance` (collision) and `predictions` also exports `getTeamById` (collision with `teams`). Import them directly with renamed bindings:
   ```ts
   import { getCoinBalance as getPredictionsBalance } from "@/lib/mock/predictions";
   import { getCoinBalance as getWalletBalance, sendTip } from "@/lib/mock/tips";
   ```
-- `lite-mode` is `"use client"` — re-exporting it would taint the barrel client-only.
+- `lite-mode` is `"use client"` - re-exporting it would taint the barrel client-only.
 
 See the `mock-feature-add` skill before extending this layer.
 
-#### Persistence — `lib/storage/persist.ts`
+#### Persistence - `lib/storage/persist.ts`
 
 Two surfaces over AsyncStorage:
 
-- **Async** (`persist.get/set/remove`) — JSON-typed; use from effects and providers.
-- **Sync-feeling** (`syncGet/syncSet/syncRemove`) — in-memory mirror that hydrates lazily. **Why it exists:** the web app's mocks call `localStorage.getItem` synchronously; AsyncStorage has no sync API. First call returns `null` (matches web SSR branch), kicks off hydration, then subsequent ticks see the real value. Don't replace these with `await persist.get` blindly.
+- **Async** (`persist.get/set/remove`) - JSON-typed; use from effects and providers.
+- **Sync-feeling** (`syncGet/syncSet/syncRemove`) - in-memory mirror that hydrates lazily. **Why it exists:** the web app's mocks call `localStorage.getItem` synchronously; AsyncStorage has no sync API. First call returns `null` (matches web SSR branch), kicks off hydration, then subsequent ticks see the real value. Don't replace these with `await persist.get` blindly.
 
 #### Phase 1A backend swap
 
-App is currently 100% mock. When the web app exposes `/api/*` with bearer tokens, follow the `phase1a-swap` skill. Short version: mirror `lib/mock/<feature>.ts` → `lib/api/<feature>.ts` with identical signatures, swap import sources one line per call site, replace `MockAuthProvider` with Better-Auth, store JWT in `expo-secure-store` on native (NOT on web — falls back to `localStorage`).
+App is currently 100% mock. When the web app exposes `/api/*` with bearer tokens, follow the `phase1a-swap` skill. Short version: mirror `lib/mock/<feature>.ts` → `lib/api/<feature>.ts` with identical signatures, swap import sources one line per call site, replace `MockAuthProvider` with Better-Auth, store JWT in `expo-secure-store` on native (NOT on web - falls back to `localStorage`).
 
 #### Platform splits
 
@@ -98,11 +98,17 @@ Metro resolves `*.web.tsx` over `*.tsx` on the web target. Canonical example: `c
 
 #### Theme + tokens
 
-Dark-first. Brand cyan `#2CD7E3`. Background `#0A0A0A` (Stack/Tabs hardcode this; keep in sync if it ever changes). Fonts: Geist + Geist Mono via `expo-font`. `tailwind.config.js` defines the full shadcn semantic palette. `lib/theme/tokens.ts` is a small duplicate for places that need raw color values in JS.
+Dark-first. **Brand mint `#46E3CE`, background `#05191B`** (changed 2026-08-11; was cyan `#2CD7E3` on `#0A0A0A`). Both are sampled from the wordmark, which is a blue `#42ACE8` to mint `#46E3CE` gradient sitting on the dark teal in `evo-tv-hero.png`. `brand-blue` `#42ACE8` is the blue end.
+
+Border is `#12383A`, deliberately almost invisible: the old `#262626` outlined every card, and the owner rejected that hairline-box look product-wide. Radii are 3/5/7/10, tightened from 6/8/10/14.
+
+**Three files carry this palette and will silently drift:** `tailwind.config.js`, `lib/theme/tokens.ts`, and the web's `EVOTV/app/globals.css`. Change all three together.
+
+Stack/Tabs hardcode the background colour, so keep those in sync too. Fonts: Geist + Geist Mono via `expo-font`; the web uses Bricolage Grotesque for headings and the app does **not** yet (no custom font is bundled, see `docs/` handover).
 
 ### naming.conventions
 
-- TS `strict: true`. Path alias `@/*` → repo root. `experiments.typedRoutes` on in `app.json` — let Expo Router generate `.expo/types/router.d.ts`; don't hand-edit.
+- TS `strict: true`. Path alias `@/*` → repo root. `experiments.typedRoutes` on in `app.json` - let Expo Router generate `.expo/types/router.d.ts`; don't hand-edit.
 - Imports: `@/components/...`, `@/lib/...`. Avoid deep relatives outside a feature folder.
 - Money fields end in `Ngn` (`priceNgn`, `subtotalNgn`, ...). Stored in NGN as integers.
 - All IDs are string UUIDs (`UUID = string`). All timestamps ISO 8601 strings (`ISODate = string`).
@@ -122,7 +128,7 @@ Dark-first. Brand cyan `#2CD7E3`. Background `#0A0A0A` (Stack/Tabs hardcode this
 EVOTV-app/
 ├── app/                     # Expo Router file-based routes
 │   ├── (auth)/              # login, signup, forgot, verify, onboarding
-│   ├── (public)/            # Tabs host — 6 tabs + many href:null routes
+│   ├── (public)/            # Tabs host - 6 tabs + many href:null routes
 │   ├── (authed)/            # Stack, auth-gated
 │   ├── (admin)/             # Stack, admin-gated
 │   ├── (embed)/             # iframe-style player
@@ -145,15 +151,15 @@ EVOTV-app/
 ├── app.json                 # web.output: "single" (SPA), typedRoutes, scheme "evotv", bundle id com.evotv.app
 ├── vercel.json              # web SPA build → dist/, rewrites /(.*) → /index.html
 └── .claude/                 # 5-layer ADK scaffold (this directory)
-    ├── skills/              # Layer 2 — project knowledge
-    ├── hooks/               # Layer 3 — guardrail scripts (inactive until wired)
-    ├── agents/              # Layer 4 — delegation subagents
-    └── plugins/             # Layer 5 — distribution bundle
+    ├── skills/              # Layer 2 - project knowledge
+    ├── hooks/               # Layer 3 - guardrail scripts (inactive until wired)
+    ├── agents/              # Layer 4 - delegation subagents
+    └── plugins/             # Layer 5 - distribution bundle
 ```
 
 ---
 
-## Layer 2 — Skills (Knowledge)
+## Layer 2 - Skills (Knowledge)
 
 > *On-demand. Modular. Description-matched, auto-invoked context.*
 
@@ -161,10 +167,10 @@ Project-local skills live under `.claude/skills/`. Each `SKILL.md` carries a des
 
 | Skill | When to use |
 |---|---|
-| [`mock-feature-add`](./.claude/skills/mock-feature-add/SKILL.md) | Adding new `lib/mock/<feature>.ts` — covers signature-mirror rule + barrel collision exclusions |
-| [`route-register`](./.claude/skills/route-register/SKILL.md) | Adding a public route — must register in `(public)/_layout.tsx` with `href: null` unless a tab |
-| [`platform-split`](./.claude/skills/platform-split/SKILL.md) | Creating `.web.tsx` variants — canonical example: `hls-player` |
-| [`expo-screen-scaffold`](./.claude/skills/expo-screen-scaffold/SKILL.md) | Scaffolding a brand-new screen — group selection, header inheritance, dark theme |
+| [`mock-feature-add`](./.claude/skills/mock-feature-add/SKILL.md) | Adding new `lib/mock/<feature>.ts` - covers signature-mirror rule + barrel collision exclusions |
+| [`route-register`](./.claude/skills/route-register/SKILL.md) | Adding a public route - must register in `(public)/_layout.tsx` with `href: null` unless a tab |
+| [`platform-split`](./.claude/skills/platform-split/SKILL.md) | Creating `.web.tsx` variants - canonical example: `hls-player` |
+| [`expo-screen-scaffold`](./.claude/skills/expo-screen-scaffold/SKILL.md) | Scaffolding a brand-new screen - group selection, header inheritance, dark theme |
 | [`phase1a-swap`](./.claude/skills/phase1a-swap/SKILL.md) | Swapping mock data for real `/api/*` once the backend ships |
 
 ### Skill folder shape
@@ -179,11 +185,11 @@ Project-local skills live under `.claude/skills/`. Each `SKILL.md` carries a des
 
 ---
 
-## Layer 3 — Hooks (Guardrail)
+## Layer 3 - Hooks (Guardrail)
 
 > *Deterministic shell. Not AI. Fires on agent events.*
 
-Hook scripts live under `.claude/hooks/`. They are **inactive until wired into `.claude/settings.json`** — Claude Code's auto-classifier rightly blocks auto-installing self-executing hooks. To activate, drop the snippet below into `.claude/settings.json` after reviewing each script.
+Hook scripts live under `.claude/hooks/`. They are **inactive until wired into `.claude/settings.json`** - Claude Code's auto-classifier rightly blocks auto-installing self-executing hooks. To activate, drop the snippet below into `.claude/settings.json` after reviewing each script.
 
 ### What ships
 
@@ -220,11 +226,11 @@ Hook scripts live under `.claude/hooks/`. They are **inactive until wired into `
 }
 ```
 
-Windows note: scripts use `#!/usr/bin/env bash` — runs via Git Bash, WSL, or any POSIX shell on PATH. The `bash` invocation in the JSON is the same on Windows + macOS + Linux.
+Windows note: scripts use `#!/usr/bin/env bash` - runs via Git Bash, WSL, or any POSIX shell on PATH. The `bash` invocation in the JSON is the same on Windows + macOS + Linux.
 
 ---
 
-## Layer 4 — Subagents (Delegation)
+## Layer 4 - Subagents (Delegation)
 
 > *Own context window. Returns ONE message. Keeps the main thread clean.*
 
@@ -246,7 +252,7 @@ Project-local subagents live under `.claude/agents/`. Dispatch with `Agent({ sub
 
 ---
 
-## Layer 5 — Plugins (Distribution)
+## Layer 5 - Plugins (Distribution)
 
 > *Bundle. Ship. Install. One package, every teammate aligned.*
 
@@ -274,7 +280,7 @@ External tools wired in at the user level. Project-local additions go in `.claud
 
 Currently enabled for this repo:
 
-- `supabase` — enabled per `.claude/settings.local.json` (use only when explicitly asked).
+- `supabase` - enabled per `.claude/settings.local.json` (use only when explicitly asked).
 
 ---
 
@@ -283,12 +289,12 @@ Currently enabled for this repo:
 > Per `../CLAUDE.md` (parent project memory).
 
 1. **Plan-first** for non-trivial work (3+ steps or architectural). If something goes sideways: stop and re-plan.
-2. **Subagents liberally** — offload research, parallel analysis, multi-module build.
-3. **Self-improvement loop** — after any correction, update `tasks/lessons.md` with the pattern.
-4. **Verification before done** — never claim complete on build pass alone. Walk the flow. Diff against `main` when relevant.
-5. **Design parity** — every new page must read as the same designer who built `/wallets`, `/user-profile`, `/tournaments`.
-6. **Elegance when warranted** — for non-trivial changes ask "is there a more elegant way?" Skip for obvious fixes.
-7. **Autonomous bug fixing** — just fix it. Point at logs, errors, failing tests; resolve them.
+2. **Subagents liberally** - offload research, parallel analysis, multi-module build.
+3. **Self-improvement loop** - after any correction, update `tasks/lessons.md` with the pattern.
+4. **Verification before done** - never claim complete on build pass alone. Walk the flow. Diff against `main` when relevant.
+5. **Design parity** - every new page must read as the same designer who built `/wallets`, `/user-profile`, `/tournaments`.
+6. **Elegance when warranted** - for non-trivial changes ask "is there a more elegant way?" Skip for obvious fixes.
+7. **Autonomous bug fixing** - just fix it. Point at logs, errors, failing tests; resolve them.
 
 ---
 
@@ -305,8 +311,8 @@ EXPO_PUBLIC_PAYMENT_PROVIDER=mock
 
 ## Known follow-ups
 
-- `lib/mock/calendar.ts` `downloadIcs()` is a no-op shim — wire `expo-file-system` + `expo-sharing` when calendar feature lands.
+- `lib/mock/calendar.ts` `downloadIcs()` is a no-op shim - wire `expo-file-system` + `expo-sharing` when calendar feature lands.
 - `(public)/_layout.tsx` uses `name="home/index"` form. If routes ever stop resolving after an Expo Router upgrade, try folder-only `name="home"`.
-- Embed + API-access screens are heavy on web-iframe semantics — rebuild RN-native or hide on app target.
+- Embed + API-access screens are heavy on web-iframe semantics - rebuild RN-native or hide on app target.
 - Watch-history / follow-aggregator / downloads-as-VODs shapes still need wiring inside library + profile screens.
-- Geist `.ttf` files in `assets/fonts/` — drop the five files before first run or accept system-font fallback.
+- Geist `.ttf` files in `assets/fonts/` - drop the five files before first run or accept system-font fallback.

@@ -12,7 +12,7 @@ module.exports = {
         // EVO brand, sampled from the wordmark rather than picked: it is a
         // gradient from blue #42ACE8 to mint #46E3CE, and evo-tv-hero.png sits
         // on the dark teal used for `background` below. Kept in lockstep with
-        // the web tokens in EVOTV/app/globals.css — the two must not drift.
+        // the web tokens in EVOTV/app/globals.css - the two must not drift.
         brand: {
           DEFAULT: "#46E3CE",
           50: "#EAFAF8",

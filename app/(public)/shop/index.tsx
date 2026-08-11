@@ -22,7 +22,7 @@ const SORTS: { v: Sort; label: string }[] = [
   { v: "featured", label: "Featured" },
   { v: "price-asc", label: "Price ↑" },
   { v: "price-desc", label: "Price ↓" },
-  { v: "name", label: "A–Z" },
+  { v: "name", label: "A-Z" },
 ];
 
 function Chip({

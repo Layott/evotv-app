@@ -235,7 +235,7 @@ export default function ShopProductScreen() {
               <View className="flex-row items-center gap-2">
                 <Check size={12} color="#67e8f9" />
                 <Text style={{ fontSize: 11, color: "#737373" }}>
-                  Ships NG-wide · 3–5 business days
+                  Ships NG-wide · 3-5 business days
                 </Text>
               </View>
               <View className="flex-row items-center gap-2">

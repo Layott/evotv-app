@@ -63,7 +63,7 @@ function Row({
               fontVariant: ["tabular-nums"],
             }}
           >
-            {played ? score : "–"}
+            {played ? score : "-"}
           </Text>
         </>
       ) : (

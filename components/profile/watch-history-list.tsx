@@ -7,7 +7,7 @@ import { MoreVertical } from "lucide-react-native";
 import type { Vod } from "@/lib/types";
 
 interface WatchHistoryItem extends Vod {
-  // Optional progress 0–100. If set, renders a progress bar at bottom of thumb.
+  // Optional progress 0-100. If set, renders a progress bar at bottom of thumb.
   progressPct?: number;
   // Optional override for "watched at" timestamp; defaults to publishedAt.
   watchedAt?: string;

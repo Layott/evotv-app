@@ -23,7 +23,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://evo-tv.vercel.app",
+        "EXPO_PUBLIC_API_BASE_URL": "https://api.evotv.co",
         "EXPO_PUBLIC_PAYMENT_PROVIDER": "paystack"
       }
     },
@@ -31,7 +31,7 @@
       "channel": "production",
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://evo-tv.vercel.app",
+        "EXPO_PUBLIC_API_BASE_URL": "https://api.evotv.co",
         "EXPO_PUBLIC_PAYMENT_PROVIDER": "paystack"
       }
     }

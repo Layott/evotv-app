@@ -64,13 +64,20 @@ Expo Router 4 with `expo-router/entry`. Routes are file-based; route groups use 
 
 Order matters. `Providers` composes (outer → inner): `ThemeProvider` → `QueryProvider` → `MockAuthProvider` → children + `<Toaster>` + dev-only `<RoleSwitcher>`.
 
-- **`MockAuthProvider`** - currently the only auth. Picks a profile from `lib/mock/users.ts` by role (`guest|user|premium|admin`), persists `{role,userId}` to AsyncStorage under `evotv:current-user`. Also owns the follows set (`evotv:follows`) and onboarding flag (`evotv:onboarded`). Exposes `useMockAuth()` with `login/logout/switchRole/toggleFollow/isFollowing/updateProfile/completeOnboarding`.
+- **`AuthProvider`** (`components/providers/auth-provider.tsx`) - real auth against Better-Auth on the backend. Holds the bearer token, maps the backend user onto `Profile` (`name` → `displayName`, `image` → `avatarUrl`; do not cast, the field names differ), and owns the follows set (`evotv:follows`) and the onboarding flag (`evotv:onboarded`). Exposes `useAuth()`, still aliased as `useMockAuth()` from `components/providers/index.tsx` because ~40 screens import that name. The alias is the only thing left called "mock"; rename it when touching those screens anyway.
 - **`SplashGate`** - holds the splash screen until fonts AND auth hydration finish.
 - **`RoleSwitcher`** - `__DEV__`-only floating widget for swapping roles without a real login.
 
-#### Data layer - `lib/mock/`
+#### Data layer - `lib/api/`
 
-Every screen reads from `lib/mock/<feature>.ts`. Functions return plain objects (or pagination wrappers from `paginate()` in `_util.ts`). `lib/mock/index.ts` is a barrel - but **three modules are deliberately not re-exported**:
+**`lib/mock/` is gone** (deleted 2026-08-12, 44 files, ~7.8k lines). Every screen reads from `lib/api/<feature>.ts`, which talks HTTP to the Next backend at `EXPO_PUBLIC_API_BASE_URL`. Nothing in the app fabricates data any more.
+
+If a feature has no backend route, the screen renders `ComingSoon`. Do not add a module that returns invented rows to fill the gap: `pickem`, `predictions` and `tips` were exactly that, wrappers over fabricated data that no screen called, and they were deleted with the mock layer. An empty screen is a missing feature; a fabricated one is a lie that ships.
+
+<details>
+<summary>Historical: the mock barrel's collision rules</summary>
+
+The deleted `lib/mock/index.ts` was a barrel with three modules deliberately not re-exported:
 
 - `predictions` and `tips` both export `getCoinBalance` (collision) and `predictions` also exports `getTeamById` (collision with `teams`). Import them directly with renamed bindings:
   ```ts
@@ -79,7 +86,9 @@ Every screen reads from `lib/mock/<feature>.ts`. Functions return plain objects 
   ```
 - `lite-mode` is `"use client"` - re-exporting it would taint the barrel client-only.
 
-See the `mock-feature-add` skill before extending this layer.
+The `mock-feature-add` and `phase1a-swap` skills under `.claude/skills/` describe this layer and the swap away from it. Both are now history; the swap happened.
+
+</details>
 
 #### Persistence - `lib/storage/persist.ts`
 
@@ -88,9 +97,11 @@ Two surfaces over AsyncStorage:
 - **Async** (`persist.get/set/remove`) - JSON-typed; use from effects and providers.
 - **Sync-feeling** (`syncGet/syncSet/syncRemove`) - in-memory mirror that hydrates lazily. **Why it exists:** the web app's mocks call `localStorage.getItem` synchronously; AsyncStorage has no sync API. First call returns `null` (matches web SSR branch), kicks off hydration, then subsequent ticks see the real value. Don't replace these with `await persist.get` blindly.
 
-#### Phase 1A backend swap
+#### Auth, and what "Phase 1A" turned into
 
-App is currently 100% mock. When the web app exposes `/api/*` with bearer tokens, follow the `phase1a-swap` skill. Short version: mirror `lib/mock/<feature>.ts` → `lib/api/<feature>.ts` with identical signatures, swap import sources one line per call site, replace `MockAuthProvider` with Better-Auth, store JWT in `expo-secure-store` on native (NOT on web - falls back to `localStorage`).
+That swap is done. The app authenticates against Better-Auth on the Next backend: real sign-up, sign-in, password reset and email verification, with the bearer token in `expo-secure-store` on native and `localStorage` on web.
+
+Social sign-in is **Google only**. The backend registers a provider solely when its client id and secret are both set, and there is no Apple pair, so `/api/mobile-auth/start` rejects anything but `google`. The Apple buttons were removed on 2026-08-12; they only ever raised a "coming soon" toast.
 
 #### Platform splits
 
@@ -139,7 +150,7 @@ EVOTV-app/
 │   ├── providers/           # Theme, Query, MockAuth, SplashGate, RoleSwitcher, FontLoader
 │   └── <domain>/            # feature-scoped (home, stream, vod, profile, library, shop, events, creators, admin, ...)
 ├── lib/
-│   ├── mock/                # data source. lib/mock/index.ts barrel (with collision exclusions)
+│   ├── api/                 # data source. HTTP to the Next backend. lib/api/index.ts barrel
 │   ├── storage/persist.ts   # AsyncStorage helpers + sync mirror
 │   ├── theme/tokens.ts      # JS-side color tokens
 │   ├── types.ts             # shared TS types (UUID, ISODate, Profile, Stream, ...)
@@ -167,11 +178,11 @@ Project-local skills live under `.claude/skills/`. Each `SKILL.md` carries a des
 
 | Skill | When to use |
 |---|---|
-| [`mock-feature-add`](./.claude/skills/mock-feature-add/SKILL.md) | Adding new `lib/mock/<feature>.ts` - covers signature-mirror rule + barrel collision exclusions |
+| ~~`mock-feature-add`~~ | Obsolete. The mock layer it describes was deleted on 2026-08-12 |
 | [`route-register`](./.claude/skills/route-register/SKILL.md) | Adding a public route - must register in `(public)/_layout.tsx` with `href: null` unless a tab |
 | [`platform-split`](./.claude/skills/platform-split/SKILL.md) | Creating `.web.tsx` variants - canonical example: `hls-player` |
 | [`expo-screen-scaffold`](./.claude/skills/expo-screen-scaffold/SKILL.md) | Scaffolding a brand-new screen - group selection, header inheritance, dark theme |
-| [`phase1a-swap`](./.claude/skills/phase1a-swap/SKILL.md) | Swapping mock data for real `/api/*` once the backend ships |
+| ~~`phase1a-swap`~~ | Obsolete. The swap it describes is done; the app is on `lib/api/*` |
 
 ### Skill folder shape
 
@@ -311,7 +322,7 @@ EXPO_PUBLIC_PAYMENT_PROVIDER=mock
 
 ## Known follow-ups
 
-- `lib/mock/calendar.ts` `downloadIcs()` is a no-op shim - wire `expo-file-system` + `expo-sharing` when calendar feature lands.
+- Calendar export: there is no `.ics` builder any more, it went with the mock layer. Wire `expo-file-system` + `expo-sharing` against a real endpoint when the calendar feature lands.
 - `(public)/_layout.tsx` uses `name="home/index"` form. If routes ever stop resolving after an Expo Router upgrade, try folder-only `name="home"`.
 - Embed + API-access screens are heavy on web-iframe semantics - rebuild RN-native or hide on app target.
 - Watch-history / follow-aggregator / downloads-as-VODs shapes still need wiring inside library + profile screens.

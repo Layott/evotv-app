@@ -12,13 +12,6 @@
 
 import { api, ApiError } from "./_client";
 import type { ChatMessage } from "@/lib/types";
-import {
-  pinMessage as mockPinMessage,
-  deleteMessage as mockDeleteMessage,
-  banUser as mockBanUser,
-  isUserBanned as mockIsUserBanned,
-  getModerationLog as mockGetModerationLog,
-} from "@/lib/mock/chat";
 
 interface ListResponse {
   messages: ChatMessage[];
@@ -87,9 +80,10 @@ export async function sendMessage(
   }
 }
 
-// Moderation passes through to mock until partner dashboard ships.
-export const pinMessage = mockPinMessage;
-export const deleteMessage = mockDeleteMessage;
-export const banUser = mockBanUser;
-export const isUserBanned = mockIsUserBanned;
-export const getModerationLog = mockGetModerationLog;
+/*
+ * Moderation used to be re-exported here, pointing at fabricated
+ * implementations that pinned and banned inside a local array. Nothing called
+ * them, so nobody was misled, but an exported `banUser` on the module a screen
+ * already imports is a trap waiting for the first moderator UI. Build it
+ * against real endpoints when the partner dashboard ships.
+ */

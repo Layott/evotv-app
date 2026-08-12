@@ -1,15 +1,13 @@
 /**
- * HTTP-backed API mirror of lib/mock/*.
+ * The app's data layer. Every screen reads from here.
  *
- * Mirrors mock signatures so the Phase 1A swap is one import flip per call site:
- *   - from "@/lib/mock/events"  →  from "@/lib/api/events"
+ * This was described as a "mirror of lib/mock/*", which it no longer is: the
+ * mock layer is gone, so there is nothing to mirror and nothing to swap. If a
+ * feature is not in this directory, the app does not have it, and the honest
+ * move is a ComingSoon screen rather than a module that returns invented rows.
  *
- * Same barrel collision rules apply as the mock layer: predictions / tips /
- * lite-mode are intentionally NOT re-exported (would collide on getCoinBalance
- * and friends). Import those modules directly with renames.
- *
- * Backend lives at process.env.EXPO_PUBLIC_API_BASE_URL - points at the
- * ../EVOTV/ Next.js app (port 3060 in local dev, evo-tv.vercel.app in prod).
+ * Backend lives at process.env.EXPO_PUBLIC_API_BASE_URL, which points at the
+ * Next app: port 3060 in local dev, https://api.evotv.co in production.
  */
 export * from "./events";
 export * from "./games";
@@ -39,13 +37,13 @@ export * from "./push";
 export * from "./vod-progress";
 export * from "./rewards";
 
-// `tips` is intentionally NOT re-exported here (collision: getCoinBalance
-// also exists on predictions). Import directly:
-//   import { sendTip, getCoinBalance as getWalletBalance } from "@/lib/api/tips";
-
-// Modules to mirror as backend routes land:
-//   - chat, users
-//   - predictions / lite-mode - collision, import directly with rename
-//   - feature-specific: pickem, fantasy, creators, ussd, cast, embed, sso,
-//     captions, ai-commentary, commentary-tracks, forensic, auto-clips,
-//     partners, watch-parties
+// `chat` is not re-exported: it is imported directly by the one component that
+// uses it, and keeping it out of the barrel keeps its error class from
+// colliding.
+//
+// Features the app shows as ComingSoon, waiting on backend routes rather than
+// on client work: pick'em, predictions, tips listings, fantasy, creators,
+// watch parties, USSD, cast, embed, captions, commentary, forensic marks,
+// auto-clips, partners. Each had a module here or under lib/mock that returned
+// fabricated rows; they were deleted rather than left to be wired up by
+// somebody who assumed they were real.

@@ -12,7 +12,7 @@ import { Link, Stack, useRouter } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Apple, ChromeIcon } from "lucide-react-native";
+import { ChromeIcon } from "lucide-react-native";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
@@ -61,7 +61,7 @@ export default function SignupScreen() {
   const router = useRouter();
   const { signUp, signInWithSocial } = useMockAuth();
   const [submitting, setSubmitting] = React.useState(false);
-  const [socialBusy, setSocialBusy] = React.useState<"google" | "apple" | null>(
+  const [socialBusy, setSocialBusy] = React.useState<"google" | null>(
     null,
   );
 
@@ -114,11 +114,7 @@ export default function SignupScreen() {
     }
   };
 
-  const handleSocial = async (provider: "google" | "apple") => {
-    if (provider === "apple") {
-      toast.info("Apple sign-up coming soon");
-      return;
-    }
+  const handleSocial = async (provider: "google") => {
     setSocialBusy(provider);
     try {
       await signInWithSocial(provider);
@@ -352,17 +348,6 @@ export default function SignupScreen() {
                 )}
                 <Text className="text-sm font-medium text-foreground">
                   {socialBusy === "google" ? "Opening Google…" : "Continue with Google"}
-                </Text>
-              </Button>
-              <Button
-                variant="outline"
-                onPress={() => handleSocial("apple")}
-                disabled={submitting || socialBusy !== null}
-                className="h-11 w-full"
-              >
-                <Apple color="#EAF6F5" size={18} />
-                <Text className="text-sm font-medium text-foreground">
-                  Continue with Apple
                 </Text>
               </Button>
             </View>

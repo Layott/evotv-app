@@ -62,7 +62,7 @@ interface AuthContextValue {
   refreshMemberships: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (input: SignUpInput) => Promise<void>;
-  signInWithSocial: (provider: "google" | "apple") => Promise<void>;
+  signInWithSocial: (provider: "google") => Promise<void>;
   signOut: () => Promise<void>;
   toggleFollow: (targetType: FollowTarget, targetId: string) => void;
   isFollowing: (targetType: FollowTarget, targetId: string) => boolean;
@@ -197,7 +197,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * for browsers can be added later).
    */
   const signInWithSocial = React.useCallback(
-    async (provider: "google" | "apple") => {
+    // Google only. The backend registers a social provider solely when its
+    // client id and secret are both set, and there is no Apple pair, so
+    // `/api/mobile-auth/start` rejects anything else outright.
+    async (provider: "google") => {
       if (Platform.OS === "web") {
         throw new Error("social_unsupported_web");
       }

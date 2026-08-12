@@ -1,5 +1,12 @@
 # DigitalOcean cold build: handoff
 
+> **Superseded, 2026-08-12.** The cold build happened. Everything below is the
+> state on 2026-08-09, before provisioning, and most of its "not verified" and
+> "what needs you" lists are answered by the event rather than by reading. The
+> current state of production lives in the backend repo at
+> `docs/HANDOVER-LAUNCH-DAY.md`. Read that first; keep this for the reasoning
+> behind decisions that are now in place.
+
 Written 2026-08-09. Companion to `DIGITALOCEAN_MIGRATION.md`, which is the plan. This file is the state: what exists, what is proven, what is still assumption, and what to do next.
 
 **One paragraph.** All the code for moving EVO TV onto DigitalOcean is written, committed, and green on every check that can run without a DO account. Nothing is pushed, nothing is merged to `main`, and no DO resources exist. The app is not live and has nobody using it, which is why this is a cold build rather than a migration: no cutover, no rollback staging. The next move needs somebody logged into DigitalOcean.

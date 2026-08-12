@@ -4,12 +4,14 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { TopNavbar } from "@/components/home/top-navbar";
+import { MainChannel } from "@/components/home/main-channel";
 import { HeroCarousel } from "@/components/home/hero-carousel";
 import { LiveNowSection } from "@/components/home/live-now-section";
 import { Recommendations } from "@/components/home/recommendations";
 import { TrendingClipsSection } from "@/components/home/trending-clips-section";
 import { UpcomingEventsSection } from "@/components/home/upcoming-events-section";
 import { AdBanner } from "@/components/home/ad-banner";
+import { getMainChannel } from "@/lib/api/channel";
 import { listFeaturedStreams, listLiveStreams } from "@/lib/api/streams";
 import { listVods, listTrendingClips } from "@/lib/api/vods";
 import { listEvents } from "@/lib/api/events";
@@ -38,6 +40,13 @@ export default function HomeScreen() {
   const live = useQuery({
     queryKey: ["home", "live"],
     queryFn: () => listLiveStreams(),
+    refetchInterval: 60_000,
+  });
+  // Same 60s cadence as the live rails: the hero carries a live badge and a
+  // viewer count, so it has to age at the same rate as everything else.
+  const mainChannel = useQuery({
+    queryKey: ["home", "main-channel"],
+    queryFn: () => getMainChannel(),
     refetchInterval: 60_000,
   });
   const events = useQuery({ queryKey: ["home", "events"], queryFn: () => listEvents({ status: "scheduled" }) });
@@ -79,6 +88,12 @@ export default function HomeScreen() {
         }
       >
         <View className="gap-6">
+          {/* The flagship channel owns the top and keeps it. It sits above the
+              featured carousel rather than inside it, because a channel is not
+              one item among several. */}
+          <Animated.View entering={section(0)}>
+            <MainChannel data={mainChannel.data} loading={mainChannel.isLoading} />
+          </Animated.View>
           <Animated.View entering={section(0)}>
             <HeroCarousel streams={featuredStreams} />
           </Animated.View>

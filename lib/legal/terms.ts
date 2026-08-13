@@ -68,7 +68,7 @@ EVO TV may terminate a partner relationship for cause.
 - **Tips** are voluntary contributions to creators. Once a tip is sent it is **non-refundable** - there are no refunds on EVO TV.
 - **Subscriptions** (when available) renew automatically and can be cancelled before the next billing date.
 - **Payouts** to partners are subject to a minimum threshold, Paystack KYC, and withholding for any chargebacks or fraud claims.
-- **Disputes** about a payment must be raised within 30 days via support@evotv.app.
+- **Disputes** about a payment must be raised within 30 days via support@evotv.co.
 
 We use Paystack as our payment processor. Their terms also apply.
 
@@ -106,7 +106,7 @@ You agree to indemnify and hold EVO TV harmless from any claim arising from your
 
 ## 11. Copyright + DMCA
 
-Send takedown notices to **legal@evotv.app** with: (1) description of the work, (2) URL of infringing content, (3) contact info, (4) good-faith statement, (5) statement of accuracy under penalty of perjury, (6) signature. We respond to valid notices within 7 days. Repeat infringers are banned.
+Send takedown notices to **legal@evotv.co** with: (1) description of the work, (2) URL of infringing content, (3) contact info, (4) good-faith statement, (5) statement of accuracy under penalty of perjury, (6) signature. We respond to valid notices within 7 days. Repeat infringers are banned.
 
 ---
 
@@ -126,9 +126,9 @@ We may update these Terms. Material changes will be announced in-app and via ema
 
 ## 14. Contact
 
-**support@evotv.app** - general questions
-**legal@evotv.app** - copyright + legal
-**privacy@evotv.app** - data + privacy
+**support@evotv.co** - general questions
+**legal@evotv.co** - copyright + legal
+**privacy@evotv.co** - data + privacy
 
 EVO TV team
 Lagos, Nigeria`;

@@ -11,7 +11,7 @@ By using the Service you agree to this Policy. If you do not agree, do not use t
 
 ## 1. Who we are
 
-EVO TV is operated by the EVO TV team based in Nigeria. Questions: **privacy@evotv.app**.
+EVO TV is operated by the EVO TV team based in Nigeria. Questions: **privacy@evotv.co**.
 
 ---
 
@@ -63,7 +63,7 @@ We do not sell your data to anyone. We do not share it with advertising networks
 
 You have the right to:
 
-- **Access** your data - email privacy@evotv.app.
+- **Access** your data - email privacy@evotv.co.
 - **Correct** wrong data - edit your profile or ask us.
 - **Delete** your account - Settings → Danger zone → Delete account. We mark you for deletion, revoke all sessions, and run a 30-day grace window. After 30 days, the GDPR purge job permanently removes your personal data (watch history, chats, clips, login events, API keys, party messages). The user row is anonymized so comments and tips you sent remain readable.
 - **Object** to a specific use - email us.
@@ -96,13 +96,13 @@ GDPR + NDPR (Nigeria Data Protection Regulation) apply.
 - Rate limits on auth endpoints.
 - No raw payment card / bank data ever touches our servers - handled by Paystack.
 
-Despite our efforts, no system is 100% secure. If your account is compromised, email security@evotv.app.
+Despite our efforts, no system is 100% secure. If your account is compromised, email security@evotv.co.
 
 ---
 
 ## 8. Children
 
-EVO TV is **not intended for users under 13**. Users 13–17 should have parental consent.
+EVO TV is **not intended for users under 13**. Users 13 - 17 should have parental consent.
 
 ---
 
@@ -120,7 +120,7 @@ We may update this Policy. Material changes are announced in-app + via email. Co
 
 ## 11. Contact
 
-**privacy@evotv.app**
+**privacy@evotv.co**
 EVO TV team
 Lagos, Nigeria
 

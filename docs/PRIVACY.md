@@ -1,4 +1,4 @@
-# EVO TV — Privacy Policy
+# EVO TV - Privacy Policy
 
 **Last updated:** 2026-05-15
 **Effective:** 2026-05-15
@@ -11,30 +11,30 @@ By using the Service you agree to this Policy. If you do not agree, do not use t
 
 ## 1. Who we are
 
-EVO TV is operated by the EVO TV team based in Nigeria. Questions: **privacy@evotv.app**.
+EVO TV is operated by the EVO TV team based in Nigeria. Questions: **privacy@evotv.co**.
 
 ---
 
 ## 2. What we collect
 
 ### 2.1 Information you provide
-- **Account details** — email, password (hashed), display name, handle, country.
-- **Profile content** — avatar image, bio, follow lists.
-- **Content you create** — clips, chat messages, comments, watch-party messages, reports you submit.
-- **Payment information** — only payment-method tokens issued by our processor (Paystack). We never see or store your raw card / bank details.
-- **Communication** — emails / support requests you send us.
+- **Account details** - email, password (hashed), display name, handle, country.
+- **Profile content** - avatar image, bio, follow lists.
+- **Content you create** - clips, chat messages, comments, watch-party messages, reports you submit.
+- **Payment information** - only payment-method tokens issued by our processor (Paystack). We never see or store your raw card / bank details.
+- **Communication** - emails / support requests you send us.
 
 ### 2.2 Information collected automatically
-- **Watch activity** — which streams / VODs / clips you watched, for how long, when (used for recommendations, viewer counts, watch-history).
-- **Device info** — model, OS version, app version (crash reports + compatibility).
-- **Approximate location** — derived from your IP address (city + country only, never precise GPS).
-- **IP address** — hashed at rest with a salted SHA-256 so we can detect abuse + ban-evasion without storing raw IPs long-term.
-- **Authentication events** — sign-in time, success/failure, hashed IP + device ID (`login_events` table). 100-record per-user cap.
-- **Sentry** — anonymized error / crash reports (when enabled).
+- **Watch activity** - which streams / VODs / clips you watched, for how long, when (used for recommendations, viewer counts, watch-history).
+- **Device info** - model, OS version, app version (crash reports + compatibility).
+- **Approximate location** - derived from your IP address (city + country only, never precise GPS).
+- **IP address** - hashed at rest with a salted SHA-256 so we can detect abuse + ban-evasion without storing raw IPs long-term.
+- **Authentication events** - sign-in time, success/failure, hashed IP + device ID (`login_events` table). 100-record per-user cap.
+- **Sentry** - anonymized error / crash reports (when enabled).
 
 ### 2.3 Cookies + similar
-- **Session cookie** (`evotv.session_token`) — HttpOnly, sets you as signed in. Survives 30 days.
-- **localStorage** (web only) — session token mirror, theme preference.
+- **Session cookie** (`evotv.session_token`) - HttpOnly, sets you as signed in. Survives 30 days.
+- **localStorage** (web only) - session token mirror, theme preference.
 - **No third-party tracking pixels.** No Google Analytics. No Facebook Pixel.
 
 ---
@@ -73,12 +73,12 @@ We do not sell your data to anyone. We do not share it with advertising networks
 
 You have the right to:
 
-- **Access** your data — request a copy by emailing privacy@evotv.app.
-- **Correct** wrong data — edit your profile or ask us.
-- **Delete** your account — Settings → Danger zone → Delete account. We mark you for deletion, revoke all sessions, and run a 30-day grace window. After 30 days, the GDPR purge cron permanently removes your personal data (watch history, chats, clips, login events, API keys, party messages). The user row is anonymized (email → `deleted-<id>@deleted.local`, name → "Deleted user") so referenced comments and tips you sent remain readable to other users.
-- **Object** to a specific use — email us.
-- **Port** your data — request a machine-readable export.
-- **Withdraw consent** — for anything that depends on consent.
+- **Access** your data - request a copy by emailing privacy@evotv.co.
+- **Correct** wrong data - edit your profile or ask us.
+- **Delete** your account - Settings → Danger zone → Delete account. We mark you for deletion, revoke all sessions, and run a 30-day grace window. After 30 days, the GDPR purge cron permanently removes your personal data (watch history, chats, clips, login events, API keys, party messages). The user row is anonymized (email → `deleted-<id>@deleted.local`, name → "Deleted user") so referenced comments and tips you sent remain readable to other users.
+- **Object** to a specific use - email us.
+- **Port** your data - request a machine-readable export.
+- **Withdraw consent** - for anything that depends on consent.
 
 GDPR + NDPR (Nigeria Data Protection Regulation) apply.
 
@@ -106,17 +106,17 @@ GDPR + NDPR (Nigeria Data Protection Regulation) apply.
 - IPs hashed with a private salt before storage.
 - HTTPS everywhere (Vercel-managed TLS).
 - Rate limits on auth endpoints (sign-in 10/min, sign-up 5/min).
-- No raw payment card / bank data ever touches our servers — handled by Paystack.
+- No raw payment card / bank data ever touches our servers - handled by Paystack.
 
-Despite our efforts, no system is 100% secure. If you believe your account has been compromised, email privacy@evotv.app immediately.
+Despite our efforts, no system is 100% secure. If you believe your account has been compromised, email privacy@evotv.co immediately.
 
 ---
 
 ## 8. Children
 
-EVO TV is **not intended for users under 13**. We don't knowingly collect data from children under 13. If you believe a child has signed up, email privacy@evotv.app and we'll remove the account.
+EVO TV is **not intended for users under 13**. We don't knowingly collect data from children under 13. If you believe a child has signed up, email privacy@evotv.co and we'll remove the account.
 
-Users 13–17 should have parental consent before using the Service.
+Users 13 - 17 should have parental consent before using the Service.
 
 ---
 
@@ -134,7 +134,7 @@ We may update this Policy. Material changes are announced in-app + via email. Th
 
 ## 11. Contact
 
-**privacy@evotv.app**
+**privacy@evotv.co**
 EVO TV team
 Lagos, Nigeria
 

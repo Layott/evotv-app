@@ -1,4 +1,4 @@
-# EVO TV — Terms of Service
+# EVO TV - Terms of Service
 
 **Last updated:** 2026-05-15
 **Effective:** 2026-05-15
@@ -29,7 +29,7 @@ The Service is intended for African esports audiences but is not restricted by r
 
 You agree NOT to:
 
-- Post content that is illegal, infringing, harassing, hateful, sexually explicit (especially involving minors — CSAM is reported to authorities immediately), threatening, defamatory, or fraudulent.
+- Post content that is illegal, infringing, harassing, hateful, sexually explicit (especially involving minors - CSAM is reported to authorities immediately), threatening, defamatory, or fraudulent.
 - Stream or upload content you don't have rights to (copyright violations).
 - Impersonate another person, brand, or EVO TV staff.
 - Spam chat, watch parties, or comments.
@@ -45,9 +45,9 @@ Violations may result in content removal, chat ban, account suspension, permanen
 
 ## 4. Content + intellectual property
 
-- **Your content** — you retain ownership of streams, VODs, clips, chats, comments, and other content you create. By posting, you grant EVO TV a **worldwide, royalty-free, non-exclusive license** to host, store, reproduce, modify (for format conversion, thumbnail extraction, captioning), display, distribute, and create derivative works for the purpose of operating the Service, including marketing snippets and search indexing.
-- **Our content** — the EVO TV brand, logos, app UI, code, designs, and our original editorial content are owned by EVO TV. You may not copy or reuse without permission.
-- **Reporting violations** — see Section 11 for DMCA / copyright reports.
+- **Your content** - you retain ownership of streams, VODs, clips, chats, comments, and other content you create. By posting, you grant EVO TV a **worldwide, royalty-free, non-exclusive license** to host, store, reproduce, modify (for format conversion, thumbnail extraction, captioning), display, distribute, and create derivative works for the purpose of operating the Service, including marketing snippets and search indexing.
+- **Our content** - the EVO TV brand, logos, app UI, code, designs, and our original editorial content are owned by EVO TV. You may not copy or reuse without permission.
+- **Reporting violations** - see Section 11 for DMCA / copyright reports.
 
 ---
 
@@ -74,7 +74,7 @@ EVO TV may terminate a partner relationship for cause (Section 7).
   - A minimum payout threshold (announced separately).
   - Paystack's KYC + bank verification on the partner account.
   - Withholding for any chargebacks, fraud claims, or terms violations.
-- **Disputes** about a payment must be raised within 30 days via support@evotv.app.
+- **Disputes** about a payment must be raised within 30 days via support@evotv.co.
 
 We use Paystack as our payment processor. Their terms also apply to transactions.
 
@@ -121,7 +121,7 @@ You agree to indemnify and hold EVO TV harmless from any claim arising from your
 
 ## 11. Copyright + DMCA
 
-If you believe content on EVO TV infringes your copyright, send a takedown notice to **legal@evotv.app** with:
+If you believe content on EVO TV infringes your copyright, send a takedown notice to **legal@evotv.co** with:
 
 1. Description of the copyrighted work.
 2. URL of the infringing content on EVO TV.
@@ -150,9 +150,9 @@ We may update these Terms. Material changes will be announced in-app and via ema
 
 ## 14. Contact
 
-**support@evotv.app** — general questions
-**legal@evotv.app** — copyright + legal
-**privacy@evotv.app** — data + privacy
+**support@evotv.co** - general questions
+**legal@evotv.co** - copyright + legal
+**privacy@evotv.co** - data + privacy
 
 EVO TV team
 Lagos, Nigeria

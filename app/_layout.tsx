@@ -8,6 +8,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Providers } from "@/components/providers";
 import { SplashGate } from "@/components/providers/splash-gate";
+import { AppLockGate } from "@/components/providers/app-lock-gate";
 import { ErrorBoundary } from "@/components/providers/error-boundary";
 import { GlobalBanner } from "@/components/common/global-banner";
 import { initSentry } from "@/sentry.config";
@@ -21,6 +22,7 @@ export default function RootLayout() {
         <ErrorBoundary>
         <Providers>
           <SplashGate>
+            <AppLockGate>
             <KeyboardAvoidingView
               behavior={Platform.OS === "ios" ? "padding" : undefined}
               style={{ flex: 1 }}
@@ -51,6 +53,7 @@ export default function RootLayout() {
                 </Stack>
               </View>
             </KeyboardAvoidingView>
+            </AppLockGate>
           </SplashGate>
         </Providers>
         </ErrorBoundary>

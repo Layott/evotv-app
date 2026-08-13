@@ -49,6 +49,12 @@
       "expo-font",
       "expo-secure-store",
       [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow EVO TV to unlock with Face ID so you stay signed in without typing your password."
+        }
+      ],
+      [
         "expo-video",
         {
           "supportsBackgroundPlayback": true,

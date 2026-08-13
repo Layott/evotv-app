@@ -43,6 +43,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
 import { SectionCard, SettingRow } from "@/components/settings/section-card";
+import { AppLockRow } from "@/components/settings/app-lock-row";
 import { changePassword } from "@/lib/api/me";
 import { exportOwnData } from "@/lib/api/profile";
 import { getMyPrefs, patchMyPrefs } from "@/lib/api/prefs";
@@ -663,6 +664,9 @@ export default function SettingsScreen() {
               </SettingRow>
             </View>
           </SectionCard>
+
+          {/* Security. Renders nothing on web, where there is no sensor. */}
+          <AppLockRow />
 
           {/* Privacy */}
           <SectionCard

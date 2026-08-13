@@ -82,7 +82,39 @@ export function HlsPlayer({
     if (nativeHlsSupported) {
       video.src = src;
     } else if (Hls.isSupported()) {
-      hls = new Hls({ enableWorker: true, lowLatencyMode: true });
+      /*
+       * Matched to the web app's `video-player.tsx`, which was tuned against
+       * the real broadcast on 11 August. The two players point at the same
+       * origin, so they need the same numbers.
+       *
+       * `lowLatencyMode` is the one that mattered. It was on here, and on the
+       * web it was found to make hls.js fetch both playlists and never request
+       * a single fragment, so the stream simply never started. Do not put it
+       * back without confirming fragments are actually being loaded.
+       *
+       * The origin is a single droplet in Frankfurt serving viewers in Lagos,
+       * with no ABR ladder to fall back to, so a dip in connection is a stall
+       * rather than a softer picture. The only defence is a deeper buffer,
+       * which is what sitting further back from the live edge buys.
+       *
+       * `liveMaxLatencyDurationCount` and `backBufferLength` must both stay
+       * above `hls_playlist_length / hls_fragment` from nginx-rtmp.conf, or
+       * the player drags the viewer forward out of a seek they asked for and
+       * evicts the DVR window it is offering them.
+       */
+      hls = new Hls({
+        enableWorker: true,
+        liveSyncDurationCount: 6,
+        liveMaxLatencyDurationCount: 200,
+        maxBufferLength: 60,
+        maxMaxBufferLength: 120,
+        backBufferLength: 300,
+        // A dropped segment on a busy origin is ordinary. Retry rather than
+        // raising a fatal error and tearing the stream down.
+        fragLoadingMaxRetry: 6,
+        manifestLoadingMaxRetry: 4,
+        levelLoadingMaxRetry: 4,
+      });
       hls.loadSource(src);
       hls.attachMedia(video);
       hls.on(Hls.Events.ERROR, (_evt, data) => {

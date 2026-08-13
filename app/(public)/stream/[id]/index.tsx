@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  Image,
   Platform,
   Pressable,
   ScrollView,
@@ -9,7 +10,7 @@ import {
 } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Eye, MessageSquare, Info } from "lucide-react-native";
+import { ArrowLeft, Eye, Lock, MessageSquare, Info } from "lucide-react-native";
 import { format } from "date-fns";
 
 import { getStreamById } from "@/lib/api/streams";
@@ -123,9 +124,45 @@ export default function StreamScreen() {
     );
   }
 
+  /*
+   * A guest with the link. The API withholds the manifest URL from a signed-out
+   * caller, so there is nothing to play; without this the screen rendered an
+   * empty player stuck at 0:00, which reads as a broken stream rather than as a
+   * wall. Everything else on the page stays visible on purpose, because the
+   * point is to ask someone to sign in, not to hide that the channel exists.
+   */
+  const gated = Boolean(stream.requiresAuth) && !stream.hlsUrl;
+
   const playerBlock = (
     <View className="relative bg-black">
-      <HLSPlayer src={stream.hlsUrl} poster={stream.thumbnailUrl} />
+      {gated ? (
+        <View className="aspect-video w-full items-center justify-center bg-black">
+          {stream.thumbnailUrl ? (
+            <Image
+              source={{ uri: stream.thumbnailUrl }}
+              className="absolute inset-0 h-full w-full opacity-30"
+              resizeMode="cover"
+            />
+          ) : null}
+          <Lock color="#EAF6F5" size={24} />
+          <Text className="mt-3 text-base font-semibold text-foreground">
+            Sign in to watch
+          </Text>
+          <Text className="mt-1 px-8 text-center text-xs text-muted-foreground">
+            Watching EVO TV needs a free account.
+          </Text>
+          <Button
+            className="mt-4"
+            onPress={() => router.push("/(auth)/login")}
+          >
+            <Text className="text-sm font-semibold text-background">
+              Sign in
+            </Text>
+          </Button>
+        </View>
+      ) : (
+        <HLSPlayer src={stream.hlsUrl} poster={stream.thumbnailUrl} />
+      )}
       <Pressable
         onPress={() => router.back()}
         className="absolute left-3 top-12 h-9 w-9 rounded-full bg-black/60 items-center justify-center"

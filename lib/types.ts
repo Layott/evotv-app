@@ -257,6 +257,12 @@ export interface Stream {
   startedAt: ISODate | null;
   endedAt: ISODate | null;
   hlsUrl: string;
+  /**
+   * Set by the API when it withheld `hlsUrl` because the caller is signed out.
+   * Lets a client tell "no video source configured yet" apart from "you are not
+   * allowed to see this", which need different screens.
+   */
+  requiresAuth?: true;
   thumbnailUrl: string;
   viewerCount: number;
   peakViewerCount: number;

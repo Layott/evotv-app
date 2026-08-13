@@ -20,7 +20,7 @@ Both send video to **Cloudflare** (or your chosen delivery service), which sends
 
 ## Daily checklist (5 minutes)
 
-1. **Is the channel on air?** Open the EVO TV app or `evotv-app.vercel.app` → the live channel should be playing.
+1. **Is the channel on air?** Open the EVO TV app or `evotv.co` → the live channel should be playing.
 2. **Is the autopilot running?** Open `http://<office-server>:8787` → the channel shows a green/active state and a current clip.
 3. **Is tomorrow scheduled?** The nightly job builds tomorrow's playlist automatically (see "How the schedule flows"). Spot-check that tomorrow has programs in the admin.
 4. **Power/UPS OK?** Glance at the UPS — on battery? Find out why. A power cut drops the stream.

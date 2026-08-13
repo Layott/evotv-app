@@ -25,13 +25,13 @@ If any of these change, regenerate ALL store asset variants below.
 - [✗] Phone screenshots — 2–8 PNGs, 16:9 or 9:16, min 320px, max 3840px (recommend 1080×1920 portrait)
 - [✗] 7-inch tablet screenshots — optional but recommended
 - [✗] 10-inch tablet screenshots — optional
-- [✓] Privacy Policy URL — `https://evotv-app.vercel.app/privacy` (host the markdown rendered, or link to the in-app screen externally — needs a web route)
+- [✓] Privacy Policy URL — `https://evotv.co/privacy`
 - [✗] Short description — max 80 chars
 - [✗] Full description — max 4000 chars
 - [✗] Content rating — IARC questionnaire (chat features, user-generated content, in-app purchases)
 - [✗] Target audience — pick age range; we're 13+
 - [✗] Contact email — `support@evotv.app`
-- [✗] Contact website — `https://evotv-app.vercel.app`
+- [✓] Contact website — `https://evotv.co`
 
 ### Data safety form
 Match the Privacy Policy:
@@ -96,7 +96,7 @@ Match the Privacy Policy:
 - [✗] Promotional text — max 170 chars
 - [✗] Description — max 4000 chars
 - [✗] Keywords — comma-separated, 100 chars total
-- [✗] Support URL — `https://evotv-app.vercel.app`
+- [✓] Support URL — `https://evotv.co`
 - [✗] Marketing URL — same or dedicated landing page
 - [✗] Privacy Policy URL — required
 - [✗] Age rating — answered via App Store Connect questionnaire (Frequent/Intense Mature/Suggestive Themes = none; chat triggers user-generated content rating)
@@ -109,7 +109,7 @@ Same as Google Play data-safety, in Apple's structured format. Match the Privacy
 
 ## Web SPA listing
 
-Already on `evotv-app.vercel.app`. Pre-launch:
+Not deployed. Pre-launch:
 
 - [✗] Marketing landing page — currently the home screen serves; consider a marketing-specific route
 - [✗] OG / Twitter card metadata
@@ -144,7 +144,7 @@ Before submitting:
 - [✓] All migrations applied to prod (latest: 0016)
 - [✓] Sentry env vars present
 - [✓] CRON_SECRET set
-- [✓] BETTER_AUTH_URL canonical (`https://evo-tv.vercel.app`)
+- [✓] BETTER_AUTH_URL canonical (`https://api.evotv.co`)
 - [✓] Google OAuth env vars set (callback URL registered)
 - [✓] GDPR purge cron scheduled (Sundays 04:00 UTC)
 - [✗] Apple Developer account ($99/yr)

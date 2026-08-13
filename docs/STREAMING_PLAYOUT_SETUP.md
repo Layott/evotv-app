@@ -263,7 +263,7 @@ EPG stays in sync:  /api/schedule  ──►  app's TV guide
 ### Step D — Wire the EPG into ffplayout (the adapter)
 
 Write one small script (run daily by cron):
-1. `GET https://evo-tv.vercel.app/api/schedule?date=<tomorrow>&pillar=all`
+1. `GET https://api.evotv.co/api/schedule?date=<tomorrow>&pillar=all`
 2. For each row, resolve it to a file path on the library drive (or, for a live event, the OBS relay URL), and build `{ source, in, out, duration }`.
 3. `POST` the array to `http://office-server:8787/api/playlist/{channelId}/` with the ffplayout bearer token.
 

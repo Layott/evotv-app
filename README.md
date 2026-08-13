@@ -132,10 +132,11 @@ pnpm expo export --platform web
 3. **SPA routing rewrite** — `vercel.json` rewrites `/(.*) → /index.html` so deep links resolve to the client-side router.
 4. **Cache headers** — `_expo/static/*` gets `max-age=31536000, immutable`. Hashed filenames make this safe.
 
-**Subdomain:**
-- Default: `<project>-<team>.vercel.app`
-- Claim short: `vercel alias set <deploy> evotv-app.vercel.app`
-- Web app already owns `evotv.vercel.app`. Suggest `evotv-app.vercel.app` for the SPA.
+**Where it would live:**
+- The web SPA is not deployed anywhere. The Vercel project this section used to
+  describe is gone; `evotv.co` is served by the Next backend on DigitalOcean.
+- If the SPA is revived, give it a subdomain of `evotv.co` rather than a
+  separate host, so the session cookie (`COOKIE_DOMAIN=.evotv.co`) still works.
 
 **Web limitations vs native:**
 
@@ -150,7 +151,7 @@ pnpm expo export --platform web
 | Geist fonts | via `expo-font` | via web font loader (can switch to Google Fonts CDN later) |
 
 **Web target use cases:**
-- Marketing preview (`evotv-app.vercel.app/home`)
+- Marketing preview (`/home`)
 - Embedded player (`/embed/player/<streamId>`)
 - Desktop watchers (laptop is a real use case for Africa esports streams)
 - Smart TV browser fallback if no Android TV app yet

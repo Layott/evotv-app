@@ -12,10 +12,10 @@ Two Vercel projects:
 
 | Repo | Role | URL |
 |---|---|---|
-| `EVOTV-app/` (this folder) | RN + web SPA client | <https://evotv-app.vercel.app> |
-| `EVOTV/` (`../EVOTV/`) | Next.js backend + admin | <https://evo-tv.vercel.app> |
+| `EVOTV-app/` (this folder) | RN + web SPA client | not yet deployed |
+| `../backend/` | Next.js backend + admin | <https://evotv.co>, API on <https://api.evotv.co> |
 
-Single Neon Postgres DB. Better-Auth bearer flow for RN clients.
+Single DigitalOcean Managed Postgres DB. Better-Auth bearer flow for RN clients.
 
 ---
 
@@ -137,7 +137,7 @@ Admin (gated by role):
 ### Distribution
 - Android: signed APK 94.77 MB on `preview` EAS channel · OTA via EAS Update for JS-only changes
 - iOS: not built yet
-- Web SPA: live at evotv-app.vercel.app (single bundle, rewrites `/(.*)→/index.html`)
+- Web SPA: not deployed. Built as a single bundle, rewrites `/(.*)→/index.html`
 - Android TV: planned (Expo TV preset, same code)
 
 ---

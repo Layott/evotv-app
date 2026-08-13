@@ -5,7 +5,7 @@
   "description": "EVO TV native app — bundled skills, subagents, and hooks for Expo Router 4 + NativeWind + mock-data scaffolding.",
   "author": {
     "name": "EVO TV",
-    "url": "https://evotv.vercel.app"
+    "url": "https://evotv.co"
   },
   "skills": [
     "../../skills/mock-feature-add",

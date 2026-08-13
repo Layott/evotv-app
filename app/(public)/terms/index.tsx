@@ -5,7 +5,7 @@ import { TERMS_BODY } from "@/lib/legal/terms";
 /**
  * Public terms shim - same body as the authed `/settings/terms` screen.
  * Required by Play / App Store as a publicly-resolvable URL
- * (https://evotv-app.vercel.app/terms).
+ * https://evotv.co/terms.
  */
 export default function PublicTermsScreen() {
   return (

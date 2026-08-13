@@ -5,7 +5,7 @@
 
 ---
 
-## Backend (evo-tv.vercel.app)
+## Backend (api.evotv.co)
 
 ### Health checks (all pass)
 
@@ -51,7 +51,7 @@ CRON_SECRET set on Vercel. Per-minute cron (viewer-count) replaced by read-time 
 ### Env vars verified
 
 - `DATABASE_URL` + Postgres flock (Neon)
-- `BETTER_AUTH_URL` = `https://evo-tv.vercel.app`
+- `BETTER_AUTH_URL` = `https://api.evotv.co`
 - `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` (OAuth working end-to-end)
 - `SENTRY_DSN` + `NEXT_PUBLIC_SENTRY_DSN` + `SENTRY_ORG` + `SENTRY_PROJECT` + `SENTRY_AUTH_TOKEN` (source-map upload green)
 - `CRON_SECRET`

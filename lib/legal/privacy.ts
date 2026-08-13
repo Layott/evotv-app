@@ -1,127 +1,119 @@
 // AUTO-MAINTAINED - mirror of docs/PRIVACY.md without the H1 title line.
 // Update both files together when revising.
-export const PRIVACY_BODY = `**Last updated:** 2026-05-15
-**Effective:** 2026-05-15
+//
+// This is the same document the website serves at evotv.co/privacy, in the
+// markdown the in-app renderer understands. Two policies for one service is how
+// a service ends up contradicting itself in writing, so the wording is the
+// site's wording. The only additions are the things that are true of a phone
+// and not of a browser: push tokens, and where the session is kept on the
+// device. If you change one, change the other in the same commit.
+export const PRIVACY_BODY = `**Last updated:** 2026-08-13
 
-EVO TV ("EVO TV", "we", "our", "us") respects your privacy. This Privacy Policy explains what personal data we collect when you use the EVO TV mobile app, web app, partner dashboard, and any related services (collectively, the "Service"), how we use that data, who we share it with, and what choices you have.
-
-By using the Service you agree to this Policy. If you do not agree, do not use the Service.
-
----
-
-## 1. Who we are
-
-EVO TV is operated by the EVO TV team based in Nigeria. Questions: **privacy@evotv.co**.
+EVO TV is operated from Lagos, Nigeria. This explains what we collect, why, who we share it with, and how to make us delete it. It covers evotv.co and the EVO TV mobile apps.
 
 ---
 
-## 2. What we collect
+## Who we are
 
-### 2.1 Information you provide
-- **Account details** - email, password (hashed), display name, handle, country.
-- **Profile content** - avatar image, bio, follow lists.
-- **Content you create** - clips, chat messages, comments, watch-party messages, reports you submit.
-- **Payment information** - only payment-method tokens issued by our processor (Paystack). We never see or store your raw card / bank details.
-- **Communication** - emails / support requests you send us.
+EVO TV is a streaming service for esports, anime and lifestyle programming. For the purposes of the Nigeria Data Protection Act 2023, we are the data controller for the information described here.
 
-### 2.2 Information collected automatically
-- **Watch activity** - which streams / VODs / clips you watched, for how long, when (used for recommendations, viewer counts, watch-history).
-- **Device info** - model, OS version, app version (crash reports + compatibility).
-- **Approximate location** - derived from your IP address (city + country only, never precise GPS).
-- **IP address** - hashed at rest with a salted SHA-256 so we can detect abuse + ban-evasion without storing raw IPs long-term.
-- **Authentication events** - sign-in time, success/failure, hashed IP + device ID. 100-record per-user cap.
-- **Sentry** - anonymized error / crash reports (when enabled).
-
-### 2.3 Cookies + similar
-- **Session cookie** - HttpOnly, sets you as signed in. Survives 30 days.
-- **localStorage** (web only) - session token mirror, theme preference.
-- **No third-party tracking pixels.** No Google Analytics. No Facebook Pixel.
+Questions, requests or complaints: **privacy@evotv.co**
 
 ---
 
-## 3. Third-party processors
+## What we collect
 
-We use Vercel (hosting), Neon (Postgres), Vercel Blob (media storage), Paystack (payments), Better-Auth (auth framework), Sentry (crash reports), Google OAuth (optional sign-in), Resend (transactional email), and EAS Updates (app OTAs).
+When you create an account:
 
-We do not sell your data to anyone. We do not share it with advertising networks.
+- Your email address and name. Both are required to have an account.
+- A handle, profile picture, short bio and country, if you choose to add them.
+- A password, stored only as a hash. We cannot read it, and neither can anyone who obtains the database.
 
----
+When you use the service:
 
-## 4. How we use your data
+- What you watch and roughly for how long, recorded as one row per minute of viewing. This is how live viewer counts work and how we know which programmes people actually watch.
+- Messages you send in chat, and polls you vote in.
+- Things you follow, like, add to a watchlist, or leave part-watched.
+- Orders you place, including the delivery address you enter.
+- Your IP address. It is stored as a one-way hash for anonymous viewer counting, and in full only on the session record, so that you can see and revoke your own sign-ins.
 
-- Authenticate you and keep you signed in.
-- Deliver the Service: recommend streams, count viewers, render chat, place orders, process tips.
-- Process payments and partner payouts via Paystack.
-- Detect and stop abuse, harassment, spam, fraud, and ban evasion.
-- Send service emails (verify, reset password, receipt). We don't send marketing emails without opt-in.
-- Comply with legal obligations (court orders, regulator requests).
-- Improve the Service via aggregated, anonymized analytics.
+From the mobile app specifically:
 
----
+- A push notification token, if you allow notifications. It identifies the installation, not you, and it is deleted when you sign out or turn notifications off.
 
-## 5. Your rights
-
-You have the right to:
-
-- **Access** your data - email privacy@evotv.co.
-- **Correct** wrong data - edit your profile or ask us.
-- **Delete** your account - Settings → Danger zone → Delete account. We mark you for deletion, revoke all sessions, and run a 30-day grace window. After 30 days, the GDPR purge job permanently removes your personal data (watch history, chats, clips, login events, API keys, party messages). The user row is anonymized so comments and tips you sent remain readable.
-- **Object** to a specific use - email us.
-- **Port** your data - request a machine-readable export.
-- **Withdraw consent** - for anything that depends on consent.
-
-GDPR + NDPR (Nigeria Data Protection Regulation) apply.
+We do not collect your location beyond the country you tell us, we do not buy data about you from anyone, and we do not run advertising or analytics trackers belonging to third parties.
 
 ---
 
-## 6. Data retention
+## Why we are allowed to hold it
 
-- **Active account data** - while your account is active.
-- **Watch events** - 90 days (rolled up into anonymous analytics after).
-- **Login events (forensic)** - 180 days, then purged.
-- **Chat messages** - while the parent stream/party exists.
-- **Deleted-account residue** - 30 days then anonymized.
-- **Audit log (admin actions)** - 7 years (legal/compliance).
-- **Payment records** - 7 years (Nigerian tax law).
-- **Sentry errors** - 90 days.
+- **To provide the service.** An account, a viewing history and an order cannot exist without the data that describes them. This is contractual necessity.
+- **To keep it working and safe.** Session records, moderation and abuse handling rest on our legitimate interest in a service that functions and is not hostile to use.
+- **Because you asked.** Marketing email and push notifications are consent, given by opting in and withdrawn by turning them off. Nothing else depends on that consent.
+- **Because the law requires it.** Payment and order records are kept for the period tax and consumer law demands, even after an account is closed.
 
 ---
 
-## 7. Security
+## Who else touches it
 
-- Passwords hashed with bcrypt.
-- Sessions revocable via sign-out or admin sanction.
-- IPs hashed with a private salt before storage.
-- HTTPS everywhere (Vercel-managed TLS).
-- Rate limits on auth endpoints.
-- No raw payment card / bank data ever touches our servers - handled by Paystack.
+We use a small number of processors. Each gets only what it needs to do its job, and none may use your data for their own purposes.
 
-Despite our efforts, no system is 100% secure. If your account is compromised, email security@evotv.co.
+- **DigitalOcean** hosts the service, the database and uploaded files, in Frankfurt, Germany.
+- **Paystack** processes payments. Card details go to Paystack directly and never reach our servers, so we never hold them.
+- **Resend** and **Google** deliver transactional email such as sign-in codes and receipts.
+- **Google** also receives your email address and name, but only if you choose to sign in with a Google account.
+- **Cloudflare** may deliver video when a broadcast is served from its network.
+- **Expo**, and through it **Apple** or **Google**, carry push notifications to your device if you have allowed them.
 
----
-
-## 8. Children
-
-EVO TV is **not intended for users under 13**. Users 13 - 17 should have parental consent.
+We do not sell your data. We will not share it with anyone else unless you ask us to, or unless a valid legal order requires it, in which case we will tell you where we are permitted to.
 
 ---
 
-## 9. International transfers
+## Where it is stored
 
-Your data may be processed outside Nigeria (Vercel + Neon are US-based). We rely on standard contractual clauses for transfers.
-
----
-
-## 10. Changes
-
-We may update this Policy. Material changes are announced in-app + via email. Continued use after a revision is acceptance.
+Our servers are in Frankfurt, Germany, so data about Nigerian users leaves Nigeria. Those transfers rest on the safeguards the Nigeria Data Protection Act 2023 provides for countries with adequate protection, and our processors are bound by contract to the standards we hold ourselves to.
 
 ---
 
-## 11. Contact
+## How long we keep it
+
+- Your account and profile: until you delete the account.
+- Viewing records: 24 months, after which they become counts that identify nobody.
+- Chat messages: 12 months, or until the stream they belong to is deleted.
+- Orders and payment records: 7 years, because tax law requires it.
+- Sign-in sessions: in a browser, 3 hours from last use. In the app, 7 days from last use. Either way, immediately when you sign out.
+
+---
+
+## Your rights
+
+Under the Nigeria Data Protection Act 2023 you may ask us for a copy of your data, correct anything wrong, delete your account and its data, object to a particular use, or withdraw consent you have given.
+
+Most of it you can do yourself in Settings. For anything else, email **privacy@evotv.co** and we will respond within 30 days. If we get it wrong, you can complain to the Nigeria Data Protection Commission.
+
+---
+
+## What is kept on your device
+
+The app stores your sign-in token in the device keystore (Keychain on iOS, Keystore on Android), and keeps small preferences such as your theme and what you follow in local storage. On the web it uses cookies to keep you signed in and to remember which interface your account should see. That is all they do. There are no advertising cookies and no third-party tracking, which is why you are not being asked to dismiss a consent banner.
+
+Signing out clears all of it.
+
+---
+
+## Children
+
+EVO TV is not intended for children under 13, and we do not knowingly collect their data. Some programming carries an age rating and is restricted accordingly. If you believe a child has given us their information, email us and we will remove it.
+
+---
+
+## Changes
+
+If this policy changes in a way that affects you, we will email you before it takes effect, rather than quietly changing the date at the top.
+
+---
+
+## Contact
 
 **privacy@evotv.co**
-EVO TV team
-Lagos, Nigeria
-
-For Nigerian regulatory questions: NDPR enquiries to the same address.`;
+`;

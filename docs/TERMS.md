@@ -1,158 +1,93 @@
-# EVO TV - Terms of Service
+# EVO TV Terms of Service
 
-**Last updated:** 2026-05-15
-**Effective:** 2026-05-15
+**Last updated:** 2026-08-13
 
-Welcome to EVO TV. By creating an account or using the EVO TV mobile app, web app, partner dashboard, or any related service (collectively, the "Service") you agree to these Terms of Service ("Terms"). If you do not agree, do not use the Service.
-
----
-
-## 1. Eligibility
-
-You must be **13 or older** to use the Service. If you are under 18, you confirm you have permission from a parent or legal guardian. EVO TV may suspend any account that misrepresents the user's age.
-
-The Service is intended for African esports audiences but is not restricted by region; usage must comply with the laws of your jurisdiction.
+These terms are the agreement between you and EVO TV. By creating an account or watching, you accept them. They are written to be read, so they are shorter than you expect.
 
 ---
 
-## 2. Your account
+## Who you are agreeing with
 
-- You provide accurate sign-up info.
-- You keep your password secret. You are responsible for activity under your account.
-- One person per account. Don't share accounts.
-- You can sign in with email + password or with Google. Google access can be revoked at any time.
-- You can delete your account at any time (Settings → Danger zone → Delete account). A 30-day grace window applies, after which personal data is purged.
+EVO TV is operated from Lagos, Nigeria. These terms govern evotv.co and the EVO TV mobile apps. Nigerian law applies, and the courts of Lagos State have jurisdiction.
+
+You must be at least 13 to hold an account. If you are under 18, you need a parent or guardian to agree to these terms with you.
 
 ---
 
-## 3. Acceptable use
+## Your account
 
-You agree NOT to:
+Keep your password to yourself. You are responsible for what happens under your account, unless it was our failure that let someone else in. Tell us immediately if you think someone else has access.
 
-- Post content that is illegal, infringing, harassing, hateful, sexually explicit (especially involving minors - CSAM is reported to authorities immediately), threatening, defamatory, or fraudulent.
-- Stream or upload content you don't have rights to (copyright violations).
-- Impersonate another person, brand, or EVO TV staff.
-- Spam chat, watch parties, or comments.
-- Use the Service to send mass unsolicited messages, including coin-tip schemes or external promotions without disclosure.
-- Probe, exploit, or attempt to bypass authentication, rate limits, abuse protections, or anti-piracy measures.
-- Scrape, mirror, rebroadcast, or republish streams without explicit written permission.
-- Use bots, automation, or accounts you do not control to inflate viewer counts, tips, fantasy scores, or prediction outcomes.
-- Misuse API keys (sharing, leaking, reverse-engineering rate-limit enforcement).
-
-Violations may result in content removal, chat ban, account suspension, permanent ban, and / or legal action.
+One account per person. Do not share it with people outside your household, and do not sell or transfer it.
 
 ---
 
-## 4. Content + intellectual property
+## Subscriptions and payment
 
-- **Your content** - you retain ownership of streams, VODs, clips, chats, comments, and other content you create. By posting, you grant EVO TV a **worldwide, royalty-free, non-exclusive license** to host, store, reproduce, modify (for format conversion, thumbnail extraction, captioning), display, distribute, and create derivative works for the purpose of operating the Service, including marketing snippets and search indexing.
-- **Our content** - the EVO TV brand, logos, app UI, code, designs, and our original editorial content are owned by EVO TV. You may not copy or reuse without permission.
-- **Reporting violations** - see Section 11 for DMCA / copyright reports.
-
----
-
-## 5. Channels + Partners
-
-If you operate a Publisher / Channel:
-
-- You confirm you have rights to all content you stream.
-- You agree to EVO TV's Community Standards (no slurs, no real-world threats, no nudity, no copyright violations).
-- You consent to your channel being monitored by EVO TV moderators. We may force-end streams, hide VODs, or suspend channels that violate the Standards.
-- Stream keys are confidential. If leaked, rotate immediately via the partner dashboard.
-- Payouts are processed weekly via Paystack Transfers. EVO TV takes a platform fee (announced separately) before disbursement.
-
-EVO TV may terminate a partner relationship for cause (Section 7).
+- Free accounts can watch the free schedule. Premium unlocks premium programming and removes ads.
+- Premium renews automatically each period until you cancel. Payments are taken by Paystack.
+- Cancel any time in Settings. You keep access until the end of the period you have already paid for, and you are not charged again.
+- We can change the price, but not without telling you at least 30 days beforehand by email. If you do not want the new price, cancel before it takes effect.
+- Refunds follow Nigerian consumer law. If the service was not delivered as described, tell us and we will put it right.
 
 ---
 
-## 6. Payments + Coins + Tips
+## Merchandise
 
-- **Coins** are an in-app currency for tips, predictions, and unlock features. Coins have **no cash value** and are non-refundable. Coins cannot be transferred between accounts except through tips.
-- **Tips** are voluntary contributions to creators. Once a tip is sent it is **non-refundable** (there are no refunds on EVO TV).
-- **Subscriptions** (when available) renew automatically and can be cancelled before the next billing date.
-- **Payouts** to partners are subject to:
-  - A minimum payout threshold (announced separately).
-  - Paystack's KYC + bank verification on the partner account.
-  - Withholding for any chargebacks, fraud claims, or terms violations.
-- **Disputes** about a payment must be raised within 30 days via support@evotv.co.
-
-We use Paystack as our payment processor. Their terms also apply to transactions.
+Physical items are sold and shipped by us. Prices include VAT where it applies. If an item arrives damaged, faulty or not as described, you have the rights Nigerian consumer law gives you, and we will replace or refund it.
 
 ---
 
-## 7. Suspension + Termination
+## What you may not do
 
-EVO TV may suspend, ban, or terminate your account (or a partner channel) without prior notice if:
+- Record, restream, download or redistribute our programming. It is licensed to us, not to you.
+- Get around geographic limits, age ratings or the premium paywall.
+- Harass, threaten or abuse anyone in chat, or post content that is illegal, hateful or sexual.
+- Impersonate someone else, including our staff.
+- Scrape the service, hammer it with automated requests, or attempt to break into any part of it.
 
-- You violate these Terms.
-- You violate the Community Standards.
-- Your activity creates legal risk for EVO TV or its users.
-- You request termination via account deletion.
-
-Upon termination, your access ends immediately. Some data (audit logs, payment records) is retained per the Privacy Policy retention schedule.
-
----
-
-## 8. Disclaimers
-
-- The Service is provided "AS IS" without warranties of any kind.
-- We don't guarantee uninterrupted streams; outages may occur.
-- We don't guarantee any specific performance from predictions, fantasy, or pickem features.
-- User-generated content is the responsibility of the user who posted it.
-- Live streams may be delayed, cut, or unavailable in certain regions due to rights restrictions.
+We moderate chat. We can remove messages, mute an account, or suspend it. For anything short of an immediate safety problem, we will tell you what happened and why, and you can reply and ask us to reconsider.
 
 ---
 
-## 9. Limitation of liability
+## Content you post
 
-To the maximum extent permitted by law:
+What you post stays yours. You give us permission to display it on the service, which is what allows a chat message to appear on a stream, and nothing more. We do not sell it, license it on, or use it in advertising.
 
-- EVO TV is not liable for indirect, incidental, consequential, or punitive damages.
-- Total liability for any claim is capped at the greater of **₦10,000** or the amount you paid EVO TV in the prior 12 months.
-- These limits apply even if EVO TV was advised of the possibility of damages.
+You keep that permission only while it is posted. Delete it, or delete your account, and the permission ends.
 
 ---
 
-## 10. Indemnification
+## Our content
 
-You agree to indemnify and hold EVO TV harmless from any claim arising from your content, your use of the Service, or your violation of these Terms.
+Programming, artwork, the schedule and the EVO TV name and marks belong to us or to the people we license from. Watching does not transfer any of it to you.
 
----
-
-## 11. Copyright + DMCA
-
-If you believe content on EVO TV infringes your copyright, send a takedown notice to **legal@evotv.co** with:
-
-1. Description of the copyrighted work.
-2. URL of the infringing content on EVO TV.
-3. Your contact info.
-4. A statement of good-faith belief that the use is unauthorized.
-5. A statement under penalty of perjury that the info is accurate and you are authorized.
-6. Your signature (physical or digital).
-
-We respond to valid notices within 7 days. Repeat infringers are banned.
+If you believe something on EVO TV infringes your copyright, email **legal@evotv.co** with enough detail to identify the work and where it appears. We will investigate and remove anything that should not be there.
 
 ---
 
-## 12. Dispute resolution
+## What we do not promise
 
-- These Terms are governed by **the laws of the Federal Republic of Nigeria**.
-- Disputes are resolved first by good-faith negotiation. If unresolved within 30 days, either party may refer the dispute to **arbitration in Lagos, Nigeria** under the Arbitration and Conciliation Act.
-- You waive the right to participate in class actions where permitted by law.
+We work to keep EVO TV available, but we do not promise it will never go down. Live broadcasts depend on the internet, on venues, and on third parties, and any of them can fail. Schedules can change, and programming can be added or withdrawn.
 
----
-
-## 13. Changes
-
-We may update these Terms. Material changes will be announced in-app and via email. The "Last updated" date reflects the latest revision. Continued use after a revision is acceptance.
+Where the law lets us limit our liability, we do, to the amount you paid us in the twelve months before the problem. Nothing here limits liability for death, personal injury or fraud, because it cannot.
 
 ---
 
-## 14. Contact
+## Ending the agreement
 
-**support@evotv.co** - general questions
-**legal@evotv.co** - copyright + legal
-**privacy@evotv.co** - data + privacy
+You can delete your account at any time in Settings. We can suspend or close an account that repeatedly breaks these terms, and we will tell you why.
 
-EVO TV team
-Lagos, Nigeria
+If we close your account and you have paid for a period you have not used, we will refund the unused part, unless it was closed for fraud.
+
+---
+
+## Changes
+
+We will email you at least 30 days before any change that materially affects you. Continuing to use EVO TV after that means you accept the new terms; if you do not, delete your account and we will refund anything you have paid for and not used.
+
+---
+
+## Contact
+
+**legal@evotv.co** for anything about these terms. See the Privacy Policy for how we handle your data.

@@ -11,7 +11,7 @@ import { Send, Users } from "lucide-react-native";
 import { toast } from "sonner-native";
 
 import type { ChatMessage, Role } from "@/lib/types";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { useStreamChat } from "@/hooks/useStreamChat";
 import { ChatPostError } from "@/lib/api/chat";
 import { cn } from "@/lib/utils";
@@ -76,7 +76,7 @@ function MessageRow({ msg }: RowProps) {
 }
 
 export function LiveChat({ streamId, className }: LiveChatProps) {
-  const { user } = useMockAuth();
+  const { user } = useAuth();
   const { messages, send, status } = useStreamChat(streamId);
   const [input, setInput] = React.useState("");
   const listRef = React.useRef<FlatList<ChatMessage>>(null);

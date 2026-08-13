@@ -9,12 +9,12 @@ import { ProfileHeader } from "@/components/profile/profile-header";
 import { ProfileTabs } from "@/components/profile/profile-tabs";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { pickAndUploadAvatar } from "@/lib/api/profile";
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user, signOut, updateProfile } = useMockAuth();
+  const { user, signOut, updateProfile } = useAuth();
   const [avatarUploading, setAvatarUploading] = React.useState(false);
 
   const handleLogout = React.useCallback(() => {

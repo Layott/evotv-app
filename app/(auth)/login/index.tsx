@@ -18,7 +18,7 @@ import { toast } from "sonner-native";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { FormField } from "@/components/auth/form-field";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 
 // Bundled, not fetched. A login screen should not need a network round trip
 // to draw its own logo, and the old URL pointed at a Vercel deployment that
@@ -34,7 +34,7 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { signIn, signInWithSocial } = useMockAuth();
+  const { signIn, signInWithSocial } = useAuth();
   const [submitting, setSubmitting] = React.useState(false);
   const [socialBusy, setSocialBusy] = React.useState<"google" | null>(
     null,

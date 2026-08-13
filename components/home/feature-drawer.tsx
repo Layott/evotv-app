@@ -41,7 +41,7 @@ import {
   type LucideIcon,
 } from "lucide-react-native";
 
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 
 interface FeatureLink {
   label: string;
@@ -139,7 +139,7 @@ interface FeatureDrawerProps {
 
 export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
   const router = useRouter();
-  const { user, role, login, logout } = useMockAuth();
+  const { user, role, login, logout } = useAuth();
   const [gatedInfo, setGatedInfo] = React.useState<{
     title: string;
     blurb: string;

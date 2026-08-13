@@ -15,7 +15,7 @@ import { ArrowLeft, Loader2, Save } from "lucide-react-native";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { getMyProfile, updateMyProfile } from "@/lib/api/me";
 import { ApiError } from "@/lib/api/_client";
 
@@ -26,7 +26,7 @@ const HANDLE_RE = /^[a-zA-Z0-9_]+$/;
 export default function ProfileEditScreen() {
   const router = useRouter();
   const qc = useQueryClient();
-  const { user, updateProfile } = useMockAuth();
+  const { user, updateProfile } = useAuth();
 
   const profileQ = useQuery({
     queryKey: ["me", "profile"],

@@ -54,7 +54,7 @@ Expo Router 4 with `expo-router/entry`. Routes are file-based; route groups use 
 
 - **`(public)/`** - `Tabs` host. The 6 visible tabs are wired in `app/(public)/_layout.tsx`: `home`, `events`, `discover`, `shop`, `library-tab`, `profile-tab`. **All other public sub-routes** (stream, vod, clip, event detail, channel, apps, calendar, api-access, etc.) are registered as `<Tabs.Screen ... options={{ href: null }} />` so they exist as routes but stay out of the tab bar. **When you add a new public route, you MUST also register it with `href: null` in this layout** or it auto-injects a tab. See the `route-register` skill for the recipe.
 - **`(auth)/`** - login / signup / forgot / reset / verify / onboarding. Header hidden, slide-from-bottom.
-- **`(authed)/`** - gated by `useMockAuth()`; redirects unauthenticated visitors to `/(auth)/login`. `Stack` navigator. Houses profile, library, watch-parties, fantasy, pickem, predictions, creator-dashboard, settings, cart, checkout, multi-stream, rewards, integrations, notifications, etc.
+- **`(authed)/`** - gated by `useAuth()`; redirects unauthenticated visitors to `/(auth)/login`. `Stack` navigator. Houses profile, library, watch-parties, fantasy, pickem, predictions, creator-dashboard, settings, cart, checkout, multi-stream, rewards, integrations, notifications, etc.
 - **`(admin)/`** - same gate plus `user.role !== "admin"` redirect to `/`.
 - **`(embed)/`** - iframe-style player screens; black background, fade animation.
 
@@ -62,9 +62,9 @@ Expo Router 4 with `expo-router/entry`. Routes are file-based; route groups use 
 
 #### Providers (`components/providers/`)
 
-Order matters. `Providers` composes (outer → inner): `ThemeProvider` → `QueryProvider` → `MockAuthProvider` → children + `<Toaster>` + dev-only `<RoleSwitcher>`.
+Order matters. `Providers` composes (outer → inner): `ThemeProvider` → `QueryProvider` → `AuthProvider` → children + `<Toaster>` + dev-only `<RoleSwitcher>`.
 
-- **`AuthProvider`** (`components/providers/auth-provider.tsx`) - real auth against Better-Auth on the backend. Holds the bearer token, maps the backend user onto `Profile` (`name` → `displayName`, `image` → `avatarUrl`; do not cast, the field names differ), and owns the follows set (`evotv:follows`) and the onboarding flag (`evotv:onboarded`). Exposes `useAuth()`, still aliased as `useMockAuth()` from `components/providers/index.tsx` because ~40 screens import that name. The alias is the only thing left called "mock"; rename it when touching those screens anyway.
+- **`AuthProvider`** (`components/providers/auth-provider.tsx`) - real auth against Better-Auth on the backend. Holds the bearer token, maps the backend user onto `Profile` (`name` → `displayName`, `image` → `avatarUrl`; do not cast, the field names differ), and owns the follows set (`evotv:follows`) and the onboarding flag (`evotv:onboarded`). Exposes `useAuth()`. The `useMockAuth` alias it used to carry is gone, along with the ~40 imports of that name: only the name was ever mock.
 - **`SplashGate`** - holds the splash screen until fonts AND auth hydration finish.
 - **`RoleSwitcher`** - `__DEV__`-only floating widget for swapping roles without a real login.
 

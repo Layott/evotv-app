@@ -17,7 +17,7 @@ import {
 } from "lucide-react-native";
 import { toast } from "sonner-native";
 
-import { useMockAuth, useTheme } from "@/components/providers";
+import { useAuth, useTheme } from "@/components/providers";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -83,7 +83,7 @@ const THEMES = [
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { user, accountEmail, signOut } = useMockAuth();
+  const { user, accountEmail, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
 
   const [prefs, setPrefs] = React.useState<UserPrefs | null>(null);

@@ -74,7 +74,7 @@ interface AuthContextValue {
   completeOnboarding: () => void;
   resetOnboarding: () => void;
 
-  /* ── Backward-compat aliases for screens still on the MockAuth shape ── */
+  /* ── Backward-compat aliases for screens still on the old mock shape ── */
   /** Legacy mock entry point. If first arg is a Role string, no-ops with a
    *  warn (screens must migrate to email+password). If email + password,
    *  routes to real signIn. */

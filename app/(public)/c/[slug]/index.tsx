@@ -11,7 +11,7 @@ import {
   toggleChannelFollow,
   type ChannelPageData,
 } from "@/lib/api/channels";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 
 export default function ChannelPublicPage() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
-  const { isAuthenticated } = useMockAuth();
+  const { isAuthenticated } = useAuth();
   const qc = useQueryClient();
   const router = useRouter();
 

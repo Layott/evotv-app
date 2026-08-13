@@ -6,7 +6,7 @@ import { ChevronRight, Package } from "lucide-react-native";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { listOrdersForUser } from "@/lib/api/orders";
 import { readLocalOrders } from "@/components/shop/cart-store";
 import { formatNgn, relativeTime } from "@/components/profile/ngn";
@@ -65,7 +65,7 @@ const STATUS_COLORS: Record<
 
 export default function ProfileOrdersScreen() {
   const router = useRouter();
-  const { user } = useMockAuth();
+  const { user } = useAuth();
   const [orders, setOrders] = React.useState<Order[]>([]);
   const [loading, setLoading] = React.useState(true);
 

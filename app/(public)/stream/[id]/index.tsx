@@ -28,7 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HLSPlayer } from "@/components/stream/hls-player";
 import { LiveChat } from "@/components/stream/live-chat";
 import { ReportButton } from "@/components/common/report-button";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { useStreamHeartbeat } from "@/hooks/useStreamHeartbeat";
 import type { Stream } from "@/lib/types";
 
@@ -50,7 +50,7 @@ export default function StreamScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const streamId = id ?? "";
-  const { isFollowing, toggleFollow } = useMockAuth();
+  const { isFollowing, toggleFollow } = useAuth();
   const { width } = useWindowDimensions();
   const isWide = Platform.OS === "web" && width >= WIDE_BREAKPOINT;
 

@@ -1,9 +1,9 @@
 import { Redirect, Stack } from "expo-router";
 
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 
 export default function AdminLayout() {
-  const { user, isLoading } = useMockAuth();
+  const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return null;

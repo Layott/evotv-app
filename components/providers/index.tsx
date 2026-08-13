@@ -35,9 +35,5 @@ export function Providers({ children }: ProvidersProps) {
   );
 }
 
-/**
- * Backward-compat alias. New code should import `useAuth` directly.
- * Both names point at the same hook now that real auth replaced the mock.
- */
-export { useAuth, useAuth as useMockAuth } from "./auth-provider";
+export { useAuth } from "./auth-provider";
 export { useTheme } from "./theme-provider";

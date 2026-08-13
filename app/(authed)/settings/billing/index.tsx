@@ -18,7 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { cancelSubscription, getActiveSubscription } from "@/lib/api";
 import { formatNgn } from "@/components/profile/ngn";
 import type { Subscription } from "@/lib/types";
@@ -31,7 +31,7 @@ const PROVIDER_LABELS: Record<Subscription["provider"], string> = {
 
 export default function BillingScreen() {
   const router = useRouter();
-  const { user } = useMockAuth();
+  const { user } = useAuth();
   const [sub, setSub] = React.useState<Subscription | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [cancelling, setCancelling] = React.useState(false);

@@ -14,7 +14,7 @@ import {
   type EpgRow,
 } from "@/lib/api/schedule";
 import { useReminder } from "@/hooks/useReminder";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 
 type PillarFilter = "all" | EpgPillar;
 
@@ -368,7 +368,7 @@ export default function ScheduleScreen() {
     isoDay(new Date()),
   );
   const [pillar, setPillar] = React.useState<PillarFilter>("all");
-  const { isAuthenticated } = useMockAuth();
+  const { isAuthenticated } = useAuth();
 
   const query = useQuery({
     queryKey: ["schedule", selectedDay, pillar],

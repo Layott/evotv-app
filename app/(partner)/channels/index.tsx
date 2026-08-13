@@ -3,10 +3,10 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { Link, Stack } from "expo-router";
 import { ArrowRight, Radio } from "lucide-react-native";
 
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 
 export default function ChannelsListScreen() {
-  const { publisherMemberships } = useMockAuth();
+  const { publisherMemberships } = useAuth();
   const channels = publisherMemberships.flatMap((m) =>
     m.channels.map((c) => ({ ...c, publisherName: m.publisher.name })),
   );

@@ -40,7 +40,7 @@ import { VodRelated } from "@/components/vod/vod-related";
 // /api/vods/[id]/comments lands.
 // import { VodComments } from "@/components/vod/vod-comments";
 import { ReportButton } from "@/components/common/report-button";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 
 function relTime(iso: string): string {
   const diff = Math.max(0, Date.now() - new Date(iso).getTime());
@@ -159,7 +159,7 @@ function VodChapters({ vod }: ChaptersProps) {
 export default function VodScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { role } = useMockAuth();
+  const { role } = useAuth();
   const vodId = id ?? "";
 
   const { data: vod, isLoading } = useQuery({
@@ -182,7 +182,7 @@ export default function VodScreen() {
     if (vod) setLikes(vod.likeCount);
   }, [vod]);
 
-  const { isAuthenticated } = useMockAuth();
+  const { isAuthenticated } = useAuth();
   const qc = useQueryClient();
   const bookmarkQ = useQuery({
     queryKey: ["vod-bookmark", vodId],

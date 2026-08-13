@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ReportButton } from "@/components/common/report-button";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { toggleLike } from "@/lib/api/likes";
 
 function relTime(iso: string): string {
@@ -171,7 +171,7 @@ function ActionButton({ icon, label, onPress }: ActionButtonProps) {
 export default function ClipDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { isFollowing, toggleFollow } = useMockAuth();
+  const { isFollowing, toggleFollow } = useAuth();
   const clipId = id ?? "";
 
   const { data: clip, isLoading } = useQuery({

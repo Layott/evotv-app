@@ -17,7 +17,7 @@ import {
   WifiOff,
 } from "lucide-react-native";
 
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { getChannelPage } from "@/lib/api/channels";
 import { modAction, ModError } from "@/lib/api/moderation";
 import { useStreamChat } from "@/hooks/useStreamChat";
@@ -32,7 +32,7 @@ const TIMEOUT_OPTIONS: Array<{ label: string; durationSec: number }> = [
 
 export default function ModPanelScreen() {
   const { id: channelId } = useLocalSearchParams<{ id: string }>();
-  const { publisherMemberships } = useMockAuth();
+  const { publisherMemberships } = useAuth();
 
   const channel = publisherMemberships
     .flatMap((m) => m.channels.map((c) => ({ ...c, role: m.role })))

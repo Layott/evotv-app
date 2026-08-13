@@ -23,7 +23,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import {
   listNotifications,
   markAllAsRead,
@@ -192,7 +192,7 @@ function EmptyState({ label = "Nothing here yet." }: { label?: string }) {
 }
 
 export default function NotificationsScreen() {
-  const { user } = useMockAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const [items, setItems] = React.useState<NotificationItem[]>([]);
   const [loading, setLoading] = React.useState(true);

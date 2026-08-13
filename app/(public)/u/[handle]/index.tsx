@@ -30,7 +30,7 @@ import {
   type PublicProfileClip,
   type PublicProfileVod,
 } from "@/lib/api/profile";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { toggleFollow as apiToggleFollow } from "@/lib/api/follows";
 
 const BRAND = "#46E3CE";
@@ -223,7 +223,7 @@ export default function PublicProfileScreen() {
   const handle = (raw ?? "").replace(/^@/, "").trim();
   const router = useRouter();
   const qc = useQueryClient();
-  const { user } = useMockAuth();
+  const { user } = useAuth();
   const viewerId = user?.id ?? null;
 
   const profileQ = useQuery({

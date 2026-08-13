@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import {
   CART_KEY,
   clearCart,
@@ -97,7 +97,7 @@ const PHONE_REGEX = /^\+234[0-9\s-]{7,}$/;
 
 export default function CheckoutScreen() {
   const router = useRouter();
-  const { user } = useMockAuth();
+  const { user } = useAuth();
   const params = useLocalSearchParams<{ plan?: string }>();
   const isSubscription = params.plan === "premium";
 

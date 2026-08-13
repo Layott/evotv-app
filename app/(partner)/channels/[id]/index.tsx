@@ -3,11 +3,11 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { ChevronRight, Key, MessageSquare, Radio, ShieldCheck } from "lucide-react-native";
 
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 
 export default function ChannelHomeScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { publisherMemberships } = useMockAuth();
+  const { publisherMemberships } = useAuth();
 
   const match = publisherMemberships
     .flatMap((m) => m.channels.map((c) => ({ ...c, publisher: m.publisher, role: m.role })))

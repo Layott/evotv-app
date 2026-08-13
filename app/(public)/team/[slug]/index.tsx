@@ -16,7 +16,7 @@ import {
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 import { getTeamBySlug } from "@/lib/api/teams";
 import { getGameById } from "@/lib/api/games";
 import { listPlayers } from "@/lib/api/players";
@@ -33,7 +33,7 @@ export default function TeamDetailScreen() {
   const router = useRouter();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const teamSlug = slug as string;
-  const { toggleFollow, isFollowing } = useMockAuth();
+  const { toggleFollow, isFollowing } = useAuth();
 
   const teamQ = useQuery({
     queryKey: ["team", teamSlug],

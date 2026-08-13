@@ -25,7 +25,7 @@ import {
   AFRICAN_COUNTRIES,
   CountrySelect,
 } from "@/components/auth/country-select";
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 
 // Bundled, not fetched. A login screen should not need a network round trip
 // to draw its own logo, and the old URL pointed at a Vercel deployment that
@@ -59,7 +59,7 @@ type SignupValues = z.infer<typeof signupSchema>;
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { signUp, signInWithSocial } = useMockAuth();
+  const { signUp, signInWithSocial } = useAuth();
   const [submitting, setSubmitting] = React.useState(false);
   const [socialBusy, setSocialBusy] = React.useState<"google" | null>(
     null,

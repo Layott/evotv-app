@@ -1,9 +1,9 @@
 import { Redirect, Stack } from "expo-router";
 
-import { useMockAuth } from "@/components/providers";
+import { useAuth } from "@/components/providers";
 
 export default function PartnerLayout() {
-  const { isAuthenticated, isLoading, publisherMemberships } = useMockAuth();
+  const { isAuthenticated, isLoading, publisherMemberships } = useAuth();
 
   if (isLoading) return null;
   if (!isAuthenticated) return <Redirect href="/(auth)/login" />;

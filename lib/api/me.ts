@@ -8,6 +8,14 @@ export interface MyProfileResponse {
     handle: string | null;
     image: string | null;
     role: string;
+    /**
+     * When this account finished onboarding, ISO 8601, or null.
+     *
+     * Belongs to the account, not the handset. The app used to keep this in
+     * AsyncStorage alone, so the same person was walked through onboarding
+     * again on every new device they signed in on.
+     */
+    onboardedAt: string | null;
     bio: string;
     country: string;
   };
@@ -18,6 +26,8 @@ export interface UpdateMyProfilePatch {
   handle?: string;
   bio?: string;
   country?: string;
+  /** Only ever true. The server stamps the time and keeps the first one. */
+  onboarded?: true;
 }
 
 /** GET /api/users/me - joined view of user + profile (bio, country). */
@@ -40,6 +50,21 @@ export async function updateMyProfile(
     body: patch,
   });
   return res.user;
+}
+
+/**
+ * Record that onboarding is finished, against the account.
+ *
+ * Best-effort on purpose: the local flag is written either way, so a failed
+ * request means this device is fine and a second device asks once more. Losing
+ * the round trip must not strand somebody in the onboarding flow.
+ */
+export async function markOnboarded(): Promise<void> {
+  try {
+    await updateMyProfile({ onboarded: true });
+  } catch {
+    /* noop */
+  }
 }
 
 /**

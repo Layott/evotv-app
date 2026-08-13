@@ -5,6 +5,7 @@ import * as WebBrowser from "expo-web-browser";
 import type { Profile, Role } from "@/lib/types";
 import { api, ApiError, setToken } from "@/lib/api/_client";
 import { getMyMemberships, type PublisherMembership } from "@/lib/api/partner";
+import { getMyProfile, markOnboarded } from "@/lib/api/me";
 import { persist } from "@/lib/storage/persist";
 
 const BASE_URL =
@@ -141,6 +142,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   React.useEffect(() => {
     let cancelled = false;
     void (async () => {
+      // Whether this ACCOUNT has onboarded, as opposed to this handset.
+      let serverOnboarded = false;
       try {
         try {
           const session = await api<SessionResponse>("/api/auth/get-session");
@@ -148,6 +151,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
           if (session?.user) {
             setUser(toProfile(session.user));
             setAccountEmail(session.user.email);
+            try {
+              const profile = await getMyProfile();
+              serverOnboarded = Boolean(profile?.onboardedAt);
+            } catch {
+              // Offline or a slow server. The local flag below still answers.
+            }
             const memberships = await getMyMemberships();
             if (!cancelled) setPublisherMemberships(memberships);
           }
@@ -158,7 +167,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const onboarded = await persist.get<boolean>(ONBOARD_KEY);
         if (cancelled) return;
         if (Array.isArray(followsList)) setFollows(new Set(followsList));
-        if (onboarded === true) setOnboardingComplete(true);
+        // The account's answer wins over the handset's. Whoever says yes is
+        // believed: the server knows about other devices, and the local flag
+        // covers the case where this request failed.
+        if (onboarded === true || serverOnboarded) {
+          setOnboardingComplete(true);
+          if (serverOnboarded && onboarded !== true) {
+            void persist.set<boolean>(ONBOARD_KEY, true);
+          }
+        }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -284,6 +301,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const completeOnboarding = React.useCallback(() => {
     setOnboardingComplete(true);
     void persist.set<boolean>(ONBOARD_KEY, true);
+    // Tell the account too, so the next device does not ask again. Best effort:
+    // a failed request must not hold anyone inside the onboarding flow.
+    void markOnboarded();
   }, []);
 
   const resetOnboarding = React.useCallback(() => {

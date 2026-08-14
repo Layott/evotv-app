@@ -5,7 +5,7 @@
 // in-app renderer understands. The wording is the site's wording on purpose:
 // two sets of terms for one service is how a service ends up contradicting
 // itself in writing. Change one, change the other in the same commit.
-export const TERMS_BODY = `**Last updated:** 2026-08-13
+export const TERMS_BODY = `**Last updated:** 2026-08-14
 
 These terms are the agreement between you and EVO TV. By creating an account or watching, you accept them. They are written to be read, so they are shorter than you expect.
 
@@ -84,6 +84,12 @@ Where the law lets us limit our liability, we do, to the amount you paid us in t
 You can delete your account at any time in Settings. We can suspend or close an account that repeatedly breaks these terms, and we will tell you why.
 
 If we close your account and you have paid for a period you have not used, we will refund the unused part, unless it was closed for fraud.
+
+---
+
+## How this was built
+
+Parts of EVO TV, the website and the apps, were built with the help of AI coding tools. A person reviewed and approved what shipped. It changes nothing about these terms: the service is ours, and so is the responsibility for it.
 
 ---
 

@@ -1,6 +1,6 @@
 # EVO TV Privacy Policy
 
-**Last updated:** 2026-08-13
+**Last updated:** 2026-08-14
 
 EVO TV is operated from Lagos, Nigeria. This explains what we collect, why, who we share it with, and how to make us delete it. It covers evotv.co and the EVO TV mobile apps.
 
@@ -97,6 +97,14 @@ Signing out clears all of it.
 ## Children
 
 EVO TV is not intended for children under 13, and we do not knowingly collect their data. Some programming carries an age rating and is restricted accordingly. If you believe a child has given us their information, email us and we will remove it.
+
+---
+
+## How this was built
+
+Parts of EVO TV, the website and the apps, were built with the help of AI coding tools. A person reviewed and approved what shipped, and the decisions about what the service does are ours.
+
+AI is not used to make decisions about you. Nothing here profiles you, scores you, or decides automatically what you may access.
 
 ---
 

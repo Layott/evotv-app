@@ -42,6 +42,7 @@ import {
 } from "lucide-react-native";
 
 import { useAuth } from "@/components/providers";
+import { hasMinRole } from "@/lib/auth/roles";
 
 interface FeatureLink {
   label: string;
@@ -151,10 +152,11 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
 
   if (!open) return null;
 
-  const isAdmin = role === "admin";
+  // Ladder, not equality: a head_admin is more than an admin.
+  const isAdmin = hasMinRole(role, "admin");
   // Creator tools only show for creators (and admins). Role is granted from
   // the admin Users screen.
-  const isCreator = role === "creator" || role === "admin";
+  const isCreator = hasMinRole(role, "creator");
   const handleNav = (item: FeatureLink) => {
     // Gated features never navigate - show an in-drawer blurb instead. Keeps
     // the drawer open (no broken back) and signals "coming soon" in context.

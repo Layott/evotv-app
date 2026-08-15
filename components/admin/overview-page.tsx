@@ -17,6 +17,7 @@ import {
   ClipboardList,
   CreditCard,
   Film,
+  MonitorPlay,
   Fingerprint,
   Gavel,
   KeyRound,
@@ -261,6 +262,12 @@ export function OverviewPage() {
       stat: waitlistQ.data
         ? `${formatNumber(waitlistQ.data.count)} signups`
         : "-",
+    },
+    {
+      to: "/admin/shows",
+      label: "Shows",
+      icon: MonitorPlay,
+      stat: "Series and episodes",
     },
     {
       to: "/admin/vods",

@@ -67,7 +67,7 @@ You keep that permission only while it is posted. Delete it, or delete your acco
 
 Programming, artwork, the schedule and the EVO TV name and marks belong to us or to the people we license from. Watching does not transfer any of it to you.
 
-If you believe something on EVO TV infringes your copyright, email **legal@evotv.co** with enough detail to identify the work and where it appears. We will investigate and remove anything that should not be there.
+If you believe something on EVO TV infringes your copyright, email **info@evotv.co** with enough detail to identify the work and where it appears. We will investigate and remove anything that should not be there.
 
 ---
 
@@ -101,5 +101,5 @@ We will email you at least 30 days before any change that materially affects you
 
 ## Contact
 
-**legal@evotv.co** for anything about these terms. See the Privacy Policy for how we handle your data.
+**info@evotv.co** for anything about these terms. See the Privacy Policy for how we handle your data.
 `;

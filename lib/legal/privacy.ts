@@ -17,7 +17,7 @@ EVO TV is operated from Lagos, Nigeria. This explains what we collect, why, who 
 
 EVO TV is a streaming service for esports, anime and lifestyle programming. For the purposes of the Nigeria Data Protection Act 2023, we are the data controller for the information described here.
 
-Questions, requests or complaints: **privacy@evotv.co**
+Questions, requests or complaints: **info@evotv.co**
 
 ---
 
@@ -89,7 +89,7 @@ Our servers are in Frankfurt, Germany, so data about Nigerian users leaves Niger
 
 Under the Nigeria Data Protection Act 2023 you may ask us for a copy of your data, correct anything wrong, delete your account and its data, object to a particular use, or withdraw consent you have given.
 
-Most of it you can do yourself in Settings. For anything else, email **privacy@evotv.co** and we will respond within 30 days. If we get it wrong, you can complain to the Nigeria Data Protection Commission.
+Most of it you can do yourself in Settings. For anything else, email **info@evotv.co** and we will respond within 30 days. If we get it wrong, you can complain to the Nigeria Data Protection Commission.
 
 ---
 
@@ -123,5 +123,5 @@ If this policy changes in a way that affects you, we will email you before it ta
 
 ## Contact
 
-**privacy@evotv.co**
+**info@evotv.co**
 `;

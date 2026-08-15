@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "EVO TV",
-    "slug": "evotv",
+    "slug": "evo-tv",
     "scheme": "evotv",
     "version": "0.1.0",
     "orientation": "portrait",
@@ -24,7 +24,9 @@
           "NSAllowsArbitraryLoads": true
         },
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": ["audio"]
+        "UIBackgroundModes": [
+          "audio"
+        ]
       }
     },
     "android": {
@@ -32,7 +34,9 @@
       "permissions": [
         "INTERNET",
         "ACCESS_NETWORK_STATE",
-        "VIBRATE"
+        "VIBRATE",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -71,15 +75,15 @@
         "origin": false
       },
       "eas": {
-        "projectId": "4f9bf255-7b3b-4c57-8be1-318bab0385df"
+        "projectId": "09d92344-6935-4f3e-8712-b44a477677d1"
       }
     },
-    "owner": "layott",
+    "owner": "gameevo-evo",
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/4f9bf255-7b3b-4c57-8be1-318bab0385df",
+      "url": "https://u.expo.dev/09d92344-6935-4f3e-8712-b44a477677d1",
       "requestHeaders": {
         "expo-channel-name": "preview"
       }

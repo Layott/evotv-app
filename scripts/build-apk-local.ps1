@@ -59,21 +59,27 @@ $text = [regex]::Replace($text, 'ndkVersion\s*=\s*"[\d\.]+"', "ndkVersion = `"$N
 [IO.File]::WriteAllText($rootGradle, $text, (New-Object Text.UTF8Encoding $false))
 
 $appGradle = "$Build\android\app\build.gradle"
-$text = [IO.File]::ReadAllText($appGradle)
+# Normalised to LF before anything is matched. The anchors below are here-strings
+# in this file, so they carry whatever line endings this file has, and git
+# rewrites it to CRLF on checkout while Expo writes build.gradle with LF. That
+# mismatch made every anchor miss and the guard refuse the build, which is the
+# right failure but for an irrelevant reason.
+$text = ([IO.File]::ReadAllText($appGradle)) -replace "`r`n", "`n"
 
 # Exact anchors, not a `.*?` splice. A lazy match across this file happily runs
 # from `signingConfigs {` into the `debug {` of `buildTypes` and swallows the
 # brace between them, which produces a gradle file that still parses and is
 # wired wrong.
-$debugKey = @"
+# Anchors normalised to LF for the same reason as the file above.
+$debugKey = (@"
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-"@
-$withRelease = $debugKey + @"
+"@ -replace "`r`n", "`n")
+$withRelease = $debugKey + (@"
 
         release {
             storeFile file('../../evotv-release.keystore')
@@ -81,7 +87,7 @@ $withRelease = $debugKey + @"
             keyAlias 'evotv'
             keyPassword 'evotvkey'
         }
-"@
+"@ -replace "`r`n", "`n")
 
 if ($text -notmatch [regex]::Escape("evotv-release.keystore")) {
     if ($text -notmatch [regex]::Escape($debugKey)) {
@@ -92,14 +98,14 @@ if ($text -notmatch [regex]::Escape("evotv-release.keystore")) {
 
 # The release buildType, identified by the comment prebuild puts above it, so
 # this cannot hit the `debug` buildType by accident.
-$debugSigned = @"
+$debugSigned = (@"
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
-"@
-$releaseSigned = @"
+"@ -replace "`r`n", "`n")
+$releaseSigned = (@"
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
-"@
+"@ -replace "`r`n", "`n")
 if ($text -match [regex]::Escape($debugSigned)) {
     $text = $text.Replace($debugSigned, $releaseSigned)
 }

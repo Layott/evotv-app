@@ -26,8 +26,34 @@ function Step($msg) { Write-Host "==> $msg" }
 Step "syncing $Repo -> $Build"
 # node_modules is excluded so pnpm reinstalls cleanly: copied pnpm symlinks
 # point at store paths that do not resolve from the new root.
-robocopy $Repo $Build /E /XD .git .expo dist android node_modules graphify-out /XF "*.log" /MT:16 /NFL /NDL /NJH /NJS | Out-Null
+#
+# /PURGE is not optional. Without it robocopy only ever adds, so a file deleted
+# from the repo lives on in the build copy and ships in every APK afterwards.
+# That is not hypothetical: `app/(public)/api-access` was deleted in June 2026
+# and was still in the 15 August build, where Expo Router turned its four
+# routes into four extra tabs, which is why the tab bar was unusable on a
+# phone. Excluded directories are exempt from the purge, so android/ and
+# node_modules/ survive and the incremental build stays fast.
+#
+# The generated directories are excluded by FULL PATH, not by name. A bare
+# `/XD android` matches every directory called android at any depth, which
+# quietly dropped `app/(public)/apps/android` - a real route - out of every APK
+# ever built by this script. `.git` and `node_modules` stay name-matched, since
+# a nested one should always be skipped.
+robocopy $Repo $Build /E /PURGE `
+    /XD .git node_modules "$Repo\.expo" "$Repo\dist" "$Repo\android" "$Repo\graphify-out" `
+    /XF "*.log" /MT:16 /NFL /NDL /NJH /NJS | Out-Null
 if ($LASTEXITCODE -ge 8) { throw "robocopy failed with $LASTEXITCODE" }
+
+# Belt and braces: the copy must contain exactly the routes the repo contains.
+# A mismatch means the sync is not doing its job, and the only symptom in the
+# built app is a screen that should not exist.
+$repoRoutes  = (Get-ChildItem "$Repo\app"  -Recurse -Filter "index.tsx" | Measure-Object).Count
+$buildRoutes = (Get-ChildItem "$Build\app" -Recurse -Filter "index.tsx" | Measure-Object).Count
+if ($repoRoutes -ne $buildRoutes) {
+    throw "the build copy has $buildRoutes routes and the repo has $repoRoutes; refusing to build a stale bundle"
+}
+Step "synced, $repoRoutes routes match"
 
 # ---------------------------------------------------------------- deps
 Step "installing dependencies"

@@ -19,6 +19,12 @@ import { tokens } from "@/lib/theme/tokens";
  *
  * Signed out, it does nothing at all: there is nothing private on screen and a
  * lock in front of a login form is a door in front of a door.
+ *
+ * It also does nothing to somebody who has just signed in. The unlock exists so
+ * that a session already on the phone can be opened with a thumb instead of a
+ * password; putting it in front of somebody who typed that password ten seconds
+ * ago asks the same question twice. So only a session that was *restored* at
+ * startup is locked, never one created by signing in.
  */
 
 interface Props {
@@ -31,6 +37,14 @@ export function AppLockGate({ children }: Props) {
   const [locked, setLocked] = React.useState(false);
   const [prompting, setPrompting] = React.useState(false);
   const backgroundedAt = React.useRef<number | null>(null);
+  /**
+   * Whether the first "is there a session?" question has been answered.
+   *
+   * That first answer is the only one that can lock the app on open, because it
+   * is the only one describing a session that was already there. Every later
+   * answer is somebody signing in, and they have just proved who they are.
+   */
+  const startupSettled = React.useRef(false);
 
   // Read the preference once the session is known. Until then `enabled` is
   // null and nothing is rendered as locked, which matches the cold-start order:
@@ -40,7 +54,11 @@ export function AppLockGate({ children }: Props) {
     let cancelled = false;
     void isLockEnabled().then((on) => {
       if (cancelled) return;
+      // Kept current either way, so turning the lock on in Settings arms the
+      // re-lock below without needing a restart.
       setEnabled(on);
+      if (startupSettled.current) return;
+      startupSettled.current = true;
       if (on && isAuthenticated) setLocked(true);
     });
     return () => {

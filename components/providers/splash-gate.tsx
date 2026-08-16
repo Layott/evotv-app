@@ -10,93 +10,119 @@ void SplashScreen.preventAutoHideAsync().catch(() => {
 });
 
 /**
- * Splash gate. Pure setInterval-driven animation - re-renders the view
- * with new transform/opacity values every 60ms. Bypasses RN's `Animated`
- * + Reanimated entirely after both reportedly didn't visibly animate on
- * the user's APK build #11. Slightly higher CPU than driver-backed
- * animation but unconditionally runs.
+ * Splash gate. Pure setInterval-driven animation - re-renders the view with
+ * new transform/opacity values every frame. Bypasses RN's `Animated` +
+ * Reanimated entirely after both reportedly didn't visibly animate on the
+ * user's APK build #11. Slightly higher CPU than driver-backed animation but
+ * unconditionally runs.
  *
- * Loops until min delay + auth-load complete, then fades children in.
+ * The animation is "emerge" (owner's pick, 2026-08-16): the mark resolves out
+ * of its own light, overbright and slightly large, sharpening as the glow
+ * falls back. It replaces two rings that expanded out of the logo on a loop.
+ * A ring travelling away from the mark reads as a signal leaving; light coming
+ * off the mark reads as the thing itself arriving.
+ *
+ * The glow is an image (`assets/splash-glow.png`, a baked radial) because RN
+ * has neither CSS filters nor radial gradients, and a glow with a hard edge is
+ * worse than no glow. Everything else is scale and opacity, which are the two
+ * things that behave identically on both platforms.
  */
 
-const CYAN = "#46E3CE";
+const GLOW = require("@/assets/splash-glow.png");
+const MARK = require("@/assets/icon.png");
+
+/** One frame every 32ms, so ~30fps. Smooth enough for scale and opacity. */
+const FRAME_MS = 32;
+const EMERGE_MS = 1500;
+const GLOW_MS = 1800;
+
+const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
 
 interface SplashGateProps {
   children: React.ReactNode;
 }
 
-function PulsingHero() {
-  const [tick, setTick] = React.useState(0);
+function EmergingHero() {
+  const [elapsed, setElapsed] = React.useState(0);
 
   React.useEffect(() => {
+    const startedAt = Date.now();
     const t = setInterval(() => {
-      setTick((prev) => (prev + 1) % 600);
-    }, 50);
+      // Wall clock rather than a frame counter: a dropped frame then costs
+      // smoothness instead of pushing the whole sequence later.
+      setElapsed(Date.now() - startedAt);
+    }, FRAME_MS);
     return () => clearInterval(t);
   }, []);
 
-  // tick goes 0 → 599 then resets. 30s cycle (600 * 50ms).
-  // We use phase positions to derive multiple parallel animations.
-  const t = tick;
-  const TWO_PI = Math.PI * 2;
+  const markT = easeOutExpo(clamp01(elapsed / EMERGE_MS));
+  const glowT = easeOutCubic(clamp01(elapsed / GLOW_MS));
 
-  // Logo pulse 1.0 → 1.08 with sine wave, 1.8s cycle = 36 ticks.
-  const pulsePhase = (t % 36) / 36;
-  const logoScale = 1 + 0.08 * (0.5 - 0.5 * Math.cos(pulsePhase * TWO_PI));
+  const markScale = 0.86 + 0.14 * markT;
+  const markOpacity = clamp01(elapsed / 620);
 
-  // Ring expand 0.9 → 1.4 over 1.8s, then snap. Linear.
-  const ringPhase = (t % 36) / 36;
-  const ringScale = 0.9 + 0.55 * ringPhase;
-  const ringOpacity = 0.65 * (1 - ringPhase);
+  // The whitened copy over the mark is what stands in for "overbright": it
+  // starts almost opaque and slightly larger, and burns off as the real mark
+  // sharpens underneath. RN cannot blur a view, and this reads as the same
+  // moment.
+  const bloomT = clamp01(elapsed / 1100);
+  const bloomOpacity = 0.75 * (1 - easeOutCubic(bloomT));
+  const bloomScale = 1.08 - 0.08 * easeOutCubic(bloomT);
 
-  // Second ring offset 18 ticks (half cycle).
-  const ring2Phase = ((t + 18) % 36) / 36;
-  const ring2Scale = 0.9 + 0.55 * ring2Phase;
-  const ring2Opacity = 0.5 * (1 - ring2Phase);
+  // After the settle the glow keeps a very slow breath. It is barely visible
+  // and it is not decoration: without it a slow sign-in leaves a frozen
+  // screen, which reads as a hung app rather than a loading one.
+  const settled = elapsed > GLOW_MS;
+  const breath = settled
+    ? 0.04 * (0.5 - 0.5 * Math.cos(((elapsed - GLOW_MS) / 2600) * Math.PI * 2))
+    : 0;
+
+  const glowScale = 0.6 + 0.45 * glowT;
+  const glowOpacity = 0.85 - 0.55 * glowT + breath;
 
   return (
     <View
       style={{
-        width: 240,
-        height: 240,
+        width: 320,
+        height: 320,
         alignItems: "center",
         justifyContent: "center",
       }}
     >
-      <View
-        pointerEvents="none"
+      <Image
+        source={GLOW}
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
-          width: 240,
-          height: 240,
-          borderRadius: 120,
-          borderWidth: 2,
-          borderColor: CYAN,
-          opacity: ringOpacity,
-          transform: [{ scale: ringScale }],
+          width: 320,
+          height: 320,
+          opacity: glowOpacity,
+          transform: [{ scale: glowScale }],
         }}
+        resizeMode="contain"
       />
-      <View
-        pointerEvents="none"
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: 240,
-          height: 240,
-          borderRadius: 120,
-          borderWidth: 2,
-          borderColor: "#16CFF3",
-          opacity: ring2Opacity,
-          transform: [{ scale: ring2Scale }],
-        }}
-      />
-      <View style={{ transform: [{ scale: logoScale }] }}>
+      <View style={{ width: 128, height: 128 }}>
         <Image
-          source={require("@/assets/icon.png")}
-          style={{ width: 128, height: 128, borderRadius: 28 }}
+          source={MARK}
+          style={{
+            width: 128,
+            height: 128,
+            opacity: markOpacity,
+            transform: [{ scale: markScale }],
+          }}
+          resizeMode="contain"
+        />
+        <Image
+          source={MARK}
+          style={{
+            position: "absolute",
+            width: 128,
+            height: 128,
+            tintColor: "#EAF6F5",
+            opacity: bloomOpacity,
+            transform: [{ scale: bloomScale }],
+          }}
           resizeMode="contain"
         />
       </View>
@@ -114,18 +140,9 @@ function SplashScreenView() {
         justifyContent: "center",
       }}
     >
-      <PulsingHero />
-      <Text
-        style={{
-          marginTop: 32,
-          color: "#EAF6F5",
-          fontSize: 16,
-          fontWeight: "700",
-          letterSpacing: 4,
-        }}
-      >
-        EVO TV
-      </Text>
+      <EmergingHero />
+      {/* No wordmark under the logo. The mark says EVO TV, and "Powered by EVO
+          TV" is on the same screen: three of the same name is two too many. */}
       <Text
         style={{
           position: "absolute",

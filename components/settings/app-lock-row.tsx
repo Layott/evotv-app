@@ -85,7 +85,7 @@ export function AppLockRow() {
       {cap.available ? (
         <SettingRow
           label={`Unlock with ${cap.label}`}
-          description="Asks on open, and again after a minute away. You stay signed in."
+          description="Reopen the app with your thumb instead of your password. Not asked right after you sign in."
         >
           <Switch
             checked={enabled}

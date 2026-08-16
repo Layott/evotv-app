@@ -44,6 +44,7 @@ import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
 import { SectionCard, SettingRow } from "@/components/settings/section-card";
 import { AppLockRow } from "@/components/settings/app-lock-row";
+import { useNativePushState } from "@/lib/push/state";
 import { changePassword } from "@/lib/api/me";
 import { exportOwnData } from "@/lib/api/profile";
 import { getMyPrefs, patchMyPrefs } from "@/lib/api/prefs";
@@ -81,10 +82,31 @@ const THEMES = [
   { v: "light", label: "Light", icon: Eye },
 ];
 
+/**
+ * The preferences below decide what EVO TV sends. This row says whether the
+ * phone can receive any of it, which is a different question and used to have
+ * no answer anywhere in the app.
+ */
+function pushRowCopy(state: ReturnType<typeof useNativePushState>): string {
+  switch (state.kind) {
+    case "registered":
+      return "This phone is registered and can receive alerts";
+    case "denied":
+      return "Turned off in your phone settings. Allow notifications for EVO TV there.";
+    case "unconfigured":
+      return "This build cannot receive push. Nothing you can change here; it needs a new build.";
+    case "unsupported":
+      return "Not available here";
+    default:
+      return "Checking this device";
+  }
+}
+
 export default function SettingsScreen() {
   const router = useRouter();
   const { user, accountEmail, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
+  const pushState = useNativePushState();
 
   const [prefs, setPrefs] = React.useState<UserPrefs | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -432,6 +454,15 @@ export default function SettingsScreen() {
             description="Choose what lands in your EVO TV inbox."
           >
             <View>
+              <SettingRow
+                label="Push on this device"
+                description={pushRowCopy(pushState)}
+              >
+                <Badge variant={pushState.kind === "registered" ? "default" : "secondary"}>
+                  {pushState.kind === "registered" ? "On" : "Off"}
+                </Badge>
+              </SettingRow>
+              <View className="h-px bg-border" />
               <SettingRow
                 label="Stream goes live"
                 description="Teams & streamers you follow"

@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import type { Product } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
+import { Price } from "@/components/ui/price";
 
 export function formatNgn(n: number): string {
   if (n >= 1_000_000) {
@@ -69,16 +70,15 @@ export function ProductCard({ product }: { product: Product }) {
         >
           {product.name}
         </Text>
-        <Text
+        <Price
+          ngn={product.priceNgn}
           style={{
             marginTop: 8,
             fontSize: 16,
             fontWeight: "700",
             color: "#67e8f9",
           }}
-        >
-          {formatNgn(product.priceNgn)}
-        </Text>
+        />
       </View>
     </Pressable>
   );

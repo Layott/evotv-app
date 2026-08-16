@@ -120,8 +120,26 @@ if ($check -notmatch [regex]::Escape("evotv-release.keystore")) {
     throw "the release keystore is not referenced; refusing to ship an unsigned APK"
 }
 
+# Prebuild writes `org.gradle.jvmargs=-Xmx2048m`, and 2 GB is not enough for
+# `:app:collectReleaseDependencies` on this project: it died with "Java heap
+# space" after eight minutes of work. Raised here rather than passed on the
+# command line, because PowerShell splits a quoted `-Dorg.gradle.jvmargs=...`
+# and gradle then reads the fragment as a task name.
+$props = "$Build\android\gradle.properties"
+$propsText = ([IO.File]::ReadAllText($props)) -replace "`r`n", "`n"
+$propsText = [regex]::Replace(
+    $propsText,
+    'org\.gradle\.jvmargs=.*',
+    'org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1g'
+)
+[IO.File]::WriteAllText($props, $propsText, (New-Object Text.UTF8Encoding $false))
+
 # ---------------------------------------------------------------- build
 Step "building"
+# Stale daemons from an earlier run hold their heap and are not reused, which
+# is how this machine ran out of memory mid-build in the first place.
+Set-Location "$Build\android"
+.\gradlew.bat --stop 2>&1 | Out-Null
 $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
 $env:ANDROID_SDK_ROOT = $env:ANDROID_HOME

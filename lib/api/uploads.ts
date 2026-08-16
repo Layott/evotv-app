@@ -4,20 +4,15 @@ import { Platform } from "react-native";
 
 import { BASE_URL, getToken, ApiError } from "./_client";
 
-/** Vercel function body cap is 4.5 MB. Stay safely under with 3.5 MB. */
+/**
+ * Cap for the multipart image route, which does pass through the API process.
+ * Inherited from Vercel's 4.5 MB serverless body limit; the droplet has no such
+ * limit, but a smaller image is the right answer for this audience anyway.
+ */
 const MAX_UPLOAD_BYTES = 3.5 * 1024 * 1024;
 
 /** Client-upload cap. Mirrors MAX_BYTES in /api/admin/uploads/client. */
 const MAX_VIDEO_BYTES = 512 * 1024 * 1024;
-
-/**
- * Vercel Blob public API. Same default the @vercel/blob SDK targets
- * (`defaultVercelBlobApiUrl` in @vercel/blob/dist/chunk-*.js).
- */
-const BLOB_API_URL = "https://vercel.com/api/blob";
-
-/** Mirrors BLOB_API_VERSION in @vercel/blob 2.3.3 (installed on the backend). */
-const BLOB_API_VERSION = "12";
 
 /**
  * The token route (app/api/admin/uploads/client/route.ts on the backend)
@@ -36,9 +31,9 @@ const ALLOWED_VIDEO_MIMES = new Set(Object.values(VIDEO_MIME_BY_EXT));
 
 /**
  * Pick an image from the device library and upload it to the backend's
- * admin-only `/api/admin/uploads` endpoint (Vercel Blob, public access).
+ * admin-only `/api/admin/uploads` endpoint.
  *
- * Returns the public blob URL, or null when the user cancels the picker.
+ * Returns the public URL, or null when the user cancels the picker.
  *
  * Throws `Error("permission_denied")` if media-library permission is denied,
  * `Error("file_too_large")` if the picker output exceeds the 3.5 MB cap
@@ -94,25 +89,20 @@ export async function pickAndUploadImage(): Promise<string | null> {
 }
 
 /**
- * Direct-upload credential, whichever backend the API is running.
- *
- * - `presigned`: DO Spaces. PUT the bytes at `uploadUrl` with exactly
- *   `headers`, and the final URL is `publicUrl` (S3 answers with an empty
- *   body, so there is nothing to parse out of the response).
- * - `blob`: legacy Vercel Blob. PUT via the Blob API with a client token and
- *   read the URL back out of the JSON response.
+ * Direct-upload credential for DO Spaces: PUT the bytes at `uploadUrl` with
+ * exactly `headers`, and the final URL is `publicUrl` (S3 answers with an empty
+ * body, so there is nothing to parse out of the response).
  */
-type DirectUpload =
-  | { kind: "presigned"; uploadUrl: string; publicUrl: string; headers: Record<string, string> }
-  | { kind: "blob"; clientToken: string };
+type DirectUpload = {
+  uploadUrl: string;
+  publicUrl: string;
+  headers: Record<string, string>;
+};
 
 /**
  * Ask the backend for a direct-upload credential.
  *
- * The request body carries both shapes at once: `pathname` + `contentType`
- * for the Spaces branch, and the `blob.generate-client-token` event for the
- * Blob branch. The server reads whichever it needs, so this is one round trip
- * either way and the client does not need to know which store is live.
+ * One round trip: `pathname` + `contentType` in, a presigned PUT back.
  *
  * Server-side constraints (allowed content types, 512 MB cap, `admin-uploads/`
  * prefix, random suffix) are applied when the credential is minted, so the
@@ -129,37 +119,24 @@ async function requestDirectUpload(
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify({
-      type: "blob.generate-client-token",
-      payload: { pathname, clientPayload: null, multipart: false },
-      pathname,
-      contentType,
-    }),
+    body: JSON.stringify({ pathname, contentType }),
   });
   if (!res.ok) {
     const body = await res.json().catch(() => null);
     throw new ApiError(res.status, body, `Token exchange failed (${res.status})`);
   }
   const data = (await res.json()) as {
-    type?: string;
     uploadUrl?: string;
     publicUrl?: string;
     headers?: Record<string, string>;
-    clientToken?: string;
   };
 
-  if (data.type === "presigned-put") {
-    if (!data.uploadUrl || !data.publicUrl) throw new Error("token_exchange_failed");
-    return {
-      kind: "presigned",
-      uploadUrl: data.uploadUrl,
-      publicUrl: data.publicUrl,
-      headers: data.headers ?? { "Content-Type": contentType },
-    };
-  }
-
-  if (!data.clientToken) throw new Error("token_exchange_failed");
-  return { kind: "blob", clientToken: data.clientToken };
+  if (!data.uploadUrl || !data.publicUrl) throw new Error("token_exchange_failed");
+  return {
+    uploadUrl: data.uploadUrl,
+    publicUrl: data.publicUrl,
+    headers: data.headers ?? { "Content-Type": contentType },
+  };
 }
 
 /**
@@ -172,7 +149,7 @@ async function requestDirectUpload(
  */
 async function putFileToPresignedUrl(
   fileUri: string,
-  upload: Extract<DirectUpload, { kind: "presigned" }>,
+  upload: DirectUpload,
 ): Promise<string> {
   if (Platform.OS === "web") {
     const fileBlob = await (await fetch(fileUri)).blob();
@@ -201,63 +178,9 @@ async function putFileToPresignedUrl(
 }
 
 /**
- * PUT the file bytes straight to the Vercel Blob API with a client token.
- *
- * Replicates the `put` leg of @vercel/blob/client `upload()`:
- * `PUT {BLOB_API_URL}/?pathname=...` with `authorization: Bearer <clientToken>`,
- * `x-api-version`, `x-vercel-blob-access: public` and `x-content-type` headers,
- * raw bytes as the body. Native uses FileSystem.uploadAsync because RN fetch
- * cannot stream a file body; web fetches the picker's blob: URI into a Blob.
- *
- * Returns the public blob URL from the API response.
- */
-async function putFileToBlobApi(
-  fileUri: string,
-  pathname: string,
-  mimeType: string,
-  clientToken: string,
-): Promise<string> {
-  const putUrl = `${BLOB_API_URL}/?pathname=${encodeURIComponent(pathname)}`;
-  const headers: Record<string, string> = {
-    authorization: `Bearer ${clientToken}`,
-    "x-api-version": BLOB_API_VERSION,
-    "x-vercel-blob-access": "public",
-    "x-content-type": mimeType,
-  };
-
-  if (Platform.OS === "web") {
-    const fileBlob = await (await fetch(fileUri)).blob();
-    const res = await fetch(putUrl, { method: "PUT", headers, body: fileBlob });
-    if (!res.ok) {
-      const body = await res.json().catch(() => null);
-      throw new ApiError(res.status, body, `Blob upload failed (${res.status})`);
-    }
-    const data = (await res.json()) as { url: string };
-    return data.url;
-  }
-
-  const result = await FileSystem.uploadAsync(putUrl, fileUri, {
-    httpMethod: "PUT",
-    uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-    headers,
-  });
-  if (result.status < 200 || result.status >= 300) {
-    let body: unknown = result.body;
-    try {
-      body = JSON.parse(result.body);
-    } catch {
-      /* keep raw text */
-    }
-    throw new ApiError(result.status, body, `Blob upload failed (${result.status})`);
-  }
-  const data = JSON.parse(result.body) as { url: string };
-  return data.url;
-}
-
-/**
- * Pick a video from the device library and client-upload it to Vercel Blob
- * via the backend's `/api/admin/uploads/client` token exchange (bypasses the
- * 4.5 MB serverless body cap; the token allows up to 512 MB).
+ * Pick a video from the device library and upload it straight to storage with
+ * a presigned PUT from the backend's `/api/admin/uploads/client`, so the bytes
+ * never pass through the API process. Up to 512 MB.
  *
  * Returns `{ url, durationSec }` (duration from the picker, ms rounded to
  * seconds, null when the platform doesn't report it), or null when the user
@@ -265,7 +188,7 @@ async function putFileToBlobApi(
  *
  * Throws `Error("permission_denied")`, `Error("video_too_large")` (over
  * 512 MB), `Error("unsupported_video_type")` (not mp4/mov/webm), or
- * `ApiError` for token-exchange / Blob API failures.
+ * `ApiError` for token-exchange or upload failures.
  */
 export async function pickAndUploadVideo(): Promise<{
   url: string;
@@ -297,8 +220,8 @@ export async function pickAndUploadVideo(): Promise<{
       ? asset.mimeType
       : VIDEO_MIME_BY_EXT[ext];
   if (!mimeType) {
-    // Neither the reported mime nor the extension maps to mp4/mov/webm; the
-    // Blob token would reject the PUT anyway, so fail with a clear error.
+    // Neither the reported mime nor the extension maps to mp4/mov/webm, and
+    // the presign would refuse the type anyway, so fail with a clear error.
     throw new Error("unsupported_video_type");
   }
 
@@ -306,10 +229,7 @@ export async function pickAndUploadVideo(): Promise<{
   const pathname = `${CLIENT_UPLOAD_PREFIX}${filename}`;
 
   const upload = await requestDirectUpload(pathname, mimeType);
-  const url =
-    upload.kind === "presigned"
-      ? await putFileToPresignedUrl(asset.uri, upload)
-      : await putFileToBlobApi(asset.uri, pathname, mimeType, upload.clientToken);
+  const url = await putFileToPresignedUrl(asset.uri, upload);
 
   // ImagePickerAsset.duration is milliseconds (null for non-videos).
   const durationSec =

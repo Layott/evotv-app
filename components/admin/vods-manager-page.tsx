@@ -415,7 +415,7 @@ export function VodsManagerPage() {
  * Bottom-sheet form for publishing a new VOD from uploaded media. Mirrors the
  * GameDrawer pattern in content-manager-page.tsx: slide-up Modal, Field rows,
  * Cancel/Create footer. Media is upload-only (no URL pasting): the video goes
- * through the Vercel Blob client-upload flow (up to 512 MB), the thumbnail
+ * through the presigned client-upload flow (up to 512 MB), the thumbnail
  * through the small-file admin upload endpoint.
  */
 function NewVodDrawer({

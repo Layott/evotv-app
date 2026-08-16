@@ -79,7 +79,7 @@ Before `pnpm start` succeeds end-to-end:
    - `splash.png` (1242×2436 or larger; transparent works)
    - `adaptive-icon.png` (1024×1024 — Android adaptive icon foreground)
    - `favicon.png` (48×48 — web preview)
-   - Use the EVO TV logo from `https://hebbkx1anhila5yf.public.blob.vercel-storage.com/evotv%20colored-cLVxaAns95OoPRdSwAHZUktQ6y8MTs.png` until brand assets are finalized.
+   - Use the EVO TV logo already bundled at `assets/icon.png`.
 4. **`pnpm start`** → scan QR with Expo Go on a physical device. iOS sim works on macOS only; Android emulator works on Windows/macOS/Linux.
 
 ## Known follow-ups
@@ -106,7 +106,7 @@ When the web app ships bearer-token `/api/auth/*` and the rest of the API:
 - **Google Play Store:** EAS Build → submit. Package `com.evotv.app`.
 - **OTA updates:** EAS Update lets you push JS-only fixes without store review.
 
-## Web build + Vercel deploy
+## Web build
 
 The same codebase ships as a Single-Page App on web via React Native Web + NativeWind. Mode is set to `output: "single"` (SPA) in `app.json` because static rendering trips Reanimated SSR (`__reanimatedLoggerConfig` undefined at pre-render).
 
@@ -119,24 +119,9 @@ pnpm expo export --platform web
 
 **Bundle size:** ~4.05 MB JS + 17 kB CSS first paint. Hermes-style transformed code is fat — accept it as the cost of native parity. Tree-shakable; production minify already enabled.
 
-**Vercel:**
+**Where it goes:** nowhere, currently. `evotv.co` is served by the Next backend on the DigitalOcean droplet, and `dist/` is copied to `/srv/evotv/app` when the SPA is wanted (see `backend/deploy/README.md`). `vercel.json` was deleted on 2026-08-16 along with the rest of the Vercel wiring: nothing in this project deploys there.
 
-`vercel.json` is committed. To deploy:
-
-1. **First time** — push `EVOTV-app/` to its own GitHub repo (sibling to `EVOTV/`).
-2. **Connect on Vercel** — import the new repo. Vercel auto-detects `vercel.json`:
-   - Build Command: `pnpm expo export --platform web`
-   - Output Directory: `dist`
-   - Install Command: `pnpm install --frozen-lockfile`
-   - Framework: none (Vercel doesn't have first-class Expo Router web detection yet)
-3. **SPA routing rewrite** — `vercel.json` rewrites `/(.*) → /index.html` so deep links resolve to the client-side router.
-4. **Cache headers** — `_expo/static/*` gets `max-age=31536000, immutable`. Hashed filenames make this safe.
-
-**Where it would live:**
-- The web SPA is not deployed anywhere. The Vercel project this section used to
-  describe is gone; `evotv.co` is served by the Next backend on DigitalOcean.
-- If the SPA is revived, give it a subdomain of `evotv.co` rather than a
-  separate host, so the session cookie (`COOKIE_DOMAIN=.evotv.co`) still works.
+If the SPA is revived, give it a subdomain of `evotv.co` rather than a separate host, so the session cookie (`COOKIE_DOMAIN=.evotv.co`) still works.
 
 **Web limitations vs native:**
 

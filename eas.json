@@ -34,9 +34,27 @@
         "EXPO_PUBLIC_API_BASE_URL": "https://api.evotv.co",
         "EXPO_PUBLIC_PAYMENT_PROVIDER": "paystack"
       }
+    },
+    "ios-simulator": {
+      "extends": "preview",
+      "ios": {
+        "simulator": true
+      }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "//": "Fill these in once the Apple Developer account exists. ascAppId is the numeric App Store Connect app id, not the bundle identifier.",
+        "appleId": "",
+        "ascAppId": "",
+        "appleTeamId": ""
+      },
+      "android": {
+        "//": "Play Console service account JSON, when there is a Play listing.",
+        "serviceAccountKeyPath": "",
+        "track": "internal"
+      }
+    }
   }
 }

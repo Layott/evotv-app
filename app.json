@@ -21,7 +21,7 @@
       "bundleIdentifier": "com.evotv.app",
       "infoPlist": {
         "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true
+          "NSAllowsLocalNetworking": true
         },
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": [

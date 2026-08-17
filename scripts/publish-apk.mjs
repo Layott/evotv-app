@@ -150,11 +150,21 @@ const presign = await api("/api/admin/uploads/client", {
   }),
 });
 
-// The Content-Type has to match exactly what was signed for, or Spaces rejects
-// the PUT with a signature mismatch that says nothing about the cause.
+/*
+ * The Content-Type has to match exactly what was signed for, or Spaces rejects
+ * the PUT with a signature mismatch that says nothing about the cause.
+ *
+ * `x-amz-acl` has to be sent as a header for the same practical reason. The
+ * server signs the upload with `ACL: public-read`, but the SDK hoists
+ * `x-amz-*` into the query string when presigning and Spaces does not apply the
+ * ACL from there. The first published build proved it: the PUT returned 200, the
+ * release row was written, /apps offered the link, and the download itself
+ * answered 403 AccessDenied. A release nobody can download is worse than no
+ * release, because the page claims it works.
+ */
 const put = await fetch(presign.uploadUrl, {
   method: "PUT",
-  headers: { "Content-Type": CONTENT_TYPE },
+  headers: { "Content-Type": CONTENT_TYPE, "x-amz-acl": "public-read" },
   body: bytes,
 });
 if (!put.ok) {

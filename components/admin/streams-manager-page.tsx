@@ -43,6 +43,7 @@ import { Input } from "@/components/ui/input";
 import type { MaturityRating } from "@/lib/types";
 
 import { PageHeader } from "./page-header";
+import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { ContentTagsEditor, MaturityEditor } from "./content-meta-editors";
 import { formatCompact, timeAgo } from "./utils";
@@ -287,6 +288,8 @@ export function StreamsManagerPage() {
           description="Read-only browse - stream keys + create + rotate via dedicated screens later."
         />
 
+        <SectionLinks parent="/admin/streams" />
+
         <View className="mb-3 flex-row items-center gap-2">
           <View className="flex-1 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
             <Search size={14} color="#9FBDBD" />
@@ -464,7 +467,7 @@ export function StreamsManagerPage() {
                   {selected.isPremium ? (
                     <StatusBadge tone="amber">Premium</StatusBadge>
                   ) : null}
-                  <StatusBadge tone="violet">{selected.streamerType}</StatusBadge>
+                  <StatusBadge tone="neutral">{selected.streamerType}</StatusBadge>
                   <StatusBadge tone="neutral">{selected.language}</StatusBadge>
                 </View>
 

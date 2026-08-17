@@ -293,9 +293,7 @@ export default function ChannelScreen() {
                     <Text
                       style={{
                         fontSize: 10,
-                        letterSpacing: 1,
                         color: palette.muted,
-                        textTransform: "uppercase",
                       }}
                     >
                       {epgTag(row)}
@@ -496,9 +494,7 @@ export default function ChannelScreen() {
                   <Text
                     style={{
                       fontSize: 10,
-                      letterSpacing: 1,
                       color: palette.muted,
-                      textTransform: "uppercase",
                     }}
                   >
                     {new Date(e.startsAt).toLocaleDateString()}

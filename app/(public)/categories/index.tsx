@@ -103,9 +103,7 @@ export default function CategoriesScreen() {
                         style={{
                           fontSize: 10,
                           fontWeight: "600",
-                          letterSpacing: 1,
                           color: "#67e8f9",
-                          textTransform: "uppercase",
                         }}
                       >
                         {categoryLabel(g.category)}

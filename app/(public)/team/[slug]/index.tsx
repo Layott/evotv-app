@@ -254,7 +254,7 @@ export default function TeamDetailScreen() {
               className="rounded-xl border border-border bg-card p-4"
               style={{ width: "48%" }}
             >
-              <Text style={{ fontSize: 11, letterSpacing: 1, color: palette.muted, textTransform: "uppercase" }}>
+              <Text style={{ fontSize: 11, color: palette.muted, }}>
                 Rank
               </Text>
               <View className="mt-1 flex-row items-center gap-1">
@@ -270,7 +270,7 @@ export default function TeamDetailScreen() {
               className="rounded-xl border border-border bg-card p-4"
               style={{ width: "48%" }}
             >
-              <Text style={{ fontSize: 11, letterSpacing: 1, color: palette.muted, textTransform: "uppercase" }}>
+              <Text style={{ fontSize: 11, color: palette.muted, }}>
                 W-L
               </Text>
               <Text
@@ -291,7 +291,7 @@ export default function TeamDetailScreen() {
               className="rounded-xl border border-border bg-card p-4"
               style={{ width: "48%" }}
             >
-              <Text style={{ fontSize: 11, letterSpacing: 1, color: palette.muted, textTransform: "uppercase" }}>
+              <Text style={{ fontSize: 11, color: palette.muted, }}>
                 Followers
               </Text>
               <View className="mt-1 flex-row items-center gap-1">
@@ -311,7 +311,7 @@ export default function TeamDetailScreen() {
               className="rounded-xl border border-border bg-card p-4"
               style={{ width: "48%" }}
             >
-              <Text style={{ fontSize: 11, letterSpacing: 1, color: palette.muted, textTransform: "uppercase" }}>
+              <Text style={{ fontSize: 11, color: palette.muted, }}>
                 Active roster
               </Text>
               <Text

@@ -246,7 +246,7 @@ export function AdsManagerPage() {
                         {row.clickUrl}
                       </Text>
                       <View className="mt-1 flex-row gap-1.5">
-                        <StatusBadge tone="violet">
+                        <StatusBadge tone="neutral">
                           {placementLabel(row.placement)}
                         </StatusBadge>
                         {row.active ? (

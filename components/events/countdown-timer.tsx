@@ -47,9 +47,7 @@ export function CountdownTimer({
           style={{
             marginBottom: 8,
             fontSize: 11,
-            letterSpacing: 1,
             color: palette.muted,
-            textTransform: "uppercase",
           }}
         >
           {label}
@@ -75,9 +73,7 @@ export function CountdownTimer({
             <Text
               style={{
                 fontSize: 10,
-                letterSpacing: 1,
                 color: palette.muted,
-                textTransform: "uppercase",
               }}
             >
               {u.label}

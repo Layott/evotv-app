@@ -1611,7 +1611,7 @@ function KindBadge({ kind }: { kind: EpgRow["kind"] }) {
     return <StatusBadge tone="emerald">Stream</StatusBadge>;
   }
   if (kind === "episode") {
-    return <StatusBadge tone="violet">Episode</StatusBadge>;
+    return <StatusBadge tone="neutral">Episode</StatusBadge>;
   }
   return <StatusBadge tone="blue">Match</StatusBadge>;
 }

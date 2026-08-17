@@ -14,11 +14,20 @@ import { PILLAR_LABELS } from "@/lib/types";
 const BRAND = "#46E3CE";
 const BRAND_RGBA = (a: number) => `rgba(70,227,206,${a})`;
 
-const PILLAR_TINT: Record<ContentPillar, string> = {
-  esports: "#a78bfa",
-  anime: "#f472b6",
-  lifestyle: "#facc15",
-};
+/*
+ * There is deliberately no colour per pillar here any more.
+ *
+ * This file used to carry `PILLAR_TINT` - violet for esports, pink for anime,
+ * yellow for lifestyle - and painted it as an 8px dot beside every rail title
+ * and as a tinted uppercase chip on every poster. The website settled this
+ * question already: `components/landing/pillar.ts` says "deliberately no colour
+ * per pillar", because a coloured dot per category is the single most
+ * dashboard-looking thing a page can do, and the violet was the exact
+ * violet-on-dark the no-vibecoded-look rule names.
+ *
+ * The channel has one accent, the brand mint, and it is reserved for what is on
+ * air. A category is communicated by its word.
+ */
 
 function HeroCard({ show }: { show: Show }) {
   const router = useRouter();
@@ -51,9 +60,7 @@ function HeroCard({ show }: { show: Show }) {
                 style={{
                   fontSize: 9,
                   fontWeight: "700",
-                  letterSpacing: 1.5,
                   color: BRAND,
-                  textTransform: "uppercase",
                 }}
               >
                 {show.originType === "evo_original"
@@ -64,19 +71,10 @@ function HeroCard({ show }: { show: Show }) {
               </Text>
             </View>
             <View
-              className="rounded-md px-1.5 py-0.5"
-              style={{
-                backgroundColor: `${PILLAR_TINT[show.pillar]}45`,
-              }}
+              className="rounded-md bg-secondary px-1.5 py-0.5"
             >
               <Text
-                style={{
-                  fontSize: 9,
-                  fontWeight: "700",
-                  letterSpacing: 1.5,
-                  color: PILLAR_TINT[show.pillar],
-                  textTransform: "uppercase",
-                }}
+                className="text-[10px] font-semibold text-muted-foreground"
               >
                 {PILLAR_LABELS[show.pillar]}
               </Text>
@@ -129,19 +127,10 @@ function ShowPosterCard({ show }: { show: Show }) {
       </View>
       <View className="p-2.5">
         <View
-          className="self-start rounded px-1 py-0.5"
-          style={{
-            backgroundColor: `${PILLAR_TINT[show.pillar]}45`,
-          }}
+          className="self-start rounded bg-secondary px-1 py-0.5"
         >
           <Text
-            style={{
-              fontSize: 8,
-              fontWeight: "700",
-              letterSpacing: 1,
-              color: PILLAR_TINT[show.pillar],
-              textTransform: "uppercase",
-            }}
+            className="text-[10px] font-semibold text-muted-foreground"
           >
             {PILLAR_LABELS[show.pillar]}
           </Text>
@@ -169,7 +158,12 @@ function Rail({
   children,
 }: {
   title: string;
-  icon: React.ReactNode;
+  /**
+   * Optional, and only worth passing when it says something the title does not.
+   * The pillar rails used to pass a coloured dot per category, which said
+   * nothing at all: "Esports - behind the scenes" is already the label.
+   */
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -305,16 +299,6 @@ export default function OriginalsScreen() {
         {byPillar("esports").length > 0 ? (
           <Rail
             title="Esports - behind the scenes"
-            icon={
-              <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: PILLAR_TINT.esports,
-                }}
-              />
-            }
           >
             {byPillar("esports").map((s) => (
               <ShowPosterCard key={s.id} show={s} />
@@ -326,16 +310,6 @@ export default function OriginalsScreen() {
         {byPillar("anime").length > 0 ? (
           <Rail
             title="Anime - debate + build-along"
-            icon={
-              <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: PILLAR_TINT.anime,
-                }}
-              />
-            }
           >
             {byPillar("anime").map((s) => (
               <ShowPosterCard key={s.id} show={s} />
@@ -347,16 +321,6 @@ export default function OriginalsScreen() {
         {byPillar("lifestyle").length > 0 ? (
           <Rail
             title="Lifestyle - long-form audio + interviews"
-            icon={
-              <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: PILLAR_TINT.lifestyle,
-                }}
-              />
-            }
           >
             {byPillar("lifestyle").map((s) => (
               <ShowPosterCard key={s.id} show={s} />

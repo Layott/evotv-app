@@ -98,9 +98,7 @@ function MatchCard({
         <Text
           style={{
             fontSize: 10,
-            letterSpacing: 1,
             color: palette.muted,
-            textTransform: "uppercase",
           }}
         >
           Bo{match.bestOf}
@@ -182,9 +180,7 @@ export function BracketView({ matches, teams }: BracketViewProps) {
               style={{
                 fontSize: 11,
                 fontWeight: "600",
-                letterSpacing: 1,
                 color: "#67e8f9",
-                textTransform: "uppercase",
               }}
             >
               {round}

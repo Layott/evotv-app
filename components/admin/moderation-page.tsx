@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
 import { PageHeader } from "./page-header";
+import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { timeAgo } from "./utils";
 
@@ -252,6 +253,8 @@ export function ModerationPage() {
           title="Moderation"
           description="User-submitted reports against streams, VODs, clips, users, chat messages."
         />
+
+        <SectionLinks parent="/admin/moderation" />
 
         <View className="mb-3 flex-row gap-2">
           {STATUS_TABS.map((t) => (

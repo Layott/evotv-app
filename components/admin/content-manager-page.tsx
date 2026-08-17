@@ -229,7 +229,7 @@ export function ContentManagerPage() {
                       /{row.slug}
                     </Text>
                     <View className="mt-1 flex-row flex-wrap gap-1.5">
-                      <StatusBadge tone="violet">
+                      <StatusBadge tone="neutral">
                         {row.category.toUpperCase()}
                       </StatusBadge>
                       <StatusBadge tone="neutral">{row.platform}</StatusBadge>

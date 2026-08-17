@@ -1,5 +1,7 @@
 import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
+import { hasMinRole } from "@/lib/auth/roles";
+import { WEAKEST_ADMIN_ROLE } from "@/lib/admin/nav-items";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { LogOut, Settings } from "@/components/icons";
@@ -75,15 +77,35 @@ export default function ProfileScreen() {
         >
           <View className="px-4 pt-4 pb-2 flex-row items-center justify-between">
             <Text className="text-2xl font-bold text-foreground">Profile</Text>
-            <Pressable
-              onPress={() => router.push("/(authed)/settings")}
-              className="h-10 w-10 rounded-full bg-card items-center justify-center border border-border"
-              accessibilityRole="button"
-              accessibilityLabel="Open settings"
-              hitSlop={8}
-            >
-              <Settings color={palette.fg} size={18} />
-            </Pressable>
+            <View className="flex-row items-center gap-2">
+              {/* The only link into the admin section used to be an entry in
+                  the home feature drawer, which is why the owner reported that
+                  the app admin "can't even open". It is a per-account
+                  capability, so it belongs beside the account, next to
+                  Settings, and only when the account actually has it. */}
+              {hasMinRole(user.role, WEAKEST_ADMIN_ROLE) ? (
+                <Pressable
+                  onPress={() => router.push("/admin" as never)}
+                  className="h-10 rounded-full bg-accent px-4 items-center justify-center"
+                  accessibilityRole="button"
+                  accessibilityLabel="Open admin"
+                  hitSlop={8}
+                >
+                  <Text className="text-sm font-semibold text-foreground">
+                    Admin
+                  </Text>
+                </Pressable>
+              ) : null}
+              <Pressable
+                onPress={() => router.push("/(authed)/settings")}
+                className="h-10 w-10 rounded-full bg-card items-center justify-center"
+                accessibilityRole="button"
+                accessibilityLabel="Open settings"
+                hitSlop={8}
+              >
+                <Settings color={palette.fg} size={18} />
+              </Pressable>
+            </View>
           </View>
 
           <View className="px-4 pt-2">

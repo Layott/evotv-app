@@ -16,11 +16,18 @@ import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
 import { timeAgo } from "./utils";
 
-function actionTone(action: string): "red" | "amber" | "violet" | "blue" | "emerald" | "neutral" {
+/**
+ * Colour by how serious the action is, not by which subsystem it came from.
+ *
+ * A role change used to get its own violet, which put it on the same footing as
+ * "this is a different kind of thing" rather than "this matters". Granting
+ * somebody admin is a privileged change, so it reads amber alongside the
+ * sanctions, which is what an audit log is actually scanned for.
+ */
+function actionTone(action: string): "red" | "amber" | "blue" | "emerald" | "neutral" {
   if (action.endsWith(".delete") || action.endsWith(".force_end")) return "red";
   if (action.startsWith("user.sanction.revert")) return "emerald";
-  if (action.startsWith("user.sanction")) return "amber";
-  if (action.startsWith("role.")) return "violet";
+  if (action.startsWith("user.sanction") || action.startsWith("role.")) return "amber";
   if (action.startsWith("report.")) return "blue";
   return "neutral";
 }

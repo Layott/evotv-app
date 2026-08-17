@@ -5,13 +5,12 @@ import { ArrowDownRight, ArrowUpRight, type Icon } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 
-export type MetricAccent = "sky" | "amber" | "emerald" | "fuchsia" | "rose" | "brand";
+export type MetricAccent = "sky" | "amber" | "emerald" | "rose" | "brand";
 
 const ACCENT: Record<MetricAccent, string> = {
   sky: "text-sky-300 bg-sky-500/15 bg-sky-500/20",
   amber: "text-amber-300 bg-amber-500/15 bg-amber-500/20",
-  emerald: "text-emerald-300 bg-emerald-500/15 bg-emerald-500/20",
-  fuchsia: "text-fuchsia-300 bg-fuchsia-500/25",
+  emerald: "text-emerald-300 bg-emerald-500/15 bg-emerald-500/20",
   rose: "text-rose-300 bg-rose-500/15 bg-rose-500/20",
   brand: "text-brand bg-brand/15 bg-brand/20",
 };
@@ -19,8 +18,7 @@ const ACCENT: Record<MetricAccent, string> = {
 const ACCENT_COLORS: Record<MetricAccent, string> = {
   sky: "#7DD3FC",
   amber: "#FCD34D",
-  emerald: "#6EE7B7",
-  fuchsia: "#F0ABFC",
+  emerald: "#6EE7B7",
   rose: "#FDA4AF",
   brand: "#46E3CE",
 };

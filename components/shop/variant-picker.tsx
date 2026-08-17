@@ -26,9 +26,7 @@ export function VariantPicker({
           marginBottom: 8,
           fontSize: 11,
           fontWeight: "600",
-          letterSpacing: 0.5,
           color: palette.muted,
-          textTransform: "uppercase",
         }}
       >
         Size

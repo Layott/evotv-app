@@ -1,39 +1,14 @@
 import * as React from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
-import { Image } from "expo-image";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
+
 import {
-  Award,
-  CalendarRange,
-  ChartColumn,
   CircleDollarSign,
-  ClipboardList,
-  CreditCard,
-  Film,
-  MonitorPlay,
-  Fingerprint,
-  Gavel,
-  KeyRound,
   LayoutGrid,
-  Megaphone,
   Radio,
-  Scissors,
-  ScrollText,
-  Settings,
-  ShieldAlert,
-  ShoppingCart,
-  Tv,
   UserPlus,
   Users,
-  Vote,
-  type Icon,
 } from "@/components/icons";
 
 import {
@@ -43,25 +18,45 @@ import {
   listAdminPolls,
   listAdminSubscriptions,
   listAdminUsers,
-  listAllSanctions,
-  listCreatorApplications,
 } from "@/lib/api/admin";
 import { listAdminReports } from "@/lib/api/reports";
+import { listAdminVods } from "@/lib/api/vods";
 import { listLiveStreams } from "@/lib/api/streams";
-import { listAdminWaitlist } from "@/lib/api/waitlist";
+import { adminNavFor } from "@/lib/admin/nav-items";
+import { hasMinRole } from "@/lib/auth/roles";
+import { useAuth } from "@/components/providers";
+import { useTokens } from "@/lib/theme/tokens";
+import { ImageWithFallback } from "@/components/common/image-with-fallback";
 
+import { ListState } from "./list-state";
 import { MetricCard } from "./metric-card";
 import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
-import {
-  formatCompact,
-  formatNgn,
-  formatNumber,
-  timeAgo,
-} from "./utils";
+import { formatCompact, formatNgn, formatNumber, timeAgo } from "./utils";
 
+/**
+ * The admin landing screen.
+ *
+ * The grid at the bottom used to be its own array of twenty-one destinations,
+ * in its own order, under its own labels: "Billing" where the website says
+ * "Billing & USSD", "Users" where it says "Users & roles", sanctions and API
+ * keys promoted to top-level tiles the website does not have. That array was
+ * the second CMS. It now reads `adminNavFor(role)`, the same list the sections
+ * sheet and the website sidebar use, so the three cannot disagree again.
+ *
+ * The live stat under a tile is the one thing the website does not have, and it
+ * is worth keeping: knowing there are four open reports before opening
+ * Moderation is the point of a landing screen. Stats are keyed by the nav
+ * item's `href` rather than living in a parallel array, so adding a section
+ * never leaves a stat attached to the wrong tile. A section with nothing cheap
+ * to count renders without a stat line rather than with a dash.
+ */
 export function OverviewPage() {
   const router = useRouter();
+  const t = useTokens();
+  const { role } = useAuth();
+
+  const sections = React.useMemo(() => adminNavFor(role), [role]);
 
   const metricsQ = useQuery({
     queryKey: ["admin", "overview"],
@@ -88,46 +83,47 @@ export function OverviewPage() {
     staleTime: 60_000,
   });
 
-  // Hub stats. Cheap count-only reads (limit: 1, totals come from pagination).
+  /**
+   * Tile stats. Count-only reads: `limit: 1` fetches one row and the totals
+   * come from the pagination envelope, so a tile costs a count, not a list.
+   *
+   * Each is switched off for a role that could not read it. The endpoints gate
+   * themselves, so leaving them on would not leak anything, but a support admin
+   * opening the dashboard would fire five requests that all answer 403 and then
+   * render nothing. `enabled` uses the same minimum the section itself carries.
+   */
   const ordersCountQ = useQuery({
     queryKey: ["admin", "hub", "orders-count"],
     queryFn: () => listAdminOrders({ limit: 1 }),
+    enabled: hasMinRole(role, "support_admin"),
     staleTime: 60_000,
   });
 
   const subsCountQ = useQuery({
     queryKey: ["admin", "hub", "subs-count"],
     queryFn: () => listAdminSubscriptions({ limit: 1 }),
-    staleTime: 60_000,
-  });
-
-  const sanctionsCountQ = useQuery({
-    queryKey: ["admin", "hub", "sanctions-count"],
-    queryFn: () => listAllSanctions({ limit: 1 }),
+    enabled: hasMinRole(role, "finance_admin"),
     staleTime: 60_000,
   });
 
   const pollsCountQ = useQuery({
     queryKey: ["admin", "hub", "polls-count"],
     queryFn: () => listAdminPolls({ limit: 1 }),
-    staleTime: 60_000,
-  });
-
-  const creatorAppsQ = useQuery({
-    queryKey: ["admin", "hub", "creator-apps-submitted"],
-    queryFn: () => listCreatorApplications("submitted"),
+    enabled: hasMinRole(role, "admin"),
     staleTime: 60_000,
   });
 
   const reportsCountQ = useQuery({
     queryKey: ["admin", "hub", "open-reports-count"],
     queryFn: () => listAdminReports({ status: "open", limit: 1 }),
+    enabled: hasMinRole(role, "moderator"),
     staleTime: 60_000,
   });
 
-  const waitlistQ = useQuery({
-    queryKey: ["admin", "hub", "waitlist-count"],
-    queryFn: listAdminWaitlist,
+  const vodsCountQ = useQuery({
+    queryKey: ["admin", "hub", "vods-count"],
+    queryFn: () => listAdminVods({ limit: 1 }),
+    enabled: hasMinRole(role, "moderator"),
     staleTime: 60_000,
   });
 
@@ -145,158 +141,57 @@ export function OverviewPage() {
     [viewsQ.data],
   );
 
-  const hubItems: {
-    to: string;
-    label: string;
-    icon: Icon;
-    stat: string;
-  }[] = [
-    {
-      to: "/admin/streams",
-      label: "Streams",
-      icon: Radio,
-      stat:
-        metrics || streamsQ.data
-          ? `${formatNumber(liveCount)} live now`
-          : "-",
-    },
-    {
-      to: "/admin/schedule",
-      label: "Schedule",
-      icon: CalendarRange,
-      stat: "Programming guide",
-    },
-    {
-      to: "/admin/content",
-      label: "Content",
-      icon: LayoutGrid,
-      stat: "Games + ratings",
-    },
-    {
-      to: "/admin/users",
-      label: "Users",
-      icon: Users,
-      stat: signupsQ.data ? `${formatNumber(signupsQ.data.total)} users` : "-",
-    },
-    {
-      to: "/admin/orders",
-      label: "Orders",
-      icon: ShoppingCart,
-      stat: ordersCountQ.data
-        ? `${formatNumber(ordersCountQ.data.total)} orders`
-        : "-",
-    },
-    {
-      to: "/admin/billing",
-      label: "Billing",
-      icon: CreditCard,
-      stat: subsCountQ.data
-        ? `${formatNumber(subsCountQ.data.total)} subs`
-        : "-",
-    },
-    {
-      to: "/admin/analytics",
-      label: "Analytics",
-      icon: ChartColumn,
-      stat: "Views + revenue",
-    },
-    {
-      to: "/admin/moderation",
-      label: "Moderation",
-      icon: ShieldAlert,
-      stat: reportsCountQ.data
-        ? `${formatNumber(reportsCountQ.data.total)} open reports`
-        : "-",
-    },
-    {
-      to: "/admin/sanctions",
-      label: "Sanctions",
-      icon: Gavel,
-      stat: sanctionsCountQ.data
-        ? `${formatNumber(sanctionsCountQ.data.total)} sanctions`
-        : "-",
-    },
-    {
-      to: "/admin/audit-log",
-      label: "Audit log",
-      icon: ScrollText,
-      stat: "Admin actions",
-    },
-    {
-      to: "/admin/forensic",
-      label: "Forensic",
-      icon: Fingerprint,
-      stat: "Login events",
-    },
-    {
-      to: "/admin/channels",
-      label: "Channels",
-      icon: Tv,
-      stat: "Publisher channels",
-    },
-    {
-      to: "/admin/polls",
-      label: "Polls",
-      icon: Vote,
-      stat: pollsCountQ.data
-        ? `${formatNumber(pollsCountQ.data.total)} polls`
-        : "-",
-    },
-    {
-      to: "/admin/ads",
-      label: "Ads",
-      icon: Megaphone,
-      stat: "Campaigns + slots",
-    },
-    {
-      to: "/admin/creator-program",
-      label: "Creator program",
-      icon: Award,
-      stat: creatorAppsQ.data ? `${creatorAppsQ.data.length} pending` : "-",
-    },
-    {
-      to: "/admin/waitlist",
-      label: "Waitlist",
-      icon: ClipboardList,
-      stat: waitlistQ.data
-        ? `${formatNumber(waitlistQ.data.count)} signups`
-        : "-",
-    },
-    {
-      to: "/admin/shows",
-      label: "Shows",
-      icon: MonitorPlay,
-      stat: "Series and episodes",
-    },
-    {
-      to: "/admin/vods",
-      label: "VODs",
-      icon: Film,
-      stat: "Video library",
-    },
-    {
-      to: "/admin/clips",
-      label: "Clips",
-      icon: Scissors,
-      stat: "Clip library",
-    },
-    {
-      to: "/admin/settings",
-      label: "Settings",
-      icon: Settings,
-      stat: "Platform config",
-    },
-    {
-      to: "/admin/api-keys",
-      label: "API keys",
-      icon: KeyRound,
-      stat: "Service keys",
-    },
-  ];
+  /**
+   * The live number under a tile, by route.
+   *
+   * Undefined means "nothing cheap to say about this section", which is most of
+   * them, and the tile renders as a label alone. A section whose count has not
+   * arrived yet is also undefined rather than a dash: an empty line settles into
+   * a number, where a dash reads as a broken value.
+   */
+  const statFor = React.useMemo<Record<string, string | undefined>>(() => {
+    const stats: Record<string, string | undefined> = {};
 
-  const hubRows: (typeof hubItems)[] = [];
-  for (let i = 0; i < hubItems.length; i += 2) {
-    hubRows.push(hubItems.slice(i, i + 2));
+    if (metrics || streamsQ.data) {
+      stats["/admin/streams"] = `${formatNumber(liveCount)} live now`;
+    }
+    if (signupsQ.data) {
+      stats["/admin/users"] = `${formatNumber(signupsQ.data.total)} users`;
+    }
+    if (ordersCountQ.data) {
+      stats["/admin/orders"] = `${formatNumber(ordersCountQ.data.total)} orders`;
+    }
+    if (subsCountQ.data) {
+      stats["/admin/subscriptions"] =
+        `${formatNumber(subsCountQ.data.total)} subscribers`;
+    }
+    if (pollsCountQ.data) {
+      stats["/admin/polls"] = `${formatNumber(pollsCountQ.data.total)} polls`;
+    }
+    if (reportsCountQ.data) {
+      stats["/admin/moderation"] =
+        `${formatNumber(reportsCountQ.data.total)} open reports`;
+    }
+    if (vodsCountQ.data) {
+      stats["/admin/library"] = `${formatNumber(vodsCountQ.data.total)} videos`;
+    }
+
+    return stats;
+  }, [
+    metrics,
+    streamsQ.data,
+    liveCount,
+    signupsQ.data,
+    ordersCountQ.data,
+    subsCountQ.data,
+    pollsCountQ.data,
+    reportsCountQ.data,
+    vodsCountQ.data,
+  ]);
+
+  const rows: (typeof sections)[] = [];
+  for (let i = 0; i < sections.length; i += 2) {
+    rows.push(sections.slice(i, i + 2));
   }
 
   return (
@@ -315,8 +210,7 @@ export function OverviewPage() {
             <MetricCard
               title="Live streams"
               value={liveCount}
-              delta={undefined}
-              deltaLabel={metricsQ.isLoading ? "Loading…" : "Real-time"}
+              deltaLabel={metricsQ.isPending ? "Loading…" : "Real-time"}
               icon={Radio}
             />
           </View>
@@ -324,8 +218,7 @@ export function OverviewPage() {
             <MetricCard
               title="Signups today"
               value={metrics?.todaySignups ?? 0}
-              delta={undefined}
-              deltaLabel={metricsQ.isLoading ? "Loading…" : "Since 00:00 UTC"}
+              deltaLabel={metricsQ.isPending ? "Loading…" : "Since 00:00 UTC"}
               icon={UserPlus}
             />
           </View>
@@ -335,8 +228,7 @@ export function OverviewPage() {
             <MetricCard
               title="Total viewers"
               value={formatNumber(totalViewers)}
-              delta={undefined}
-              deltaLabel={metricsQ.isLoading ? "Loading…" : "Live now"}
+              deltaLabel={metricsQ.isPending ? "Loading…" : "Live now"}
               icon={Users}
             />
           </View>
@@ -344,9 +236,8 @@ export function OverviewPage() {
             <MetricCard
               title="Active premium"
               value={formatNumber(metrics?.activePremiumSubs ?? 0)}
-              delta={undefined}
               deltaLabel={
-                metricsQ.isLoading
+                metricsQ.isPending
                   ? "Loading…"
                   : metrics
                     ? `${formatNgn(metrics.mrrNgn)} MRR`
@@ -358,9 +249,9 @@ export function OverviewPage() {
         </View>
       </View>
 
-      <View className="mt-6 rounded-xl border border-border bg-card/40 p-4">
+      <View className="mt-6 rounded-2xl bg-card p-4">
         <View className="mb-3 flex-row items-center justify-between">
-          <View>
+          <View className="flex-1 pr-3">
             <Text className="text-sm font-semibold text-foreground">
               Live snapshot
             </Text>
@@ -372,23 +263,21 @@ export function OverviewPage() {
             {liveCount > 0 ? "Live" : "Idle"}
           </StatusBadge>
         </View>
-        <View className="rounded-lg border border-border bg-background/50 p-3">
+        <View className="rounded-xl bg-background p-3">
           <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
             30-day views trend
           </Text>
-          {viewsQ.isLoading ? (
-            <View className="mt-3 items-center" style={{ height: 80 }}>
-              <ActivityIndicator color="#46E3CE" />
-            </View>
-          ) : viewsQ.isError ? (
-            <Text className="mt-3 text-xs text-red-400">
-              Couldn't load chart
-            </Text>
-          ) : (viewsQ.data ?? []).length === 0 ? (
-            <Text className="mt-3 text-xs text-muted-foreground">
-              No views yet.
-            </Text>
-          ) : (
+          <ListState
+            isPending={viewsQ.isPending}
+            isError={viewsQ.isError}
+            error={viewsQ.error}
+            isEmpty={(viewsQ.data ?? []).length === 0}
+            emptyMessage="No views recorded in the last 30 days."
+            onRetry={() => viewsQ.refetch()}
+          />
+          {!viewsQ.isPending &&
+          !viewsQ.isError &&
+          (viewsQ.data ?? []).length > 0 ? (
             <View className="mt-3 flex-row items-end gap-1" style={{ height: 80 }}>
               {(viewsQ.data ?? []).map((d) => {
                 const h = Math.max(2, Math.round((d.views / viewsMax) * 80));
@@ -396,164 +285,156 @@ export function OverviewPage() {
                   <View
                     key={d.date}
                     style={{ height: h }}
-                    className="flex-1 rounded-sm bg-cyan-500/60"
+                    className="flex-1 rounded-sm bg-brand/60"
                   />
                 );
               })}
             </View>
-          )}
+          ) : null}
         </View>
       </View>
 
-      <View className="mt-6 overflow-hidden rounded-xl border border-border bg-card/40">
-        <View className="flex-row items-center justify-between border-b border-border p-4">
+      <View className="mt-6 overflow-hidden rounded-2xl bg-card">
+        <View className="flex-row items-center justify-between p-4 pb-2">
           <Text className="text-sm font-semibold text-foreground">
             Top streams right now
           </Text>
-          <Text
-            className="text-xs text-cyan-400"
+          <Pressable
             onPress={() => router.push("/admin/streams" as never)}
+            hitSlop={8}
+            accessibilityRole="link"
+            className="active:opacity-70"
           >
-            View all
-          </Text>
+            <Text className="text-xs font-semibold text-brand">View all</Text>
+          </Pressable>
         </View>
-        <View>
-          {streamsQ.isLoading ? (
-            <View className="p-4">
-              <ActivityIndicator color="#46E3CE" />
-            </View>
-          ) : streamsQ.isError ? (
-            <Text className="p-4 text-xs text-red-400">
-              Couldn't load streams
-            </Text>
-          ) : topStreams.length === 0 ? (
-            <Text className="p-4 text-xs text-muted-foreground">
-              No live streams right now.
-            </Text>
-          ) : (
-            topStreams.map((s, idx) => (
-              <View
-                key={s.id}
-                className={`flex-row items-center gap-3 p-3 ${
-                  idx < topStreams.length - 1 ? "border-b border-border" : ""
-                }`}
-              >
-                <View className="h-10 w-16 overflow-hidden rounded bg-muted">
-                  <Image
-                    source={s.thumbnailUrl}
-                    style={{ width: "100%", height: "100%" }}
-                    contentFit="cover"
-                  />
-                </View>
-                <View className="min-w-0 flex-1">
-                  <Text
-                    numberOfLines={1}
-                    className="text-sm font-medium text-foreground"
-                  >
-                    {s.title}
-                  </Text>
-                  <Text
-                    numberOfLines={1}
-                    className="text-xs text-muted-foreground"
-                  >
-                    {s.streamerName}
-                  </Text>
-                </View>
-                <StatusBadge tone="red" dot>
-                  LIVE
-                </StatusBadge>
+        <View className="px-3 pb-3">
+          <ListState
+            isPending={streamsQ.isPending}
+            isError={streamsQ.isError}
+            error={streamsQ.error}
+            isEmpty={topStreams.length === 0}
+            emptyMessage="Nothing is live right now."
+            onRetry={() => streamsQ.refetch()}
+          />
+          {topStreams.map((s) => (
+            <View
+              key={s.id}
+              className="mb-1 flex-row items-center gap-3 rounded-xl bg-background p-3"
+            >
+              <View className="h-10 w-16 overflow-hidden rounded-lg bg-muted">
+                <ImageWithFallback
+                  source={s.thumbnailUrl}
+                  fallbackLabel={s.title}
+                  tintSeed={s.id}
+                  // The placeholder branch is a bare View, so it needs a size
+                  // of its own or it collapses inside its box.
+                  style={{ width: "100%", height: "100%" }}
+                />
+              </View>
+              <View className="min-w-0 flex-1">
                 <Text
-                  className="w-12 text-right text-sm text-foreground"
-                  style={{ fontVariant: ["tabular-nums"] }}
+                  numberOfLines={1}
+                  className="text-sm font-medium text-foreground"
                 >
-                  {formatCompact(s.viewerCount)}
+                  {s.title}
+                </Text>
+                <Text numberOfLines={1} className="text-xs text-muted-foreground">
+                  {s.streamerName}
                 </Text>
               </View>
-            ))
-          )}
+              <StatusBadge tone="red" dot>
+                LIVE
+              </StatusBadge>
+              <Text
+                className="w-12 text-right text-sm text-foreground"
+                style={{ fontVariant: ["tabular-nums"] }}
+              >
+                {formatCompact(s.viewerCount)}
+              </Text>
+            </View>
+          ))}
         </View>
       </View>
 
-      <View className="mt-6 overflow-hidden rounded-xl border border-border bg-card/40">
-        <View className="flex-row items-center justify-between border-b border-border p-4">
+      <View className="mt-6 overflow-hidden rounded-2xl bg-card">
+        <View className="flex-row items-center justify-between p-4 pb-2">
           <Text className="text-sm font-semibold text-foreground">
             Recent signups
           </Text>
-          <Text
-            className="text-xs text-cyan-400"
+          <Pressable
             onPress={() => router.push("/admin/users" as never)}
+            hitSlop={8}
+            accessibilityRole="link"
+            className="active:opacity-70"
           >
-            Users
-          </Text>
+            <Text className="text-xs font-semibold text-brand">Users</Text>
+          </Pressable>
         </View>
-        <View>
-          {signupsQ.isLoading ? (
-            <View className="p-4">
-              <ActivityIndicator color="#46E3CE" />
-            </View>
-          ) : signupsQ.isError ? (
-            <Text className="p-4 text-xs text-red-400">
-              Couldn't load signups
-            </Text>
-          ) : recentSignups.length === 0 ? (
-            <Text className="p-4 text-xs text-muted-foreground">
-              No recent signups.
-            </Text>
-          ) : (
-            recentSignups.map((u, idx) => (
-              <View
-                key={u.id}
-                className={`flex-row items-center gap-3 p-3 ${
-                  idx < recentSignups.length - 1 ? "border-b border-border" : ""
-                }`}
-              >
-                <View className="h-9 w-9 overflow-hidden rounded-full bg-muted">
-                  {u.image ? (
-                    <Image
-                      source={u.image}
-                      style={{ width: "100%", height: "100%" }}
-                      contentFit="cover"
-                    />
-                  ) : null}
-                </View>
-                <View className="flex-1">
-                  <Text className="text-sm text-foreground">
-                    {u.handle ? `@${u.handle}` : u.email}
-                  </Text>
-                  <Text className="text-xs text-muted-foreground">
-                    {timeAgo(u.createdAt)}
-                  </Text>
-                </View>
+        <View className="px-3 pb-3">
+          <ListState
+            isPending={signupsQ.isPending}
+            isError={signupsQ.isError}
+            error={signupsQ.error}
+            isEmpty={recentSignups.length === 0}
+            emptyMessage="Nobody has signed up yet."
+            onRetry={() => signupsQ.refetch()}
+          />
+          {recentSignups.map((u) => (
+            <View
+              key={u.id}
+              className="mb-1 flex-row items-center gap-3 rounded-xl bg-background p-3"
+            >
+              <View className="h-9 w-9 overflow-hidden rounded-full bg-muted">
+                <ImageWithFallback
+                  source={u.image ?? ""}
+                  fallbackLabel={u.handle ?? u.email}
+                  tintSeed={u.id}
+                  style={{ width: "100%", height: "100%" }}
+                />
               </View>
-            ))
-          )}
+              <View className="flex-1">
+                <Text numberOfLines={1} className="text-sm text-foreground">
+                  {u.handle ? `@${u.handle}` : u.email}
+                </Text>
+                <Text className="text-xs text-muted-foreground">
+                  {timeAgo(u.createdAt)}
+                </Text>
+              </View>
+            </View>
+          ))}
         </View>
       </View>
 
       <View className="mt-6">
         <View className="flex-row items-center gap-2">
-          <LayoutGrid size={14} color="#46E3CE" />
+          <LayoutGrid size={14} color={t.brand} />
           <Text className="text-sm font-semibold text-foreground">
-            All admin pages
+            All admin sections
           </Text>
         </View>
         <Text className="mt-0.5 text-xs text-muted-foreground">
-          Jump into any admin area.
+          The same list as the Sections button, in the same order as the
+          website.
         </Text>
         <View className="mt-3 gap-3">
-          {hubRows.map((row, rowIdx) => (
+          {rows.map((row, rowIdx) => (
             <View key={rowIdx} className="flex-row gap-3">
               {row.map((item) => {
-                const Icon = item.icon;
+                const stat = statFor[item.href];
                 return (
-                  <View key={item.to} className="flex-1">
+                  <View key={item.href} className="flex-1">
                     <Pressable
-                      onPress={() => router.push(item.to as never)}
-                      className="rounded-xl border border-border bg-card/40 p-3 active:opacity-70"
+                      onPress={() => router.push(item.href as never)}
+                      accessibilityRole="link"
+                      // Stretches to the tallest tile in the row: not every
+                      // section has a stat line, and without this the two
+                      // halves of a row end up different heights.
+                      className="flex-1 rounded-xl bg-card p-3 active:opacity-70"
                     >
                       <View className="flex-row items-center gap-2">
-                        <View className="rounded-md bg-muted p-1.5">
-                          <Icon size={14} color="#46E3CE" />
+                        <View className="rounded-lg bg-muted p-1.5">
+                          <item.Icon size={14} color={t.brand} />
                         </View>
                         <Text
                           numberOfLines={1}
@@ -562,13 +443,15 @@ export function OverviewPage() {
                           {item.label}
                         </Text>
                       </View>
-                      <Text
-                        numberOfLines={1}
-                        className="mt-2 text-xs text-muted-foreground"
-                        style={{ fontVariant: ["tabular-nums"] }}
-                      >
-                        {item.stat}
-                      </Text>
+                      {stat ? (
+                        <Text
+                          numberOfLines={1}
+                          className="mt-2 text-xs text-muted-foreground"
+                          style={{ fontVariant: ["tabular-nums"] }}
+                        >
+                          {stat}
+                        </Text>
+                      ) : null}
                     </Pressable>
                   </View>
                 );

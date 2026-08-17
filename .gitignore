@@ -52,3 +52,6 @@ graphify-out/
 # the whole Firebase project, it lives in EAS, and it must never reach a repo.
 *firebase-adminsdk*.json
 *service-account*.json
+
+# Credentials for scripts/publish-apk.mjs. Never commit.
+.publish.env

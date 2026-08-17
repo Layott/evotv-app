@@ -66,7 +66,7 @@ export function RoleSwitcher() {
             className="mb-20 w-56 rounded-lg   bg-background"
           >
             <View className="  px-3 py-2">
-              <Text className="text-[10px] r text-muted-foreground">
+              <Text className="text-[10px] text-muted-foreground">
                 Dev role switcher
               </Text>
             </View>

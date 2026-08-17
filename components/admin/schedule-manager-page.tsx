@@ -957,7 +957,7 @@ export function ScheduleManagerPage() {
               once: store it securely, then paste it into the encoder.
             </Text>
 
-            <Text className="mt-3 text-[11px] r text-muted-foreground">
+            <Text className="mt-3 text-[11px] text-muted-foreground">
               Stream key
             </Text>
             <View className="mt-1 rounded-lg border border-border bg-background p-3">
@@ -966,7 +966,7 @@ export function ScheduleManagerPage() {
               </Text>
             </View>
 
-            <Text className="mt-3 text-[11px] r text-muted-foreground">
+            <Text className="mt-3 text-[11px] text-muted-foreground">
               Ingest URL
             </Text>
             <View className="mt-1 rounded-lg border border-border bg-background p-3">
@@ -1340,17 +1340,17 @@ function ScheduleEditorCard({
           EPG schedule
         </Text>
         {initialStartAt ? (
-          <Text className="ml-auto text-[10px] r text-cyan-400">
+          <Text className="ml-auto text-[10px] text-cyan-400">
             Programmed
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] r text-muted-foreground">
+          <Text className="ml-auto text-[10px] text-muted-foreground">
             Unscheduled
           </Text>
         )}
       </View>
 
-      <Text className="mb-1 text-[11px] r text-muted-foreground">
+      <Text className="mb-1 text-[11px] text-muted-foreground">
         Airs at (local time)
       </Text>
       <Input
@@ -1362,7 +1362,7 @@ function ScheduleEditorCard({
         className="mb-3 h-9"
       />
 
-      <Text className="mb-1 text-[11px] r text-muted-foreground">
+      <Text className="mb-1 text-[11px] text-muted-foreground">
         Duration (minutes)
       </Text>
       <Input

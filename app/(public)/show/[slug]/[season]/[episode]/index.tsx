@@ -196,7 +196,7 @@ export default function EpisodePlayerScreen() {
             </Pressable>
 
             <View className="flex-row items-center gap-2">
-              <Text className="text-[10px] st text-muted-foreground">
+              <Text className="text-[10px] text-muted-foreground">
                 Season {episode.seasonNumber} · Episode {episode.episodeNumber}
               </Text>
               <Text className="text-[10px] text-muted-foreground">
@@ -217,7 +217,7 @@ export default function EpisodePlayerScreen() {
           {nextEpisode ? (
             <View className="mt-6 mx-4 overflow-hidden rounded-2xl border border-border bg-card">
               <View className="px-4 py-3 border-b border-border">
-                <Text className="text-[11px] font-semibold st text-muted-foreground">
+                <Text className="text-[11px] font-semibold text-muted-foreground">
                   Up next
                 </Text>
               </View>
@@ -236,7 +236,7 @@ export default function EpisodePlayerScreen() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[10px] st text-muted-foreground">
+                  <Text className="text-[10px] text-muted-foreground">
                     E{nextEpisode.episodeNumber} · {formatRuntime(nextEpisode.runtimeSec)}
                   </Text>
                   <Text

@@ -222,7 +222,7 @@ export function OrdersPage() {
                   </Text>
                 </View>
 
-                <Text className="mb-2 text-[10px] r text-muted-foreground">
+                <Text className="mb-2 text-[10px] text-muted-foreground">
                   Items
                 </Text>
                 <View className="mb-3">
@@ -276,7 +276,7 @@ export function OrdersPage() {
                   />
                 </View>
 
-                <Text className="mb-2 text-[10px] r text-muted-foreground">
+                <Text className="mb-2 text-[10px] text-muted-foreground">
                   Ship to
                 </Text>
                 <View className="mb-3 rounded-lg border border-border bg-card/40 p-3">

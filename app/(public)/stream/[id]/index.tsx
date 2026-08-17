@@ -175,7 +175,7 @@ export default function StreamScreen() {
       {stream.isLive ? (
         <View className="absolute left-3 bottom-3 flex-row items-center gap-1.5 rounded bg-red-600/90 px-2 py-1">
           <View className="size-1.5 rounded-full bg-white" />
-          <Text className="text-[11px] font-bold r text-white">
+          <Text className="text-[11px] font-bold text-white">
             Live
           </Text>
         </View>

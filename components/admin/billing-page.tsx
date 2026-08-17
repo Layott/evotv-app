@@ -360,7 +360,7 @@ function MetricCard({
         <Icon size={20} color="#67E8F0" />
       </View>
       <View className="flex-1">
-        <Text className="text-[10px] r text-muted-foreground">
+        <Text className="text-[10px] text-muted-foreground">
           {label}
         </Text>
         {loading ? (

@@ -79,7 +79,7 @@ export default function PartnerDashboard() {
                   ) : null}
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-[10px] r text-muted-foreground">
+                  <Text className="text-[10px] text-muted-foreground">
                     {m.role}
                   </Text>
                   <Text
@@ -152,7 +152,7 @@ function SummaryCard({
     <View className="flex-1 rounded-xl bg-card/60 p-3">
       <View className="flex-row items-center gap-1.5">
         {icon}
-        <Text className="text-[10px] r text-muted-foreground">
+        <Text className="text-[10px] text-muted-foreground">
           {label}
         </Text>
       </View>

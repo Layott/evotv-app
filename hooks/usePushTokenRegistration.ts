@@ -1,26 +1,30 @@
 import * as React from "react";
 import { Platform } from "react-native";
 
-import {
-  registerExpoPushToken,
-  unregisterExpoPushToken,
-  type ExpoPlatform,
-} from "@/lib/api/push";
-import { classifyTokenError, setNativePushState } from "@/lib/push/state";
+import { unregisterExpoPushToken } from "@/lib/api/push";
+import { getNativePushState, setNativePushState } from "@/lib/push/state";
+import { enableNativePush, isPushOptedOut } from "@/lib/push/register";
 
 /**
- * Native push token registration.
+ * Native push token registration, on sign-in.
  *
- * On native: request permission (no-op if already granted), fetch the Expo
- * push token, register it against the signed-in user. Unregister on
- * sign-out via the cleanup callback returned alongside.
+ * On native: request permission if it has not been answered, fetch the Expo
+ * push token, register it against the signed-in user. Unregister on sign-out
+ * via the cleanup callback.
  *
  * On web: no-ops. Web push is the VAPID flow, which the website owns.
+ *
+ * The work itself lives in `lib/push/register.ts` rather than here, because it
+ * needs to be callable a second time. This hook ran once on mount and could
+ * never be re-run, so somebody who dismissed the OS prompt had no way back:
+ * Android stops asking after two dismissals and iOS after one, and the settings
+ * screen could only describe the problem. It offers a switch now, and both
+ * paths go through the same function.
  *
  * Failures still never block anything, but they are no longer invisible: each
  * one is recorded in `lib/push/state` so the settings screen can say why push
  * is off. A build with no FCM credentials used to look identical to a working
- * one, which is how nobody noticed that the project has never had any.
+ * one, which is how nobody noticed the project had never had any.
  */
 export function usePushTokenRegistration(isAuthenticated: boolean): void {
   React.useEffect(() => {
@@ -37,83 +41,31 @@ export function usePushTokenRegistration(isAuthenticated: boolean): void {
     }
 
     let cancelled = false;
-    let registeredToken: string | null = null;
 
     void (async () => {
-      try {
-        /* eslint-disable @typescript-eslint/no-require-imports */
-        const Notifications = require(
-          "expo-notifications",
-        ) as typeof import("expo-notifications");
-        const Device = require("expo-device") as typeof import("expo-device");
-        /* eslint-enable @typescript-eslint/no-require-imports */
+      // Somebody who turned the switch off should stay off. Without this the
+      // sign-in effect would register the device again on the next launch and
+      // the switch would appear to have flipped itself back on.
+      if (await isPushOptedOut()) {
+        if (!cancelled) setNativePushState({ kind: "off" });
+        return;
+      }
 
-        // Simulator / emulator can't receive push. Skip the prompt + write.
-        if (!Device.isDevice) {
-          setNativePushState({
-            kind: "unsupported",
-            reason: "a simulator cannot receive a push",
-          });
-          return;
-        }
-
-        const existing = await Notifications.getPermissionsAsync();
-        let granted =
-          existing.granted ||
-          existing.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
-
-        if (!granted) {
-          const req = await Notifications.requestPermissionsAsync();
-          granted =
-            req.granted ||
-            req.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
-        }
-        if (cancelled) return;
-        if (!granted) {
-          setNativePushState({ kind: "denied" });
-          return;
-        }
-
-        let result: { data?: string } | undefined;
-        try {
-          result = await Notifications.getExpoPushTokenAsync();
-        } catch (err) {
-          // The interesting failure. On Android this is a build with no
-          // google-services.json; on iOS an EAS project with no APNs key.
-          setNativePushState(
-            classifyTokenError(err instanceof Error ? err.message : String(err)),
-          );
-          return;
-        }
-        if (cancelled || !result?.data) return;
-
-        registeredToken = result.data;
-        const platform: ExpoPlatform =
-          Platform.OS === "ios"
-            ? "ios"
-            : Platform.OS === "android"
-              ? "android"
-              : "web";
-        await registerExpoPushToken(result.data, platform);
-        if (!cancelled) {
-          setNativePushState({ kind: "registered", token: result.data });
-        }
-      } catch (err) {
-        // Native module missing (a dev run before a rebuild), or anything else
-        // unforeseen. Still not a blocker, but no longer a secret.
-        setNativePushState({
-          kind: "unsupported",
-          reason: err instanceof Error ? err.message : String(err),
-        });
+      const state = await enableNativePush(true);
+      // A sign-out that lands mid-flight should not leave the screen claiming
+      // this device is registered.
+      if (cancelled && state.kind === "registered") {
+        void unregisterExpoPushToken(state.token).catch(() => {});
       }
     })();
 
     return () => {
       cancelled = true;
-      // Best-effort unregister on sign-out / unmount. Fire-and-forget; if
-      // the network blip we're not going to retry.
-      if (registeredToken) {
-        void unregisterExpoPushToken(registeredToken).catch(() => {});
+      // Best-effort unregister on sign-out or unmount. Fire and forget: if the
+      // network is down there is nothing useful to retry against.
+      const state = getNativePushState();
+      if (state.kind === "registered") {
+        void unregisterExpoPushToken(state.token).catch(() => {});
       }
     };
   }, [isAuthenticated]);

@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { useTokens } from "@/lib/theme/tokens";
-import { MessageCircle, MessageSquare } from "lucide-react-native";
+import { MessageCircle, MessageSquare } from "@/components/icons";
 
 /**
  * Comments backend does not exist yet (no /api/vods/[id]/comments).

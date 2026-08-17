@@ -5,7 +5,7 @@ import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { toast } from "sonner-native";
 

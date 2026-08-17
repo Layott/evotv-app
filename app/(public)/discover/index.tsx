@@ -8,7 +8,7 @@ import { MaturityBadge } from "@/components/common/maturity-badge";
 import { PressableScale } from "@/components/common/pressable-scale";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Clock, Eye, Search, UserRound, Users, X } from "lucide-react-native";
+import { Clock, Eye, Search, UserRound, Users, X } from "@/components/icons";
 
 import { TopNavbar } from "@/components/home/top-navbar";
 import { Skeleton } from "@/components/ui/skeleton";

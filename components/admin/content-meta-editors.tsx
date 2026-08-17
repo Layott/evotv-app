@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Pressable, Text, View } from "react-native";
-import { ShieldAlert, Tags, X } from "lucide-react-native";
+import { ShieldAlert, Tags, X } from "@/components/icons";
 
 import type { MaturityRating } from "@/lib/types";
 import { MATURITY_LABELS } from "@/lib/types";

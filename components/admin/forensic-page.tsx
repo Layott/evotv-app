@@ -6,7 +6,7 @@ import {
   ChevronRight,
   ScanLine,
   ShieldCheck,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { useQuery } from "@tanstack/react-query";
 
 import { listAdminLoginEvents, listAuditLog } from "@/lib/api/admin";

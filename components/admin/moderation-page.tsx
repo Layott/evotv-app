@@ -6,7 +6,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Check, ExternalLink, Flag, X } from "lucide-react-native";
+import { Check, ExternalLink, Flag, X } from "@/components/icons";
 import { useRouter } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";

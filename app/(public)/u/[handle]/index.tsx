@@ -21,7 +21,7 @@ import {
   UserPlus,
   UserCheck,
   Users,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -121,7 +121,7 @@ function ChannelCard({ channel }: { channel: PublicProfileChannel }) {
             {channel.name}
           </Text>
           {channel.isVerified ? (
-            <BadgeCheck size={14} color={BRAND} fill={BRAND_RGBA(0.18)} />
+            <BadgeCheck size={14} color={BRAND} />
           ) : null}
         </View>
         <Text className="text-xs text-muted-foreground">
@@ -307,7 +307,7 @@ export default function PublicProfileScreen() {
                     {profileQ.data.displayName}
                   </Text>
                   {profileQ.data.channels.some((c) => c.isVerified) ? (
-                    <BadgeCheck size={16} color={BRAND} fill={BRAND_RGBA(0.18)} />
+                    <BadgeCheck size={16} color={BRAND} />
                   ) : null}
                 </View>
                 <Text className="text-sm text-muted-foreground">

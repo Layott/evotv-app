@@ -3,11 +3,11 @@ import { Modal, Pressable, Text, View } from "react-native";
 import {
   ChevronDown,
   Shield,
-  Star,
+  BadgeCheck,
   UserPlus,
   UserRound,
-  type LucideIcon,
-} from "lucide-react-native";
+  type Icon,
+} from "@/components/icons";
 
 import type { Role } from "@/lib/types";
 import { useAuth } from "./auth-provider";
@@ -15,13 +15,13 @@ import { useAuth } from "./auth-provider";
 interface RoleEntry {
   value: Role;
   label: string;
-  Icon: LucideIcon;
+  Icon: Icon;
 }
 
 const ROLES: RoleEntry[] = [
   { value: "guest", label: "Guest", Icon: UserPlus },
   { value: "user", label: "User", Icon: UserRound },
-  { value: "premium", label: "Premium", Icon: Star },
+  { value: "premium", label: "Premium", Icon: BadgeCheck },
   { value: "admin", label: "Admin", Icon: Shield },
 ];
 

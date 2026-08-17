@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Eye, Lock, Play } from "lucide-react-native";
+import { Eye, Lock, Play } from "@/components/icons";
 
 import type { MainChannelResponse } from "@/lib/api/channel";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
@@ -95,7 +95,7 @@ export function MainChannel({ data, loading }: Props) {
                 {channel.requiresAuth ? (
                   <Lock color={palette.fg} size={22} />
                 ) : (
-                  <Play color={palette.fg} size={24} fill={palette.fg} />
+                  <Play color={palette.fg} size={24} />
                 )}
               </View>
             </View>

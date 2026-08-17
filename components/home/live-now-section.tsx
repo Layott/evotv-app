@@ -2,7 +2,7 @@ import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Eye } from "lucide-react-native";
+import { Eye } from "@/components/icons";
 
 import type { Game, Stream } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";

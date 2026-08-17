@@ -2,7 +2,7 @@ import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Eye, Play } from "lucide-react-native";
+import { Eye, Play } from "@/components/icons";
 
 import type { Clip } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -138,7 +138,7 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
                       backgroundColor: "rgba(70,227,206,0.85)",
                     }}
                   >
-                    <Play size={18} color={palette.bg} fill={palette.bg} />
+                    <Play size={18} color={palette.bg} />
                   </View>
                 </View>
 

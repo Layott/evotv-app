@@ -3,6 +3,52 @@
 @tailwind utilities;
 
 /**
+ * Weight utilities have to carry the family too.
+ *
+ * React Native does not synthesise weights: `fontFamily: "Archivo"` with
+ * `fontWeight: "600"` renders the regular face on Android and says nothing
+ * about it. Every weight is therefore its own registered family (see
+ * `components/providers/font-loader.tsx`).
+ *
+ * That would normally mean rewriting all 529 `font-medium` / `font-semibold` /
+ * `font-bold` classes in this app into family classes. Instead the three
+ * utilities are redefined here to set the family as well as the weight. Same
+ * class names, same call sites, right file on the device.
+ *
+ * `@layer utilities` puts these after Tailwind's own definitions at equal
+ * specificity, so these win. `font-extrabold` maps onto bold rather than
+ * loading a seventh file for two call sites.
+ */
+@layer utilities {
+  /* The web half of the default font.
+     React Native has no cascade, so a <Text> carrying no font class renders in
+     the system face. On native that is fixed by patching Text's props (see
+     lib/theme/default-text-font.ts); on web it has to be CSS, because
+     NativeWind passes className straight through there and an injected style
+     would become a react-native-web atomic class that outranks the weight
+     rules below. Doing it here keeps one cascade.
+     react-native-web stamps every Text with a css-text-* class, which is what
+     was painting the system stack. This is an attribute selector, so it has the
+     same weight as a class and loses to the three rules under it purely on
+     order, which is what we want. */
+  [class*="css-text-"],
+  [class*="css-textinput-"] {
+    font-family: Archivo;
+  }
+
+  .font-medium {
+    font-family: ArchivoMedium;
+  }
+  .font-semibold {
+    font-family: ArchivoSemiBold;
+  }
+  .font-bold,
+  .font-extrabold {
+    font-family: ArchivoBold;
+  }
+}
+
+/**
  * Two palettes, one set of names.
  *
  * The app shipped a single fixed dark palette and no `dark:` variants at all,

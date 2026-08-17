@@ -7,7 +7,7 @@ import {
   Library,
   Trophy,
   User,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 export default function PublicLayout() {
   const t = useTokens();
@@ -30,7 +30,7 @@ export default function PublicLayout() {
         tabBarInactiveTintColor: t.muted,
         tabBarLabelStyle: {
           fontSize: 11,
-          fontFamily: "GeistMedium",
+          fontFamily: "ArchivoMedium",
         },
       }}
     >

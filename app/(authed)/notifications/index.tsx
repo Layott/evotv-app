@@ -11,9 +11,9 @@ import {
   Film,
   Package,
   Play,
-  Star,
+  BadgeCheck,
   UserPlus,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
@@ -34,13 +34,13 @@ import type { NotificationItem, NotificationType } from "@/lib/types";
 import { relativeTime } from "@/components/profile/ngn";
 import { cn } from "@/lib/utils";
 
-const ICONS: Record<NotificationType, import("lucide-react-native").LucideIcon> = {
+const ICONS: Record<NotificationType, import("@/components/icons").Icon> = {
   stream_live: Play,
   event_starting: Calendar,
   new_vod: Film,
   follow: UserPlus,
   order_update: Package,
-  subscription: Star,
+  subscription: BadgeCheck,
   system: AlertCircle,
 };
 

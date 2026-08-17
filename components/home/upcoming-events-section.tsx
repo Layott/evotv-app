@@ -3,7 +3,7 @@ import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { Calendar, Trophy } from "lucide-react-native";
+import { Calendar, Trophy } from "@/components/icons";
 
 import type { EsportsEvent, Game } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";

@@ -12,10 +12,10 @@ import {
   Eye,
   Lock,
   Share2,
-  Sparkles,
+  Unlock,
   ThumbsDown,
   ThumbsUp,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { getVodById, listRelatedVods } from "@/lib/api/vods";
 import { getProgress, upsertProgress } from "@/lib/api/vod-progress";
@@ -109,7 +109,7 @@ function PaywallOverlay({ vod, onUpgrade }: PaywallProps) {
           className="bg-amber-500"
           textClassName="text-black font-semibold"
         >
-          <Sparkles size={16} color="#000" />
+          <Unlock size={16} color="#000" />
           Upgrade with Paystack
         </Button>
       </View>
@@ -432,7 +432,7 @@ export default function VodScreen() {
                 <ThumbsUp
                   size={14}
                   color={liked ? palette.brand : palette.fg}
-                  fill={liked ? palette.brand : "transparent"}
+                  weight={liked ? "fill" : "regular"}
                 />
                 <Text className="text-sm text-foreground">
                   {compact(likes)}
@@ -446,7 +446,7 @@ export default function VodScreen() {
                 <ThumbsDown
                   size={14}
                   color={disliked ? "#f87171" : palette.fg}
-                  fill={disliked ? "#f87171" : "transparent"}
+                  weight={disliked ? "fill" : "regular"}
                 />
                 {dislikes > 0 ? (
                   <Text className="text-sm text-foreground">

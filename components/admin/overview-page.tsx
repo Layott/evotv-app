@@ -29,13 +29,12 @@ import {
   Settings,
   ShieldAlert,
   ShoppingCart,
-  Sparkles,
   Tv,
   UserPlus,
   Users,
   Vote,
-  type LucideIcon,
-} from "lucide-react-native";
+  type Icon,
+} from "@/components/icons";
 
 import {
   getOverviewMetrics,
@@ -149,7 +148,7 @@ export function OverviewPage() {
   const hubItems: {
     to: string;
     label: string;
-    icon: LucideIcon;
+    icon: Icon;
     stat: string;
   }[] = [
     {
@@ -533,7 +532,7 @@ export function OverviewPage() {
 
       <View className="mt-6">
         <View className="flex-row items-center gap-2">
-          <Sparkles size={14} color="#46E3CE" />
+          <LayoutGrid size={14} color="#46E3CE" />
           <Text className="text-sm font-semibold text-foreground">
             All admin pages
           </Text>

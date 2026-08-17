@@ -4,7 +4,7 @@ import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Stack } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
-import { Check, Clock, Sparkles, X } from "lucide-react-native";
+import { Check, Clock, Mic2, X } from "@/components/icons";
 
 import {
   listCreatorApplications,
@@ -77,7 +77,7 @@ export default function AdminCreatorProgramScreen() {
       <ScrollView className="flex-1 bg-background" contentContainerClassName="pb-12">
         <View className="px-4 pt-4 pb-2 gap-2 border-b border-border">
           <View className="flex-row items-center gap-2">
-            <Sparkles size={18} color={palette.brand} />
+            <Mic2 size={18} color={palette.brand} />
             <Text className="text-xl font-bold text-foreground">
               Creator applications
             </Text>

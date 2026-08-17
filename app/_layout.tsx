@@ -14,8 +14,13 @@ import { AppLockGate } from "@/components/providers/app-lock-gate";
 import { ErrorBoundary } from "@/components/providers/error-boundary";
 import { GlobalBanner } from "@/components/common/global-banner";
 import { initSentry } from "@/sentry.config";
+import { applyDefaultTextFont } from "@/lib/theme/default-text-font";
 
 initSentry();
+
+// Before any screen renders. React Native has no cascade, so a <Text> with no
+// font class falls back to the system face; this gives them all Archivo.
+applyDefaultTextFont();
 
 export default function RootLayout() {
   /*

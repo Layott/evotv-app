@@ -2,7 +2,7 @@ import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
 import { ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
-import { CreditCard, Crown } from "lucide-react-native";
+import { CreditCard, BadgeCheck } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import {
@@ -96,7 +96,7 @@ export default function BillingScreen() {
         <View className="px-4">
           <View className="rounded-2xl border border-border bg-card p-5">
             <View className="flex-row items-start gap-3">
-              <Crown
+              <BadgeCheck
                 size={26}
                 color={sub ? "#fbbf24" : palette.muted}
               />

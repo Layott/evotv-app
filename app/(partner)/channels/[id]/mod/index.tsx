@@ -16,7 +16,7 @@ import {
   UserX,
   Wifi,
   WifiOff,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { useAuth } from "@/components/providers";
 import { getChannelPage } from "@/lib/api/channels";

@@ -2,7 +2,7 @@ import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { ChevronRight, Key, MessageSquare, Radio, ShieldCheck } from "lucide-react-native";
+import { ChevronRight, Key, MessageSquare, Radio, ShieldCheck } from "@/components/icons";
 
 import { useAuth } from "@/components/providers";
 

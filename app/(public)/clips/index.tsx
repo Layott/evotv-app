@@ -4,7 +4,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Flame, Heart, Play } from "lucide-react-native";
+import { Flame, Heart, Play } from "@/components/icons";
 
 import { listTrendingClips } from "@/lib/api/vods";
 import type { Clip } from "@/lib/types";

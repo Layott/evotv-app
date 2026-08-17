@@ -7,7 +7,7 @@ import {
   Bell,
   CalendarRange,
   Clapperboard,
-  Crown,
+  Unlock,
   Disc,
   Film,
   Gamepad2,
@@ -31,15 +31,14 @@ import {
   Share2,
   ShieldCheck,
   ShoppingBag,
-  Star,
   Target,
   Tv,
   User as UserIcon,
   Users as UsersIcon,
   Wallet,
   X,
-  type LucideIcon,
-} from "lucide-react-native";
+  type Icon,
+} from "@/components/icons";
 
 import { useAuth } from "@/components/providers";
 import { hasMinRole } from "@/lib/auth/roles";
@@ -47,7 +46,7 @@ import { hasMinRole } from "@/lib/auth/roles";
 interface FeatureLink {
   label: string;
   href: string;
-  Icon: LucideIcon;
+  Icon: Icon;
   premium?: boolean;
   adminOnly?: boolean;
 }
@@ -85,7 +84,7 @@ const GROUPS: FeatureGroup[] = [
     title: "Discover",
     items: [
       { label: "Shop", href: "/shop", Icon: ShoppingBag },
-      { label: "Upgrade to Premium", href: "/upgrade", Icon: Crown },
+      { label: "Upgrade to Premium", href: "/upgrade", Icon: Unlock },
     ],
   },
   {

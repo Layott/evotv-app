@@ -11,8 +11,8 @@ import {
   Shield,
   SlidersHorizontal,
   Users,
-  type LucideIcon,
-} from "lucide-react-native";
+  type Icon,
+} from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
@@ -103,7 +103,7 @@ const NOTIF_ITEMS: { key: NotifKey; title: string; body: string }[] = [
 const STEP_TITLES: ReadonlyArray<{
   title: string;
   subtitle: string;
-  Icon: LucideIcon;
+  Icon: Icon;
 }> = [
   {
     title: "Pick your games",

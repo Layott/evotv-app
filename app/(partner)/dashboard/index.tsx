@@ -2,7 +2,7 @@ import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Link, Stack } from "expo-router";
-import { ArrowRight, BadgeCheck, Banknote, Building2, Radio } from "lucide-react-native";
+import { ArrowRight, BadgeCheck, Banknote, Building2, Radio } from "@/components/icons";
 
 import { useAuth } from "@/components/providers";
 import { cn } from "@/lib/utils";

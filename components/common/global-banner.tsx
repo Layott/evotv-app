@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Pressable, Text, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, Wrench, X } from "lucide-react-native";
+import { AlertTriangle, Wrench, X } from "@/components/icons";
 
 import { getPublicFlags } from "@/lib/api/feature-flags";
 

@@ -10,7 +10,7 @@ import {
   Clock,
   Eye,
   Trophy,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

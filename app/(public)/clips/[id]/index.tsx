@@ -16,7 +16,7 @@ import {
   Share2,
   Volume2,
   VolumeX,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { getClipById, listTrendingClips } from "@/lib/api/vods";
 import type { Clip } from "@/lib/types";
@@ -109,7 +109,7 @@ function ClipPlayer({
               backgroundColor: "rgba(0,0,0,0.55)",
             }}
           >
-            <Play size={32} color="#fff" fill="#fff" />
+            <Play size={32} color="#fff" />
           </View>
         ) : null}
       </Pressable>
@@ -328,7 +328,7 @@ export default function ClipDetailScreen() {
                   <Heart
                     size={22}
                     color={liked ? "#f87171" : "#fff"}
-                    fill={liked ? "#f87171" : "transparent"}
+                    weight={liked ? "fill" : "regular"}
                   />
                 }
                 label={compact(likeCount)}

@@ -12,7 +12,7 @@ import {
 import { Stack, useRouter } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
-import { ArrowLeft, Loader2, Save } from "lucide-react-native";
+import { ArrowLeft, Loader2, Save } from "@/components/icons";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";

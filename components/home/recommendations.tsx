@@ -2,7 +2,7 @@ import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Clock, Sparkles } from "lucide-react-native";
+import { Clock } from "@/components/icons";
 
 import type { Game, Vod } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -113,7 +113,6 @@ export function Recommendations({
     <View className="gap-3">
       <View className="flex-row items-center justify-between px-4">
         <View className="flex-row items-center gap-2">
-          <Sparkles size={16} color={palette.brand} />
           <Text className="text-xl font-semibold text-foreground">
             Recommended for you
           </Text>

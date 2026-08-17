@@ -2,7 +2,7 @@ import { Stack, useRouter } from "expo-router";
 import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import Animated, { FadeIn, FadeInDown, ReduceMotion } from "react-native-reanimated";
-import { ChevronLeft, Sparkles } from "lucide-react-native";
+import { ChevronLeft, Wrench } from "@/components/icons";
 
 /**
  * MVP gate. Renders a branded "Coming soon" placeholder for features that are
@@ -33,7 +33,7 @@ export function ComingSoon({
         entering={FadeIn.duration(500).reduceMotion(rm)}
         className="h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/25"
       >
-        <Sparkles size={28} color={palette.brand} />
+        <Wrench size={28} color={palette.brand} />
       </Animated.View>
       <Animated.Text
         entering={rise(80)}

@@ -11,7 +11,7 @@ import {
   Radio,
   TrendingUp,
   Users,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import {
   getChannelAnalytics,

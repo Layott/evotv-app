@@ -3,7 +3,7 @@ import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { Eye, Film, Info, Video } from "lucide-react-native";
+import { Eye, Film, Info, Video } from "@/components/icons";
 
 import type { Clip, Profile, Vod } from "@/lib/types";
 import {

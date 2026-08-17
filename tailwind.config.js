@@ -71,9 +71,22 @@ module.exports = {
         input: "rgb(var(--input) / <alpha-value>)",
         ring: "rgb(var(--ring) / <alpha-value>)"
       },
+      // One family, headings and body, matching the website. The names are the
+      // keys registered in `components/providers/font-loader.tsx`, not the
+      // fonts' internal family names: React Native resolves what expo-font was
+      // given, and each weight is registered separately because RN does not
+      // synthesise weights on Android.
+      //
+      // `display` is Archivo instanced at wdth 118, the same width the web sets
+      // its headings at.
       fontFamily: {
-        sans: ["Geist", "System"],
-        mono: ["GeistMono", "Menlo"],
+        sans: ["Archivo", "System"],
+        medium: ["ArchivoMedium", "System"],
+        semibold: ["ArchivoSemiBold", "System"],
+        bold: ["ArchivoBold", "System"],
+        display: ["ArchivoDisplay", "System"],
+        "display-heavy": ["ArchivoDisplayHeavy", "System"],
+        mono: ["MartianMono", "Menlo"],
       },
       // Tighter than before (6/8/10/14). Big soft radii on every element is
       // part of the generic look; matches --radius: 0.3rem on the web.

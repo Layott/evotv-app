@@ -3,7 +3,7 @@ import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
-import { ShoppingBag, Trash2 } from "lucide-react-native";
+import { ShoppingBag, Trash2 } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Crown, Sparkles, Star } from "lucide-react-native";
+import { Film, History, Star } from "@/components/icons";
 
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -94,7 +94,7 @@ function HeroCard({ show }: { show: Show }) {
           </Text>
           <View className="mt-1 flex-row items-center gap-3">
             <View className="flex-row items-center gap-1">
-              <Star size={11} color="#fbbf24" fill="#fbbf24" />
+              <Star size={11} color="#fbbf24" />
               <Text className="text-[11px] font-semibold" style={{ color: "#fbbf24" }}>
                 {show.rating.toFixed(1)}
               </Text>
@@ -153,7 +153,7 @@ function ShowPosterCard({ show }: { show: Show }) {
           {show.title}
         </Text>
         <View className="mt-1 flex-row items-center gap-1">
-          <Star size={9} color="#fbbf24" fill="#fbbf24" />
+          <Star size={9} color="#fbbf24" />
           <Text className="text-[10px] text-muted-foreground">
             {show.rating.toFixed(1)} · S{show.totalSeasons}
           </Text>
@@ -220,7 +220,7 @@ export default function OriginalsScreen() {
             className="border-brand"
             textClassName="text-brand"
           >
-            <Crown size={11} color={BRAND} /> EVO Originals + Licensed
+            <Film size={11} color={BRAND} /> EVO Originals + Licensed
           </Badge>
           <Text className="text-2xl font-bold leading-tight text-foreground">
             Shows, seasons, and episode drops - built for African audiences.
@@ -246,7 +246,7 @@ export default function OriginalsScreen() {
         {continueQ.data && continueQ.data.length > 0 ? (
           <Rail
             title="Continue watching"
-            icon={<Sparkles size={16} color={BRAND} />}
+            icon={<History size={16} color={BRAND} />}
           >
             {continueQ.data.map((row) => (
               <Pressable

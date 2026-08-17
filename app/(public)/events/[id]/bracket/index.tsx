@@ -3,7 +3,7 @@ import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft } from "@/components/icons";
 
 import { BracketView } from "@/components/events/bracket-view";
 import { Skeleton } from "@/components/ui/skeleton";

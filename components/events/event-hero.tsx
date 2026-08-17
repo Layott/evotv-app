@@ -3,7 +3,7 @@ import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { ArrowLeft, Calendar, MapPin, Trophy } from "lucide-react-native";
+import { ArrowLeft, Calendar, MapPin, Trophy } from "@/components/icons";
 
 import type { EsportsEvent, Game } from "@/lib/types";
 

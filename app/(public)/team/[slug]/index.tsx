@@ -13,7 +13,7 @@ import {
   MapPin,
   Trophy,
   Users,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -230,7 +230,7 @@ export default function TeamDetailScreen() {
               }}
             >
               {following ? (
-                <Bell size={14} color="#67e8f9" fill="#67e8f9" />
+                <Bell size={14} color="#67e8f9" />
               ) : (
                 <BellOff size={14} color="#000" />
               )}

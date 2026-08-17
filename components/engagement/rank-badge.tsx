@@ -1,14 +1,14 @@
 import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
 import { Text, View } from "react-native";
-import { Crown, Medal, Trophy } from "lucide-react-native";
+import { Medal, Trophy } from "@/components/icons";
 
 export function RankBadge({ rank }: { rank: number }) {
   const palette = useTokens();
   if (rank === 1) {
     return (
       <View className="h-7 w-7 items-center justify-center rounded-full bg-amber-500/25">
-        <Crown size={14} color="#FCD34D" />
+        <Medal size={14} color="#FCD34D" />
       </View>
     );
   }

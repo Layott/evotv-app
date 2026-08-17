@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Flag, X } from "lucide-react-native";
+import { Flag, X } from "@/components/icons";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 

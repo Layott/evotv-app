@@ -12,7 +12,7 @@ import { Link, Stack, useRouter } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CheckCircle2, KeyRound } from "lucide-react-native";
+import { CheckCircle2, KeyRound } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";

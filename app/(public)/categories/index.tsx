@@ -2,7 +2,7 @@ import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight } from "lucide-react-native";
+import { ArrowRight } from "@/components/icons";
 
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { Skeleton } from "@/components/ui/skeleton";

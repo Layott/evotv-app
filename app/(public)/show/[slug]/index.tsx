@@ -3,7 +3,7 @@ import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Bookmark, BookmarkCheck, Play, Star } from "lucide-react-native";
+import { ArrowLeft, Bookmark, BookmarkCheck, Play, Star } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Badge } from "@/components/ui/badge";
@@ -86,7 +86,7 @@ function EpisodeRow({
         className="h-9 w-9 items-center justify-center rounded-full"
         style={{ backgroundColor: BRAND_RGBA(0.3) }}
       >
-        <Play size={16} color={BRAND} fill={BRAND} />
+        <Play size={16} color={BRAND} />
       </View>
     </Pressable>
   );
@@ -254,7 +254,7 @@ export default function ShowLandingScreen() {
 
           <View className="flex-row items-center gap-3 flex-wrap">
             <View className="flex-row items-center gap-1">
-              <Star size={12} color="#fbbf24" fill="#fbbf24" />
+              <Star size={12} color="#fbbf24" />
               <Text className="text-xs font-semibold" style={{ color: "#fbbf24" }}>
                 {show.rating.toFixed(1)}
               </Text>
@@ -296,7 +296,7 @@ export default function ShowLandingScreen() {
               className="flex-1 flex-row items-center justify-center gap-1.5 rounded-xl py-3 active:opacity-80"
               style={{ backgroundColor: BRAND }}
             >
-              <Play size={16} color={palette.bg} fill={palette.bg} />
+              <Play size={16} color={palette.bg} />
               <Text style={{ color: palette.bg, fontWeight: "700", fontSize: 14 }}>
                 Watch S{(episodesQ.data?.[0]?.seasonNumber ?? 1)}·E
                 {episodesQ.data?.[0]?.episodeNumber ?? 1}

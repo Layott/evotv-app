@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { ExternalLink, Search, Shield, ShieldOff, X } from "lucide-react-native";
+import { ExternalLink, Search, Shield, ShieldOff, X } from "@/components/icons";
 import { useRouter } from "expo-router";
 import { toast } from "sonner-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

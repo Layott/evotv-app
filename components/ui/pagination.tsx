@@ -7,7 +7,7 @@ import {
   type PressableProps,
   type ViewProps,
 } from "react-native";
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react-native";
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

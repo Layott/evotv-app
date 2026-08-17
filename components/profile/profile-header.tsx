@@ -2,7 +2,7 @@ import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { Edit, MapPin, ShieldCheck, Star } from "lucide-react-native";
+import { Edit, MapPin, ShieldCheck, BadgeCheck } from "@/components/icons";
 
 import type { Profile } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
@@ -177,7 +177,7 @@ export function ProfileHeader({
                 backgroundColor: "rgba(245,158,11,0.15)",
               }}
             >
-              <Star size={10} color="#fcd34d" />
+              <BadgeCheck size={10} color="#fcd34d" />
               <Text
                 className="text-xs font-medium"
                 style={{ color: "#fcd34d" }}

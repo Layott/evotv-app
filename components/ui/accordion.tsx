@@ -8,7 +8,7 @@ import {
   type TextProps,
   type ViewProps,
 } from "react-native";
-import { ChevronDown } from "lucide-react-native";
+import { ChevronDown } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

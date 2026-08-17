@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { toast } from "sonner-native";
-import { Download, SlidersHorizontal } from "lucide-react-native";
+import { Download, SlidersHorizontal } from "@/components/icons";
 
 import {
   auditLogExportUrl,

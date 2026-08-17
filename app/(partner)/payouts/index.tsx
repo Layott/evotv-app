@@ -3,7 +3,7 @@ import { useTokens } from "@/lib/theme/tokens";
 import { ScrollView, Text, View } from "react-native";
 import { Stack } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Banknote, ClockIcon } from "lucide-react-native";
+import { Banknote, ClockIcon } from "@/components/icons";
 
 import { listPayouts, type Payout } from "@/lib/api/partner";
 import { Skeleton } from "@/components/ui/skeleton";

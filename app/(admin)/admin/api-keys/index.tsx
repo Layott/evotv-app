@@ -12,7 +12,7 @@ import { Stack } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
-import { Copy, KeyRound, Trash2 } from "lucide-react-native";
+import { Copy, KeyRound, Trash2 } from "@/components/icons";
 
 import {
   createApiKey,

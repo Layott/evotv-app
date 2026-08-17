@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { Check, Mail, Palette, Save, ToggleLeft } from "lucide-react-native";
+import { Check, Mail, Palette, Save, ToggleLeft } from "@/components/icons";
 import { toast } from "sonner-native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 

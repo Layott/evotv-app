@@ -3,7 +3,7 @@ import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { Bookmark, History, Users } from "lucide-react-native";
+import { Bookmark, History, Users } from "@/components/icons";
 
 import type { Vod } from "@/lib/types";
 import {

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Text, View } from "react-native";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react-native";
+import { ArrowDownRight, ArrowUpRight } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -9,7 +9,7 @@ interface MetricCardProps {
   value: string | number;
   delta?: number;
   deltaLabel?: string;
-  icon?: import("lucide-react-native").LucideIcon;
+  icon?: import("@/components/icons").Icon;
   hint?: string;
   className?: string;
 }

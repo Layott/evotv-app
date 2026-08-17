@@ -9,7 +9,7 @@ import {
   Users,
   Wallet,
   XCircle,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { toast } from "sonner-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -351,7 +351,7 @@ function MetricCard({
 }: {
   label: string;
   value: string;
-  Icon: import("lucide-react-native").LucideIcon;
+  Icon: import("@/components/icons").Icon;
   loading?: boolean;
 }) {
   return (

@@ -21,8 +21,8 @@ import {
   Plus,
   Upload,
   X,
-  type LucideIcon,
-} from "lucide-react-native";
+  type Icon,
+} from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -1428,7 +1428,7 @@ function ConfigFileBlock({
   onAdd,
   onRemove,
 }: {
-  icon: LucideIcon;
+  icon: Icon;
   title: string;
   caption: string;
   selected: string[];
@@ -1551,7 +1551,7 @@ function SectionTitle({
   caption,
   className,
 }: {
-  icon: LucideIcon;
+  icon: Icon;
   title: string;
   caption?: string;
   className?: string;

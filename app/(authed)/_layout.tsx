@@ -20,7 +20,7 @@ export default function AuthedLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: t.bg },
         headerTintColor: t.fg,
-        headerTitleStyle: { color: t.fg, fontFamily: "GeistSemiBold" },
+        headerTitleStyle: { color: t.fg, fontFamily: "ArchivoSemiBold" },
         headerBackTitle: "Back",
         contentStyle: { backgroundColor: t.bg },
         animation: "slide_from_right",

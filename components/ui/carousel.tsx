@@ -8,7 +8,7 @@ import {
   type FlatListProps,
   type ViewProps,
 } from "react-native";
-import { ArrowLeft, ArrowRight } from "lucide-react-native";
+import { ArrowLeft, ArrowRight } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

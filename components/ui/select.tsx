@@ -10,7 +10,7 @@ import {
   type TextProps,
   type ViewProps,
 } from "react-native";
-import { Check, ChevronDown } from "lucide-react-native";
+import { Check, ChevronDown } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

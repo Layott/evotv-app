@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
 import { Text, View, type ViewProps } from "react-native";
-import { Coins } from "lucide-react-native";
+import { Coins } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

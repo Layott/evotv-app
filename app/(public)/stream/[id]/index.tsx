@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Eye, Lock, MessageSquare, Info } from "lucide-react-native";
+import { ArrowLeft, Eye, Lock, MessageSquare, Info } from "@/components/icons";
 import { format } from "date-fns";
 
 import { getStreamById } from "@/lib/api/streams";

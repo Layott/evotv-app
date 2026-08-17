@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { Send, Users } from "lucide-react-native";
+import { Send, Users } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import type { ChatMessage, Role } from "@/lib/types";

@@ -4,7 +4,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Trophy, Users } from "lucide-react-native";
+import { Trophy, Users } from "@/components/icons";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { listGames } from "@/lib/api/games";

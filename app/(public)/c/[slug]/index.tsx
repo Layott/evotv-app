@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
-import { ArrowLeft, Compass, Heart, Radio, ShieldCheck, Users } from "lucide-react-native";
+import { ArrowLeft, Compass, Heart, Radio, ShieldCheck, Users } from "@/components/icons";
 
 import {
   getChannelPage,
@@ -177,7 +177,7 @@ export default function ChannelPublicPage() {
             <Heart
               size={14}
               color={followedByMe ? "#F472B6" : "#000"}
-              fill={followedByMe ? "#F472B6" : "transparent"}
+              weight={followedByMe ? "fill" : "regular"}
             />
             {followedByMe ? "Following" : "Follow"}
           </Button>

@@ -13,7 +13,7 @@ import {
   type TextProps,
   type ViewProps,
 } from "react-native";
-import { X } from "lucide-react-native";
+import { X } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

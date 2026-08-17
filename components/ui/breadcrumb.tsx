@@ -9,7 +9,7 @@ import {
   type TextProps,
   type ViewProps,
 } from "react-native";
-import { ChevronRight, MoreHorizontal } from "lucide-react-native";
+import { ChevronRight, MoreHorizontal } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

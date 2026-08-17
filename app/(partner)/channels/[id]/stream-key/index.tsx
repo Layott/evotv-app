@@ -5,7 +5,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { toast } from "sonner-native";
 import { useQuery } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
-import { AlertTriangle, Copy, Key, RefreshCw } from "lucide-react-native";
+import { AlertTriangle, Copy, Key, RefreshCw } from "@/components/icons";
 
 import {
   getChannelKeyState,

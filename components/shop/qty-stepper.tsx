@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
-import { Minus, Plus } from "lucide-react-native";
+import { Minus, Plus } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

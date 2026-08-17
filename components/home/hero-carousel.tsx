@@ -12,7 +12,7 @@ import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { MaturityBadge } from "@/components/common/maturity-badge";
 import { PressableScale } from "@/components/common/pressable-scale";
 import { useRouter } from "expo-router";
-import { Eye, Play } from "lucide-react-native";
+import { Eye, Play } from "@/components/icons";
 
 import type { Stream } from "@/lib/types";
 
@@ -159,7 +159,7 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
                 className="mt-1 flex-row items-center gap-2 self-start rounded-md px-3 py-1.5"
                 style={{ backgroundColor: palette.brand }}
               >
-                <Play size={14} color={palette.bg} fill={palette.bg} />
+                <Play size={14} color={palette.bg} />
                 <Text
                   style={{
                     fontSize: 12,

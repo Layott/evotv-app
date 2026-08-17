@@ -4,7 +4,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, BellOff, Calendar, Clock, Film, Radio, Trophy } from "lucide-react-native";
+import { Bell, BellOff, Calendar, Clock, Film, Radio, Trophy } from "@/components/icons";
 
 import { PressableScale } from "@/components/common/pressable-scale";
 import { TopNavbar } from "@/components/home/top-navbar";

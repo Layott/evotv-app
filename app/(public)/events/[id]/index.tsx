@@ -3,7 +3,7 @@ import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, BellOff, ListTree, Play } from "lucide-react-native";
+import { Bell, BellOff, ListTree, Play } from "@/components/icons";
 
 import { EventHero } from "@/components/events/event-hero";
 import { CountdownTimer } from "@/components/events/countdown-timer";
@@ -168,7 +168,7 @@ export default function EventDetailScreen() {
                   router.push(`/stream/${liveStreamQ.data!.id}`)
                 }
               >
-                <Play size={14} color="#ffffff" fill="#ffffff" />
+                <Play size={14} color="#ffffff" />
                 <Text className="text-sm font-semibold text-white">
                   Watch live
                 </Text>
@@ -189,7 +189,7 @@ export default function EventDetailScreen() {
               }}
             >
               {reminded ? (
-                <Bell size={16} color="#67e8f9" fill="#67e8f9" />
+                <Bell size={16} color="#67e8f9" />
               ) : (
                 <BellOff size={16} color={palette.fg} />
               )}

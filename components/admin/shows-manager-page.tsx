@@ -14,7 +14,7 @@ import {
   Tv,
   Upload,
   X,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 

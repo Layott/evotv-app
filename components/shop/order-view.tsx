@@ -9,7 +9,7 @@ import {
   Printer,
   ShoppingBag,
   Truck,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Badge } from "@/components/ui/badge";
@@ -159,7 +159,7 @@ export function OrderView({ id }: OrderViewProps) {
   const steps: {
     key: OrderStatus;
     label: string;
-    icon: import("lucide-react-native").LucideIcon;
+    icon: import("@/components/icons").Icon;
     at: string;
   }[] = [
     {

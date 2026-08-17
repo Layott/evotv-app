@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { Search, X } from "lucide-react-native";
+import { Search, X } from "@/components/icons";
 import { useQuery } from "@tanstack/react-query";
 
 import { listAdminOrders } from "@/lib/api/admin";

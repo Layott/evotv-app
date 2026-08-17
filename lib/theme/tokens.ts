@@ -7,7 +7,7 @@ import { useColorScheme } from "nativewind";
  * setting on their own now that `tailwind.config.js` reads CSS variables. Two
  * things cannot:
  *
- * - `lucide-react-native` icons, which take a `color` string, not a class.
+ * - Phosphor icons, which take a `color` string, not a class.
  * - navigator chrome (`Stack` / `Tabs` `screenOptions`), which takes style
  *   objects.
  *

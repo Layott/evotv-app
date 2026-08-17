@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Stack } from "expo-router";
-import { RotateCcw, Search, ShieldBan, X } from "lucide-react-native";
+import { RotateCcw, Search, ShieldBan, X } from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 

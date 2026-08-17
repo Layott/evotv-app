@@ -15,7 +15,7 @@ import {
   ShieldCheck,
   Trash2,
   UserCog,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { useAuth, useTheme } from "@/components/providers";

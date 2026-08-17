@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, Menu, Search } from "lucide-react-native";
+import { Bell, Menu, Search } from "@/components/icons";
 
 import { FeatureDrawer } from "./feature-drawer";
 import { useAuth } from "@/components/providers";

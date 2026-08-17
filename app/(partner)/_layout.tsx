@@ -1,8 +1,10 @@
 import { Redirect, Stack } from "expo-router";
+import { useTokens } from "@/lib/theme/tokens";
 
 import { useAuth } from "@/components/providers";
 
 export default function PartnerLayout() {
+  const t = useTokens();
   const { isAuthenticated, isLoading, publisherMemberships } = useAuth();
 
   if (isLoading) return null;
@@ -12,10 +14,10 @@ export default function PartnerLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: "#05191B" },
-        headerTintColor: "#EAF6F5",
-        headerTitleStyle: { color: "#EAF6F5", fontWeight: "700" },
-        contentStyle: { backgroundColor: "#05191B" },
+        headerStyle: { backgroundColor: t.bg },
+        headerTintColor: t.fg,
+        headerTitleStyle: { color: t.fg, fontWeight: "700" },
+        contentStyle: { backgroundColor: t.bg },
         animation: "slide_from_right",
       }}
     >

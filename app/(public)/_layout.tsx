@@ -1,4 +1,5 @@
 import { Tabs, useRouter } from "expo-router";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   CalendarRange,
   Compass,
@@ -9,21 +10,24 @@ import {
 } from "lucide-react-native";
 
 export default function PublicLayout() {
+  const t = useTokens();
   const router = useRouter();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
+        // No borderTop: a 1px rule across the tab bar is exactly the hairline
+        // the product stopped drawing. The bar separates by sitting on its own
+        // surface, not by a line.
         tabBarStyle: {
-          backgroundColor: "#05191B",
-          borderTopColor: "#1F1F1F",
-          borderTopWidth: 1,
+          backgroundColor: t.bg,
+          borderTopWidth: 0,
           height: 64,
           paddingBottom: 8,
           paddingTop: 8,
         },
-        tabBarActiveTintColor: "#46E3CE",
-        tabBarInactiveTintColor: "#666666",
+        tabBarActiveTintColor: t.brand,
+        tabBarInactiveTintColor: t.muted,
         tabBarLabelStyle: {
           fontSize: 11,
           fontFamily: "GeistMedium",

@@ -1,9 +1,11 @@
 import { Redirect, Stack } from "expo-router";
+import { useTokens } from "@/lib/theme/tokens";
 
 import { useAuth } from "@/components/providers";
 import { hasMinRole } from "@/lib/auth/roles";
 
 export default function AdminLayout() {
+  const t = useTokens();
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
@@ -25,11 +27,11 @@ export default function AdminLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: "#05191B" },
-        headerTintColor: "#EAF6F5",
-        headerTitleStyle: { color: "#EAF6F5", fontFamily: "GeistSemiBold" },
+        headerStyle: { backgroundColor: t.bg },
+        headerTintColor: t.fg,
+        headerTitleStyle: { color: t.fg, fontFamily: "GeistSemiBold" },
         headerBackTitle: "Back",
-        contentStyle: { backgroundColor: "#05191B" },
+        contentStyle: { backgroundColor: t.bg },
         animation: "slide_from_right",
       }}
     />

@@ -1,3 +1,79 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/**
+ * Two palettes, one set of names.
+ *
+ * The app shipped a single fixed dark palette and no `dark:` variants at all,
+ * so the appearance setting in Settings had nothing to switch to and did
+ * visibly nothing. Defining the semantic names as variables here and pointing
+ * `tailwind.config.js` at them means every `bg-background`, `text-foreground`
+ * and `bg-card` in the app follows the setting without a single component
+ * changing.
+ *
+ * Values are space-separated RGB channels rather than hex, which is what lets
+ * `bg-card/40` and friends keep working: Tailwind composes them as
+ * `rgb(var(--card) / 0.4)`.
+ *
+ * Dark is the designed state and stays exactly as it was, sampled from the
+ * wordmark. Light is built to the same relationships rather than inverted:
+ * the page sits slightly off-white so cards can be pure white and still read
+ * as raised, the mint darkens to hold contrast on a light ground, and the
+ * border stays transparent because the no-hairlines rule applies to both.
+ */
+@layer base {
+  :root {
+    /* Light. Off-white, never #fff on the page itself. */
+    --background: 244 247 246;
+    --foreground: 8 34 36;
+    --card: 255 255 255;
+    --card-foreground: 8 34 36;
+    --popover: 255 255 255;
+    --popover-foreground: 8 34 36;
+    /* Mint at full strength is unreadable on white, so the light palette uses
+       a darkened brand for anything carrying text and keeps the bright mint
+       for fills that sit under dark type. */
+    --primary: 12 122 110;
+    --primary-foreground: 255 255 255;
+    --secondary: 226 238 236;
+    --secondary-foreground: 8 34 36;
+    --muted: 226 238 236;
+    --muted-foreground: 82 110 110;
+    --accent: 214 233 230;
+    --accent-foreground: 8 34 36;
+    --destructive: 200 30 30;
+    --destructive-foreground: 255 255 255;
+    --brand: 12 122 110;
+    --brand-blue: 27 122 184;
+    /* Structure comes from surface and space. See the hairline ban. */
+    --border: 0 0 0;
+    --input: 214 233 230;
+    --ring: 12 122 110;
+  }
+
+  .dark:root {
+    /* Dark. Unchanged: sampled from the wordmark gradient on the hero. */
+    --background: 5 25 27;
+    --foreground: 234 246 245;
+    --card: 10 36 38;
+    --card-foreground: 234 246 245;
+    --popover: 10 36 38;
+    --popover-foreground: 234 246 245;
+    --primary: 70 227 206;
+    --primary-foreground: 5 25 27;
+    --secondary: 16 49 51;
+    --secondary-foreground: 234 246 245;
+    --muted: 16 49 51;
+    --muted-foreground: 159 189 189;
+    --accent: 16 49 51;
+    --accent-foreground: 234 246 245;
+    --destructive: 255 74 56;
+    --destructive-foreground: 255 230 226;
+    --brand: 70 227 206;
+    --brand-blue: 66 172 232;
+    --border: 0 0 0;
+    --input: 23 69 74;
+    --ring: 70 227 206;
+  }
+}

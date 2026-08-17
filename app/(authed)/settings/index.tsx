@@ -46,6 +46,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { SectionCard, SettingRow } from "@/components/settings/section-card";
 import { AppLockRow } from "@/components/settings/app-lock-row";
 import { useNativePushState } from "@/lib/push/state";
+import {
+  disableNativePush,
+  enableNativePush,
+  openSystemNotificationSettings,
+} from "@/lib/push/register";
 import { changePassword } from "@/lib/api/me";
 import { exportOwnData } from "@/lib/api/profile";
 import { getMyPrefs, patchMyPrefs } from "@/lib/api/prefs";
@@ -92,8 +97,12 @@ function pushRowCopy(state: ReturnType<typeof useNativePushState>): string {
   switch (state.kind) {
     case "registered":
       return "This phone is registered and can receive alerts";
+    case "off":
+      return "Turned off. Turn it back on to start receiving alerts here again.";
     case "denied":
-      return "Turned off in your phone settings. Allow notifications for EVO TV there.";
+      return "Not allowed yet. Turn it on and your phone will ask again.";
+    case "blocked":
+      return "Blocked in your phone's settings. Turn it on to open them.";
     case "unconfigured":
       return "This build cannot receive push. Nothing you can change here; it needs a new build.";
     case "unsupported":
@@ -103,12 +112,66 @@ function pushRowCopy(state: ReturnType<typeof useNativePushState>): string {
   }
 }
 
+/** The states a person can act on from inside the app. */
+function pushRowIsActionable(state: ReturnType<typeof useNativePushState>): boolean {
+  return (
+    state.kind === "registered" ||
+    state.kind === "off" ||
+    state.kind === "denied" ||
+    state.kind === "blocked"
+  );
+}
+
 export default function SettingsScreen() {
   const palette = useTokens();
   const router = useRouter();
   const { user, accountEmail, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
   const pushState = useNativePushState();
+  const [pushBusy, setPushBusy] = React.useState(false);
+
+  /**
+   * The push switch.
+   *
+   * Turning it on has three possible endings, and the switch has to tell them
+   * apart or it lies. Permission granted means a token and a real "on".
+   * Declined but askable means the OS showed the prompt and the answer was no,
+   * so the switch goes back off. Blocked means the OS will not prompt at all
+   * any more, and the only honest thing left is to open the system settings
+   * page rather than flick a switch that does nothing.
+   */
+  const handlePushToggle = React.useCallback(
+    async (next: boolean) => {
+      if (pushBusy) return;
+      setPushBusy(true);
+      try {
+        if (!next) {
+          await disableNativePush();
+          return;
+        }
+        if (pushState.kind === "blocked") {
+          await openSystemNotificationSettings();
+          toast.info("Allow notifications for EVO TV, then come back");
+          return;
+        }
+        const result = await enableNativePush(true);
+        if (result.kind === "registered") {
+          toast.success("Push is on for this phone");
+        } else if (result.kind === "denied") {
+          toast.error("Notifications were not allowed");
+        } else if (result.kind === "blocked") {
+          toast.error("Blocked on this phone", {
+            description: "Turn the switch on again to open your settings.",
+          });
+        } else if (result.kind === "unconfigured") {
+          toast.error("This build cannot receive push");
+        }
+      } finally {
+        setPushBusy(false);
+      }
+    },
+    [pushBusy, pushState.kind],
+  );
 
   const [prefs, setPrefs] = React.useState<UserPrefs | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -460,9 +523,20 @@ export default function SettingsScreen() {
                 label="Push on this device"
                 description={pushRowCopy(pushState)}
               >
-                <Badge variant={pushState.kind === "registered" ? "default" : "secondary"}>
-                  {pushState.kind === "registered" ? "On" : "Off"}
-                </Badge>
+                {/* A switch rather than the badge this used to be. The badge
+                    reported the state and offered no way to change it, so
+                    somebody who dismissed the OS prompt was simply stuck: the
+                    system stops asking after a couple of dismissals, and the
+                    app had no route back. */}
+                {pushRowIsActionable(pushState) ? (
+                  <Switch
+                    checked={pushState.kind === "registered"}
+                    disabled={pushBusy}
+                    onCheckedChange={handlePushToggle}
+                  />
+                ) : (
+                  <Badge variant="secondary">Off</Badge>
+                )}
               </SettingRow>
               <View className="h-px bg-border" />
               <SettingRow

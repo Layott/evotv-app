@@ -417,7 +417,7 @@ export default function PublicProfileScreen() {
           {/* CHANNELS */}
           {profileQ.data.channels.length > 0 ? (
             <View className="px-4 pt-8 gap-3">
-              <Text className="text-xs font-semibold st text-muted-foreground">
+              <Text className="text-xs font-semibold text-muted-foreground">
                 Channels
               </Text>
               {profileQ.data.channels.map((c) => (
@@ -430,7 +430,7 @@ export default function PublicProfileScreen() {
           {profileQ.data.recentClips.length > 0 ? (
             <View className="pt-8 gap-3">
               <View className="flex-row items-center justify-between px-4">
-                <Text className="text-xs font-semibold st text-muted-foreground">
+                <Text className="text-xs font-semibold text-muted-foreground">
                   Recent clips
                 </Text>
                 <Badge
@@ -457,7 +457,7 @@ export default function PublicProfileScreen() {
           {profileQ.data.recentVods.length > 0 ? (
             <View className="pt-8 gap-3">
               <View className="flex-row items-center justify-between px-4">
-                <Text className="text-xs font-semibold st text-muted-foreground">
+                <Text className="text-xs font-semibold text-muted-foreground">
                   Recent VODs
                 </Text>
                 <Badge

@@ -84,7 +84,7 @@ export default function StreamKeyScreen() {
           </Text>
 
           <View className="mt-5 rounded-2xl bg-card/60 p-4">
-            <Text className="text-[10px] r text-muted-foreground">
+            <Text className="text-[10px] text-muted-foreground">
               Ingest URL
             </Text>
             <View className="mt-2 flex-row items-center gap-2">
@@ -130,7 +130,7 @@ export default function StreamKeyScreen() {
             </View>
           ) : (
             <View className="mt-4 rounded-2xl bg-card/60 p-4">
-              <Text className="text-[10px] r text-muted-foreground">
+              <Text className="text-[10px] text-muted-foreground">
                 Active key
               </Text>
               <Text className="mt-2 text-sm text-foreground">

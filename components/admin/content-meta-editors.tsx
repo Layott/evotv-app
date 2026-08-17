@@ -32,11 +32,11 @@ export function MaturityEditor({
           Maturity rating
         </Text>
         {current ? (
-          <Text className="ml-auto text-[10px] r text-cyan-400">
+          <Text className="ml-auto text-[10px] text-cyan-400">
             {MATURITY_LABELS[current]}
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] r text-muted-foreground">
+          <Text className="ml-auto text-[10px] text-muted-foreground">
             Unrated
           </Text>
         )}
@@ -131,7 +131,7 @@ export function ContentTagsEditor({
         <Text className="text-sm font-semibold text-foreground">
           Content tags
         </Text>
-        <Text className="ml-auto text-[10px] r text-muted-foreground">
+        <Text className="ml-auto text-[10px] text-muted-foreground">
           {tags.length} tag{tags.length === 1 ? "" : "s"}
         </Text>
       </View>

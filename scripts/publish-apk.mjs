@@ -36,15 +36,61 @@ if (!fs.existsSync(file)) {
   process.exit(1);
 }
 
+/**
+ * Credentials come from `.publish.env` beside the repo root, not the shell.
+ *
+ * Publishing needs an admin credential, and the obvious way to supply one is to
+ * paste it into a command. That is the wrong shape for a secret: it lands in
+ * shell history, in scrollback, and in any transcript of the session that ran
+ * it. A gitignored file is read by the process that needs it and by nothing
+ * else, so whoever runs the publish never has to hold the value in their hands.
+ *
+ * Format is plain `KEY=value` lines; `#` comments and blanks are ignored.
+ */
+function loadEnvFile() {
+  const envPath = path.resolve(process.cwd(), ".publish.env");
+  if (!fs.existsSync(envPath)) return;
+  for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) continue;
+    const key = trimmed.slice(0, eq).trim();
+    // Strip one layer of surrounding quotes, which people add out of habit.
+    const value = trimmed.slice(eq + 1).trim().replace(/^["'](.*)["']$/, "$1");
+    // The shell wins, so a one-off override is still possible.
+    if (!process.env[key]) process.env[key] = value;
+  }
+}
+loadEnvFile();
+
 const base = (process.env.EVOTV_API_BASE ?? "").replace(/\/$/, "");
+
+/**
+ * An API key is the right credential here and a session token is not.
+ *
+ * `getCurrentUser()` on the backend falls back to `X-API-Key` when there is no
+ * session, so a key issued at /api-access/keys authorises these routes exactly
+ * as a signed-in admin would. Unlike a session token it is minted for this
+ * purpose, it does not die when somebody signs out, and it can be revoked on
+ * its own without ending anybody's login.
+ *
+ * The bearer path stays for whoever already has a token to hand.
+ */
+const apiKey = process.env.EVOTV_API_KEY;
 const token = process.env.EVOTV_ADMIN_TOKEN;
-if (!base || !token) {
+if (!base || (!apiKey && !token)) {
   console.error(
     [
-      "Not publishing: EVOTV_API_BASE and EVOTV_ADMIN_TOKEN are both required.",
+      "Not publishing: missing credentials.",
+      "",
+      "Create `.publish.env` in this repo (already gitignored) containing:",
       "",
       "  EVOTV_API_BASE=https://api.evotv.co",
-      "  EVOTV_ADMIN_TOKEN=<bearer token for an admin account>",
+      "  EVOTV_API_KEY=<admin API key from https://evotv.co/api-access/keys>",
+      "",
+      "An `EVOTV_ADMIN_TOKEN=<bearer token>` is accepted instead, but a key is",
+      "better: it is revocable on its own and survives a sign-out.",
       "",
       "The APK is still built and sitting in builds/. Publishing is the only",
       "step that was skipped.",
@@ -83,7 +129,7 @@ async function api(pathname, init = {}) {
   const res = await fetch(`${base}${pathname}`, {
     ...init,
     headers: {
-      Authorization: `Bearer ${token}`,
+      ...(apiKey ? { "X-API-Key": apiKey } : { Authorization: `Bearer ${token}` }),
       "Content-Type": "application/json",
       ...(init.headers ?? {}),
     },

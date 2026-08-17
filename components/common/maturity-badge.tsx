@@ -47,8 +47,6 @@ export function MaturityBadge({ rating, className }: MaturityBadgeProps) {
     <View
       className={`rounded-md px-2 py-0.5 ${className ?? ""}`}
       style={{
-        borderWidth: 1,
-        borderColor: tone.border,
         backgroundColor: tone.bg,
       }}
     >

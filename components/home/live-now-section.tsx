@@ -1,7 +1,8 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Eye } from "lucide-react-native";
+import { Eye } from "@/components/icons";
 
 import type { Game, Stream } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,9 +29,7 @@ function LiveBadge() {
     <View
       className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
       style={{
-        borderWidth: 1,
-        borderColor: "rgba(239,68,68,0.3)",
-        backgroundColor: "rgba(239,68,68,0.1)",
+        backgroundColor: "rgba(239,68,68,0.25)",
       }}
     >
       <View
@@ -66,6 +65,7 @@ function SkeletonCard() {
 }
 
 export function LiveNow({ streams, games, loading }: LiveNowProps) {
+  const palette = useTokens();
   const router = useRouter();
   const gameMap = React.useMemo(
     () => new Map(games.map((g) => [g.id, g])),
@@ -80,7 +80,7 @@ export function LiveNow({ streams, games, loading }: LiveNowProps) {
           onPress={() => router.push("/discover")}
           className="active:opacity-70"
         >
-          <Text className="text-xs font-medium" style={{ color: "#46E3CE" }}>
+          <Text className="text-xs font-medium" style={{ color: palette.brand }}>
             See all
           </Text>
         </Pressable>
@@ -135,8 +135,8 @@ export function LiveNow({ streams, games, loading }: LiveNowProps) {
                     className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
                     style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
                   >
-                    <Eye size={12} color="#e5e5e5" />
-                    <Text style={{ fontSize: 11, color: "#e5e5e5" }}>
+                    <Eye size={12} color={palette.fg} />
+                    <Text style={{ fontSize: 11, color: palette.fg }}>
                       {formatViewers(s.viewerCount)}
                     </Text>
                   </View>
@@ -152,7 +152,7 @@ export function LiveNow({ streams, games, loading }: LiveNowProps) {
                     {s.streamerName}
                   </Text>
                   {game ? (
-                    <Text style={{ fontSize: 11, color: "#46E3CE" }}>
+                    <Text style={{ fontSize: 11, color: palette.brand }}>
                       {game.shortName}
                     </Text>
                   ) : null}

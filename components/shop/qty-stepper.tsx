@@ -1,6 +1,7 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
-import { Minus, Plus } from "lucide-react-native";
+import { Minus, Plus } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,7 @@ export function QtyStepper({
   min = 1,
   max = 99,
 }: QtyStepperProps) {
+  const palette = useTokens();
   const decDisabled = value <= min;
   const incDisabled = value >= max;
   return (
@@ -33,7 +35,7 @@ export function QtyStepper({
           decDisabled && "opacity-40",
         )}
       >
-        <Minus size={16} color="#e5e5e5" />
+        <Minus size={16} color={palette.fg} />
       </Pressable>
       <View
         style={{ minWidth: 40, alignItems: "center" }}
@@ -50,7 +52,7 @@ export function QtyStepper({
           incDisabled && "opacity-40",
         )}
       >
-        <Plus size={16} color="#e5e5e5" />
+        <Plus size={16} color={palette.fg} />
       </Pressable>
     </View>
   );

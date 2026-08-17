@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { Mail, Palette, Save, ToggleLeft } from "lucide-react-native";
+import { Check, Mail, Palette, Save, ToggleLeft } from "@/components/icons";
 import { toast } from "sonner-native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { PageHeader } from "./page-header";
+import { SectionLinks } from "./section-links";
 
 const EMAIL_TEMPLATES: Record<string, { label: string; body: string }> = {
   welcome: {
@@ -69,6 +70,8 @@ export function AdminSettingsPage() {
           title="Settings"
           description="Feature flags, branding and email templates."
         />
+
+        <SectionLinks parent="/admin/settings" />
 
         <Tabs defaultValue="flags">
           <TabsList className="mb-4">
@@ -202,6 +205,8 @@ function BrandingSection() {
 
       <View className="mt-3 flex-row flex-wrap gap-2">
         {["#46E3CE", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"].map((c) => (
+          // A swatch's fill is the value it stands for, so selection cannot be
+          // another fill - and it must not be a ring. A tick inside it is.
           <Pressable
             key={c}
             onPress={() => setPrimary(c)}
@@ -210,10 +215,12 @@ function BrandingSection() {
               width: 32,
               height: 32,
               borderRadius: 6,
-              borderWidth: primary === c ? 2 : 0,
-              borderColor: "#EAF6F5",
+              alignItems: "center",
+              justifyContent: "center",
             }}
-          />
+          >
+            {primary === c ? <Check size={16} color="#05191B" /> : null}
+          </Pressable>
         ))}
       </View>
 

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { router } from "expo-router";
 import { AppState, type AppStateStatus, Image, Platform, Pressable, Text, View } from "react-native";
 
 import { useAuth } from "./auth-provider";
@@ -7,7 +8,7 @@ import {
   authenticate,
   isLockEnabled,
 } from "@/lib/security/app-lock";
-import { tokens } from "@/lib/theme/tokens";
+import { tokens, useTokens } from "@/lib/theme/tokens";
 
 /**
  * Holds the app behind the device's own unlock when the setting is on.
@@ -32,6 +33,7 @@ interface Props {
 }
 
 export function AppLockGate({ children }: Props) {
+  const palette = useTokens();
   const { isAuthenticated, isLoading, logout } = useAuth();
   const [enabled, setEnabled] = React.useState<boolean | null>(null);
   const [locked, setLocked] = React.useState(false);
@@ -66,16 +68,32 @@ export function AppLockGate({ children }: Props) {
     };
   }, [isLoading, isAuthenticated]);
 
+  /**
+   * True while the system unlock dialog is open.
+   *
+   * A ref as well as state, because the AppState listener below reads it from
+   * inside a closure that must not be torn down and rebuilt every time the
+   * dialog opens.
+   */
+  const promptingRef = React.useRef(false);
+
   const unlock = React.useCallback(async () => {
-    if (prompting) return;
+    if (promptingRef.current) return;
+    promptingRef.current = true;
     setPrompting(true);
     try {
       const ok = await authenticate("Unlock EVO TV");
-      if (ok) setLocked(false);
+      if (ok) {
+        setLocked(false);
+        // Cleared so the "active" event that arrives as the dialog closes
+        // cannot be measured against a timestamp taken when it opened.
+        backgroundedAt.current = null;
+      }
     } finally {
+      promptingRef.current = false;
       setPrompting(false);
     }
-  }, [prompting]);
+  }, []);
 
   // Ask as soon as the lock appears, so the common case is one glance at the
   // phone rather than a screen that waits to be tapped first.
@@ -93,6 +111,17 @@ export function AppLockGate({ children }: Props) {
     if (!enabled || !isAuthenticated) return;
 
     const onChange = (state: AppStateStatus) => {
+      /*
+       * The unlock dialog is not the user leaving.
+       *
+       * On iOS opening a system dialog reports "inactive", which the check
+       * below already skipped. Android reports a full "background" instead, so
+       * asking for a fingerprint started the away clock, and an unlock that
+       * took longer than the window re-locked the app the instant it
+       * succeeded. That is the "I unlock it and it locks again" loop.
+       */
+      if (promptingRef.current) return;
+
       if (state === "active") {
         const away = backgroundedAt.current;
         backgroundedAt.current = null;
@@ -101,9 +130,7 @@ export function AppLockGate({ children }: Props) {
         }
         return;
       }
-      // "inactive" is the iOS app-switcher preview and the moment a system
-      // dialog opens, including the unlock prompt itself. Only a real
-      // background start the clock, or unlocking would re-lock the app.
+
       if (state === "background" && backgroundedAt.current === null) {
         backgroundedAt.current = Date.now();
       }
@@ -121,7 +148,7 @@ export function AppLockGate({ children }: Props) {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: tokens.bg,
+        backgroundColor: palette.bg,
         padding: 24,
       }}
     >
@@ -133,7 +160,7 @@ export function AppLockGate({ children }: Props) {
       <Text
         style={{
           marginTop: 24,
-          color: tokens.fg,
+          color: palette.fg,
           fontSize: 20,
           fontWeight: "700",
         }}
@@ -144,12 +171,12 @@ export function AppLockGate({ children }: Props) {
         style={{
           marginTop: 8,
           textAlign: "center",
-          color: tokens.muted,
+          color: palette.muted,
           fontSize: 14,
           maxWidth: 300,
         }}
       >
-        Unlock to pick up where you left off. You stay signed in.
+        Unlock with your fingerprint or face, or sign in the usual way.
       </Text>
 
       <Pressable
@@ -161,23 +188,38 @@ export function AppLockGate({ children }: Props) {
           justifyContent: "center",
           paddingHorizontal: 28,
           borderRadius: 7,
-          backgroundColor: tokens.brand,
+          backgroundColor: palette.brand,
           opacity: prompting ? 0.6 : 1,
         }}
       >
-        <Text style={{ color: tokens.bg, fontSize: 16, fontWeight: "700" }}>
+        <Text style={{ color: palette.bg, fontSize: 16, fontWeight: "700" }}>
           {prompting ? "Waiting…" : "Unlock"}
         </Text>
       </Pressable>
 
-      {/* The way out for somebody whose sensor has stopped recognising them,
-          or who is handing the phone to someone else. */}
+      {/*
+        The other way in, offered at the same time rather than as a punishment.
+        This used to read "Sign out instead", which is the same action described
+        as a loss: somebody whose sensor has stopped recognising them was told
+        their only remaining option was to leave. Signing in with a password or
+        with Google is a normal thing to want to do, and the screen now says so.
+      */}
       <Pressable
-        onPress={() => void logout()}
-        style={{ marginTop: 16, minHeight: 44, justifyContent: "center", paddingHorizontal: 16 }}
+        onPress={async () => {
+          await logout();
+          router.replace("/(auth)/login");
+        }}
+        style={{
+          marginTop: 14,
+          minHeight: 48,
+          justifyContent: "center",
+          paddingHorizontal: 24,
+          borderRadius: 7,
+          backgroundColor: palette.input,
+        }}
       >
-        <Text style={{ color: tokens.muted, fontSize: 14 }}>
-          Sign out instead
+        <Text style={{ color: palette.fg, fontSize: 15, fontWeight: "600" }}>
+          Sign in with email or Google
         </Text>
       </Pressable>
     </View>

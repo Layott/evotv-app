@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -8,7 +9,7 @@ import {
   Printer,
   ShoppingBag,
   Truck,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Badge } from "@/components/ui/badge";
@@ -96,6 +97,7 @@ interface OrderViewProps {
 }
 
 export function OrderView({ id }: OrderViewProps) {
+  const palette = useTokens();
   const router = useRouter();
   const [order, setOrder] = React.useState<Order | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -135,7 +137,7 @@ export function OrderView({ id }: OrderViewProps) {
   if (missing || !order) {
     return (
       <View className="flex-1 items-center justify-center bg-background px-4">
-        <Package size={36} color="#525252" />
+        <Package size={36} color={palette.muted} />
         <Text className="mt-3 text-base font-semibold text-foreground">
           Order not found
         </Text>
@@ -157,7 +159,7 @@ export function OrderView({ id }: OrderViewProps) {
   const steps: {
     key: OrderStatus;
     label: string;
-    icon: import("lucide-react-native").LucideIcon;
+    icon: import("@/components/icons").Icon;
     at: string;
   }[] = [
     {
@@ -198,7 +200,7 @@ export function OrderView({ id }: OrderViewProps) {
         <View className="rounded-2xl border border-border bg-card p-5">
           <View className="flex-row flex-wrap items-start justify-between gap-3">
             <View className="flex-1">
-              <Text className="text-[11px] uppercase tracking-wider text-muted-foreground">
+              <Text className="text-[11px] r text-muted-foreground">
                 Order
               </Text>
               <Text className="font-mono text-lg font-bold text-foreground">
@@ -237,10 +239,10 @@ export function OrderView({ id }: OrderViewProps) {
                     <View
                       className="h-8 w-8 items-center justify-center rounded-full"
                       style={{
-                        backgroundColor: active ? "#46E3CE" : "#103133",
+                        backgroundColor: active ? palette.brand : palette.subtle,
                       }}
                     >
-                      <Icon size={14} color={active ? "#05191B" : "#737373"} />
+                      <Icon size={14} color={active ? palette.bg : palette.muted} />
                     </View>
                     <View className="flex-1">
                       <Text className="text-sm font-semibold text-foreground">
@@ -392,14 +394,14 @@ export function OrderView({ id }: OrderViewProps) {
           onPress={() => toast("Receipt download is desktop-only")}
           className="flex-1"
         >
-          <Printer size={14} color="#EAF6F5" />
+          <Printer size={14} color={palette.fg} />
           <Text className="text-sm font-medium text-foreground">Receipt</Text>
         </Button>
         <Pressable
           onPress={() => router.push("/(public)/shop")}
           className="flex-1 h-9 flex-row items-center justify-center gap-2 rounded-md bg-brand px-4 active:opacity-80"
         >
-          <ShoppingBag size={14} color="#05191B" />
+          <ShoppingBag size={14} color={palette.bg} />
           <Text className="text-sm font-medium text-black">Continue</Text>
         </Pressable>
       </View>

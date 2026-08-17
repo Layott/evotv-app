@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   Dimensions,
   FlatList,
@@ -7,7 +8,7 @@ import {
   type FlatListProps,
   type ViewProps,
 } from "react-native";
-import { ArrowLeft, ArrowRight } from "lucide-react-native";
+import { ArrowLeft, ArrowRight } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
@@ -10,9 +11,9 @@ import {
   Film,
   Package,
   Play,
-  Star,
+  BadgeCheck,
   UserPlus,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
@@ -33,13 +34,13 @@ import type { NotificationItem, NotificationType } from "@/lib/types";
 import { relativeTime } from "@/components/profile/ngn";
 import { cn } from "@/lib/utils";
 
-const ICONS: Record<NotificationType, import("lucide-react-native").LucideIcon> = {
+const ICONS: Record<NotificationType, import("@/components/icons").Icon> = {
   stream_live: Play,
   event_starting: Calendar,
   new_vod: Film,
   follow: UserPlus,
   order_update: Package,
-  subscription: Star,
+  subscription: BadgeCheck,
   system: AlertCircle,
 };
 
@@ -73,6 +74,7 @@ function Row({
   n: NotificationItem;
   onPress: () => void;
 }) {
+  const palette = useTokens();
   const Icon = ICONS[n.type] ?? Bell;
   const unread = n.readAt === null;
   return (
@@ -96,16 +98,16 @@ function Row({
           </View>
         ) : (
           <View className="h-12 w-12 items-center justify-center rounded-lg bg-muted">
-            <Icon size={20} color="#46E3CE" />
+            <Icon size={20} color={palette.brand} />
           </View>
         )}
         {unread ? (
           <View
             className="absolute -right-1 -top-1 h-3 w-3 rounded-full"
             style={{
-              backgroundColor: "#46E3CE",
+              backgroundColor: palette.brand,
               borderWidth: 2,
-              borderColor: "#05191B",
+              borderColor: palette.bg,
             }}
           />
         ) : null}
@@ -128,7 +130,7 @@ function Row({
         >
           {n.body}
         </Text>
-        <Text className="mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+        <Text className="mt-1 text-[11px] text-muted-foreground">
           {relativeTime(n.createdAt)}
         </Text>
       </View>
@@ -165,7 +167,7 @@ function GroupedList({
       {order.map((k) => (
         <View key={k}>
           <View className="mb-1 px-1">
-            <Text className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            <Text className="text-[11px] r text-muted-foreground">
               {k}
             </Text>
           </View>
@@ -181,9 +183,10 @@ function GroupedList({
 }
 
 function EmptyState({ label = "Nothing here yet." }: { label?: string }) {
+  const palette = useTokens();
   return (
-    <View className="items-center rounded-2xl border border-dashed border-border bg-card p-10">
-      <Bell size={36} color="#525252" />
+    <View className="items-center rounded-2xl bg-card p-10">
+      <Bell size={36} color={palette.muted} />
       <Text className="mt-3 text-sm font-semibold text-foreground">
         {label}
       </Text>
@@ -192,6 +195,7 @@ function EmptyState({ label = "Nothing here yet." }: { label?: string }) {
 }
 
 export default function NotificationsScreen() {
+  const palette = useTokens();
   const { user } = useAuth();
   const router = useRouter();
   const [items, setItems] = React.useState<NotificationItem[]>([]);
@@ -281,7 +285,7 @@ export default function NotificationsScreen() {
               onPress={handleMarkAll}
               disabled={unread.length === 0}
             >
-              <CheckCheck size={14} color="#EAF6F5" />
+              <CheckCheck size={14} color={palette.fg} />
               <Text className="text-sm font-medium text-foreground">
                 Mark all read
               </Text>

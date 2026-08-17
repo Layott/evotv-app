@@ -1,7 +1,8 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Eye, Play } from "lucide-react-native";
+import { Eye, Play } from "@/components/icons";
 
 import type { Clip } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -35,6 +36,7 @@ function SkeletonCard() {
 }
 
 export function TrendingClips({ clips, loading }: TrendingClipsProps) {
+  const palette = useTokens();
   const router = useRouter();
 
   return (
@@ -47,7 +49,7 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
           onPress={() => router.push("/discover")}
           className="active:opacity-70"
         >
-          <Text className="text-xs font-medium" style={{ color: "#46E3CE" }}>
+          <Text className="text-xs font-medium" style={{ color: palette.brand }}>
             See all
           </Text>
         </Pressable>
@@ -110,8 +112,7 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
                     style={{
                       width: 28,
                       height: 28,
-                      borderWidth: 2,
-                      borderColor: "rgba(255,255,255,0.4)",
+                      backgroundColor: "rgba(255,255,255,0.2)",
                     }}
                   >
                     <ImageWithFallback
@@ -137,7 +138,7 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
                       backgroundColor: "rgba(70,227,206,0.85)",
                     }}
                   >
-                    <Play size={18} color="#05191B" fill="#05191B" />
+                    <Play size={18} color={palette.bg} />
                   </View>
                 </View>
 

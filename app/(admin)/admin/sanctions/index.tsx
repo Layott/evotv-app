@@ -1,8 +1,9 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack } from "expo-router";
-import { ShieldBan, ShieldOff } from "lucide-react-native";
+import { ShieldBan, ShieldOff } from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -37,6 +38,7 @@ function fmtDate(iso: string | null): string {
 }
 
 export default function SanctionsListScreen() {
+  const palette = useTokens();
   const queryClient = useQueryClient();
   const [filter, setFilter] = React.useState<SanctionKind | "all">("all");
 
@@ -108,8 +110,8 @@ export default function SanctionsListScreen() {
               <Spinner size="large" />
             </View>
           ) : sanctions.length === 0 ? (
-            <View className="items-center rounded-xl border border-dashed border-border p-8">
-              <ShieldOff size={20} color="#737373" />
+            <View className="items-center rounded-xl bg-card/50 p-8">
+              <ShieldOff size={20} color={palette.muted} />
               <Text className="mt-2 text-sm text-muted-foreground">
                 No active sanctions{filter === "all" ? "" : ` of type ${filter}`}.
               </Text>
@@ -146,14 +148,14 @@ export default function SanctionsListScreen() {
                     className="rounded-md border border-border bg-background px-2.5 py-1"
                   >
                     <View className="flex-row items-center gap-1">
-                      <ShieldOff size={11} color="#EAF6F5" />
+                      <ShieldOff size={11} color={palette.fg} />
                       <Text className="text-[11px] text-foreground">Revert</Text>
                     </View>
                   </Pressable>
                 </View>
                 <View className="mt-3">
                   <Text
-                    className="text-[11px] font-bold uppercase tracking-wider"
+                    className="text-[11px] font-bold r"
                     style={{ color: kindColor(s.kind as SanctionKind) }}
                   >
                     {s.kind.replace("_", " ")}

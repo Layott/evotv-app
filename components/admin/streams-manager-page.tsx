@@ -20,7 +20,7 @@ import {
   X,
   Square,
   Trash2,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -43,6 +43,7 @@ import { Input } from "@/components/ui/input";
 import type { MaturityRating } from "@/lib/types";
 
 import { PageHeader } from "./page-header";
+import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { ContentTagsEditor, MaturityEditor } from "./content-meta-editors";
 import { formatCompact, timeAgo } from "./utils";
@@ -287,6 +288,8 @@ export function StreamsManagerPage() {
           description="Read-only browse - stream keys + create + rotate via dedicated screens later."
         />
 
+        <SectionLinks parent="/admin/streams" />
+
         <View className="mb-3 flex-row items-center gap-2">
           <View className="flex-1 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
             <Search size={14} color="#9FBDBD" />
@@ -464,7 +467,7 @@ export function StreamsManagerPage() {
                   {selected.isPremium ? (
                     <StatusBadge tone="amber">Premium</StatusBadge>
                   ) : null}
-                  <StatusBadge tone="violet">{selected.streamerType}</StatusBadge>
+                  <StatusBadge tone="neutral">{selected.streamerType}</StatusBadge>
                   <StatusBadge tone="neutral">{selected.language}</StatusBadge>
                 </View>
 
@@ -560,7 +563,7 @@ export function StreamsManagerPage() {
                     <Pressable
                       onPress={() => restoreMut.mutate(selected)}
                       disabled={restoreMut.isPending}
-                      className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-3 py-3"
+                      className="flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-emerald-500/20 bg-emerald-500/15 px-3 py-3"
                     >
                       <RotateCcw size={14} color="#10B981" />
                       <Text className="text-sm font-semibold text-emerald-400">
@@ -573,7 +576,7 @@ export function StreamsManagerPage() {
                         <Pressable
                           onPress={() => handleForceEnd(selected)}
                           disabled={forceEndMut.isPending}
-                          className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/15 px-3 py-3"
+                          className="flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-amber-500/20 bg-amber-500/15 px-3 py-3"
                         >
                           <Square size={14} color="#F59E0B" />
                           <Text className="text-sm font-semibold text-amber-400">
@@ -584,7 +587,7 @@ export function StreamsManagerPage() {
                       <Pressable
                         onPress={() => handleDelete(selected)}
                         disabled={deleteMut.isPending}
-                        className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-destructive/40 bg-destructive/15 px-3 py-3"
+                        className="flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-destructive/20 bg-destructive/15 px-3 py-3"
                       >
                         <Trash2 size={14} color="#EF4444" />
                         <Text className="text-sm font-semibold text-destructive">
@@ -684,17 +687,17 @@ function ScheduleEditor({
           EPG schedule
         </Text>
         {stream.scheduledStartAt ? (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+          <Text className="ml-auto text-[10px] r text-cyan-400">
             Programmed
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="ml-auto text-[10px] r text-muted-foreground">
             Unscheduled
           </Text>
         )}
       </View>
 
-      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+      <Text className="mb-1 text-[11px] r text-muted-foreground">
         Airs at (local time)
       </Text>
       <Input
@@ -704,7 +707,7 @@ function ScheduleEditor({
         className="mb-3 h-9"
       />
 
-      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+      <Text className="mb-1 text-[11px] r text-muted-foreground">
         Duration (minutes)
       </Text>
       <Input
@@ -731,7 +734,7 @@ function ScheduleEditor({
             onSave(parsed.toISOString(), Math.round(d));
           }}
           disabled={!canSave || !dirty || isPending}
-          className="flex-1 items-center rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+          className="flex-1 items-center rounded-lg bg-cyan-500/20 bg-cyan-500/15 px-3 py-2"
           style={{ opacity: !canSave || !dirty || isPending ? 0.5 : 1 }}
         >
           <Text className="text-xs font-semibold text-cyan-300">
@@ -793,17 +796,17 @@ function HlsUrlEditor({
           Playback URL (HLS)
         </Text>
         {stream.hlsUrl ? (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+          <Text className="ml-auto text-[10px] r text-cyan-400">
             Set
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="ml-auto text-[10px] r text-muted-foreground">
             Auto
           </Text>
         )}
       </View>
 
-      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+      <Text className="mb-1 text-[11px] r text-muted-foreground">
         .m3u8 manifest URL
       </Text>
       <Input
@@ -825,7 +828,7 @@ function HlsUrlEditor({
             onSave(trimmed);
           }}
           disabled={!dirty || !valid || isPending}
-          className="flex-1 items-center rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+          className="flex-1 items-center rounded-lg bg-cyan-500/20 bg-cyan-500/15 px-3 py-2"
           style={{ opacity: !dirty || !valid || isPending ? 0.5 : 1 }}
         >
           <Text className="text-xs font-semibold text-cyan-300">
@@ -886,11 +889,11 @@ function ThumbnailEditor({
           Thumbnail
         </Text>
         {stream.thumbnailUrl ? (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+          <Text className="ml-auto text-[10px] r text-cyan-400">
             Set
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="ml-auto text-[10px] r text-muted-foreground">
             None
           </Text>
         )}
@@ -909,7 +912,7 @@ function ThumbnailEditor({
       <Pressable
         onPress={handlePick}
         disabled={busy}
-        className={`flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+        className={`flex-row items-center justify-center gap-2 rounded-md bg-card px-3 py-2.5 ${
           busy ? "opacity-60" : ""
         }`}
       >
@@ -972,18 +975,18 @@ function PlayoutFileEditor({
           Playout file
         </Text>
         {current ? (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+          <Text className="ml-auto text-[10px] r text-cyan-400">
             Chosen
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="ml-auto text-[10px] r text-muted-foreground">
             None
           </Text>
         )}
       </View>
 
       {current ? (
-        <View className="mb-3 flex-row items-center gap-2 rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2 py-1.5">
+        <View className="mb-3 flex-row items-center gap-2 rounded-md bg-cyan-500/25 px-2 py-1.5">
           <Text className="flex-1 text-xs text-cyan-200" numberOfLines={1}>
             {current}
           </Text>
@@ -1075,7 +1078,7 @@ function toLocalDatetimeInputValue(iso: string): string {
 function InfoCell({ label, value }: { label: string; value: string }) {
   return (
     <View className="min-w-[44%]">
-      <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+      <Text className="text-[10px] r text-muted-foreground">
         {label}
       </Text>
       <Text

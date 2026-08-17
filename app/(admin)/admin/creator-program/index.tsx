@@ -1,9 +1,10 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Stack } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
-import { Check, Clock, Sparkles, X } from "lucide-react-native";
+import { Check, Clock, Mic2, X } from "@/components/icons";
 
 import {
   listCreatorApplications,
@@ -39,6 +40,7 @@ function fmtDate(iso: string | null): string {
 }
 
 export default function AdminCreatorProgramScreen() {
+  const palette = useTokens();
   const [filter, setFilter] = React.useState<CreatorAppStatus | "all">("all");
   const [openId, setOpenId] = React.useState<string | null>(null);
   const [note, setNote] = React.useState("");
@@ -75,7 +77,7 @@ export default function AdminCreatorProgramScreen() {
       <ScrollView className="flex-1 bg-background" contentContainerClassName="pb-12">
         <View className="px-4 pt-4 pb-2 gap-2 border-b border-border">
           <View className="flex-row items-center gap-2">
-            <Sparkles size={18} color="#46E3CE" />
+            <Mic2 size={18} color={palette.brand} />
             <Text className="text-xl font-bold text-foreground">
               Creator applications
             </Text>
@@ -169,6 +171,7 @@ function ApplicationCard({
   onReview: (status: "in_review" | "approved" | "rejected") => void;
   disabled: boolean;
 }) {
+  const palette = useTokens();
   return (
     <View className="rounded-2xl border border-border bg-card p-4">
       <Pressable onPress={onToggle}>
@@ -201,7 +204,7 @@ function ApplicationCard({
 
         <View className="mt-2 flex-row items-center gap-3">
           <View className="flex-row items-center gap-1">
-            <Clock size={11} color="#9FBDBD" />
+            <Clock size={11} color={palette.muted} />
             <Text className="text-[10px] text-muted-foreground">
               Submitted {fmtDate(row.submittedAt)}
             </Text>
@@ -217,7 +220,7 @@ function ApplicationCard({
       {open ? (
         <View className="mt-3 gap-3 border-t border-border pt-3">
           <View className="gap-1">
-            <Text className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            <Text className="text-[11px] r text-muted-foreground">
               Primary game
             </Text>
             <Text className="text-xs text-foreground">{row.primaryGameId}</Text>
@@ -225,7 +228,7 @@ function ApplicationCard({
 
           {row.reviewerNote ? (
             <View className="gap-1">
-              <Text className="text-[11px] uppercase tracking-wider text-muted-foreground">
+              <Text className="text-[11px] r text-muted-foreground">
                 Previous note
               </Text>
               <Text className="text-xs text-foreground">{row.reviewerNote}</Text>
@@ -233,14 +236,14 @@ function ApplicationCard({
           ) : null}
 
           <View className="gap-1">
-            <Text className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            <Text className="text-[11px] r text-muted-foreground">
               Review note (optional)
             </Text>
             <TextInput
               value={note}
               onChangeText={onNoteChange}
               placeholder="Why this decision?"
-              placeholderTextColor="#737373"
+              placeholderTextColor={palette.muted}
               multiline
               className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
               style={{ minHeight: 60 }}
@@ -251,7 +254,7 @@ function ApplicationCard({
             <Pressable
               onPress={() => onReview("in_review")}
               disabled={disabled || row.status === "in_review"}
-              className="flex-1 flex-row items-center justify-center gap-1 rounded-full border border-amber-500/60 bg-amber-500/10 px-3 py-2 active:opacity-80"
+              className="flex-1 flex-row items-center justify-center gap-1 rounded-full bg-amber-500/25 px-3 py-2 active:opacity-80"
             >
               <Clock size={13} color="#F59E0B" />
               <Text className="text-xs font-semibold text-amber-300">
@@ -261,7 +264,7 @@ function ApplicationCard({
             <Pressable
               onPress={() => onReview("approved")}
               disabled={disabled || row.status === "approved"}
-              className="flex-1 flex-row items-center justify-center gap-1 rounded-full border border-emerald-500/60 bg-emerald-500/10 px-3 py-2 active:opacity-80"
+              className="flex-1 flex-row items-center justify-center gap-1 rounded-full bg-emerald-500/25 px-3 py-2 active:opacity-80"
             >
               <Check size={13} color="#34D399" />
               <Text className="text-xs font-semibold text-emerald-300">
@@ -271,7 +274,7 @@ function ApplicationCard({
             <Pressable
               onPress={() => onReview("rejected")}
               disabled={disabled || row.status === "rejected"}
-              className="flex-1 flex-row items-center justify-center gap-1 rounded-full border border-rose-500/60 bg-rose-500/10 px-3 py-2 active:opacity-80"
+              className="flex-1 flex-row items-center justify-center gap-1 rounded-full bg-rose-500/25 px-3 py-2 active:opacity-80"
             >
               <X size={13} color="#EF4444" />
               <Text className="text-xs font-semibold text-rose-300">

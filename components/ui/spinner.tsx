@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { ActivityIndicator, type ActivityIndicatorProps } from "react-native";
 
 import { cn } from "@/lib/utils";
@@ -8,11 +9,14 @@ export interface SpinnerProps extends ActivityIndicatorProps {
 }
 
 const Spinner = React.forwardRef<ActivityIndicator, SpinnerProps>(
-  ({ className, color = "#46E3CE", size = "small", ...props }, ref) => {
+  ({ className, color, size = "small", ...props }, ref) => {
+    // Resolved in the body, not as a default parameter: a default cannot call
+    // a hook, and the brand colour differs between light and dark.
+    const palette = useTokens();
     return (
       <ActivityIndicator
         ref={ref}
-        color={color}
+        color={color ?? palette.brand}
         size={size}
         accessibilityLabel="Loading"
         className={cn(className)}

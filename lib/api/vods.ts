@@ -67,6 +67,13 @@ export interface AdminVod extends Vod {
 export interface AdminClip extends Clip {
   deletedAt?: string | null;
   channelId?: string | null;
+  /**
+   * What it was cut from. The public `Clip` type does not carry these because
+   * the viewer-facing rails do not need them, but the admin list does: they are
+   * the link that puts a clip next to the show it came out of.
+   */
+  showId?: string | null;
+  episodeId?: string | null;
 }
 
 export async function listAdminVods(opts: ListAdminVodsOpts = {}): Promise<{
@@ -155,6 +162,48 @@ export async function createAdminVod(
   payload: CreateAdminVodPayload,
 ): Promise<AdminVod> {
   return api<AdminVod>("/api/admin/vods", { method: "POST", body: payload });
+}
+
+/** Mirrors the backend POST /api/admin/clips create contract. */
+export interface CreateAdminClipPayload {
+  title: string;
+  gameId: string;
+  /** Public blob URL from pickAndUploadVideo. */
+  mp4Url: string;
+  /** Public blob URL from pickAndUploadImage. */
+  thumbnailUrl: string;
+  durationSec: number;
+  /** Whose clip it is. Shown on the card, so the API requires it. */
+  creatorHandle: string;
+  creatorAvatarUrl?: string;
+  pillar?: ContentPillar;
+  maturityRating?: MaturityRating;
+  contentTags?: string[];
+  /**
+   * What it was cut from. At most one is meaningful, and passing an episode
+   * fills in its show server-side, so a clip cannot claim to belong to an
+   * episode of a series it is not filed under.
+   */
+  vodId?: string | null;
+  showId?: string | null;
+  episodeId?: string | null;
+}
+
+/**
+ * POST /api/admin/clips - admin only.
+ *
+ * Nothing in the app could write a clip before this, and neither could the
+ * website until the library screen shipped there, so the clips rail could only
+ * ever be filled by whatever inserted rows directly.
+ */
+export async function createAdminClip(
+  payload: CreateAdminClipPayload,
+): Promise<AdminClip> {
+  const res = await api<{ clip: AdminClip }>("/api/admin/clips", {
+    method: "POST",
+    body: payload,
+  });
+  return res.clip;
 }
 
 /** PATCH /api/admin/vods/[id] - update content maturity + descriptor tags. */

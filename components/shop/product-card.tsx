@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -17,6 +18,7 @@ export function formatNgn(n: number): string {
 }
 
 export function ProductCard({ product }: { product: Product }) {
+  const palette = useTokens();
   const router = useRouter();
   const image = product.images[0];
   return (
@@ -28,7 +30,7 @@ export function ProductCard({ product }: { product: Product }) {
       <View
         style={{
           aspectRatio: 1,
-          backgroundColor: "#103133",
+          backgroundColor: palette.subtle,
           position: "relative",
         }}
       >

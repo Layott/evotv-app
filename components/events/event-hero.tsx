@@ -1,8 +1,9 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { ArrowLeft, Calendar, MapPin, Trophy } from "lucide-react-native";
+import { ArrowLeft, Calendar, MapPin, Trophy } from "@/components/icons";
 
 import type { EsportsEvent, Game } from "@/lib/types";
 
@@ -22,27 +23,23 @@ function formatNgn(n: number | null | undefined): string {
 }
 
 function tierStyle(t: string): {
-  borderColor: string;
   backgroundColor: string;
   color: string;
 } {
   switch (t) {
     case "s":
       return {
-        borderColor: "rgba(245,158,11,0.4)",
-        backgroundColor: "rgba(245,158,11,0.1)",
+        backgroundColor: "rgba(245,158,11,0.3)",
         color: "#fcd34d",
       };
     case "a":
     case "b":
       return {
-        borderColor: "rgba(70,227,206,0.4)",
-        backgroundColor: "rgba(70,227,206,0.1)",
+        backgroundColor: "rgba(70,227,206,0.3)",
         color: "#67e8f9",
       };
     default:
       return {
-        borderColor: "#17454A",
         backgroundColor: "#103133",
         color: "#d4d4d4",
       };
@@ -56,6 +53,7 @@ function safeDateLabel(iso: string | null | undefined): string {
 }
 
 export function EventHero({ event, game }: EventHeroProps) {
+  const palette = useTokens();
   const router = useRouter();
   const tier = tierStyle(event.tier);
   const startLabel = safeDateLabel(event.startsAt);
@@ -82,15 +80,13 @@ export function EventHero({ event, game }: EventHeroProps) {
             onPress={() => router.push("/events")}
             className="flex-row items-center gap-1 self-start"
           >
-            <ArrowLeft size={12} color="#9FBDBD" />
-            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>All events</Text>
+            <ArrowLeft size={12} color={palette.muted} />
+            <Text style={{ fontSize: 11, color: palette.muted }}>All events</Text>
           </Pressable>
           <View className="flex-row items-center gap-2">
             <View
               className="rounded-md px-2 py-0.5"
               style={{
-                borderWidth: 1,
-                borderColor: tier.borderColor,
                 backgroundColor: tier.backgroundColor,
               }}
             >
@@ -109,9 +105,7 @@ export function EventHero({ event, game }: EventHeroProps) {
               <View
                 className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
                 style={{
-                  borderWidth: 1,
-                  borderColor: "rgba(239,68,68,0.3)",
-                  backgroundColor: "rgba(239,68,68,0.1)",
+                  backgroundColor: "rgba(239,68,68,0.25)",
                 }}
               >
                 <View
@@ -138,9 +132,7 @@ export function EventHero({ event, game }: EventHeroProps) {
               <View
                 className="rounded-md px-2 py-0.5"
                 style={{
-                  borderWidth: 1,
-                  borderColor: "#17454A",
-                  backgroundColor: "#103133",
+                  backgroundColor: palette.subtle,
                 }}
               >
                 <Text
@@ -148,7 +140,7 @@ export function EventHero({ event, game }: EventHeroProps) {
                     fontSize: 10,
                     fontWeight: "600",
                     letterSpacing: 1,
-                    color: "#9FBDBD",
+                    color: palette.muted,
                   }}
                 >
                   CONCLUDED

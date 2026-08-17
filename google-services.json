@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "606438759614",
+    "project_id": "evo-tv-3a23e",
+    "storage_bucket": "evo-tv-3a23e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:606438759614:android:d2c658ebcc79f1cc7952ef",
+        "android_client_info": {
+          "package_name": "com.evotv.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8wjHLkhB-42aGr6Nu-Q8-m68T7udDfZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

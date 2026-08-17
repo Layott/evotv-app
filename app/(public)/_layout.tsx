@@ -1,4 +1,5 @@
 import { Tabs, useRouter } from "expo-router";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   CalendarRange,
   Compass,
@@ -6,27 +7,30 @@ import {
   Library,
   Trophy,
   User,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 export default function PublicLayout() {
+  const t = useTokens();
   const router = useRouter();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
+        // No borderTop: a 1px rule across the tab bar is exactly the hairline
+        // the product stopped drawing. The bar separates by sitting on its own
+        // surface, not by a line.
         tabBarStyle: {
-          backgroundColor: "#05191B",
-          borderTopColor: "#1F1F1F",
-          borderTopWidth: 1,
+          backgroundColor: t.bg,
+          borderTopWidth: 0,
           height: 64,
           paddingBottom: 8,
           paddingTop: 8,
         },
-        tabBarActiveTintColor: "#46E3CE",
-        tabBarInactiveTintColor: "#666666",
+        tabBarActiveTintColor: t.brand,
+        tabBarInactiveTintColor: t.muted,
         tabBarLabelStyle: {
           fontSize: 11,
-          fontFamily: "GeistMedium",
+          fontFamily: "ArchivoMedium",
         },
       }}
     >
@@ -60,17 +64,14 @@ export default function PublicLayout() {
           ),
         }}
       />
+      {/* No tabPress override: the tab renders the Library screen itself now,
+          rather than intercepting the press to push a Stack screen from
+          another group over the top of the tab bar. */}
       <Tabs.Screen
         name="library-tab/index"
         options={{
           title: "Library",
           tabBarIcon: ({ color, size }) => <Library color={color} size={size} />,
-        }}
-        listeners={{
-          tabPress: (e) => {
-            e.preventDefault();
-            router.push("/library" as never);
-          },
         }}
       />
       <Tabs.Screen
@@ -78,12 +79,6 @@ export default function PublicLayout() {
         options={{
           title: "Profile",
           tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
-        }}
-        listeners={{
-          tabPress: (e) => {
-            e.preventDefault();
-            router.push("/profile" as never);
-          },
         }}
       />
 
@@ -100,21 +95,9 @@ export default function PublicLayout() {
       <Tabs.Screen name="team/index" options={{ href: null }} />
       <Tabs.Screen name="team/[slug]/index" options={{ href: null }} />
       <Tabs.Screen name="stream/[id]/index" options={{ href: null }} />
-      <Tabs.Screen
-        name="stream/[id]/co-stream/index"
-        options={{ href: null }}
-      />
       <Tabs.Screen name="vod/[id]/index" options={{ href: null }} />
-      <Tabs.Screen name="apps/index" options={{ href: null }} />
-      <Tabs.Screen name="apps/tv/index" options={{ href: null }} />
-      <Tabs.Screen name="apps/android/index" options={{ href: null }} />
-      <Tabs.Screen name="apps/ios/index" options={{ href: null }} />
-      <Tabs.Screen name="apps/desktop/index" options={{ href: null }} />
       <Tabs.Screen name="upgrade/index" options={{ href: null }} />
-      <Tabs.Screen name="calendar/index" options={{ href: null }} />
       <Tabs.Screen name="shop/index" options={{ href: null }} />
-      <Tabs.Screen name="partners/index" options={{ href: null }} />
-      <Tabs.Screen name="embed-marketing/index" options={{ href: null }} />
       <Tabs.Screen name="privacy/index" options={{ href: null }} />
       <Tabs.Screen name="terms/index" options={{ href: null }} />
       <Tabs.Screen name="u/[handle]/index" options={{ href: null }} />

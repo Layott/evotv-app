@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Pressable, Text, View } from "react-native";
-import { ShieldAlert, Tags, X } from "lucide-react-native";
+import { ShieldAlert, Tags, X } from "@/components/icons";
 
 import type { MaturityRating } from "@/lib/types";
 import { MATURITY_LABELS } from "@/lib/types";
@@ -32,11 +32,11 @@ export function MaturityEditor({
           Maturity rating
         </Text>
         {current ? (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+          <Text className="ml-auto text-[10px] r text-cyan-400">
             {MATURITY_LABELS[current]}
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="ml-auto text-[10px] r text-muted-foreground">
             Unrated
           </Text>
         )}
@@ -131,7 +131,7 @@ export function ContentTagsEditor({
         <Text className="text-sm font-semibold text-foreground">
           Content tags
         </Text>
-        <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+        <Text className="ml-auto text-[10px] r text-muted-foreground">
           {tags.length} tag{tags.length === 1 ? "" : "s"}
         </Text>
       </View>
@@ -180,7 +180,7 @@ export function ContentTagsEditor({
       <Pressable
         onPress={() => onSave(tags)}
         disabled={!dirty || isPending}
-        className="mt-2 items-center rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+        className="mt-2 items-center rounded-lg bg-cyan-500/20 bg-cyan-500/15 px-3 py-2"
         style={{ opacity: !dirty || isPending ? 0.5 : 1 }}
       >
         <Text className="text-xs font-semibold text-cyan-300">

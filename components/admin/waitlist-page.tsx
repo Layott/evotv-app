@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Platform, Pressable, ScrollView, Text, View } from "react-native";
-import { Download, Search } from "lucide-react-native";
+import { Download, Search } from "@/components/icons";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 import * as Clipboard from "expo-clipboard";
@@ -124,7 +124,7 @@ export function WaitlistPage() {
             <Pressable
               onPress={handleExport}
               disabled={entries.length === 0}
-              className="flex-row items-center gap-1.5 rounded-md border border-cyan-500/40 bg-cyan-500/10 px-3 py-2"
+              className="flex-row items-center gap-1.5 rounded-md bg-cyan-500/25 px-3 py-2"
               style={{ opacity: entries.length === 0 ? 0.4 : 1 }}
             >
               <Download size={14} color="#46E3CE" />
@@ -166,7 +166,7 @@ export function WaitlistPage() {
             {waitlistQ.error instanceof Error ? waitlistQ.error.message : ""}
           </Text>
         ) : filtered.length === 0 ? (
-          <View className="items-center rounded-xl border border-dashed border-border p-8">
+          <View className="items-center rounded-xl bg-card/50 p-8">
             <Text className="text-sm text-muted-foreground">
               {entries.length === 0
                 ? "No signups yet."

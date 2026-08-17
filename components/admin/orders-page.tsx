@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { Search, X } from "lucide-react-native";
+import { Search, X } from "@/components/icons";
 import { useQuery } from "@tanstack/react-query";
 
 import { listAdminOrders } from "@/lib/api/admin";
@@ -222,7 +222,7 @@ export function OrdersPage() {
                   </Text>
                 </View>
 
-                <Text className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+                <Text className="mb-2 text-[10px] r text-muted-foreground">
                   Items
                 </Text>
                 <View className="mb-3">
@@ -276,7 +276,7 @@ export function OrdersPage() {
                   />
                 </View>
 
-                <Text className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+                <Text className="mb-2 text-[10px] r text-muted-foreground">
                   Ship to
                 </Text>
                 <View className="mb-3 rounded-lg border border-border bg-card/40 p-3">

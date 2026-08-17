@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { ActivityIndicator, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 
@@ -12,6 +13,7 @@ import { Stack, useRouter } from "expo-router";
  * navigation and bounces the user home.
  */
 export default function OAuthLandingScreen() {
+  const palette = useTokens();
   const router = useRouter();
 
   React.useEffect(() => {
@@ -29,10 +31,10 @@ export default function OAuthLandingScreen() {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#05191B",
+          backgroundColor: palette.bg,
         }}
       >
-        <ActivityIndicator size="large" color="#46E3CE" />
+        <ActivityIndicator size="large" color={palette.brand} />
       </View>
     </>
   );

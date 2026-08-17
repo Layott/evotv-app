@@ -21,8 +21,8 @@ import {
   Plus,
   Upload,
   X,
-  type LucideIcon,
-} from "lucide-react-native";
+  type Icon,
+} from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -743,7 +743,7 @@ export function ScheduleManagerPage() {
                 </View>
                 <Pressable
                   onPress={() => prefillFromFile(f)}
-                  className="flex-row items-center gap-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+                  className="flex-row items-center gap-1.5 rounded-lg bg-cyan-500/20 bg-cyan-500/15 px-3 py-2"
                 >
                   <CalendarClock size={12} color="#67e8f9" />
                   <Text className="text-xs font-semibold text-cyan-300">
@@ -829,7 +829,7 @@ export function ScheduleManagerPage() {
               <View className="mt-2 flex-row gap-2">
                 <Pressable
                   onPress={() => setEditing({ stream, startAt, durationMin })}
-                  className="flex-1 flex-row items-center justify-center gap-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+                  className="flex-1 flex-row items-center justify-center gap-1.5 rounded-lg bg-cyan-500/20 bg-cyan-500/15 px-3 py-2"
                 >
                   <Pencil size={12} color="#67e8f9" />
                   <Text className="text-xs font-semibold text-cyan-300">
@@ -945,7 +945,7 @@ export function ScheduleManagerPage() {
         />
 
         {reveal ? (
-          <View className="mb-3 rounded-xl border border-brand bg-brand/10 p-4">
+          <View className="mb-3 rounded-xl bg-brand/20 p-4">
             <View className="mb-2 flex-row items-center gap-2">
               <KeyRound size={14} color="#46E3CE" />
               <Text className="text-sm font-bold text-brand">
@@ -957,7 +957,7 @@ export function ScheduleManagerPage() {
               once: store it securely, then paste it into the encoder.
             </Text>
 
-            <Text className="mt-3 text-[11px] uppercase tracking-wider text-muted-foreground">
+            <Text className="mt-3 text-[11px] r text-muted-foreground">
               Stream key
             </Text>
             <View className="mt-1 rounded-lg border border-border bg-background p-3">
@@ -966,7 +966,7 @@ export function ScheduleManagerPage() {
               </Text>
             </View>
 
-            <Text className="mt-3 text-[11px] uppercase tracking-wider text-muted-foreground">
+            <Text className="mt-3 text-[11px] r text-muted-foreground">
               Ingest URL
             </Text>
             <View className="mt-1 rounded-lg border border-border bg-background p-3">
@@ -978,7 +978,7 @@ export function ScheduleManagerPage() {
             <View className="mt-3 flex-row gap-2">
               <Pressable
                 onPress={() => handleCopy(reveal.streamKey, "Stream key")}
-                className="flex-1 flex-row items-center justify-center gap-2 rounded-md border border-brand bg-brand px-3 py-2"
+                className="flex-1 flex-row items-center justify-center gap-2 rounded-md bg-brand px-3 py-2"
               >
                 <Copy size={14} color="#05191B" />
                 <Text className="text-sm font-semibold text-black">
@@ -1005,7 +1005,7 @@ export function ScheduleManagerPage() {
         <View className="rounded-xl border border-border bg-card/40 p-4">
           {playoutFilePath ? (
             <View className="mb-3">
-              <View className="flex-row items-center gap-2 self-start rounded-full border border-cyan-500/40 bg-cyan-500/10 py-1.5 pl-3 pr-2">
+              <View className="flex-row items-center gap-2 self-start rounded-full bg-cyan-500/25 py-1.5 pl-3 pr-2">
                 <FileVideo size={12} color="#67e8f9" />
                 <Text
                   numberOfLines={1}
@@ -1127,7 +1127,7 @@ export function ScheduleManagerPage() {
             <Pressable
               onPress={handleUploadThumbnail}
               disabled={uploadingThumb}
-              className={`flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+              className={`flex-row items-center justify-center gap-2 rounded-md bg-card px-3 py-2.5 ${
                 uploadingThumb ? "opacity-60" : ""
               }`}
             >
@@ -1340,17 +1340,17 @@ function ScheduleEditorCard({
           EPG schedule
         </Text>
         {initialStartAt ? (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+          <Text className="ml-auto text-[10px] r text-cyan-400">
             Programmed
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="ml-auto text-[10px] r text-muted-foreground">
             Unscheduled
           </Text>
         )}
       </View>
 
-      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+      <Text className="mb-1 text-[11px] r text-muted-foreground">
         Airs at (local time)
       </Text>
       <Input
@@ -1362,7 +1362,7 @@ function ScheduleEditorCard({
         className="mb-3 h-9"
       />
 
-      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+      <Text className="mb-1 text-[11px] r text-muted-foreground">
         Duration (minutes)
       </Text>
       <Input
@@ -1389,7 +1389,7 @@ function ScheduleEditorCard({
             onSave(parsed.toISOString(), Math.round(d));
           }}
           disabled={!canSave || !dirty || isPending}
-          className="flex-1 items-center rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+          className="flex-1 items-center rounded-lg bg-cyan-500/20 bg-cyan-500/15 px-3 py-2"
           style={{ opacity: !canSave || !dirty || isPending ? 0.5 : 1 }}
         >
           <Text className="text-xs font-semibold text-cyan-300">
@@ -1428,7 +1428,7 @@ function ConfigFileBlock({
   onAdd,
   onRemove,
 }: {
-  icon: LucideIcon;
+  icon: Icon;
   title: string;
   caption: string;
   selected: string[];
@@ -1479,7 +1479,7 @@ function ConfigFileBlock({
 
       <Pressable
         onPress={() => setPickerOpen((v) => !v)}
-        className="mt-3 flex-row items-center justify-center gap-1.5 rounded-md border border-dashed border-border bg-card px-3 py-2"
+        className="mt-3 flex-row items-center justify-center gap-1.5 rounded-md bg-card px-3 py-2"
       >
         {pickerOpen ? (
           <X size={12} color="#46E3CE" />
@@ -1551,7 +1551,7 @@ function SectionTitle({
   caption,
   className,
 }: {
-  icon: LucideIcon;
+  icon: Icon;
   title: string;
   caption?: string;
   className?: string;
@@ -1611,7 +1611,7 @@ function KindBadge({ kind }: { kind: EpgRow["kind"] }) {
     return <StatusBadge tone="emerald">Stream</StatusBadge>;
   }
   if (kind === "episode") {
-    return <StatusBadge tone="violet">Episode</StatusBadge>;
+    return <StatusBadge tone="neutral">Episode</StatusBadge>;
   }
   return <StatusBadge tone="blue">Match</StatusBadge>;
 }

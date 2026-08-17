@@ -1,10 +1,11 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
-import { ArrowLeft, Compass, Heart, Radio, ShieldCheck, Users } from "lucide-react-native";
+import { ArrowLeft, Compass, Heart, Radio, ShieldCheck, Users } from "@/components/icons";
 
 import {
   getChannelPage,
@@ -23,6 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 export default function ChannelPublicPage() {
+  const palette = useTokens();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
   const qc = useQueryClient();
@@ -89,7 +91,7 @@ export default function ChannelPublicPage() {
         <View className="flex-1 items-center justify-center bg-background px-6">
           <Empty className="border-0">
             <EmptyHeader>
-              <Radio size={28} color="#9FBDBD" />
+              <Radio size={28} color={palette.muted} />
               <EmptyTitle>Channel not found</EmptyTitle>
               <EmptyDescription>
                 @{slug} doesn't exist or has been removed. The handle may have changed.
@@ -97,7 +99,7 @@ export default function ChannelPublicPage() {
             </EmptyHeader>
             <View className="flex-row items-center gap-2">
               <Button variant="outline" onPress={() => router.back()}>
-                <ArrowLeft color="#EAF6F5" size={16} />
+                <ArrowLeft color={palette.fg} size={16} />
                 <Text className="text-foreground text-sm font-medium">Go back</Text>
               </Button>
               <Button
@@ -124,7 +126,7 @@ export default function ChannelPublicPage() {
         <View
           style={{
             height: 120,
-            backgroundColor: channel.brandColor || "#46E3CE",
+            backgroundColor: channel.brandColor || palette.brand,
             opacity: 0.5,
           }}
         />
@@ -141,7 +143,7 @@ export default function ChannelPublicPage() {
                   contentFit="cover"
                 />
               ) : (
-                <Radio size={28} color="#46E3CE" />
+                <Radio size={28} color={palette.brand} />
               )}
             </View>
             <View className="flex-1 pb-1">
@@ -153,7 +155,7 @@ export default function ChannelPublicPage() {
                   {channel.name}
                 </Text>
                 {channel.isVerified ? (
-                  <ShieldCheck size={16} color="#46E3CE" />
+                  <ShieldCheck size={16} color={palette.brand} />
                 ) : null}
               </View>
               <Text className="text-xs text-muted-foreground">
@@ -166,7 +168,7 @@ export default function ChannelPublicPage() {
           <Button
             className={cn(
               "mt-4 h-10",
-              followedByMe ? "bg-neutral-800" : "bg-brand",
+              followedByMe ? "bg-muted" : "bg-brand",
             )}
             disabled={followMut.isPending}
             onPress={onFollow}
@@ -175,7 +177,7 @@ export default function ChannelPublicPage() {
             <Heart
               size={14}
               color={followedByMe ? "#F472B6" : "#000"}
-              fill={followedByMe ? "#F472B6" : "transparent"}
+              weight={followedByMe ? "fill" : "regular"}
             />
             {followedByMe ? "Following" : "Follow"}
           </Button>
@@ -191,7 +193,7 @@ export default function ChannelPublicPage() {
               href={`/stream/${liveStream.id}` as never}
               asChild
             >
-              <Pressable className="mt-5 overflow-hidden rounded-2xl border border-brand/30 bg-neutral-900/60 active:opacity-80">
+              <Pressable className="mt-5 overflow-hidden rounded-2xl bg-brand/20 bg-card/60 active:opacity-80">
                 <View
                   style={{
                     backgroundColor: "#1f1f1f",
@@ -225,7 +227,7 @@ export default function ChannelPublicPage() {
                     {liveStream.title}
                   </Text>
                   <View className="mt-1 flex-row items-center gap-1">
-                    <Users size={11} color="#737373" />
+                    <Users size={11} color={palette.muted} />
                     <Text className="text-[11px] text-muted-foreground">
                       {liveStream.viewerCount.toLocaleString()} watching
                     </Text>
@@ -234,7 +236,7 @@ export default function ChannelPublicPage() {
               </Pressable>
             </Link>
           ) : (
-            <View className="mt-5 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-6">
+            <View className="mt-5 rounded-2xl bg-card/60 p-6">
               <Text className="text-center text-sm text-muted-foreground">
                 Not live right now.
               </Text>
@@ -257,7 +259,7 @@ export default function ChannelPublicPage() {
                   asChild
                 >
                   <Pressable
-                    className="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/40 active:opacity-80"
+                    className="overflow-hidden rounded-xl bg-card/60 active:opacity-80"
                     style={{ width: "47%" }}
                   >
                     <View

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight } from "lucide-react-native";
+import { ArrowRight } from "@/components/icons";
 
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -96,18 +96,14 @@ export default function CategoriesScreen() {
                     <View
                       className="self-start rounded-md px-2 py-0.5"
                       style={{
-                        borderWidth: 1,
-                        borderColor: "rgba(70,227,206,0.3)",
-                        backgroundColor: "rgba(70,227,206,0.1)",
+                        backgroundColor: "rgba(70,227,206,0.25)",
                       }}
                     >
                       <Text
                         style={{
                           fontSize: 10,
                           fontWeight: "600",
-                          letterSpacing: 1,
                           color: "#67e8f9",
-                          textTransform: "uppercase",
                         }}
                       >
                         {categoryLabel(g.category)}

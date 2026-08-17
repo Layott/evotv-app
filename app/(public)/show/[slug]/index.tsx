@@ -1,8 +1,9 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Bookmark, BookmarkCheck, Play, Star } from "lucide-react-native";
+import { ArrowLeft, Bookmark, BookmarkCheck, Play, Star } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Badge } from "@/components/ui/badge";
@@ -65,7 +66,7 @@ function EpisodeRow({
       </View>
       <View className="flex-1 gap-1">
         <View className="flex-row items-center gap-2">
-          <Text className="text-[10px] uppercase tracking-widest text-muted-foreground">
+          <Text className="text-[10px] st text-muted-foreground">
             E{episode.episodeNumber}
           </Text>
           <Text
@@ -83,15 +84,16 @@ function EpisodeRow({
       </View>
       <View
         className="h-9 w-9 items-center justify-center rounded-full"
-        style={{ backgroundColor: BRAND_RGBA(0.12) }}
+        style={{ backgroundColor: BRAND_RGBA(0.3) }}
       >
-        <Play size={16} color={BRAND} fill={BRAND} />
+        <Play size={16} color={BRAND} />
       </View>
     </Pressable>
   );
 }
 
 export default function ShowLandingScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const qc = useQueryClient();
@@ -171,7 +173,7 @@ export default function ShowLandingScreen() {
           className="mt-6 rounded-xl px-4 py-2.5"
           style={{ backgroundColor: BRAND }}
         >
-          <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
+          <Text style={{ color: palette.bg, fontWeight: "700", fontSize: 13 }}>
             Back to Originals
           </Text>
         </Pressable>
@@ -252,7 +254,7 @@ export default function ShowLandingScreen() {
 
           <View className="flex-row items-center gap-3 flex-wrap">
             <View className="flex-row items-center gap-1">
-              <Star size={12} color="#fbbf24" fill="#fbbf24" />
+              <Star size={12} color="#fbbf24" />
               <Text className="text-xs font-semibold" style={{ color: "#fbbf24" }}>
                 {show.rating.toFixed(1)}
               </Text>
@@ -294,8 +296,8 @@ export default function ShowLandingScreen() {
               className="flex-1 flex-row items-center justify-center gap-1.5 rounded-xl py-3 active:opacity-80"
               style={{ backgroundColor: BRAND }}
             >
-              <Play size={16} color="#05191B" fill="#05191B" />
-              <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 14 }}>
+              <Play size={16} color={palette.bg} />
+              <Text style={{ color: palette.bg, fontWeight: "700", fontSize: 14 }}>
                 Watch S{(episodesQ.data?.[0]?.seasonNumber ?? 1)}·E
                 {episodesQ.data?.[0]?.episodeNumber ?? 1}
               </Text>
@@ -309,7 +311,7 @@ export default function ShowLandingScreen() {
               {onWatchlist ? (
                 <BookmarkCheck size={16} color={BRAND} />
               ) : (
-                <Bookmark size={16} color="#9FBDBD" />
+                <Bookmark size={16} color={palette.muted} />
               )}
               <Text className="text-sm font-medium text-foreground">
                 {onWatchlist ? "On watchlist" : "Watchlist"}
@@ -321,7 +323,7 @@ export default function ShowLandingScreen() {
         {/* SEASON PICKER */}
         {seasonsQ.data && seasonsQ.data.length > 0 ? (
           <View className="pt-8 gap-3">
-            <Text className="px-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <Text className="px-4 text-xs font-semibold st text-muted-foreground">
               Seasons
             </Text>
             <ScrollView
@@ -337,7 +339,7 @@ export default function ShowLandingScreen() {
                     onPress={() => setActiveSeasonId(s.id)}
                     className="rounded-full border px-3 py-1.5"
                     style={{
-                      borderColor: active ? BRAND_RGBA(0.5) : "#103133",
+                      borderColor: active ? BRAND_RGBA(0.5) : palette.subtle,
                       backgroundColor: active
                         ? BRAND_RGBA(0.1)
                         : "rgba(15,15,15,0.6)",
@@ -345,7 +347,7 @@ export default function ShowLandingScreen() {
                   >
                     <Text
                       className="text-xs font-medium"
-                      style={{ color: active ? BRAND : "#9FBDBD" }}
+                      style={{ color: active ? BRAND : palette.muted }}
                     >
                       Season {s.seasonNumber} · {s.title}
                     </Text>
@@ -375,7 +377,7 @@ export default function ShowLandingScreen() {
             ))}
           </View>
         ) : (
-          <View className="mx-4 mt-4 rounded-2xl border border-dashed border-border bg-card p-8">
+          <View className="mx-4 mt-4 rounded-2xl bg-card p-8">
             <Text className="text-center text-sm text-muted-foreground">
               No episodes released yet for this season.
             </Text>

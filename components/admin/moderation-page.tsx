@@ -169,7 +169,9 @@ function targetHref(r: ContentReport): string | null {
         ? `/stream/${r.targetPreview.streamId}`
         : null;
     case "party":
-      return `/watch-parties/${r.targetId}`;
+      // Watch parties were removed from the app along with the rest of the
+      // coming-soon screens, so there is nothing to open.
+      return null;
     default:
       return null;
   }

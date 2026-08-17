@@ -60,17 +60,14 @@ export default function PublicLayout() {
           ),
         }}
       />
+      {/* No tabPress override: the tab renders the Library screen itself now,
+          rather than intercepting the press to push a Stack screen from
+          another group over the top of the tab bar. */}
       <Tabs.Screen
         name="library-tab/index"
         options={{
           title: "Library",
           tabBarIcon: ({ color, size }) => <Library color={color} size={size} />,
-        }}
-        listeners={{
-          tabPress: (e) => {
-            e.preventDefault();
-            router.push("/library" as never);
-          },
         }}
       />
       <Tabs.Screen
@@ -100,21 +97,9 @@ export default function PublicLayout() {
       <Tabs.Screen name="team/index" options={{ href: null }} />
       <Tabs.Screen name="team/[slug]/index" options={{ href: null }} />
       <Tabs.Screen name="stream/[id]/index" options={{ href: null }} />
-      <Tabs.Screen
-        name="stream/[id]/co-stream/index"
-        options={{ href: null }}
-      />
       <Tabs.Screen name="vod/[id]/index" options={{ href: null }} />
-      <Tabs.Screen name="apps/index" options={{ href: null }} />
-      <Tabs.Screen name="apps/tv/index" options={{ href: null }} />
-      <Tabs.Screen name="apps/android/index" options={{ href: null }} />
-      <Tabs.Screen name="apps/ios/index" options={{ href: null }} />
-      <Tabs.Screen name="apps/desktop/index" options={{ href: null }} />
       <Tabs.Screen name="upgrade/index" options={{ href: null }} />
-      <Tabs.Screen name="calendar/index" options={{ href: null }} />
       <Tabs.Screen name="shop/index" options={{ href: null }} />
-      <Tabs.Screen name="partners/index" options={{ href: null }} />
-      <Tabs.Screen name="embed-marketing/index" options={{ href: null }} />
       <Tabs.Screen name="privacy/index" options={{ href: null }} />
       <Tabs.Screen name="terms/index" options={{ href: null }} />
       <Tabs.Screen name="u/[handle]/index" options={{ href: null }} />

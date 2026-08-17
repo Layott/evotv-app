@@ -28,12 +28,16 @@ const ENABLED_KEY = "evotv:app-lock";
 /**
  * How long the app may sit in the background before it locks again.
  *
- * Zero would lock on every glance at a notification, which on a video app
- * means being thrown out of a stream for looking at the time. A minute covers
- * switching apps to reply to a message; anything longer is somebody putting
- * the phone down.
+ * Was one minute, and the owner's report was "every time you minimize the app,
+ * when you open it you have to unlock it again". A minute is the length of
+ * replying to one message, so ordinary use kept landing on the lock screen.
+ *
+ * Fifteen minutes is the useful line: it covers switching apps, taking a call
+ * and reading a notification, and still locks a phone somebody put down and
+ * walked away from. The session itself is the thing being protected and it is
+ * a week long, so a slightly longer window here changes very little.
  */
-export const RELOCK_AFTER_MS = 60_000;
+export const RELOCK_AFTER_MS = 15 * 60_000;
 
 export type LockCapability =
   | { available: true; label: string }

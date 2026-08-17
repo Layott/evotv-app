@@ -120,3 +120,88 @@ both are reverted after testing:
 
 Expo web: `pnpm exec expo start --web --port 8090` (8081 is usually taken, and
 the CLI cannot prompt in this environment). Not `npx`.
+
+---
+
+# Later on 2026-08-17: shipped, plus push and APK naming
+
+Everything below is on `main` (`76ad32b` and later). The app repo's `main`
+moving does **not** put anything on a phone; that still needs a build.
+
+## Correction to the note above
+
+`ALLOWED_ORIGINS=*` **does** work now. The line above was true when written: the
+wildcard was filtered out of Better-Auth's trusted list, which left it empty and
+fell back to `[baseURL]`, and sign-in answered 403. Fixed on the web side the
+same day, and proven end to end from `localhost:8090`, which now returns 401
+"Invalid email or password" rather than 403. It is refused in production on
+purpose, because `trustedOrigins` is also the OAuth redirect allowlist.
+
+## Android push has credentials for the first time
+
+`google-services.json` is committed and wired as
+`expo.android.googleServicesFile`. The FCM V1 service account key is on EAS,
+uploaded through the GraphQL API because `eas credentials` is interactive only
+in the pinned CLI (18.12.3) and this shell has no TTY.
+
+Verified in the built APK rather than inferred: the merged manifest contains
+`POST_NOTIFICATIONS` (merged in from the expo-notifications library, not from
+app.json), and the compiled resources carry `project_id = evo-tv-3a23e`,
+`gcm_defaultSenderId = 606438759614`.
+
+**There is no keystore on EAS** (`build credential sets: 0`), so
+`eas build --non-interactive` cannot run: it would stop to generate a signing
+key, and a new key produces an APK Android refuses to install over the existing
+one. Local builds are the route until somebody uploads a keystore.
+
+## A declined push permission can be asked for again
+
+Settings had a read-only badge, and registration ran once on mount and could
+never be re-run. Somebody who dismissed the OS prompt was stuck: Android stops
+asking after two dismissals, iOS after one.
+
+The work moved to `lib/push/register.ts` so the sign-in path and the settings
+switch share one function. The part that matters is `canAskAgain`: a naive retry
+calls `requestPermissionsAsync`, the OS returns denied without showing anything,
+and the switch flicks back with no explanation. So:
+
+- `denied` - the OS will still prompt. The switch re-asks.
+- `blocked` - the OS will not prompt again. The switch opens system settings.
+- `off` - permission is granted but the person turned it off, so the server has
+  no token. **Persisted to `evotv:push-opt-out`**, because otherwise the next
+  launch re-registers the device and the switch appears to flip itself back on.
+
+The switch only renders where something can actually change. A build with no FCM
+credentials, a simulator, or the web build still show a plain Off badge, because
+a switch there would be a lie. That also means **the switch cannot be exercised
+in the web build** - web is legitimately `unsupported`. It needs the APK.
+
+The website's browser push was checked for the same gap and does not have it:
+`denied` disables its switch with an explanation, and a merely dismissed prompt
+leaves it enabled. Browsers expose no equivalent of `Linking.openSettings()`,
+which is the one place the two differ on purpose.
+
+## APK names carry the build, not the date
+
+Every APK this script produced declared `versionCode 1` and
+`versionName 0.1.0`, because app.json sets no versionCode and `eas.json` puts
+`appVersionSource` on remote, which only governs cloud builds. Android uses
+versionCode to decide whether an install is an upgrade, so every build looked
+like the same build, and Play would reject a second upload.
+
+`scripts/build-apk-local.ps1` now stamps `git rev-list --count HEAD` into the
+generated `build.gradle` and refuses to build if the patch does not apply. Files
+are named `evotv-<version>-build<n>-<sha>.apk`, with `-dirty` appended when the
+tree has uncommitted changes.
+
+EAS cloud builds keep their own remote counter, so a cloud build's versionCode
+will not match these.
+
+## Still needs a person
+
+- Install the APK on a real phone. FCM registration needs Play services, so an
+  emulator cannot prove it.
+- Say yes to the notification prompt. If you decline, the switch above is now
+  the way back.
+- Then send one from `/admin/announcements`, audience "just this person". The
+  response reports `expoDelivered`.

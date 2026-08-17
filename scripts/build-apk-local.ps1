@@ -146,6 +146,41 @@ if ($check -notmatch [regex]::Escape("evotv-release.keystore")) {
     throw "the release keystore is not referenced; refusing to ship an unsigned APK"
 }
 
+# ---------------------------------------------------------------- version
+# Every APK this script has ever produced declared `versionCode 1` and
+# `versionName "0.1.0"`, because app.json sets no versionCode and eas.json puts
+# `appVersionSource` on remote, which only applies to cloud builds. Two things
+# were wrong with that. Android uses versionCode to decide whether an install is
+# an upgrade, so every build looked like the same build. And naming the file
+# after the version alone would have produced one filename for ever, each build
+# silently overwriting the last, which is why these were dated instead.
+#
+# The commit count is the build number: monotonic, needs no state file to keep
+# in sync, and unlike a counter it points at an exact commit. The short SHA goes
+# in the filename so an APK on a phone can be traced back to the code in it.
+#
+# Note for the future: EAS cloud builds keep their own remote counter, so a
+# cloud build's versionCode will not match these. Only this script's output is
+# numbered this way.
+Step "stamping the build number"
+Push-Location $Repo
+$BuildNumber = (git rev-list --count HEAD).Trim()
+$ShortSha    = (git rev-parse --short HEAD).Trim()
+$IsDirty     = [bool](git status --porcelain)
+Pop-Location
+if (-not $BuildNumber) { throw "could not read a commit count to use as the build number" }
+
+$VersionName = (Get-Content "$Build\app.json" -Raw | ConvertFrom-Json).expo.version
+
+$appGradleText = ([IO.File]::ReadAllText($appGradle)) -replace "`r`n", "`n"
+$appGradleText = [regex]::Replace($appGradleText, 'versionCode\s+\d+', "versionCode $BuildNumber")
+[IO.File]::WriteAllText($appGradle, $appGradleText, (New-Object Text.UTF8Encoding $false))
+
+if ((Get-Content $appGradle -Raw) -notmatch "versionCode $BuildNumber") {
+    throw "the build number did not apply; refusing to ship another APK numbered 1"
+}
+Step "version $VersionName, build $BuildNumber, commit $ShortSha$(if ($IsDirty) { ', working tree DIRTY' })"
+
 # Prebuild writes `org.gradle.jvmargs=-Xmx2048m`, and 2 GB is not enough for
 # `:app:collectReleaseDependencies` on this project: it died with "Java heap
 # space" after eight minutes of work. Raised here rather than passed on the
@@ -179,8 +214,11 @@ if (-not $?) { throw "gradle failed" }
 $apk = "$Build\android\app\build\outputs\apk\release\app-release.apk"
 if (-not (Test-Path $apk)) { throw "gradle reported success but produced no APK" }
 
-$stamp = Get-Date -Format "yyyy-MM-dd"
-$out = "$Repo\builds\evotv-$stamp.apk"
+# Named for what is in it rather than when it was made: version, build number,
+# and the commit. `-dirty` when the tree had uncommitted changes, because an APK
+# that cannot be traced to a commit should say so on the tin.
+$suffix = if ($IsDirty) { "-dirty" } else { "" }
+$out = "$Repo\builds\evotv-$VersionName-build$BuildNumber-$ShortSha$suffix.apk"
 New-Item -ItemType Directory -Force "$Repo\builds" | Out-Null
 Copy-Item $apk $out -Force
 

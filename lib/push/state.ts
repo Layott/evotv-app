@@ -14,8 +14,23 @@ export type NativePushState =
   | { kind: "idle" }
   /** The web build, a simulator, or a dev client without the native module. */
   | { kind: "unsupported"; reason: string }
-  /** The person said no. Only the OS settings can undo it. */
+  /**
+   * The person said no, and the OS will still show the prompt if asked again.
+   * Turning the switch back on re-asks.
+   */
   | { kind: "denied" }
+  /**
+   * The person said no and the OS will not prompt again. Android stops asking
+   * after two dismissals, iOS after one. There is nothing the app can do from
+   * here except open the system settings page, so the switch sends them there
+   * rather than pretending a retry will work.
+   */
+  | { kind: "blocked" }
+  /**
+   * Permission is granted but the switch is off, so the server has no token for
+   * this device and will not send to it. Turning it back on needs no prompt.
+   */
+  | { kind: "off" }
   /**
    * The app asked for a token and the push service refused, which on Android
    * means no FCM credentials in this build and on iOS no APNs key. Nothing the

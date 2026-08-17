@@ -18,7 +18,7 @@ export function Stub({ name, className, children }: StubProps) {
   return (
     <View
       className={cn(
-        "rounded-md border border-dashed border-border bg-card p-3",
+        "rounded-md bg-card p-3",
         className,
       )}
     >

@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { RotateCcw, Search, Trash2, X } from "lucide-react-native";
+import { RotateCcw, Search, Trash2, X } from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -181,7 +181,7 @@ export function ClipsManagerPage() {
             <Spinner size="large" />
           </View>
         ) : filtered.length === 0 ? (
-          <View className="items-center rounded-xl border border-dashed border-border p-8">
+          <View className="items-center rounded-xl bg-card/50 p-8">
             <Text className="text-sm text-muted-foreground">
               No {filter === "deleted" ? "deleted clips" : "clips"}.
             </Text>
@@ -285,7 +285,7 @@ export function ClipsManagerPage() {
                     <Pressable
                       onPress={() => restoreMut.mutate(selected)}
                       disabled={restoreMut.isPending}
-                      className="flex-row items-center justify-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-3 py-3"
+                      className="flex-row items-center justify-center gap-2 rounded-lg bg-emerald-500/20 bg-emerald-500/15 px-3 py-3"
                     >
                       <RotateCcw size={14} color="#10B981" />
                       <Text className="text-sm font-semibold text-emerald-400">
@@ -296,7 +296,7 @@ export function ClipsManagerPage() {
                     <Pressable
                       onPress={() => handleDelete(selected)}
                       disabled={deleteMut.isPending}
-                      className="flex-row items-center justify-center gap-2 rounded-lg border border-destructive/40 bg-destructive/15 px-3 py-3"
+                      className="flex-row items-center justify-center gap-2 rounded-lg bg-destructive/20 bg-destructive/15 px-3 py-3"
                     >
                       <Trash2 size={14} color="#EF4444" />
                       <Text className="text-sm font-semibold text-destructive">

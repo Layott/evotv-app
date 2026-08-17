@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   Modal,
   Pressable,
@@ -9,7 +10,7 @@ import {
   type TextProps,
   type ViewProps,
 } from "react-native";
-import { X } from "lucide-react-native";
+import { X } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

@@ -43,3 +43,12 @@ expo-env.d.ts
 
 # graphify outputs (regenerable knowledge graph)
 graphify-out/
+
+# Firebase service account keys. These are private keys, not config.
+#
+# google-services.json is deliberately NOT here: it carries a project id and a
+# public API key, it has to be in the build, and Google publishes it in every
+# Android tutorial. The adminsdk file is the opposite - it is a signing key for
+# the whole Firebase project, it lives in EAS, and it must never reach a repo.
+*firebase-adminsdk*.json
+*service-account*.json

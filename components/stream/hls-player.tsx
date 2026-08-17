@@ -1,8 +1,9 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useVideoPlayer, VideoView, type VideoSource } from "expo-video";
-import { Play } from "lucide-react-native";
+import { Play } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -42,6 +43,7 @@ export function HlsPlayer({
   startAtSec,
   onEnded,
 }: HlsPlayerProps) {
+  const palette = useTokens();
   const [hasStarted, setHasStarted] = React.useState(autoPlay);
   const [errored, setErrored] = React.useState(false);
 
@@ -164,7 +166,7 @@ export function HlsPlayer({
                 backgroundColor: "rgba(70,227,206,0.9)",
               }}
             >
-              <Play size={28} color="#05191B" fill="#05191B" />
+              <Play size={28} color={palette.bg} />
             </View>
           </View>
         </Pressable>

@@ -9,7 +9,7 @@ import {
   Users,
   Wallet,
   XCircle,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { toast } from "sonner-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -243,7 +243,7 @@ export function AdminBillingPage() {
                 Failed to load subscriptions.
               </Text>
             ) : subs.length === 0 ? (
-              <View className="rounded-xl border border-dashed border-border p-6">
+              <View className="rounded-xl bg-card/50 p-6">
                 <Text className="text-center text-sm text-muted-foreground">
                   No subscriptions match this filter.
                 </Text>
@@ -351,16 +351,16 @@ function MetricCard({
 }: {
   label: string;
   value: string;
-  Icon: import("lucide-react-native").LucideIcon;
+  Icon: import("@/components/icons").Icon;
   loading?: boolean;
 }) {
   return (
     <View className="min-w-[30%] flex-1 flex-row items-center gap-3 rounded-2xl border border-border bg-card/40 p-3">
-      <View className="h-10 w-10 items-center justify-center rounded-lg border border-cyan-500/30 bg-cyan-500/10">
+      <View className="h-10 w-10 items-center justify-center rounded-lg bg-cyan-500/25">
         <Icon size={20} color="#67E8F0" />
       </View>
       <View className="flex-1">
-        <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+        <Text className="text-[10px] r text-muted-foreground">
           {label}
         </Text>
         {loading ? (

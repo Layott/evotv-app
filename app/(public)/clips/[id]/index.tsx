@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Share, Text, View } from "react-native";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -15,7 +16,7 @@ import {
   Share2,
   Volume2,
   VolumeX,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { getClipById, listTrendingClips } from "@/lib/api/vods";
 import type { Clip } from "@/lib/types";
@@ -108,7 +109,7 @@ function ClipPlayer({
               backgroundColor: "rgba(0,0,0,0.55)",
             }}
           >
-            <Play size={32} color="#fff" fill="#fff" />
+            <Play size={32} color="#fff" />
           </View>
         ) : null}
       </Pressable>
@@ -169,6 +170,7 @@ function ActionButton({ icon, label, onPress }: ActionButtonProps) {
 }
 
 export default function ClipDetailScreen() {
+  const palette = useTokens();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { isFollowing, toggleFollow } = useAuth();
@@ -257,7 +259,7 @@ export default function ClipDetailScreen() {
               </EmptyDescription>
             </EmptyHeader>
             <Button variant="outline" onPress={() => router.back()}>
-              <ArrowLeft size={16} color="#EAF6F5" />
+              <ArrowLeft size={16} color={palette.fg} />
               <Text className="text-foreground text-sm font-medium">
                 Go back
               </Text>
@@ -326,7 +328,7 @@ export default function ClipDetailScreen() {
                   <Heart
                     size={22}
                     color={liked ? "#f87171" : "#fff"}
-                    fill={liked ? "#f87171" : "transparent"}
+                    weight={liked ? "fill" : "regular"}
                   />
                 }
                 label={compact(likeCount)}

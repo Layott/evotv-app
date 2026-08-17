@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { ExternalLink, Search, Shield, ShieldOff, X } from "lucide-react-native";
+import { ExternalLink, Search, Shield, ShieldOff, X } from "@/components/icons";
 import { useRouter } from "expo-router";
 import { toast } from "sonner-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { PageHeader } from "./page-header";
+import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { formatDate, timeAgo } from "./utils";
 
@@ -161,6 +162,8 @@ export function UsersRolesPage() {
           title="Users & roles"
           description="Search accounts, manage roles."
         />
+
+        <SectionLinks parent="/admin/users" />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
           <Search size={14} color="#9FBDBD" />
@@ -348,7 +351,7 @@ export function UsersRolesPage() {
                   ))}
                 </View>
 
-                <View className="mt-5 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                <View className="mt-5 rounded-lg bg-amber-500/20 bg-amber-500/5 p-3">
                   <View className="mb-2 flex-row items-center gap-2">
                     <Shield size={14} color="#F59E0B" />
                     <Text className="text-sm font-semibold text-foreground">
@@ -366,7 +369,7 @@ export function UsersRolesPage() {
                         >
                           <View className="flex-row items-start justify-between gap-2">
                             <View className="flex-1">
-                              <Text className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                              <Text className="text-xs font-bold r text-amber-400">
                                 {s.kind.replace("_", " ")}
                               </Text>
                               <Text className="text-xs text-foreground mt-0.5">
@@ -430,7 +433,7 @@ export function UsersRolesPage() {
                             kind: opt.kind,
                           })
                         }
-                        className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5"
+                        className="rounded-md bg-destructive/25 px-3 py-1.5"
                         style={{
                           opacity:
                             !sanctionReason.trim() ||
@@ -485,7 +488,7 @@ export function UsersRolesPage() {
 function InfoCell({ label, value }: { label: string; value: string }) {
   return (
     <View className="min-w-[44%]">
-      <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+      <Text className="text-[10px] r text-muted-foreground">
         {label}
       </Text>
       <Text className="text-sm text-foreground" numberOfLines={1}>

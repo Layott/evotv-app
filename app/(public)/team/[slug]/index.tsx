@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -12,7 +13,7 @@ import {
   MapPin,
   Trophy,
   Users,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ function formatFollowers(n: number): string {
 }
 
 export default function TeamDetailScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const teamSlug = slug as string;
@@ -142,7 +144,7 @@ export default function TeamDetailScreen() {
           <View
             style={{
               minHeight: 240,
-              backgroundColor: "rgba(70,227,206,0.05)",
+              backgroundColor: "rgba(70,227,206,0.3)",
               position: "relative",
             }}
           >
@@ -167,8 +169,8 @@ export default function TeamDetailScreen() {
               onPress={() => router.push("/team")}
               className="flex-row items-center gap-1 self-start"
             >
-              <ArrowLeft size={12} color="#9FBDBD" />
-              <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+              <ArrowLeft size={12} color={palette.muted} />
+              <Text style={{ fontSize: 11, color: palette.muted }}>
                 All teams
               </Text>
             </Pressable>
@@ -179,8 +181,6 @@ export default function TeamDetailScreen() {
                   width: 80,
                   height: 80,
                   borderRadius: 12,
-                  borderWidth: 2,
-                  borderColor: "#0d0d0d",
                   backgroundColor: "#0d0d0d",
                 }}
                 contentFit="cover"
@@ -192,7 +192,7 @@ export default function TeamDetailScreen() {
                   </Text>
                   <View
                     className="rounded px-2 py-0.5"
-                    style={{ backgroundColor: "#103133" }}
+                    style={{ backgroundColor: palette.subtle }}
                   >
                     <Text
                       style={{
@@ -207,8 +207,8 @@ export default function TeamDetailScreen() {
                 </View>
                 <View className="mt-1 flex-row flex-wrap items-center gap-3">
                   <View className="flex-row items-center gap-1">
-                    <MapPin size={11} color="#9FBDBD" />
-                    <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+                    <MapPin size={11} color={palette.muted} />
+                    <Text style={{ fontSize: 11, color: palette.muted }}>
                       {team.country} · {team.region}
                     </Text>
                   </View>
@@ -224,17 +224,13 @@ export default function TeamDetailScreen() {
               onPress={onFollow}
               className="mt-4 self-start flex-row items-center gap-2 rounded-md px-4 py-2 active:opacity-80"
               style={{
-                borderWidth: 1,
-                borderColor: following
-                  ? "rgba(70,227,206,0.5)"
-                  : "transparent",
                 backgroundColor: following
                   ? "rgba(70,227,206,0.1)"
-                  : "#46E3CE",
+                  : palette.brand,
               }}
             >
               {following ? (
-                <Bell size={14} color="#67e8f9" fill="#67e8f9" />
+                <Bell size={14} color="#67e8f9" />
               ) : (
                 <BellOff size={14} color="#000" />
               )}
@@ -258,7 +254,7 @@ export default function TeamDetailScreen() {
               className="rounded-xl border border-border bg-card p-4"
               style={{ width: "48%" }}
             >
-              <Text style={{ fontSize: 11, letterSpacing: 1, color: "#737373", textTransform: "uppercase" }}>
+              <Text style={{ fontSize: 11, color: palette.muted, }}>
                 Rank
               </Text>
               <View className="mt-1 flex-row items-center gap-1">
@@ -274,7 +270,7 @@ export default function TeamDetailScreen() {
               className="rounded-xl border border-border bg-card p-4"
               style={{ width: "48%" }}
             >
-              <Text style={{ fontSize: 11, letterSpacing: 1, color: "#737373", textTransform: "uppercase" }}>
+              <Text style={{ fontSize: 11, color: palette.muted, }}>
                 W-L
               </Text>
               <Text
@@ -287,7 +283,7 @@ export default function TeamDetailScreen() {
               >
                 {team.wins}-{team.losses}
               </Text>
-              <Text style={{ fontSize: 11, color: "#737373" }}>
+              <Text style={{ fontSize: 11, color: palette.muted }}>
                 {winRate}% win rate
               </Text>
             </View>
@@ -295,16 +291,16 @@ export default function TeamDetailScreen() {
               className="rounded-xl border border-border bg-card p-4"
               style={{ width: "48%" }}
             >
-              <Text style={{ fontSize: 11, letterSpacing: 1, color: "#737373", textTransform: "uppercase" }}>
+              <Text style={{ fontSize: 11, color: palette.muted, }}>
                 Followers
               </Text>
               <View className="mt-1 flex-row items-center gap-1">
-                <Users size={16} color="#e5e5e5" />
+                <Users size={16} color={palette.fg} />
                 <Text
                   style={{
                     fontSize: 18,
                     fontWeight: "700",
-                    color: "#e5e5e5",
+                    color: palette.fg,
                   }}
                 >
                   {formatFollowers(team.followers)}
@@ -315,7 +311,7 @@ export default function TeamDetailScreen() {
               className="rounded-xl border border-border bg-card p-4"
               style={{ width: "48%" }}
             >
-              <Text style={{ fontSize: 11, letterSpacing: 1, color: "#737373", textTransform: "uppercase" }}>
+              <Text style={{ fontSize: 11, color: palette.muted, }}>
                 Active roster
               </Text>
               <Text
@@ -323,7 +319,7 @@ export default function TeamDetailScreen() {
                   marginTop: 4,
                   fontSize: 18,
                   fontWeight: "700",
-                  color: "#e5e5e5",
+                  color: palette.fg,
                 }}
               >
                 {roster.length}
@@ -356,8 +352,6 @@ export default function TeamDetailScreen() {
                         width: 48,
                         height: 48,
                         borderRadius: 24,
-                        borderWidth: 1,
-                        borderColor: "#103133",
                       }}
                       contentFit="cover"
                     />
@@ -369,7 +363,7 @@ export default function TeamDetailScreen() {
                         {p.handle}
                       </Text>
                       <Text
-                        style={{ fontSize: 11, color: "#9FBDBD" }}
+                        style={{ fontSize: 11, color: palette.muted }}
                         numberOfLines={1}
                       >
                         {p.realName}
@@ -411,14 +405,14 @@ export default function TeamDetailScreen() {
                     <Text className="text-sm font-medium text-foreground">
                       {m.round}
                     </Text>
-                    <Text style={{ fontSize: 11, color: "#737373" }}>
+                    <Text style={{ fontSize: 11, color: palette.muted }}>
                       Bo{m.bestOf}
                     </Text>
                     <Text
                       style={{
                         marginLeft: "auto",
                         fontSize: 11,
-                        color: "#9FBDBD",
+                        color: palette.muted,
                       }}
                     >
                       {new Date(m.scheduledAt).toLocaleString([], {
@@ -483,7 +477,7 @@ export default function TeamDetailScreen() {
                           marginLeft: "auto",
                           fontSize: 13,
                           fontVariant: ["tabular-nums"],
-                          color: "#e5e5e5",
+                          color: palette.fg,
                         }}
                       >
                         {ourScore} - {theirScore}

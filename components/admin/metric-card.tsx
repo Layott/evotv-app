@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Text, View } from "react-native";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react-native";
+import { ArrowDownRight, ArrowUpRight } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -9,7 +9,7 @@ interface MetricCardProps {
   value: string | number;
   delta?: number;
   deltaLabel?: string;
-  icon?: import("lucide-react-native").LucideIcon;
+  icon?: import("@/components/icons").Icon;
   hint?: string;
   className?: string;
 }
@@ -34,7 +34,7 @@ export function MetricCard({
       )}
     >
       <View className="flex-row items-start justify-between">
-        <Text className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+        <Text className="text-[10px] font-medium r text-muted-foreground">
           {title}
         </Text>
         {Icon ? (

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Mail } from "lucide-react-native";
+import { Mail } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ function OtpInput({
   hasError?: boolean;
   disabled?: boolean;
 }) {
+  const palette = useTokens();
   const ref = React.useRef<TextInput>(null);
   const [focused, setFocused] = React.useState(false);
 
@@ -60,13 +62,13 @@ function OtpInput({
                 key={i}
                 className="h-12 w-10 items-center justify-center rounded-md"
                 style={{
-                  backgroundColor: "#05191B",
+                  backgroundColor: palette.bg,
                   borderWidth: 1,
                   borderColor: hasError
                     ? "#ef4444"
                     : isActive
-                      ? "#46E3CE"
-                      : "#103133",
+                      ? palette.brand
+                      : palette.subtle,
                 }}
               >
                 <Text className="text-lg font-semibold text-foreground">
@@ -105,6 +107,7 @@ function OtpInput({
 }
 
 export default function VerifyEmailScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const params = useLocalSearchParams<{ email?: string }>();
   const email = params.email && params.email.length > 0 ? params.email : DEFAULT_EMAIL;
@@ -197,12 +200,10 @@ export default function VerifyEmailScreen() {
             <View
               className="h-14 w-14 items-center justify-center rounded-2xl"
               style={{
-                backgroundColor: "rgba(70,227,206,0.10)",
-                borderWidth: 1,
-                borderColor: "rgba(70,227,206,0.30)",
+                backgroundColor: "rgba(70,227,206,0.25)",
               }}
             >
-              <Mail color="#46E3CE" size={26} />
+              <Mail color={palette.brand} size={26} />
             </View>
             <Text className="text-center text-2xl font-bold text-foreground">
               Verify your email
@@ -242,7 +243,7 @@ export default function VerifyEmailScreen() {
             >
               {submitting ? (
                 <View className="flex-row items-center gap-2">
-                  <Spinner color="#05191B" />
+                  <Spinner color={palette.bg} />
                   <Text className="font-semibold text-black">
                     Verifying...
                   </Text>

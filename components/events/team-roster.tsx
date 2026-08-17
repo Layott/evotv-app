@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -11,6 +12,7 @@ export interface TeamRosterProps {
 }
 
 export function TeamRoster({ team, players }: TeamRosterProps) {
+  const palette = useTokens();
   const router = useRouter();
   return (
     <View className="rounded-xl border border-border bg-card p-4">
@@ -21,8 +23,6 @@ export function TeamRoster({ team, players }: TeamRosterProps) {
             width: 40,
             height: 40,
             borderRadius: 6,
-            borderWidth: 1,
-            borderColor: "#103133",
           }}
           contentFit="cover"
         />
@@ -38,13 +38,13 @@ export function TeamRoster({ team, players }: TeamRosterProps) {
               {team.name}
             </Text>
           </Pressable>
-          <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+          <Text style={{ fontSize: 11, color: palette.muted }}>
             {team.tag} · #{team.ranking}
           </Text>
         </View>
       </View>
       {players.length === 0 ? (
-        <Text style={{ fontSize: 12, color: "#737373" }}>Roster TBA</Text>
+        <Text style={{ fontSize: 12, color: palette.muted }}>Roster TBA</Text>
       ) : (
         <View className="flex-row flex-wrap" style={{ gap: 8 }}>
           {players.slice(0, 6).map((p) => (
@@ -62,8 +62,6 @@ export function TeamRoster({ team, players }: TeamRosterProps) {
                   width: 32,
                   height: 32,
                   borderRadius: 16,
-                  borderWidth: 1,
-                  borderColor: "#103133",
                 }}
                 contentFit="cover"
               />
@@ -75,7 +73,7 @@ export function TeamRoster({ team, players }: TeamRosterProps) {
                   {p.handle}
                 </Text>
                 <Text
-                  style={{ fontSize: 10, color: "#9FBDBD" }}
+                  style={{ fontSize: 10, color: palette.muted }}
                   numberOfLines={1}
                 >
                   {p.role}

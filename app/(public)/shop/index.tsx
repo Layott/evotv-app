@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
@@ -34,12 +35,13 @@ function Chip({
   onPress: () => void;
   label: string;
 }) {
+  const palette = useTokens();
   return (
     <Pressable
       onPress={onPress}
       className="rounded-full border px-3 py-1.5 active:opacity-70"
       style={{
-        borderColor: active ? "rgba(70,227,206,0.5)" : "#103133",
+        borderColor: active ? "rgba(70,227,206,0.5)" : palette.subtle,
         backgroundColor: active
           ? "rgba(70,227,206,0.15)"
           : "rgba(15,15,15,0.6)",
@@ -59,6 +61,7 @@ function Chip({
 }
 
 export default function ShopScreen() {
+  const palette = useTokens();
   const [cat, setCat] = React.useState<Product["category"] | "all">("all");
   const [sort, setSort] = React.useState<Sort>("featured");
 
@@ -136,7 +139,7 @@ export default function ShopScreen() {
             marginTop: 8,
           }}
         >
-          <Text style={{ fontSize: 11, color: "#737373", alignSelf: "center" }}>
+          <Text style={{ fontSize: 11, color: palette.muted, alignSelf: "center" }}>
             Sort:
           </Text>
           {SORTS.map((s) => (
@@ -162,7 +165,7 @@ export default function ShopScreen() {
               </View>
             </View>
           ) : filtered.length === 0 ? (
-            <View className="rounded-2xl border border-dashed border-border p-12">
+            <View className="rounded-2xl bg-card/50 p-12">
               <Text className="text-center text-sm text-muted-foreground">
                 No products match your filters.
               </Text>

@@ -1,6 +1,7 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Text, View, type ViewProps } from "react-native";
-import { Coins } from "lucide-react-native";
+import { Coins } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -27,27 +28,29 @@ export function CoinPill({
   textClassName,
   ...props
 }: CoinPillProps) {
-  const palette =
+  const palette = useTokens();
+  // Renamed: this is the per-tone class set, not the theme palette.
+  const toneStyles =
     tone === "amber"
       ? { wrap: "border-amber-500/30 bg-amber-500/10", text: "text-amber-300", icon: "#FCD34D" }
       : tone === "sky"
         ? { wrap: "border-sky-500/30 bg-sky-500/10", text: "text-sky-300", icon: "#7DD3FC" }
-        : { wrap: "border-neutral-700 bg-neutral-900/60", text: "text-neutral-200", icon: "#9FBDBD" };
+        : { wrap: "bg-card/60", text: "text-foreground", icon: palette.muted };
 
   return (
     <View
       className={cn(
         "flex-row items-center gap-1 rounded-full border px-2 py-0.5",
-        palette.wrap,
+        toneStyles.wrap,
         className,
       )}
       {...props}
     >
-      <Coins size={iconSize} color={palette.icon} />
+      <Coins size={iconSize} color={toneStyles.icon} />
       <Text
         className={cn(
           "text-[11px] font-semibold tabular-nums",
-          palette.text,
+          toneStyles.text,
           textClassName,
         )}
       >

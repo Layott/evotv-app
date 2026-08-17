@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -9,7 +10,7 @@ import {
   Clock,
   Eye,
   Trophy,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -47,9 +48,7 @@ function LiveBadge() {
     <View
       className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
       style={{
-        borderWidth: 1,
-        borderColor: "rgba(239,68,68,0.3)",
-        backgroundColor: "rgba(239,68,68,0.1)",
+        backgroundColor: "rgba(239,68,68,0.25)",
       }}
     >
       <View
@@ -75,6 +74,7 @@ function LiveBadge() {
 }
 
 export default function CategoryDetailScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const gameSlug = slug as string;
@@ -179,8 +179,8 @@ export default function CategoryDetailScreen() {
                 onPress={() => router.push("/categories")}
                 className="flex-row items-center gap-1 self-start"
               >
-                <ArrowLeft size={12} color="#9FBDBD" />
-                <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+                <ArrowLeft size={12} color={palette.muted} />
+                <Text style={{ fontSize: 11, color: palette.muted }}>
                   All categories
                 </Text>
               </Pressable>
@@ -191,8 +191,6 @@ export default function CategoryDetailScreen() {
                     width: 48,
                     height: 48,
                     borderRadius: 8,
-                    borderWidth: 1,
-                    borderColor: "#17454A",
                   }}
                   contentFit="cover"
                   fallbackLabel={game.shortName}
@@ -268,9 +266,9 @@ export default function CategoryDetailScreen() {
                           className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
                           style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
                         >
-                          <Eye size={11} color="#e5e5e5" />
+                          <Eye size={11} color={palette.fg} />
                           <Text
-                            style={{ fontSize: 11, color: "#e5e5e5" }}
+                            style={{ fontSize: 11, color: palette.fg }}
                           >
                             {formatViewers(s.viewerCount)}
                           </Text>
@@ -331,9 +329,9 @@ export default function CategoryDetailScreen() {
                           {ev.title}
                         </Text>
                         <View className="mt-1 flex-row items-center gap-1">
-                          <Calendar size={11} color="#9FBDBD" />
+                          <Calendar size={11} color={palette.muted} />
                           <Text
-                            style={{ fontSize: 11, color: "#9FBDBD" }}
+                            style={{ fontSize: 11, color: palette.muted }}
                           >
                             {new Date(ev.startsAt).toLocaleDateString()}
                           </Text>
@@ -382,8 +380,6 @@ export default function CategoryDetailScreen() {
                           width: 48,
                           height: 48,
                           borderRadius: 6,
-                          borderWidth: 1,
-                          borderColor: "#103133",
                         }}
                         contentFit="cover"
                       />
@@ -394,7 +390,7 @@ export default function CategoryDetailScreen() {
                         >
                           {t.name}
                         </Text>
-                        <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+                        <Text style={{ fontSize: 11, color: palette.muted }}>
                           #{t.ranking} · {t.wins}-{t.losses}
                         </Text>
                       </View>
@@ -428,8 +424,6 @@ export default function CategoryDetailScreen() {
                           width: 48,
                           height: 48,
                           borderRadius: 24,
-                          borderWidth: 1,
-                          borderColor: "#103133",
                         }}
                         contentFit="cover"
                       />
@@ -440,7 +434,7 @@ export default function CategoryDetailScreen() {
                         >
                           {p.handle}
                         </Text>
-                        <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+                        <Text style={{ fontSize: 11, color: palette.muted }}>
                           {p.role} · KDA {p.kda.toFixed(2)}
                         </Text>
                       </View>
@@ -486,9 +480,9 @@ export default function CategoryDetailScreen() {
                           className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
                           style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
                         >
-                          <Clock size={11} color="#e5e5e5" />
+                          <Clock size={11} color={palette.fg} />
                           <Text
-                            style={{ fontSize: 11, color: "#e5e5e5" }}
+                            style={{ fontSize: 11, color: palette.fg }}
                           >
                             {formatDuration(v.durationSec)}
                           </Text>

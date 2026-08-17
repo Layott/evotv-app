@@ -6,7 +6,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Check, ExternalLink, Flag, X } from "lucide-react-native";
+import { Check, ExternalLink, Flag, X } from "@/components/icons";
 import { useRouter } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
 import { PageHeader } from "./page-header";
+import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { timeAgo } from "./utils";
 
@@ -91,8 +92,8 @@ function ReportCard({
       </Text>
 
       {report.targetPreview ? (
-        <View className="mt-2 rounded-md border border-amber-500/30 bg-amber-500/5 p-2">
-          <Text className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
+        <View className="mt-2 rounded-md bg-amber-500/20 bg-amber-500/5 p-2">
+          <Text className="text-[10px] font-bold r text-amber-400">
             Reported message
           </Text>
           <Text className="mt-1 text-sm italic text-foreground">
@@ -109,7 +110,7 @@ function ReportCard({
 
       {report.resolutionNotes ? (
         <View className="mt-2 rounded-md border border-border bg-background/50 p-2">
-          <Text className="text-[11px] uppercase tracking-wider text-muted-foreground">
+          <Text className="text-[11px] r text-muted-foreground">
             Resolution notes
           </Text>
           <Text className="text-sm text-foreground">
@@ -169,7 +170,9 @@ function targetHref(r: ContentReport): string | null {
         ? `/stream/${r.targetPreview.streamId}`
         : null;
     case "party":
-      return `/watch-parties/${r.targetId}`;
+      // Watch parties were removed from the app along with the rest of the
+      // coming-soon screens, so there is nothing to open.
+      return null;
     default:
       return null;
   }
@@ -251,6 +254,8 @@ export function ModerationPage() {
           description="User-submitted reports against streams, VODs, clips, users, chat messages."
         />
 
+        <SectionLinks parent="/admin/moderation" />
+
         <View className="mb-3 flex-row gap-2">
           {STATUS_TABS.map((t) => (
             <Pressable
@@ -305,7 +310,7 @@ export function ModerationPage() {
                     })
                   }
                   disabled={bulkMut.isPending}
-                  className="ml-auto rounded-md border border-emerald-500/40 bg-emerald-500/15 px-3 py-1.5"
+                  className="ml-auto rounded-md bg-emerald-500/20 bg-emerald-500/15 px-3 py-1.5"
                 >
                   <Text className="text-xs font-semibold text-emerald-400">
                     Resolve all
@@ -337,7 +342,7 @@ export function ModerationPage() {
             <Spinner size="large" />
           </View>
         ) : reports.length === 0 ? (
-          <View className="items-center rounded-xl border border-dashed border-border p-8">
+          <View className="items-center rounded-xl bg-card/50 p-8">
             <Flag size={24} color="#737373" />
             <Text className="mt-2 text-sm text-muted-foreground">
               No {status} reports.

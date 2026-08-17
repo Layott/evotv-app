@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Text, View } from "react-native";
 
 import { cn } from "@/lib/utils";
@@ -60,6 +61,7 @@ export function PasswordStrengthMeter({
   password,
   className,
 }: PasswordStrengthMeterProps) {
+  const palette = useTokens();
   const strength = scorePassword(password);
   const filled = FILLED[strength];
   const color = COLOR[strength];
@@ -77,7 +79,7 @@ export function PasswordStrengthMeter({
               flex: 1,
               height: 4,
               borderRadius: 2,
-              backgroundColor: i < filled ? color : "#103133",
+              backgroundColor: i < filled ? color : palette.subtle,
             }}
           />
         ))}
@@ -86,7 +88,7 @@ export function PasswordStrengthMeter({
         style={{
           fontSize: 11,
           fontWeight: "500",
-          color: strength === "empty" ? "#737373" : color,
+          color: strength === "empty" ? palette.muted : color,
         }}
       >
         {LABELS[strength]}

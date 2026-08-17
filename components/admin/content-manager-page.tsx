@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { Plus, Search, Upload, X } from "lucide-react-native";
+import { Plus, Search, Upload, X } from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -229,7 +229,7 @@ export function ContentManagerPage() {
                       /{row.slug}
                     </Text>
                     <View className="mt-1 flex-row flex-wrap gap-1.5">
-                      <StatusBadge tone="violet">
+                      <StatusBadge tone="neutral">
                         {row.category.toUpperCase()}
                       </StatusBadge>
                       <StatusBadge tone="neutral">{row.platform}</StatusBadge>
@@ -791,7 +791,7 @@ function ImageUploadField({
       <Pressable
         onPress={handlePick}
         disabled={uploading}
-        className={`flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+        className={`flex-row items-center justify-center gap-2 rounded-md bg-card px-3 py-2.5 ${
           uploading ? "opacity-60" : ""
         }`}
       >

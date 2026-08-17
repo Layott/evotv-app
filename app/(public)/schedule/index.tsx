@@ -1,9 +1,10 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, BellOff, Calendar, Clock, Film, Radio, Trophy } from "lucide-react-native";
+import { Bell, BellOff, Calendar, Clock, Film, Radio, Trophy } from "@/components/icons";
 
 import { PressableScale } from "@/components/common/pressable-scale";
 import { TopNavbar } from "@/components/home/top-navbar";
@@ -57,7 +58,6 @@ function formatTime(iso: string): string {
 }
 
 function pillarStyle(p: EpgPillar): {
-  borderColor: string;
   backgroundColor: string;
   color: string;
   label: string;
@@ -65,23 +65,20 @@ function pillarStyle(p: EpgPillar): {
   switch (p) {
     case "anime":
       return {
-        borderColor: "rgba(244,114,182,0.4)",
-        backgroundColor: "rgba(244,114,182,0.12)",
+        backgroundColor: "rgba(244,114,182,0.3)",
         color: "#f9a8d4",
         label: "Anime",
       };
     case "lifestyle":
       return {
-        borderColor: "rgba(168,85,247,0.4)",
-        backgroundColor: "rgba(168,85,247,0.12)",
+        backgroundColor: "rgba(168,85,247,0.3)",
         color: "#d8b4fe",
         label: "Lifestyle",
       };
     case "esports":
     default:
       return {
-        borderColor: "rgba(70,227,206,0.4)",
-        backgroundColor: "rgba(70,227,206,0.1)",
+        backgroundColor: "rgba(70,227,206,0.3)",
         color: "#67e8f9",
         label: "Esports",
       };
@@ -99,9 +96,7 @@ function LiveBadge() {
     <View
       className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
       style={{
-        borderWidth: 1,
-        borderColor: "rgba(239,68,68,0.3)",
-        backgroundColor: "rgba(239,68,68,0.1)",
+        backgroundColor: "rgba(239,68,68,0.25)",
       }}
     >
       <View
@@ -135,6 +130,7 @@ function ReminderBell({
   airsAt: string;
   isAuthenticated: boolean;
 }) {
+  const palette = useTokens();
   const router = useRouter();
   const reminder = useReminder(targetId, airsAt, isAuthenticated);
 
@@ -147,7 +143,7 @@ function ReminderBell({
   };
 
   const Icon = reminder.active ? Bell : BellOff;
-  const color = reminder.active ? "#67e8f9" : "#737373";
+  const color = reminder.active ? "#67e8f9" : palette.muted;
 
   return (
     <Pressable
@@ -156,7 +152,6 @@ function ReminderBell({
       disabled={reminder.isPending}
       className="absolute right-2 top-2 rounded-md border bg-card/70 px-1.5 py-1 active:opacity-70"
       style={{
-        borderColor: reminder.active ? "rgba(70,227,206,0.4)" : "#103133",
         opacity: reminder.isPending ? 0.5 : 1,
       }}
       accessibilityRole="button"
@@ -174,6 +169,7 @@ function EpgCard({
   row: EpgRow;
   isAuthenticated: boolean;
 }) {
+  const palette = useTokens();
   const router = useRouter();
   const pillar = pillarStyle(row.pillar);
   const isLive = row.state === "live";
@@ -202,8 +198,6 @@ function EpgCard({
         <View
           className="absolute left-2 top-2 rounded-md px-1.5 py-0.5"
           style={{
-            borderWidth: 1,
-            borderColor: pillar.borderColor,
             backgroundColor: pillar.backgroundColor,
           }}
         >
@@ -234,11 +228,11 @@ function EpgCard({
           />
         ) : null}
         <View className="flex-row items-center gap-1 pr-7">
-          <Clock size={11} color="#9FBDBD" />
-          <Text style={{ fontSize: 11, color: "#9FBDBD", fontWeight: "500" }}>
+          <Clock size={11} color={palette.muted} />
+          <Text style={{ fontSize: 11, color: palette.muted, fontWeight: "500" }}>
             {formatTime(row.airsAt)}
           </Text>
-          <Text style={{ fontSize: 11, color: "#525252" }}>
+          <Text style={{ fontSize: 11, color: palette.muted }}>
             · {row.durationMin}m
           </Text>
         </View>
@@ -251,7 +245,7 @@ function EpgCard({
         </Text>
 
         <Text
-          style={{ fontSize: 12, color: "#9FBDBD" }}
+          style={{ fontSize: 12, color: palette.muted }}
           numberOfLines={1}
         >
           {row.subtitle}
@@ -259,7 +253,7 @@ function EpgCard({
 
         <View className="mt-auto flex-row items-center gap-1 pt-1">
           <KindIcon kind={row.kind} />
-          <Text style={{ fontSize: 11, color: "#737373" }}>
+          <Text style={{ fontSize: 11, color: palette.muted }}>
             {row.kind === "live_stream"
               ? "Live broadcast"
               : row.kind === "match"
@@ -281,16 +275,14 @@ function Chip({
   active: boolean;
   onPress: () => void;
   label: string;
-  toneActive?: { borderColor: string; backgroundColor: string; color: string };
+  toneActive?: { backgroundColor: string; color: string };
 }) {
+  const palette = useTokens();
   return (
     <Pressable
       onPress={onPress}
       className="rounded-full border px-3 py-1 active:opacity-70"
       style={{
-        borderColor: active
-          ? toneActive?.borderColor ?? "rgba(70,227,206,0.5)"
-          : "#103133",
         backgroundColor: active
           ? toneActive?.backgroundColor ?? "rgba(70,227,206,0.1)"
           : "rgba(15,15,15,0.6)",
@@ -300,7 +292,7 @@ function Chip({
         style={{
           fontSize: 12,
           fontWeight: "500",
-          color: active ? toneActive?.color ?? "#67e8f9" : "#9FBDBD",
+          color: active ? toneActive?.color ?? "#67e8f9" : palette.muted,
         }}
       >
         {label}
@@ -320,12 +312,12 @@ function DayChip({
   label: string;
   sub: string;
 }) {
+  const palette = useTokens();
   return (
     <Pressable
       onPress={onPress}
       className="items-center rounded-xl border px-4 py-2 active:opacity-70"
       style={{
-        borderColor: active ? "rgba(70,227,206,0.5)" : "#103133",
         backgroundColor: active
           ? "rgba(70,227,206,0.1)"
           : "rgba(15,15,15,0.6)",
@@ -336,7 +328,7 @@ function DayChip({
         style={{
           fontSize: 12,
           fontWeight: "600",
-          color: active ? "#67e8f9" : "#e5e5e5",
+          color: active ? "#67e8f9" : palette.fg,
         }}
       >
         {label}
@@ -344,7 +336,7 @@ function DayChip({
       <Text
         style={{
           fontSize: 11,
-          color: active ? "#67e8f9" : "#737373",
+          color: active ? "#67e8f9" : palette.muted,
           marginTop: 2,
         }}
       >
@@ -363,6 +355,7 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
 }
 
 export default function ScheduleScreen() {
+  const palette = useTokens();
   const days = React.useMemo(() => buildDayStrip(), []);
   const [selectedDay, setSelectedDay] = React.useState<string>(
     isoDay(new Date()),
@@ -461,7 +454,7 @@ export default function ScheduleScreen() {
           ) : rows.length === 0 ? (
             <View className="mx-4 rounded-xl border border-border bg-card p-8">
               <View className="items-center gap-2">
-                <Calendar size={28} color="#525252" />
+                <Calendar size={28} color={palette.muted} />
                 <Text className="text-center text-sm text-muted-foreground">
                   Nothing on the schedule for this day yet.
                 </Text>

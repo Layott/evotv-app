@@ -1,8 +1,9 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { Calendar, Trophy } from "lucide-react-native";
+import { Calendar, Trophy } from "@/components/icons";
 
 import type { EsportsEvent, Game } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,27 +25,23 @@ function formatNgn(n: number): string {
 }
 
 function tierStyle(t: string): {
-  borderColor: string;
   backgroundColor: string;
   color: string;
 } {
   switch (t) {
     case "s":
       return {
-        borderColor: "rgba(245,158,11,0.4)",
-        backgroundColor: "rgba(245,158,11,0.1)",
+        backgroundColor: "rgba(245,158,11,0.3)",
         color: "#fcd34d",
       };
     case "a":
     case "b":
       return {
-        borderColor: "rgba(70,227,206,0.4)",
-        backgroundColor: "rgba(70,227,206,0.1)",
+        backgroundColor: "rgba(70,227,206,0.3)",
         color: "#67e8f9",
       };
     default:
       return {
-        borderColor: "#17454A",
         backgroundColor: "#103133",
         color: "#d4d4d4",
       };
@@ -76,6 +73,7 @@ export function UpcomingEvents({
   games,
   loading,
 }: UpcomingEventsProps) {
+  const palette = useTokens();
   const router = useRouter();
   const gameMap = React.useMemo(
     () => new Map(games.map((g) => [g.id, g])),
@@ -92,7 +90,7 @@ export function UpcomingEvents({
           onPress={() => router.push("/events")}
           className="active:opacity-70"
         >
-          <Text className="text-xs font-medium" style={{ color: "#46E3CE" }}>
+          <Text className="text-xs font-medium" style={{ color: palette.brand }}>
             See all
           </Text>
         </Pressable>
@@ -137,8 +135,6 @@ export function UpcomingEvents({
                   <View
                     className="absolute left-2 top-2 rounded-md px-2 py-0.5"
                     style={{
-                      borderWidth: 1,
-                      borderColor: tier.borderColor,
                       backgroundColor: tier.backgroundColor,
                     }}
                   >
@@ -163,18 +159,18 @@ export function UpcomingEvents({
                     {ev.title}
                   </Text>
                   <View className="flex-row items-center gap-2">
-                    <Calendar size={12} color="#9FBDBD" />
+                    <Calendar size={12} color={palette.muted} />
                     <Text
-                      style={{ fontSize: 11, color: "#9FBDBD" }}
+                      style={{ fontSize: 11, color: palette.muted }}
                     >
                       {formatDateShort(ev.startsAt)}
                     </Text>
                     <Text
-                      style={{ fontSize: 11, color: "#9FBDBD" }}
+                      style={{ fontSize: 11, color: palette.muted }}
                     >
                       &middot;
                     </Text>
-                    <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+                    <Text style={{ fontSize: 11, color: palette.muted }}>
                       {countdownLabel(ev.startsAt)}
                     </Text>
                     {game ? (
@@ -182,7 +178,7 @@ export function UpcomingEvents({
                         style={{
                           marginLeft: "auto",
                           fontSize: 11,
-                          color: "#46E3CE",
+                          color: palette.brand,
                         }}
                       >
                         {game.shortName}

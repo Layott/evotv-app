@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { Plus, Search, Trash2, Upload, X } from "lucide-react-native";
+import { Plus, Search, Trash2, Upload, X } from "@/components/icons";
 import { toast } from "sonner-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -246,7 +246,7 @@ export function AdsManagerPage() {
                         {row.clickUrl}
                       </Text>
                       <View className="mt-1 flex-row gap-1.5">
-                        <StatusBadge tone="violet">
+                        <StatusBadge tone="neutral">
                           {placementLabel(row.placement)}
                         </StatusBadge>
                         {row.active ? (
@@ -438,7 +438,7 @@ function AdForm({
             <Pressable
               onPress={handleUpload}
               disabled={uploading}
-              className={`mb-2 flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+              className={`mb-2 flex-row items-center justify-center gap-2 rounded-md bg-card px-3 py-2.5 ${
                 uploading ? "opacity-60" : ""
               }`}
             >

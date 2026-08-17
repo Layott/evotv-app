@@ -1,8 +1,9 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { ScrollView, Text, View } from "react-native";
 import { Stack } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Banknote, ClockIcon } from "lucide-react-native";
+import { Banknote, ClockIcon } from "@/components/icons";
 
 import { listPayouts, type Payout } from "@/lib/api/partner";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,6 +27,7 @@ function statusClass(s: Payout["status"]): string {
 }
 
 export default function PayoutsScreen() {
+  const palette = useTokens();
   const payoutsQ = useQuery({
     queryKey: ["partner", "payouts"],
     queryFn: () => listPayouts(),
@@ -37,7 +39,7 @@ export default function PayoutsScreen() {
       <ScrollView className="flex-1 bg-background">
         <View className="px-5 py-6">
           <View className="flex-row items-center gap-2">
-            <Banknote size={22} color="#46E3CE" />
+            <Banknote size={22} color={palette.brand} />
             <Text className="text-2xl font-bold text-foreground">Payouts</Text>
           </View>
           <Text className="mt-1 text-sm text-muted-foreground">
@@ -51,15 +53,15 @@ export default function PayoutsScreen() {
               ))}
             </View>
           ) : payoutsQ.isError ? (
-            <View className="mt-5 rounded-xl border border-rose-500/30 bg-rose-500/5 p-4">
+            <View className="mt-5 rounded-xl bg-rose-500/20 bg-rose-500/5 p-4">
               <Text className="text-sm text-rose-300">
                 {(payoutsQ.error as Error)?.message ?? "Failed to load"}
               </Text>
             </View>
           ) : payoutsQ.data?.length === 0 ? (
-            <View className="mt-5 rounded-2xl border border-dashed border-neutral-800 bg-neutral-900/30 p-8">
+            <View className="mt-5 rounded-2xl bg-card/50 p-8">
               <View className="items-center gap-2">
-                <ClockIcon size={20} color="#737373" />
+                <ClockIcon size={20} color={palette.muted} />
                 <Text className="text-center text-sm text-muted-foreground">
                   No payouts yet. The first weekly rollup runs Sunday 03:00 UTC.
                 </Text>
@@ -70,7 +72,7 @@ export default function PayoutsScreen() {
               {payoutsQ.data?.map((p) => (
                 <View
                   key={p.id}
-                  className="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4"
+                  className="rounded-2xl bg-card/60 p-4"
                 >
                   <View className="flex-row items-center justify-between">
                     <Text className="text-sm font-semibold text-foreground">
@@ -87,7 +89,7 @@ export default function PayoutsScreen() {
                   </View>
                   <View className="mt-3 flex-row items-center justify-between">
                     <View>
-                      <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <Text className="text-[10px] r text-muted-foreground">
                         Net payout
                       </Text>
                       <Text className="mt-0.5 text-lg font-bold text-foreground">
@@ -95,7 +97,7 @@ export default function PayoutsScreen() {
                       </Text>
                     </View>
                     <View className="items-end">
-                      <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <Text className="text-[10px] r text-muted-foreground">
                         Gross · Fee
                       </Text>
                       <Text className="mt-0.5 text-xs text-muted-foreground">

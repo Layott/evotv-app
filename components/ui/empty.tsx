@@ -9,7 +9,7 @@ const Empty = React.forwardRef<View, ViewProps & { className?: string }>(
     <View
       ref={ref}
       className={cn(
-        "flex-1 items-center justify-center gap-6 rounded-lg border border-dashed border-border p-6",
+        "flex-1 items-center justify-center gap-6 rounded-lg bg-card/50 p-6",
         className,
       )}
       {...props}

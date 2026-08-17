@@ -1,25 +1,24 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Text, View } from "react-native";
-import { ArrowDownRight, ArrowUpRight, type LucideIcon } from "lucide-react-native";
+import { ArrowDownRight, ArrowUpRight, type Icon } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 
-export type MetricAccent = "sky" | "amber" | "emerald" | "fuchsia" | "rose" | "brand";
+export type MetricAccent = "sky" | "amber" | "emerald" | "rose" | "brand";
 
 const ACCENT: Record<MetricAccent, string> = {
-  sky: "text-sky-300 bg-sky-500/15 border border-sky-500/30",
-  amber: "text-amber-300 bg-amber-500/15 border border-amber-500/30",
-  emerald: "text-emerald-300 bg-emerald-500/15 border border-emerald-500/30",
-  fuchsia: "text-fuchsia-300 bg-fuchsia-500/15 border border-fuchsia-500/30",
-  rose: "text-rose-300 bg-rose-500/15 border border-rose-500/30",
-  brand: "text-brand bg-brand/15 border border-brand/30",
+  sky: "text-sky-300 bg-sky-500/15 bg-sky-500/20",
+  amber: "text-amber-300 bg-amber-500/15 bg-amber-500/20",
+  emerald: "text-emerald-300 bg-emerald-500/15 bg-emerald-500/20",
+  rose: "text-rose-300 bg-rose-500/15 bg-rose-500/20",
+  brand: "text-brand bg-brand/15 bg-brand/20",
 };
 
 const ACCENT_COLORS: Record<MetricAccent, string> = {
   sky: "#7DD3FC",
   amber: "#FCD34D",
-  emerald: "#6EE7B7",
-  fuchsia: "#F0ABFC",
+  emerald: "#6EE7B7",
   rose: "#FDA4AF",
   brand: "#46E3CE",
 };
@@ -29,7 +28,7 @@ interface MetricCardProps {
   value: string | number;
   hint?: string;
   delta?: number;
-  icon?: LucideIcon;
+  icon?: Icon;
   accent?: MetricAccent;
 }
 
@@ -45,7 +44,7 @@ export function MetricCard({
   return (
     <View className="rounded-2xl border border-border bg-card/40 p-4">
       <View className="flex-row items-start justify-between">
-        <Text className="text-[10px] uppercase tracking-widest text-muted-foreground">
+        <Text className="text-[10px] st text-muted-foreground">
           {label}
         </Text>
         {Icon ? (

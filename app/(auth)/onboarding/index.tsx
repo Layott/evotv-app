@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Link, Stack, useRouter } from "expo-router";
@@ -10,8 +11,8 @@ import {
   Shield,
   SlidersHorizontal,
   Users,
-  type LucideIcon,
-} from "lucide-react-native";
+  type Icon,
+} from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
@@ -102,7 +103,7 @@ const NOTIF_ITEMS: { key: NotifKey; title: string; body: string }[] = [
 const STEP_TITLES: ReadonlyArray<{
   title: string;
   subtitle: string;
-  Icon: LucideIcon;
+  Icon: Icon;
 }> = [
   {
     title: "Pick your games",
@@ -127,6 +128,7 @@ const STEP_TITLES: ReadonlyArray<{
 ];
 
 export default function OnboardingScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { completeOnboarding } = useAuth();
 
@@ -238,7 +240,7 @@ export default function OnboardingScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View className="mb-3 flex-row items-center justify-between">
-          <Text className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          <Text className="text-xs font-semibold st text-muted-foreground">
             Step {step} of 4
           </Text>
           <Link href="/(public)/home" asChild>
@@ -261,7 +263,7 @@ export default function OnboardingScreen() {
 
         <View className="mt-6 mb-4">
           <View className="flex-row items-center gap-2">
-            <Icon color="#46E3CE" size={20} />
+            <Icon color={palette.brand} size={20} />
             <Text className="text-2xl font-bold text-foreground">
               {current.title}
             </Text>
@@ -315,7 +317,7 @@ export default function OnboardingScreen() {
             disabled={step === 1 || submitting}
             className="h-11 flex-1"
           >
-            <ArrowLeft color="#EAF6F5" size={16} />
+            <ArrowLeft color={palette.fg} size={16} />
             <Text className="text-sm font-medium text-foreground">Back</Text>
           </Button>
           <Button
@@ -326,18 +328,18 @@ export default function OnboardingScreen() {
           >
             {submitting ? (
               <View className="flex-row items-center gap-2">
-                <Spinner color="#05191B" />
+                <Spinner color={palette.bg} />
                 <Text className="font-semibold text-black">Finishing...</Text>
               </View>
             ) : step === 4 ? (
               <View className="flex-row items-center gap-2">
                 <Text className="font-semibold text-black">Finish</Text>
-                <Check color="#05191B" size={16} />
+                <Check color={palette.bg} size={16} />
               </View>
             ) : (
               <View className="flex-row items-center gap-2">
                 <Text className="font-semibold text-black">Continue</Text>
-                <ArrowRight color="#05191B" size={16} />
+                <ArrowRight color={palette.bg} size={16} />
               </View>
             )}
           </Button>
@@ -360,6 +362,7 @@ function StepGames({
   selected: string[];
   onToggle: (id: string) => void;
 }) {
+  const palette = useTokens();
   if (loading) {
     return (
       <View className="gap-3">
@@ -390,8 +393,6 @@ function StepGames({
             style={
               isSelected
                 ? {
-                    borderColor: "#46E3CE",
-                    borderWidth: 2,
                   }
                 : undefined
             }
@@ -416,7 +417,7 @@ function StepGames({
                 <View
                   className="absolute right-2 top-2 h-6 w-6 items-center justify-center rounded-full bg-brand"
                 >
-                  <Check color="#05191B" size={14} />
+                  <Check color={palette.bg} size={14} />
                 </View>
               ) : null}
             </View>
@@ -429,7 +430,7 @@ function StepGames({
                   {g.shortName}
                 </Text>
                 <View className="rounded bg-muted px-1.5 py-0.5">
-                  <Text className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <Text className="text-[10px] font-medium text-muted-foreground">
                     {g.platform}
                   </Text>
                 </View>
@@ -457,6 +458,7 @@ function StepTeams({
   selected: string[];
   onToggle: (id: string) => void;
 }) {
+  const palette = useTokens();
   if (loading) {
     return (
       <View className="gap-2">
@@ -488,22 +490,18 @@ function StepTeams({
             onPress={() => onToggle(t.id)}
             accessibilityRole="button"
             accessibilityState={{ selected: isSelected }}
+            // Selection is a stronger fill, never a ring.
             className={cn(
-              "flex-row items-center gap-3 rounded-lg border bg-background p-3",
-              isSelected ? "border-brand" : "border-border",
+              "flex-row items-center gap-3 rounded-lg p-3",
+              isSelected ? "bg-brand/25" : "bg-background",
             )}
-            style={
-              isSelected
-                ? { borderColor: "#46E3CE", borderWidth: 2 }
-                : undefined
-            }
           >
             <View
               className="overflow-hidden rounded-md"
               style={{
                 width: 40,
                 height: 40,
-                backgroundColor: "#103133",
+                backgroundColor: palette.subtle,
               }}
             >
               <Image
@@ -535,13 +533,13 @@ function StepTeams({
             </View>
             <View
               className="h-5 w-5 items-center justify-center rounded-full"
+              // Both states are fills: an unticked box used to be an outline
+              // around nothing, which is the shape being removed.
               style={{
-                borderWidth: 1,
-                borderColor: isSelected ? "#46E3CE" : "#17454A",
-                backgroundColor: isSelected ? "#46E3CE" : "transparent",
+                backgroundColor: isSelected ? palette.brand : palette.input,
               }}
             >
-              {isSelected ? <Check color="#05191B" size={12} /> : null}
+              {isSelected ? <Check color={palette.bg} size={12} /> : null}
             </View>
           </Pressable>
         );
@@ -618,12 +616,9 @@ function StepPreferences({
                 accessibilityRole="radio"
                 accessibilityState={{ selected: active }}
                 className={cn(
-                  "flex-1 items-center justify-center rounded-lg border bg-background px-3 py-2.5",
-                  active ? "border-brand" : "border-border",
+                  "flex-1 items-center justify-center rounded-lg px-3 py-2.5",
+                  active ? "bg-brand/25" : "bg-background",
                 )}
-                style={
-                  active ? { borderColor: "#46E3CE", borderWidth: 2 } : undefined
-                }
               >
                 <Text
                   className={cn(
@@ -677,12 +672,9 @@ function StepPreferences({
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
                 className={cn(
-                  "flex-1 items-center justify-center rounded-lg border bg-background py-2",
-                  active ? "border-brand" : "border-border",
+                  "flex-1 items-center justify-center rounded-lg py-2",
+                  active ? "bg-brand/25" : "bg-background",
                 )}
-                style={
-                  active ? { borderColor: "#46E3CE", borderWidth: 2 } : undefined
-                }
               >
                 <Text
                   className={cn(
@@ -701,9 +693,7 @@ function StepPreferences({
       <View
         className="flex-row items-start gap-2 rounded-lg p-3"
         style={{
-          backgroundColor: "rgba(70,227,206,0.05)",
-          borderWidth: 1,
-          borderColor: "rgba(70,227,206,0.20)",
+          backgroundColor: "rgba(70,227,206,0.25)",
         }}
       >
         <Checkbox

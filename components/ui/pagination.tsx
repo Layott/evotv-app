@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   Pressable,
   Text,
@@ -6,7 +7,7 @@ import {
   type PressableProps,
   type ViewProps,
 } from "react-native";
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react-native";
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 

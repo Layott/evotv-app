@@ -3,7 +3,16 @@ import { Text, View } from "react-native";
 
 import { cn } from "@/lib/utils";
 
-type Tone = "emerald" | "amber" | "red" | "blue" | "neutral" | "violet";
+/**
+ * `violet` is gone on purpose.
+ *
+ * Its four call sites were labelling a kind rather than a state: an ad's type,
+ * a content type, "Episode", a streamer type. Colour on this platform is meant
+ * to carry meaning - live, paid, failed, blocked - and a kind has no state to
+ * report, so it takes `neutral` and the word does the work. Violet on dark is
+ * also the exact palette the no-vibecoded-look rule names.
+ */
+type Tone = "emerald" | "amber" | "red" | "blue" | "neutral";
 
 const toneClasses: Record<Tone, { bg: string; text: string; ring: string; dot: string }> = {
   emerald: {
@@ -31,16 +40,10 @@ const toneClasses: Record<Tone, { bg: string; text: string; ring: string; dot: s
     dot: "bg-blue-400",
   },
   neutral: {
-    bg: "bg-neutral-700/40",
+    bg: "bg-muted/40",
     text: "text-neutral-300",
     ring: "border-neutral-600/50",
     dot: "bg-neutral-400",
-  },
-  violet: {
-    bg: "bg-violet-500/10",
-    text: "text-violet-300",
-    ring: "border-violet-500/30",
-    dot: "bg-violet-400",
   },
 };
 

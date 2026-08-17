@@ -1,8 +1,9 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ChevronRight, Forward } from "lucide-react-native";
+import { ArrowLeft, ChevronRight, Forward } from "@/components/icons";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { HLSPlayer } from "@/components/stream/hls-player";
@@ -25,6 +26,7 @@ function formatRuntime(sec: number): string {
 }
 
 export default function EpisodePlayerScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const params = useLocalSearchParams<{
     slug: string;
@@ -133,7 +135,7 @@ export default function EpisodePlayerScreen() {
           className="mt-6 rounded-xl px-4 py-2.5"
           style={{ backgroundColor: BRAND }}
         >
-          <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
+          <Text style={{ color: palette.bg, fontWeight: "700", fontSize: 13 }}>
             Go back
           </Text>
         </Pressable>
@@ -170,8 +172,6 @@ export default function EpisodePlayerScreen() {
               className="absolute bottom-12 right-4 flex-row items-center gap-1.5 rounded-md px-3 py-2 active:opacity-80"
               style={{
                 backgroundColor: "rgba(0,0,0,0.7)",
-                borderWidth: 1,
-                borderColor: BRAND_RGBA(0.5),
               }}
             >
               <Forward size={14} color={BRAND} />
@@ -196,7 +196,7 @@ export default function EpisodePlayerScreen() {
             </Pressable>
 
             <View className="flex-row items-center gap-2">
-              <Text className="text-[10px] uppercase tracking-widest text-muted-foreground">
+              <Text className="text-[10px] st text-muted-foreground">
                 Season {episode.seasonNumber} · Episode {episode.episodeNumber}
               </Text>
               <Text className="text-[10px] text-muted-foreground">
@@ -217,7 +217,7 @@ export default function EpisodePlayerScreen() {
           {nextEpisode ? (
             <View className="mt-6 mx-4 overflow-hidden rounded-2xl border border-border bg-card">
               <View className="px-4 py-3 border-b border-border">
-                <Text className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+                <Text className="text-[11px] font-semibold st text-muted-foreground">
                   Up next
                 </Text>
               </View>
@@ -236,7 +236,7 @@ export default function EpisodePlayerScreen() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <Text className="text-[10px] st text-muted-foreground">
                     E{nextEpisode.episodeNumber} · {formatRuntime(nextEpisode.runtimeSec)}
                   </Text>
                   <Text

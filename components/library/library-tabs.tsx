@@ -1,8 +1,9 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { Bookmark, History, Users } from "lucide-react-native";
+import { Bookmark, History, Users } from "@/components/icons";
 
 import type { Vod } from "@/lib/types";
 import {
@@ -38,7 +39,7 @@ function EmptyState({
 }) {
   return (
     <View
-      className="rounded-2xl border border-dashed border-border bg-card p-8"
+      className="rounded-2xl bg-card p-8"
     >
       <View className="items-center">{icon}</View>
       <Text className="mt-3 text-center text-sm font-semibold text-foreground">
@@ -52,6 +53,7 @@ function EmptyState({
 }
 
 function VodRow({ vod }: { vod: Vod }) {
+  const palette = useTokens();
   const router = useRouter();
   return (
     <Pressable
@@ -60,7 +62,7 @@ function VodRow({ vod }: { vod: Vod }) {
     >
       <View
         className="overflow-hidden rounded-md"
-        style={{ width: 120, aspectRatio: 16 / 9, backgroundColor: "#103133" }}
+        style={{ width: 120, aspectRatio: 16 / 9, backgroundColor: palette.subtle }}
       >
         <Image
           source={vod.thumbnailUrl}
@@ -102,11 +104,12 @@ function VodList({ vods, emptyTitle, emptyBody, emptyIcon }: {
 }
 
 function FollowingList({ items }: { items: FollowingItem[] }) {
+  const palette = useTokens();
   const router = useRouter();
   if (items.length === 0) {
     return (
       <EmptyState
-        icon={<Users size={32} color="#525252" />}
+        icon={<Users size={32} color={palette.muted} />}
         title="Not following anyone yet"
         body="Find creators, teams, and players to follow."
       />
@@ -126,7 +129,7 @@ function FollowingList({ items }: { items: FollowingItem[] }) {
               height: 44,
               borderRadius: 22,
               overflow: "hidden",
-              backgroundColor: "#103133",
+              backgroundColor: palette.subtle,
             }}
           >
             <Image
@@ -163,6 +166,7 @@ export function LibraryTabs({
   following = [],
   defaultValue = "watch-later",
 }: LibraryTabsProps) {
+  const palette = useTokens();
   return (
     <Tabs defaultValue={defaultValue} className="gap-4">
       <TabsList>
@@ -174,7 +178,7 @@ export function LibraryTabs({
       <TabsContent value="watch-later">
         <VodList
           vods={watchLater}
-          emptyIcon={<Bookmark size={32} color="#525252" />}
+          emptyIcon={<Bookmark size={32} color={palette.muted} />}
           emptyTitle="No saved videos"
           emptyBody="Tap the bookmark icon to save videos for later."
         />
@@ -183,7 +187,7 @@ export function LibraryTabs({
       <TabsContent value="history">
         <VodList
           vods={history}
-          emptyIcon={<History size={32} color="#525252" />}
+          emptyIcon={<History size={32} color={palette.muted} />}
           emptyTitle="No watch history"
           emptyBody="Videos you watch will show up here."
         />

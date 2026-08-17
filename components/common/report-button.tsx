@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   Modal,
   Pressable,
@@ -6,7 +7,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Flag, X } from "lucide-react-native";
+import { Flag, X } from "@/components/icons";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -39,6 +40,7 @@ export function ReportButton({
   targetId,
   trigger,
 }: ReportButtonProps) {
+  const palette = useTokens();
   const [open, setOpen] = React.useState(false);
   const [category, setCategory] = React.useState<ReportCategory | null>(null);
   const [details, setDetails] = React.useState("");
@@ -78,7 +80,7 @@ export function ReportButton({
           accessibilityLabel="Report content"
           className="flex-row items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1.5"
         >
-          <Flag size={12} color="#9FBDBD" />
+          <Flag size={12} color={palette.muted} />
           <Text className="text-xs text-muted-foreground">Report</Text>
         </Pressable>
       )}
@@ -102,7 +104,7 @@ export function ReportButton({
                 Report this {targetType.replace("_", " ")}
               </Text>
               <Pressable onPress={() => setOpen(false)} hitSlop={8}>
-                <X size={20} color="#9FBDBD" />
+                <X size={20} color={palette.muted} />
               </Pressable>
             </View>
 
@@ -136,7 +138,7 @@ export function ReportButton({
               value={details}
               onChangeText={setDetails}
               placeholder="What did you see? Add timestamps or links if relevant."
-              placeholderTextColor="#737373"
+              placeholderTextColor={palette.muted}
               multiline
               numberOfLines={4}
               maxLength={2000}

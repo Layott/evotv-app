@@ -14,7 +14,7 @@ import {
   Tv,
   Upload,
   X,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -421,7 +421,7 @@ function ShowDetail({
               <ActivityIndicator />
             </View>
           ) : seasons.length === 0 ? (
-            <Text className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            <Text className="rounded-lg bg-card/50 p-6 text-center text-sm text-muted-foreground">
               No seasons yet. Add one, then episodes go inside it.
             </Text>
           ) : (

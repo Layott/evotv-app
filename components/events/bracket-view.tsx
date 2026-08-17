@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 
@@ -20,6 +21,7 @@ function Row({
   win: boolean;
   played: boolean;
 }) {
+  const palette = useTokens();
   return (
     <View
       className="flex-row items-center gap-2 px-3 py-2"
@@ -35,8 +37,6 @@ function Row({
               width: 24,
               height: 24,
               borderRadius: 4,
-              borderWidth: 1,
-              borderColor: "#103133",
             }}
             contentFit="cover"
           />
@@ -44,19 +44,19 @@ function Row({
             style={{
               fontSize: 13,
               fontWeight: "500",
-              color: win ? "#67e8f9" : "#e5e5e5",
+              color: win ? "#67e8f9" : palette.fg,
               flex: 1,
             }}
             numberOfLines={1}
           >
             {team.name}
           </Text>
-          <Text style={{ fontSize: 11, color: "#9FBDBD" }}>{team.tag}</Text>
+          <Text style={{ fontSize: 11, color: palette.muted }}>{team.tag}</Text>
           <Text
             style={{
               fontSize: 13,
               fontWeight: "700",
-              color: win ? "#67e8f9" : played ? "#e5e5e5" : "#525252",
+              color: win ? "#67e8f9" : played ? palette.fg : palette.muted,
               marginLeft: 8,
               minWidth: 16,
               textAlign: "right",
@@ -67,7 +67,7 @@ function Row({
           </Text>
         </>
       ) : (
-        <Text style={{ fontSize: 13, color: "#737373" }}>TBD</Text>
+        <Text style={{ fontSize: 13, color: palette.muted }}>TBD</Text>
       )}
     </View>
   );
@@ -80,6 +80,7 @@ function MatchCard({
   match: Match;
   teams: Map<string, Team>;
 }) {
+  const palette = useTokens();
   const a = teams.get(match.teamAId);
   const b = teams.get(match.teamBId);
   const completed = match.state === "completed";
@@ -97,9 +98,7 @@ function MatchCard({
         <Text
           style={{
             fontSize: 10,
-            letterSpacing: 1,
-            color: "#737373",
-            textTransform: "uppercase",
+            color: palette.muted,
           }}
         >
           Bo{match.bestOf}
@@ -118,7 +117,7 @@ function MatchCard({
           </View>
         ) : null}
         {match.state === "scheduled" ? (
-          <Text style={{ fontSize: 10, color: "#737373" }}>
+          <Text style={{ fontSize: 10, color: palette.muted }}>
             {new Date(match.scheduledAt).toLocaleString([], {
               month: "short",
               day: "numeric",
@@ -128,7 +127,7 @@ function MatchCard({
           </Text>
         ) : null}
         {completed ? (
-          <Text style={{ fontSize: 10, color: "#737373" }}>Final</Text>
+          <Text style={{ fontSize: 10, color: palette.muted }}>Final</Text>
         ) : null}
       </View>
       <View>
@@ -138,7 +137,7 @@ function MatchCard({
           win={aWin}
           played={completed || match.state === "live"}
         />
-        <View style={{ height: 1, backgroundColor: "#103133" }} />
+        <View style={{ height: 1, backgroundColor: palette.subtle }} />
         <Row
           team={b}
           score={match.scoreB}
@@ -181,9 +180,7 @@ export function BracketView({ matches, teams }: BracketViewProps) {
               style={{
                 fontSize: 11,
                 fontWeight: "600",
-                letterSpacing: 1,
                 color: "#67e8f9",
-                textTransform: "uppercase",
               }}
             >
               {round}

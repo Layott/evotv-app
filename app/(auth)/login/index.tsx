@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -12,7 +13,7 @@ import { Link, Stack, useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ChromeIcon } from "lucide-react-native";
+import { ChromeIcon } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ const loginSchema = z.object({
 type LoginValues = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { signIn, signInWithSocial } = useAuth();
   const [submitting, setSubmitting] = React.useState(false);
@@ -161,7 +163,7 @@ export default function LoginScreen() {
             >
               {submitting ? (
                 <View className="flex-row items-center gap-2">
-                  <Spinner color="#05191B" />
+                  <Spinner color={palette.bg} />
                   <Text className="text-black font-semibold">Signing in...</Text>
                 </View>
               ) : (
@@ -171,7 +173,7 @@ export default function LoginScreen() {
 
             <View className="my-2 flex-row items-center gap-3">
               <View className="h-px flex-1 bg-border" />
-              <Text className="text-[11px] uppercase tracking-widest text-muted-foreground">
+              <Text className="text-[11px] st text-muted-foreground">
                 or continue with
               </Text>
               <View className="h-px flex-1 bg-border" />
@@ -185,9 +187,9 @@ export default function LoginScreen() {
                 className="h-11 w-full"
               >
                 {socialBusy === "google" ? (
-                  <Spinner color="#EAF6F5" />
+                  <Spinner color={palette.fg} />
                 ) : (
-                  <ChromeIcon color="#EAF6F5" size={18} />
+                  <ChromeIcon color={palette.fg} size={18} />
                 )}
                 <Text className="text-sm font-medium text-foreground">
                   {socialBusy === "google" ? "Opening Google…" : "Continue with Google"}

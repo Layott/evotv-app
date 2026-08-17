@@ -1,7 +1,8 @@
 import { Stack, useRouter } from "expo-router";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import Animated, { FadeIn, FadeInDown, ReduceMotion } from "react-native-reanimated";
-import { ChevronLeft, Sparkles } from "lucide-react-native";
+import { ChevronLeft, Wrench } from "@/components/icons";
 
 /**
  * MVP gate. Renders a branded "Coming soon" placeholder for features that are
@@ -23,15 +24,16 @@ export function ComingSoon({
   title: string;
   blurb?: string;
 }) {
+  const palette = useTokens();
   const router = useRouter();
   return (
     <View className="flex-1 items-center justify-center bg-background px-8">
       <Stack.Screen options={{ title }} />
       <Animated.View
         entering={FadeIn.duration(500).reduceMotion(rm)}
-        className="h-16 w-16 items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-500/10"
+        className="h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/25"
       >
-        <Sparkles size={28} color="#46E3CE" />
+        <Wrench size={28} color={palette.brand} />
       </Animated.View>
       <Animated.Text
         entering={rise(80)}
@@ -41,7 +43,7 @@ export function ComingSoon({
       </Animated.Text>
       <Animated.Text
         entering={rise(150)}
-        className="mt-1 text-center text-[11px] font-semibold uppercase tracking-[3px] text-cyan-400"
+        className="mt-1 text-center text-[11px] font-semibold text-cyan-400"
       >
         Coming soon
       </Animated.Text>
@@ -59,7 +61,7 @@ export function ComingSoon({
           }
           className="mt-7 flex-row items-center gap-1 rounded-full border border-border bg-card px-4 py-2 active:opacity-70"
         >
-          <ChevronLeft size={16} color="#9FBDBD" />
+          <ChevronLeft size={16} color={palette.muted} />
           <Text className="text-sm text-foreground">Back</Text>
         </Pressable>
       </Animated.View>

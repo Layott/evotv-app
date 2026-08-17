@@ -9,6 +9,16 @@ export interface Tier {
   priceNgn: number;
   periodDays: number;
   features: string[];
+  /**
+   * One line saying what the plan is for, and the label for its button.
+   *
+   * `/api/tiers` has returned both for a while; this type just never listed
+   * them, so the upgrade screen invented its own from `features[0]` and a
+   * price check. The words belong to whoever edits the ladder, not to the
+   * screen rendering it.
+   */
+  tagline: string;
+  cta: string;
 }
 
 /** GET /api/tiers - public, returns full tier ladder. */

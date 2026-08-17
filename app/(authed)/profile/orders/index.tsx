@@ -1,7 +1,8 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
-import { ChevronRight, Package } from "lucide-react-native";
+import { ChevronRight, Package } from "@/components/icons";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -64,6 +65,7 @@ const STATUS_COLORS: Record<
 };
 
 export default function ProfileOrdersScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { user } = useAuth();
   const [orders, setOrders] = React.useState<Order[]>([]);
@@ -133,8 +135,8 @@ export default function ProfileOrdersScreen() {
         </View>
 
         {orders.length === 0 ? (
-          <View className="mx-4 items-center rounded-2xl border border-dashed border-border bg-card p-10">
-            <Package size={36} color="#525252" />
+          <View className="mx-4 items-center rounded-2xl bg-card p-10">
+            <Package size={36} color={palette.muted} />
             <Text className="mt-3 text-base font-semibold text-foreground">
               No orders yet.
             </Text>
@@ -164,7 +166,7 @@ export default function ProfileOrdersScreen() {
                   >
                     <View
                       className="h-10 w-10 items-center justify-center rounded-lg"
-                      style={{ backgroundColor: c.bg, borderWidth: 1, borderColor: c.border }}
+                      style={{ backgroundColor: c.bg }}
                     >
                       <Package size={16} color={c.text} />
                     </View>
@@ -202,7 +204,7 @@ export default function ProfileOrdersScreen() {
                     <Text className="text-sm font-semibold text-foreground">
                       {formatNgn(o.totalNgn)}
                     </Text>
-                    <ChevronRight size={16} color="#737373" />
+                    <ChevronRight size={16} color={palette.muted} />
                   </Pressable>
                 );
               })}

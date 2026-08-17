@@ -6,7 +6,7 @@ import {
   ChevronRight,
   ScanLine,
   ShieldCheck,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { useQuery } from "@tanstack/react-query";
 
 import { listAdminLoginEvents, listAuditLog } from "@/lib/api/admin";
@@ -16,11 +16,18 @@ import { PageHeader } from "./page-header";
 import { StatusBadge } from "./status-badge";
 import { timeAgo } from "./utils";
 
-function actionTone(action: string): "red" | "amber" | "violet" | "blue" | "emerald" | "neutral" {
+/**
+ * Colour by how serious the action is, not by which subsystem it came from.
+ *
+ * A role change used to get its own violet, which put it on the same footing as
+ * "this is a different kind of thing" rather than "this matters". Granting
+ * somebody admin is a privileged change, so it reads amber alongside the
+ * sanctions, which is what an audit log is actually scanned for.
+ */
+function actionTone(action: string): "red" | "amber" | "blue" | "emerald" | "neutral" {
   if (action.endsWith(".delete") || action.endsWith(".force_end")) return "red";
   if (action.startsWith("user.sanction.revert")) return "emerald";
-  if (action.startsWith("user.sanction")) return "amber";
-  if (action.startsWith("role.")) return "violet";
+  if (action.startsWith("user.sanction") || action.startsWith("role.")) return "amber";
   if (action.startsWith("report.")) return "blue";
   return "neutral";
 }
@@ -48,7 +55,7 @@ export function ForensicPage() {
           description="Track what admins did and when. Watermark / piracy tracking ships with the Phase 4 streaming infra rollout."
         />
 
-        <View className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
+        <View className="rounded-2xl bg-amber-500/20 bg-amber-500/5 p-4">
           <View className="flex-row items-center gap-2">
             <AlertTriangle size={16} color="#F59E0B" />
             <Text className="text-sm font-semibold text-foreground">
@@ -95,7 +102,7 @@ export function ForensicPage() {
             <Spinner />
           </View>
         ) : (data ?? []).length === 0 ? (
-          <View className="mt-3 rounded-xl border border-dashed border-border p-6">
+          <View className="mt-3 rounded-xl bg-card/50 p-6">
             <Text className="text-center text-sm text-muted-foreground">
               No admin actions logged yet.
             </Text>
@@ -144,7 +151,7 @@ export function ForensicPage() {
             <Spinner />
           </View>
         ) : (loginsQ.data?.events ?? []).length === 0 ? (
-          <View className="mt-3 rounded-xl border border-dashed border-border p-6">
+          <View className="mt-3 rounded-xl bg-card/50 p-6">
             <Text className="text-center text-sm text-muted-foreground">
               No sign-in events logged yet.
             </Text>

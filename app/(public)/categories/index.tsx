@@ -96,9 +96,7 @@ export default function CategoriesScreen() {
                     <View
                       className="self-start rounded-md px-2 py-0.5"
                       style={{
-                        borderWidth: 1,
-                        borderColor: "rgba(70,227,206,0.3)",
-                        backgroundColor: "rgba(70,227,206,0.1)",
+                        backgroundColor: "rgba(70,227,206,0.25)",
                       }}
                     >
                       <Text

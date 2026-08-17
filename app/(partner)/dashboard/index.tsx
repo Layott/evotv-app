@@ -43,7 +43,7 @@ export default function PartnerDashboard() {
           </View>
 
           <Link href={"/(partner)/payouts" as never} asChild>
-            <Pressable className="mt-3 flex-row items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900/40 p-3 active:opacity-80">
+            <Pressable className="mt-3 flex-row items-center gap-3 rounded-xl bg-neutral-900/60 p-3 active:opacity-80">
               <View
                 className="h-9 w-9 items-center justify-center rounded-md"
                 style={{ backgroundColor: "#1f1f1f" }}
@@ -65,7 +65,7 @@ export default function PartnerDashboard() {
           {publisherMemberships.map((m) => (
             <View
               key={m.publisher.id}
-              className="mt-5 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4"
+              className="mt-5 rounded-2xl bg-neutral-900/60 p-4"
             >
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center gap-2">
@@ -106,7 +106,7 @@ export default function PartnerDashboard() {
                     href={`/(partner)/channels/${c.id}` as never}
                     asChild
                   >
-                    <Pressable className="flex-row items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-950 p-3 active:opacity-80">
+                    <Pressable className="flex-row items-center gap-3 rounded-xl   bg-neutral-950 p-3 active:opacity-80">
                       <View
                         className="h-9 w-9 items-center justify-center rounded-md"
                         style={{ backgroundColor: "#1f1f1f" }}
@@ -147,7 +147,7 @@ function SummaryCard({
   value: number;
 }) {
   return (
-    <View className="flex-1 rounded-xl border border-neutral-800 bg-neutral-900/40 p-3">
+    <View className="flex-1 rounded-xl bg-neutral-900/60 p-3">
       <View className="flex-row items-center gap-1.5">
         {icon}
         <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">

@@ -560,7 +560,7 @@ export function StreamsManagerPage() {
                     <Pressable
                       onPress={() => restoreMut.mutate(selected)}
                       disabled={restoreMut.isPending}
-                      className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-3 py-3"
+                      className="flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-emerald-500/20 bg-emerald-500/15 px-3 py-3"
                     >
                       <RotateCcw size={14} color="#10B981" />
                       <Text className="text-sm font-semibold text-emerald-400">
@@ -573,7 +573,7 @@ export function StreamsManagerPage() {
                         <Pressable
                           onPress={() => handleForceEnd(selected)}
                           disabled={forceEndMut.isPending}
-                          className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/15 px-3 py-3"
+                          className="flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-amber-500/20 bg-amber-500/15 px-3 py-3"
                         >
                           <Square size={14} color="#F59E0B" />
                           <Text className="text-sm font-semibold text-amber-400">
@@ -584,7 +584,7 @@ export function StreamsManagerPage() {
                       <Pressable
                         onPress={() => handleDelete(selected)}
                         disabled={deleteMut.isPending}
-                        className="flex-1 flex-row items-center justify-center gap-2 rounded-lg border border-destructive/40 bg-destructive/15 px-3 py-3"
+                        className="flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-destructive/20 bg-destructive/15 px-3 py-3"
                       >
                         <Trash2 size={14} color="#EF4444" />
                         <Text className="text-sm font-semibold text-destructive">
@@ -731,7 +731,7 @@ function ScheduleEditor({
             onSave(parsed.toISOString(), Math.round(d));
           }}
           disabled={!canSave || !dirty || isPending}
-          className="flex-1 items-center rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+          className="flex-1 items-center rounded-lg bg-cyan-500/20 bg-cyan-500/15 px-3 py-2"
           style={{ opacity: !canSave || !dirty || isPending ? 0.5 : 1 }}
         >
           <Text className="text-xs font-semibold text-cyan-300">
@@ -825,7 +825,7 @@ function HlsUrlEditor({
             onSave(trimmed);
           }}
           disabled={!dirty || !valid || isPending}
-          className="flex-1 items-center rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+          className="flex-1 items-center rounded-lg bg-cyan-500/20 bg-cyan-500/15 px-3 py-2"
           style={{ opacity: !dirty || !valid || isPending ? 0.5 : 1 }}
         >
           <Text className="text-xs font-semibold text-cyan-300">
@@ -909,7 +909,7 @@ function ThumbnailEditor({
       <Pressable
         onPress={handlePick}
         disabled={busy}
-        className={`flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+        className={`flex-row items-center justify-center gap-2 rounded-md bg-card px-3 py-2.5 ${
           busy ? "opacity-60" : ""
         }`}
       >
@@ -983,7 +983,7 @@ function PlayoutFileEditor({
       </View>
 
       {current ? (
-        <View className="mb-3 flex-row items-center gap-2 rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2 py-1.5">
+        <View className="mb-3 flex-row items-center gap-2 rounded-md bg-cyan-500/25 px-2 py-1.5">
           <Text className="flex-1 text-xs text-cyan-200" numberOfLines={1}>
             {current}
           </Text>

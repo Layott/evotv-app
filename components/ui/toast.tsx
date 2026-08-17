@@ -16,8 +16,6 @@ function Toaster(props: ToasterProps) {
       toastOptions={{
         style: {
           backgroundColor: "#05191B",
-          borderColor: "#103133",
-          borderWidth: 1,
         },
         titleStyle: { color: "#EAF6F5" },
         descriptionStyle: { color: "#9FBDBD" },

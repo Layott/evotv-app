@@ -387,7 +387,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
             >
               <View className="items-center">
                 <View
-                  className="h-14 w-14 items-center justify-center rounded-2xl border border-purple-500/30"
+                  className="h-14 w-14 items-center justify-center rounded-2xl bg-purple-500/20"
                   style={{ backgroundColor: "rgba(168,85,247,0.10)" }}
                 >
                   <Sparkles size={26} color="#A855F7" />

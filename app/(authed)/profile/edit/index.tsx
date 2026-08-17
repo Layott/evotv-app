@@ -297,8 +297,6 @@ function Field({
 }
 
 const inputStyle = {
-  borderWidth: 1,
-  borderColor: "#27272a",
   backgroundColor: "#0f0f0f",
   borderRadius: 12,
   paddingHorizontal: 14,

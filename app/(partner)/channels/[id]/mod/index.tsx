@@ -117,7 +117,7 @@ function StreamStatusBanner({
   const isLive = !!liveStreamId;
   return (
     <View
-      className="flex-row items-center gap-2 border-b border-neutral-800 px-5 py-3"
+      className="flex-row items-center gap-2   px-5 py-3"
       style={{ backgroundColor: isLive ? "#0c2429" : "#1a1a1a" }}
     >
       {loading ? (
@@ -247,7 +247,7 @@ function ModMessageRow({
   };
 
   return (
-    <View className="mb-2 rounded-lg border border-neutral-800 bg-neutral-900/40 p-3">
+    <View className="mb-2 rounded-lg bg-neutral-900/60 p-3">
       <View className="flex-row items-center justify-between">
         <View className="flex-1 flex-row items-center gap-2">
           <Text className="text-xs font-semibold text-foreground">
@@ -282,12 +282,12 @@ function ModMessageRow({
       </View>
       <Text className="mt-1 text-sm text-foreground">{message.body}</Text>
       {showTimeoutMenu ? (
-        <View className="mt-2 flex-row gap-1.5 border-t border-neutral-800 pt-2">
+        <View className="mt-2 flex-row gap-1.5   pt-2">
           {TIMEOUT_OPTIONS.map((opt) => (
             <Pressable
               key={opt.label}
               onPress={() => handleTimeout(opt.durationSec, opt.label)}
-              className="flex-1 items-center rounded-md border border-neutral-700 bg-neutral-900 px-2 py-1.5 active:opacity-70"
+              className="flex-1 items-center rounded-md   bg-neutral-900 px-2 py-1.5 active:opacity-70"
             >
               <Text className="text-xs font-medium text-foreground">
                 {opt.label}
@@ -317,7 +317,7 @@ function ActionButton({
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      className="flex-row items-center gap-1 rounded-md border border-neutral-700 px-2 py-1 active:opacity-70"
+      className="flex-row items-center gap-1 rounded-md   px-2 py-1 active:opacity-70"
       style={{
         backgroundColor: danger ? "#2a1212" : "#1a1a1a",
         opacity: disabled ? 0.5 : 1,

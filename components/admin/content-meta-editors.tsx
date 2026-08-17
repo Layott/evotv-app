@@ -180,7 +180,7 @@ export function ContentTagsEditor({
       <Pressable
         onPress={() => onSave(tags)}
         disabled={!dirty || isPending}
-        className="mt-2 items-center rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-2"
+        className="mt-2 items-center rounded-lg bg-cyan-500/20 bg-cyan-500/15 px-3 py-2"
         style={{ opacity: !dirty || isPending ? 0.5 : 1 }}
       >
         <Text className="text-xs font-semibold text-cyan-300">

@@ -147,7 +147,7 @@ export default function AdminChannelsScreen() {
               <Spinner size="large" />
             </View>
           ) : filtered.length === 0 ? (
-            <View className="items-center rounded-xl border border-dashed border-border p-8">
+            <View className="items-center rounded-xl bg-card/50 p-8">
               <Text className="text-sm text-muted-foreground">
                 No {filter} channels.
               </Text>
@@ -226,7 +226,7 @@ export default function AdminChannelsScreen() {
                   </View>
 
                   {selected.suspendedAt ? (
-                    <View className="rounded-md border border-destructive/40 bg-destructive/10 p-3 mb-3">
+                    <View className="rounded-md bg-destructive/25 p-3 mb-3">
                       <Text className="text-[11px] uppercase tracking-wider text-destructive">
                         Suspended
                       </Text>
@@ -243,7 +243,7 @@ export default function AdminChannelsScreen() {
                     <Pressable
                       onPress={() => unsuspendMut.mutate(selected.id)}
                       disabled={unsuspendMut.isPending}
-                      className="flex-row items-center justify-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-3 py-3"
+                      className="flex-row items-center justify-center gap-2 rounded-lg bg-emerald-500/20 bg-emerald-500/15 px-3 py-3"
                     >
                       <RotateCcw size={14} color="#10B981" />
                       <Text className="text-sm font-semibold text-emerald-400">
@@ -269,7 +269,7 @@ export default function AdminChannelsScreen() {
                       <Pressable
                         onPress={handleSuspend}
                         disabled={suspendMut.isPending || !reason.trim()}
-                        className="flex-row items-center justify-center gap-2 rounded-lg border border-destructive/40 bg-destructive/15 px-3 py-3"
+                        className="flex-row items-center justify-center gap-2 rounded-lg bg-destructive/20 bg-destructive/15 px-3 py-3"
                         style={{
                           opacity:
                             suspendMut.isPending || !reason.trim() ? 0.5 : 1,

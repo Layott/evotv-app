@@ -191,7 +191,7 @@ export default function ChannelPublicPage() {
               href={`/stream/${liveStream.id}` as never}
               asChild
             >
-              <Pressable className="mt-5 overflow-hidden rounded-2xl border border-brand/30 bg-neutral-900/60 active:opacity-80">
+              <Pressable className="mt-5 overflow-hidden rounded-2xl bg-brand/20 bg-neutral-900/60 active:opacity-80">
                 <View
                   style={{
                     backgroundColor: "#1f1f1f",
@@ -234,7 +234,7 @@ export default function ChannelPublicPage() {
               </Pressable>
             </Link>
           ) : (
-            <View className="mt-5 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-6">
+            <View className="mt-5 rounded-2xl bg-neutral-900/60 p-6">
               <Text className="text-center text-sm text-muted-foreground">
                 Not live right now.
               </Text>
@@ -257,7 +257,7 @@ export default function ChannelPublicPage() {
                   asChild
                 >
                   <Pressable
-                    className="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/40 active:opacity-80"
+                    className="overflow-hidden rounded-xl bg-neutral-900/60 active:opacity-80"
                     style={{ width: "47%" }}
                   >
                     <View

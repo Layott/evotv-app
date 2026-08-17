@@ -162,7 +162,7 @@ export default function ShopScreen() {
               </View>
             </View>
           ) : filtered.length === 0 ? (
-            <View className="rounded-2xl border border-dashed border-border p-12">
+            <View className="rounded-2xl bg-card/50 p-12">
               <Text className="text-center text-sm text-muted-foreground">
                 No products match your filters.
               </Text>

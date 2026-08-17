@@ -5,14 +5,14 @@ import { Crown, Medal, Trophy } from "lucide-react-native";
 export function RankBadge({ rank }: { rank: number }) {
   if (rank === 1) {
     return (
-      <View className="h-7 w-7 items-center justify-center rounded-full border border-amber-500/40 bg-amber-500/10">
+      <View className="h-7 w-7 items-center justify-center rounded-full bg-amber-500/25">
         <Crown size={14} color="#FCD34D" />
       </View>
     );
   }
   if (rank === 2) {
     return (
-      <View className="h-7 w-7 items-center justify-center rounded-full border border-neutral-500/40 bg-neutral-500/10">
+      <View className="h-7 w-7 items-center justify-center rounded-full bg-neutral-500/25">
         <Medal size={14} color="#E5E5E5" />
       </View>
     );
@@ -25,7 +25,7 @@ export function RankBadge({ rank }: { rank: number }) {
     );
   }
   return (
-    <View className="h-7 w-7 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900/60">
+    <View className="h-7 w-7 items-center justify-center rounded-full bg-neutral-900/60">
       <Text className="text-xs font-medium text-neutral-400">{rank}</Text>
     </View>
   );

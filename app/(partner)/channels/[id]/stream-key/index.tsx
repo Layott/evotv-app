@@ -81,7 +81,7 @@ export default function StreamKeyScreen() {
             Configure OBS, vMix, or any RTMP encoder with the URL + key below.
           </Text>
 
-          <View className="mt-5 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
+          <View className="mt-5 rounded-2xl bg-neutral-900/60 p-4">
             <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
               Ingest URL
             </Text>
@@ -94,7 +94,7 @@ export default function StreamKeyScreen() {
               </Text>
               <Pressable
                 onPress={() => onCopy(RTMP_INGEST_URL, "Ingest URL")}
-                className="h-8 w-8 items-center justify-center rounded-md border border-neutral-800 bg-neutral-950 active:opacity-80"
+                className="h-8 w-8 items-center justify-center rounded-md   bg-neutral-950 active:opacity-80"
               >
                 <Copy size={14} color="#EAF6F5" />
               </Pressable>
@@ -102,14 +102,14 @@ export default function StreamKeyScreen() {
           </View>
 
           {revealed ? (
-            <View className="mt-4 rounded-2xl border border-amber-500/50 bg-amber-500/5 p-4">
+            <View className="mt-4 rounded-2xl bg-amber-500/25 p-4">
               <View className="flex-row items-center gap-2">
                 <AlertTriangle size={14} color="#FCD34D" />
                 <Text className="text-xs font-semibold text-amber-300">
                   Save this now - it won't be shown again
                 </Text>
               </View>
-              <View className="mt-3 rounded-lg border border-amber-500/30 bg-black/40 p-3">
+              <View className="mt-3 rounded-lg bg-amber-500/20 bg-black/40 p-3">
                 <Text
                   className="font-mono text-sm text-amber-200"
                   selectable
@@ -127,7 +127,7 @@ export default function StreamKeyScreen() {
               </Button>
             </View>
           ) : (
-            <View className="mt-4 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
+            <View className="mt-4 rounded-2xl bg-neutral-900/60 p-4">
               <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 Active key
               </Text>

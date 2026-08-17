@@ -108,7 +108,7 @@ export default function SanctionsListScreen() {
               <Spinner size="large" />
             </View>
           ) : sanctions.length === 0 ? (
-            <View className="items-center rounded-xl border border-dashed border-border p-8">
+            <View className="items-center rounded-xl bg-card/50 p-8">
               <ShieldOff size={20} color="#737373" />
               <Text className="mt-2 text-sm text-muted-foreground">
                 No active sanctions{filter === "all" ? "" : ` of type ${filter}`}.

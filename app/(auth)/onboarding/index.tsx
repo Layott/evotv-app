@@ -390,8 +390,6 @@ function StepGames({
             style={
               isSelected
                 ? {
-                    borderColor: "#46E3CE",
-                    borderWidth: 2,
                   }
                 : undefined
             }
@@ -488,15 +486,11 @@ function StepTeams({
             onPress={() => onToggle(t.id)}
             accessibilityRole="button"
             accessibilityState={{ selected: isSelected }}
+            // Selection is a stronger fill, never a ring.
             className={cn(
-              "flex-row items-center gap-3 rounded-lg border bg-background p-3",
-              isSelected ? "border-brand" : "border-border",
+              "flex-row items-center gap-3 rounded-lg p-3",
+              isSelected ? "bg-brand/25" : "bg-background",
             )}
-            style={
-              isSelected
-                ? { borderColor: "#46E3CE", borderWidth: 2 }
-                : undefined
-            }
           >
             <View
               className="overflow-hidden rounded-md"
@@ -535,10 +529,10 @@ function StepTeams({
             </View>
             <View
               className="h-5 w-5 items-center justify-center rounded-full"
+              // Both states are fills: an unticked box used to be an outline
+              // around nothing, which is the shape being removed.
               style={{
-                borderWidth: 1,
-                borderColor: isSelected ? "#46E3CE" : "#17454A",
-                backgroundColor: isSelected ? "#46E3CE" : "transparent",
+                backgroundColor: isSelected ? "#46E3CE" : "#17454A",
               }}
             >
               {isSelected ? <Check color="#05191B" size={12} /> : null}
@@ -618,12 +612,9 @@ function StepPreferences({
                 accessibilityRole="radio"
                 accessibilityState={{ selected: active }}
                 className={cn(
-                  "flex-1 items-center justify-center rounded-lg border bg-background px-3 py-2.5",
-                  active ? "border-brand" : "border-border",
+                  "flex-1 items-center justify-center rounded-lg px-3 py-2.5",
+                  active ? "bg-brand/25" : "bg-background",
                 )}
-                style={
-                  active ? { borderColor: "#46E3CE", borderWidth: 2 } : undefined
-                }
               >
                 <Text
                   className={cn(
@@ -677,12 +668,9 @@ function StepPreferences({
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
                 className={cn(
-                  "flex-1 items-center justify-center rounded-lg border bg-background py-2",
-                  active ? "border-brand" : "border-border",
+                  "flex-1 items-center justify-center rounded-lg py-2",
+                  active ? "bg-brand/25" : "bg-background",
                 )}
-                style={
-                  active ? { borderColor: "#46E3CE", borderWidth: 2 } : undefined
-                }
               >
                 <Text
                   className={cn(
@@ -701,9 +689,7 @@ function StepPreferences({
       <View
         className="flex-row items-start gap-2 rounded-lg p-3"
         style={{
-          backgroundColor: "rgba(70,227,206,0.05)",
-          borderWidth: 1,
-          borderColor: "rgba(70,227,206,0.20)",
+          backgroundColor: "rgba(70,227,206,0.25)",
         }}
       >
         <Checkbox

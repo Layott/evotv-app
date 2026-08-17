@@ -105,7 +105,7 @@ export default function ApiKeysScreen() {
         </Text>
 
         {revealedKey ? (
-          <View className="mt-5 rounded-xl border border-brand bg-brand/10 p-4">
+          <View className="mt-5 rounded-xl bg-brand/20 p-4">
             <View className="mb-2 flex-row items-center gap-2">
               <KeyRound size={14} color="#46E3CE" />
               <Text className="text-sm font-bold text-brand">
@@ -123,7 +123,7 @@ export default function ApiKeysScreen() {
             <View className="mt-3 flex-row gap-2">
               <Pressable
                 onPress={() => handleCopy(revealedKey)}
-                className="flex-1 flex-row items-center justify-center gap-2 rounded-md border border-brand bg-brand px-3 py-2"
+                className="flex-1 flex-row items-center justify-center gap-2 rounded-md bg-brand px-3 py-2"
               >
                 <Copy size={14} color="#05191B" />
                 <Text className="text-sm font-semibold text-black">Copy key</Text>
@@ -207,7 +207,7 @@ export default function ApiKeysScreen() {
                   <Pressable
                     onPress={() => handleRevoke(k)}
                     disabled={revokeMut.isPending}
-                    className="rounded-md border border-destructive/40 bg-destructive/10 px-2.5 py-1.5"
+                    className="rounded-md bg-destructive/25 px-2.5 py-1.5"
                   >
                     <View className="flex-row items-center gap-1">
                       <Trash2 size={12} color="#EF4444" />

@@ -254,7 +254,7 @@ export function VodsManagerPage() {
             <Spinner size="large" />
           </View>
         ) : filtered.length === 0 ? (
-          <View className="items-center rounded-xl border border-dashed border-border p-8">
+          <View className="items-center rounded-xl bg-card/50 p-8">
             <Text className="text-sm text-muted-foreground">
               No {filter === "deleted" ? "deleted VODs" : "VODs"}.
             </Text>
@@ -375,7 +375,7 @@ export function VodsManagerPage() {
                     <Pressable
                       onPress={() => restoreMut.mutate(selected)}
                       disabled={restoreMut.isPending}
-                      className="flex-row items-center justify-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-3 py-3"
+                      className="flex-row items-center justify-center gap-2 rounded-lg bg-emerald-500/20 bg-emerald-500/15 px-3 py-3"
                     >
                       <RotateCcw size={14} color="#10B981" />
                       <Text className="text-sm font-semibold text-emerald-400">
@@ -386,7 +386,7 @@ export function VodsManagerPage() {
                     <Pressable
                       onPress={() => handleDelete(selected)}
                       disabled={deleteMut.isPending}
-                      className="flex-row items-center justify-center gap-2 rounded-lg border border-destructive/40 bg-destructive/15 px-3 py-3"
+                      className="flex-row items-center justify-center gap-2 rounded-lg bg-destructive/20 bg-destructive/15 px-3 py-3"
                     >
                       <Trash2 size={14} color="#EF4444" />
                       <Text className="text-sm font-semibold text-destructive">
@@ -533,7 +533,7 @@ function NewVodDrawer({
 
             <FormField label="Video">
               {mp4Url ? (
-                <View className="mb-2 flex-row items-center gap-2 rounded-md border border-cyan-500/30 bg-cyan-500/10 px-3 py-2.5">
+                <View className="mb-2 flex-row items-center gap-2 rounded-md bg-cyan-500/25 px-3 py-2.5">
                   <CheckCircle2 size={14} color="#46E3CE" />
                   <View className="min-w-0 flex-1">
                     <Text className="text-xs font-medium text-cyan-200">
@@ -563,7 +563,7 @@ function NewVodDrawer({
               <Pressable
                 onPress={handlePickVideo}
                 disabled={uploadingVideo}
-                className={`flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+                className={`flex-row items-center justify-center gap-2 rounded-md bg-card px-3 py-2.5 ${
                   uploadingVideo ? "opacity-60" : ""
                 }`}
               >
@@ -779,7 +779,7 @@ function UploadImageButton({
     <Pressable
       onPress={handlePick}
       disabled={busy}
-      className={`mb-3 flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+      className={`mb-3 flex-row items-center justify-center gap-2 rounded-md bg-card px-3 py-2.5 ${
         busy ? "opacity-60" : ""
       }`}
     >

@@ -97,8 +97,6 @@ export default function ChannelScreen() {
         <View
           className="overflow-hidden rounded-2xl"
           style={{
-            borderWidth: 1,
-            borderColor: "rgba(70,227,206,0.2)",
             backgroundColor: "#05091a",
           }}
         >
@@ -108,9 +106,7 @@ export default function ChannelScreen() {
                 <View
                   className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
                   style={{
-                    borderWidth: 1,
-                    borderColor: "rgba(239,68,68,0.3)",
-                    backgroundColor: "rgba(239,68,68,0.1)",
+                    backgroundColor: "rgba(239,68,68,0.25)",
                   }}
                 >
                   <View
@@ -136,8 +132,6 @@ export default function ChannelScreen() {
                 <View
                   className="rounded-md px-2 py-0.5"
                   style={{
-                    borderWidth: 1,
-                    borderColor: "#103133",
                     backgroundColor: "rgba(15,15,15,0.8)",
                   }}
                 >
@@ -156,9 +150,7 @@ export default function ChannelScreen() {
               <View
                 className="rounded-md px-2 py-0.5"
                 style={{
-                  borderWidth: 1,
-                  borderColor: "rgba(70,227,206,0.3)",
-                  backgroundColor: "rgba(70,227,206,0.1)",
+                  backgroundColor: "rgba(70,227,206,0.25)",
                 }}
               >
                 <Text
@@ -179,8 +171,6 @@ export default function ChannelScreen() {
                   width: 56,
                   height: 56,
                   borderRadius: 16,
-                  borderWidth: 1,
-                  borderColor: "rgba(70,227,206,0.3)",
                   alignItems: "center",
                   justifyContent: "center",
                   padding: 6,
@@ -295,8 +285,6 @@ export default function ChannelScreen() {
                   <View
                     className="rounded-md px-2 py-0.5"
                     style={{
-                      borderWidth: 1,
-                      borderColor: "#103133",
                       backgroundColor: "rgba(15,15,15,0.5)",
                     }}
                   >
@@ -365,9 +353,7 @@ export default function ChannelScreen() {
                       <View
                         className="absolute left-2 top-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
                         style={{
-                          borderWidth: 1,
-                          borderColor: "rgba(239,68,68,0.3)",
-                          backgroundColor: "rgba(239,68,68,0.1)",
+                          backgroundColor: "rgba(239,68,68,0.25)",
                         }}
                       >
                         <View
@@ -492,9 +478,7 @@ export default function ChannelScreen() {
                   <View
                     className="rounded-md px-1.5 py-0.5"
                     style={{
-                      borderWidth: 1,
-                      borderColor: "rgba(70,227,206,0.3)",
-                      backgroundColor: "rgba(70,227,206,0.1)",
+                      backgroundColor: "rgba(70,227,206,0.25)",
                     }}
                   >
                     <Text

@@ -250,9 +250,7 @@ export default function EventDetailScreen() {
                 <View
                   className="self-start flex-row items-center gap-2 rounded-md px-2.5 py-1"
                   style={{
-                    borderWidth: 1,
-                    borderColor: "rgba(239,68,68,0.3)",
-                    backgroundColor: "rgba(239,68,68,0.1)",
+                    backgroundColor: "rgba(239,68,68,0.25)",
                   }}
                 >
                   <View
@@ -284,8 +282,6 @@ export default function EventDetailScreen() {
                 <View
                   className="self-start rounded-md px-2.5 py-1"
                   style={{
-                    borderWidth: 1,
-                    borderColor: "#17454A",
                     backgroundColor: "#103133",
                   }}
                 >

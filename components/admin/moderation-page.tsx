@@ -91,7 +91,7 @@ function ReportCard({
       </Text>
 
       {report.targetPreview ? (
-        <View className="mt-2 rounded-md border border-amber-500/30 bg-amber-500/5 p-2">
+        <View className="mt-2 rounded-md bg-amber-500/20 bg-amber-500/5 p-2">
           <Text className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
             Reported message
           </Text>
@@ -305,7 +305,7 @@ export function ModerationPage() {
                     })
                   }
                   disabled={bulkMut.isPending}
-                  className="ml-auto rounded-md border border-emerald-500/40 bg-emerald-500/15 px-3 py-1.5"
+                  className="ml-auto rounded-md bg-emerald-500/20 bg-emerald-500/15 px-3 py-1.5"
                 >
                   <Text className="text-xs font-semibold text-emerald-400">
                     Resolve all
@@ -337,7 +337,7 @@ export function ModerationPage() {
             <Spinner size="large" />
           </View>
         ) : reports.length === 0 ? (
-          <View className="items-center rounded-xl border border-dashed border-border p-8">
+          <View className="items-center rounded-xl bg-card/50 p-8">
             <Flag size={24} color="#737373" />
             <Text className="mt-2 text-sm text-muted-foreground">
               No {status} reports.

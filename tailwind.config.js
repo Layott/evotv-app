@@ -48,9 +48,10 @@ module.exports = {
         "accent-foreground": "#EAF6F5",
         destructive: "#FF4A38",
         "destructive-foreground": "#FFE6E2",
-        // Barely there on purpose. The old #262626 outlined every card, which
-        // is the hairline-box look being removed across the product.
-        border: "#12383A",
+        // Transparent, not faint. The owner banned hairline borders outright
+        // on 2026-08-17: structure comes from filled surfaces and space, never
+        // a 1px stroke. `input` stays visible so form fields keep an edge.
+        border: "transparent",
         input: "#17454A",
         ring: "#46E3CE",
       },

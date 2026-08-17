@@ -117,7 +117,7 @@ const Slider = React.forwardRef<View, SliderProps>(
         </View>
         <View
           className={cn(
-            "absolute h-4 w-4 rounded-full border border-brand bg-background",
+            "absolute h-4 w-4 rounded-full bg-brand",
             thumbClassName,
           )}
           style={{

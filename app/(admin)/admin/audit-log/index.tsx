@@ -201,7 +201,7 @@ export default function AuditLogScreen() {
           <Pressable
             onPress={handleExport}
             disabled={exporting}
-            className="px-3 py-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 flex-row items-center gap-1.5"
+            className="px-3 py-1.5 rounded-full bg-emerald-500/25 flex-row items-center gap-1.5"
           >
             <Download size={11} color="#10B981" />
             <Text className="text-xs font-semibold text-emerald-400">

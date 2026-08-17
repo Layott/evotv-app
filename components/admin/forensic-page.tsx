@@ -48,7 +48,7 @@ export function ForensicPage() {
           description="Track what admins did and when. Watermark / piracy tracking ships with the Phase 4 streaming infra rollout."
         />
 
-        <View className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
+        <View className="rounded-2xl bg-amber-500/20 bg-amber-500/5 p-4">
           <View className="flex-row items-center gap-2">
             <AlertTriangle size={16} color="#F59E0B" />
             <Text className="text-sm font-semibold text-foreground">
@@ -95,7 +95,7 @@ export function ForensicPage() {
             <Spinner />
           </View>
         ) : (data ?? []).length === 0 ? (
-          <View className="mt-3 rounded-xl border border-dashed border-border p-6">
+          <View className="mt-3 rounded-xl bg-card/50 p-6">
             <Text className="text-center text-sm text-muted-foreground">
               No admin actions logged yet.
             </Text>
@@ -144,7 +144,7 @@ export function ForensicPage() {
             <Spinner />
           </View>
         ) : (loginsQ.data?.events ?? []).length === 0 ? (
-          <View className="mt-3 rounded-xl border border-dashed border-border p-6">
+          <View className="mt-3 rounded-xl bg-card/50 p-6">
             <Text className="text-center text-sm text-muted-foreground">
               No sign-in events logged yet.
             </Text>

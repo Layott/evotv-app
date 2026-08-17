@@ -74,7 +74,7 @@ function NotFound({ handle, onBack }: { handle: string; onBack: () => void }) {
     <View className="flex-1 items-center justify-center bg-background px-6">
       <View
         className="h-14 w-14 items-center justify-center rounded-full"
-        style={{ backgroundColor: BRAND_RGBA(0.12) }}
+        style={{ backgroundColor: BRAND_RGBA(0.3) }}
       >
         <Users size={24} color={BRAND} />
       </View>
@@ -350,8 +350,6 @@ export default function PublicProfileScreen() {
                   className="flex-1 flex-row items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 active:opacity-80"
                   style={{
                     backgroundColor: "transparent",
-                    borderWidth: 1,
-                    borderColor: BRAND_RGBA(0.4),
                   }}
                 >
                   <Pencil size={13} color={BRAND} />
@@ -370,13 +368,11 @@ export default function PublicProfileScreen() {
                     followMutation.mutate();
                   }}
                   className="flex-1 flex-row items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 active:opacity-80"
+                  // Following was an outline button over nothing. Both states
+                  // are fills now: solid brand to follow, muted once followed.
                   style={{
                     backgroundColor:
-                      followingLocal && viewerId
-                        ? "transparent"
-                        : BRAND,
-                    borderWidth: followingLocal && viewerId ? 1 : 0,
-                    borderColor: BRAND_RGBA(0.4),
+                      followingLocal && viewerId ? "#17454A" : BRAND,
                   }}
                   disabled={followMutation.isPending}
                 >
@@ -483,7 +479,7 @@ export default function PublicProfileScreen() {
           {profileQ.data.recentClips.length === 0 &&
           profileQ.data.recentVods.length === 0 &&
           profileQ.data.channels.length === 0 ? (
-            <View className="mx-4 mt-8 rounded-2xl border border-dashed border-border bg-card p-8">
+            <View className="mx-4 mt-8 rounded-2xl bg-card p-8">
               <Text className="text-center text-sm text-muted-foreground">
                 @{profileQ.data.handle} hasn't posted any clips or VODs yet.
               </Text>

@@ -182,7 +182,7 @@ function GroupedList({
 
 function EmptyState({ label = "Nothing here yet." }: { label?: string }) {
   return (
-    <View className="items-center rounded-2xl border border-dashed border-border bg-card p-10">
+    <View className="items-center rounded-2xl bg-card p-10">
       <Bell size={36} color="#525252" />
       <Text className="mt-3 text-sm font-semibold text-foreground">
         {label}

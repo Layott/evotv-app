@@ -348,7 +348,7 @@ export function UsersRolesPage() {
                   ))}
                 </View>
 
-                <View className="mt-5 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                <View className="mt-5 rounded-lg bg-amber-500/20 bg-amber-500/5 p-3">
                   <View className="mb-2 flex-row items-center gap-2">
                     <Shield size={14} color="#F59E0B" />
                     <Text className="text-sm font-semibold text-foreground">
@@ -430,7 +430,7 @@ export function UsersRolesPage() {
                             kind: opt.kind,
                           })
                         }
-                        className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5"
+                        className="rounded-md bg-destructive/25 px-3 py-1.5"
                         style={{
                           opacity:
                             !sanctionReason.trim() ||

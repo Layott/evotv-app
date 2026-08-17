@@ -791,7 +791,7 @@ function ImageUploadField({
       <Pressable
         onPress={handlePick}
         disabled={uploading}
-        className={`flex-row items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-2.5 ${
+        className={`flex-row items-center justify-center gap-2 rounded-md bg-card px-3 py-2.5 ${
           uploading ? "opacity-60" : ""
         }`}
       >

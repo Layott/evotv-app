@@ -33,8 +33,6 @@ function TeamCard({ team }: { team: Team }) {
           width: 56,
           height: 56,
           borderRadius: 6,
-          borderWidth: 1,
-          borderColor: "#103133",
         }}
         contentFit="cover"
       />

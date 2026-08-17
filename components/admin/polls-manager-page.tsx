@@ -116,7 +116,7 @@ export function PollsManagerPage() {
             {pollsQuery.error instanceof Error ? pollsQuery.error.message : ""}
           </Text>
         ) : polls.length === 0 ? (
-          <View className="rounded-xl border border-dashed border-border p-6">
+          <View className="rounded-xl bg-card/50 p-6">
             <Text className="text-center text-sm text-muted-foreground">
               No polls yet. Tap "New" to create one.
             </Text>

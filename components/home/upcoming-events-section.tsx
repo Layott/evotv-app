@@ -24,27 +24,23 @@ function formatNgn(n: number): string {
 }
 
 function tierStyle(t: string): {
-  borderColor: string;
   backgroundColor: string;
   color: string;
 } {
   switch (t) {
     case "s":
       return {
-        borderColor: "rgba(245,158,11,0.4)",
-        backgroundColor: "rgba(245,158,11,0.1)",
+        backgroundColor: "rgba(245,158,11,0.3)",
         color: "#fcd34d",
       };
     case "a":
     case "b":
       return {
-        borderColor: "rgba(70,227,206,0.4)",
-        backgroundColor: "rgba(70,227,206,0.1)",
+        backgroundColor: "rgba(70,227,206,0.3)",
         color: "#67e8f9",
       };
     default:
       return {
-        borderColor: "#17454A",
         backgroundColor: "#103133",
         color: "#d4d4d4",
       };
@@ -137,8 +133,6 @@ export function UpcomingEvents({
                   <View
                     className="absolute left-2 top-2 rounded-md px-2 py-0.5"
                     style={{
-                      borderWidth: 1,
-                      borderColor: tier.borderColor,
                       backgroundColor: tier.backgroundColor,
                     }}
                   >

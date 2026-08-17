@@ -81,7 +81,7 @@ function NavRow({
 }) {
   return (
     <Link href={href} asChild>
-      <Pressable className="flex-row items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900/40 p-3 active:opacity-80">
+      <Pressable className="flex-row items-center gap-3 rounded-xl bg-neutral-900/60 p-3 active:opacity-80">
         <View
           className="h-9 w-9 items-center justify-center rounded-md"
           style={{ backgroundColor: "#1f1f1f" }}

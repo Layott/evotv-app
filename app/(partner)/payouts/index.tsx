@@ -51,13 +51,13 @@ export default function PayoutsScreen() {
               ))}
             </View>
           ) : payoutsQ.isError ? (
-            <View className="mt-5 rounded-xl border border-rose-500/30 bg-rose-500/5 p-4">
+            <View className="mt-5 rounded-xl bg-rose-500/20 bg-rose-500/5 p-4">
               <Text className="text-sm text-rose-300">
                 {(payoutsQ.error as Error)?.message ?? "Failed to load"}
               </Text>
             </View>
           ) : payoutsQ.data?.length === 0 ? (
-            <View className="mt-5 rounded-2xl border border-dashed border-neutral-800 bg-neutral-900/30 p-8">
+            <View className="mt-5 rounded-2xl bg-neutral-900/50 p-8">
               <View className="items-center gap-2">
                 <ClockIcon size={20} color="#737373" />
                 <Text className="text-center text-sm text-muted-foreground">
@@ -70,7 +70,7 @@ export default function PayoutsScreen() {
               {payoutsQ.data?.map((p) => (
                 <View
                   key={p.id}
-                  className="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4"
+                  className="rounded-2xl bg-neutral-900/60 p-4"
                 >
                   <View className="flex-row items-center justify-between">
                     <Text className="text-sm font-semibold text-foreground">

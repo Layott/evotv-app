@@ -32,7 +32,7 @@ export function CoinPill({
       ? { wrap: "border-amber-500/30 bg-amber-500/10", text: "text-amber-300", icon: "#FCD34D" }
       : tone === "sky"
         ? { wrap: "border-sky-500/30 bg-sky-500/10", text: "text-sky-300", icon: "#7DD3FC" }
-        : { wrap: "border-neutral-700 bg-neutral-900/60", text: "text-neutral-200", icon: "#9FBDBD" };
+        : { wrap: "bg-neutral-900/60", text: "text-neutral-200", icon: "#9FBDBD" };
 
   return (
     <View

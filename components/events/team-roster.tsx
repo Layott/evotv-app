@@ -21,8 +21,6 @@ export function TeamRoster({ team, players }: TeamRosterProps) {
             width: 40,
             height: 40,
             borderRadius: 6,
-            borderWidth: 1,
-            borderColor: "#103133",
           }}
           contentFit="cover"
         />
@@ -62,8 +60,6 @@ export function TeamRoster({ team, players }: TeamRosterProps) {
                   width: 32,
                   height: 32,
                   borderRadius: 16,
-                  borderWidth: 1,
-                  borderColor: "#103133",
                 }}
                 contentFit="cover"
               />

@@ -38,7 +38,7 @@ function EmptyState({
 }) {
   return (
     <View
-      className="rounded-2xl border border-dashed border-border bg-card p-8"
+      className="rounded-2xl bg-card p-8"
     >
       <View className="items-center">{icon}</View>
       <Text className="mt-3 text-center text-sm font-semibold text-foreground">

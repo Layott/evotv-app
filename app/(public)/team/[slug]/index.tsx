@@ -142,7 +142,7 @@ export default function TeamDetailScreen() {
           <View
             style={{
               minHeight: 240,
-              backgroundColor: "rgba(70,227,206,0.05)",
+              backgroundColor: "rgba(70,227,206,0.3)",
               position: "relative",
             }}
           >
@@ -179,8 +179,6 @@ export default function TeamDetailScreen() {
                   width: 80,
                   height: 80,
                   borderRadius: 12,
-                  borderWidth: 2,
-                  borderColor: "#0d0d0d",
                   backgroundColor: "#0d0d0d",
                 }}
                 contentFit="cover"
@@ -224,10 +222,6 @@ export default function TeamDetailScreen() {
               onPress={onFollow}
               className="mt-4 self-start flex-row items-center gap-2 rounded-md px-4 py-2 active:opacity-80"
               style={{
-                borderWidth: 1,
-                borderColor: following
-                  ? "rgba(70,227,206,0.5)"
-                  : "transparent",
                 backgroundColor: following
                   ? "rgba(70,227,206,0.1)"
                   : "#46E3CE",
@@ -356,8 +350,6 @@ export default function TeamDetailScreen() {
                         width: 48,
                         height: 48,
                         borderRadius: 24,
-                        borderWidth: 1,
-                        borderColor: "#103133",
                       }}
                       contentFit="cover"
                     />

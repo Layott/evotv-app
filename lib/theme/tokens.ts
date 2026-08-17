@@ -7,7 +7,8 @@ export const tokens = {
   bg: "#05191B",
   fg: "#EAF6F5",
   muted: "#9FBDBD",
-  border: "#123B3D",
+  // See tailwind.config.js: hairline borders are banned product-wide.
+  border: "transparent",
 } as const;
 
 export type ThemeTokens = typeof tokens;

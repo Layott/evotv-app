@@ -114,9 +114,7 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
                 <View
                   className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
                   style={{
-                    borderWidth: 1,
-                    borderColor: "rgba(239,68,68,0.3)",
-                    backgroundColor: "rgba(239,68,68,0.1)",
+                    backgroundColor: "rgba(239,68,68,0.25)",
                   }}
                 >
                   <View

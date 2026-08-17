@@ -170,8 +170,6 @@ export default function EpisodePlayerScreen() {
               className="absolute bottom-12 right-4 flex-row items-center gap-1.5 rounded-md px-3 py-2 active:opacity-80"
               style={{
                 backgroundColor: "rgba(0,0,0,0.7)",
-                borderWidth: 1,
-                borderColor: BRAND_RGBA(0.5),
               }}
             >
               <Forward size={14} color={BRAND} />

@@ -122,8 +122,6 @@ export function ProfileHeader({
                 className="absolute -bottom-0.5 -right-0.5 rounded-full p-1.5"
                 style={{
                   backgroundColor: "#103133",
-                  borderWidth: 1,
-                  borderColor: "#17454A",
                 }}
               >
                 <Edit size={14} color="#46E3CE" />

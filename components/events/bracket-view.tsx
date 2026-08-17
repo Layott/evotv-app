@@ -35,8 +35,6 @@ function Row({
               width: 24,
               height: 24,
               borderRadius: 4,
-              borderWidth: 1,
-              borderColor: "#103133",
             }}
             contentFit="cover"
           />

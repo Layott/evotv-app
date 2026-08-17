@@ -30,7 +30,7 @@ function VideoGrid({ vods }: { vods: Vod[] }) {
   if (vods.length === 0) {
     return (
       <View
-        className="rounded-2xl border border-dashed border-border bg-card p-8"
+        className="rounded-2xl bg-card p-8"
       >
         <View className="items-center">
           <Video size={32} color="#525252" />
@@ -93,7 +93,7 @@ function ClipsGrid({ clips }: { clips: Clip[] }) {
   if (clips.length === 0) {
     return (
       <View
-        className="rounded-2xl border border-dashed border-border bg-card p-8"
+        className="rounded-2xl bg-card p-8"
       >
         <View className="items-center">
           <Film size={32} color="#525252" />

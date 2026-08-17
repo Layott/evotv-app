@@ -197,9 +197,7 @@ export default function VerifyEmailScreen() {
             <View
               className="h-14 w-14 items-center justify-center rounded-2xl"
               style={{
-                backgroundColor: "rgba(70,227,206,0.10)",
-                borderWidth: 1,
-                borderColor: "rgba(70,227,206,0.30)",
+                backgroundColor: "rgba(70,227,206,0.25)",
               }}
             >
               <Mail color="#46E3CE" size={26} />

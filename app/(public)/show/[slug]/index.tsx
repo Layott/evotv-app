@@ -83,7 +83,7 @@ function EpisodeRow({
       </View>
       <View
         className="h-9 w-9 items-center justify-center rounded-full"
-        style={{ backgroundColor: BRAND_RGBA(0.12) }}
+        style={{ backgroundColor: BRAND_RGBA(0.3) }}
       >
         <Play size={16} color={BRAND} fill={BRAND} />
       </View>
@@ -375,7 +375,7 @@ export default function ShowLandingScreen() {
             ))}
           </View>
         ) : (
-          <View className="mx-4 mt-4 rounded-2xl border border-dashed border-border bg-card p-8">
+          <View className="mx-4 mt-4 rounded-2xl bg-card p-8">
             <Text className="text-center text-sm text-muted-foreground">
               No episodes released yet for this season.
             </Text>

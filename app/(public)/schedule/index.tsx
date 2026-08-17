@@ -57,7 +57,6 @@ function formatTime(iso: string): string {
 }
 
 function pillarStyle(p: EpgPillar): {
-  borderColor: string;
   backgroundColor: string;
   color: string;
   label: string;
@@ -65,23 +64,20 @@ function pillarStyle(p: EpgPillar): {
   switch (p) {
     case "anime":
       return {
-        borderColor: "rgba(244,114,182,0.4)",
-        backgroundColor: "rgba(244,114,182,0.12)",
+        backgroundColor: "rgba(244,114,182,0.3)",
         color: "#f9a8d4",
         label: "Anime",
       };
     case "lifestyle":
       return {
-        borderColor: "rgba(168,85,247,0.4)",
-        backgroundColor: "rgba(168,85,247,0.12)",
+        backgroundColor: "rgba(168,85,247,0.3)",
         color: "#d8b4fe",
         label: "Lifestyle",
       };
     case "esports":
     default:
       return {
-        borderColor: "rgba(70,227,206,0.4)",
-        backgroundColor: "rgba(70,227,206,0.1)",
+        backgroundColor: "rgba(70,227,206,0.3)",
         color: "#67e8f9",
         label: "Esports",
       };
@@ -99,9 +95,7 @@ function LiveBadge() {
     <View
       className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
       style={{
-        borderWidth: 1,
-        borderColor: "rgba(239,68,68,0.3)",
-        backgroundColor: "rgba(239,68,68,0.1)",
+        backgroundColor: "rgba(239,68,68,0.25)",
       }}
     >
       <View
@@ -156,7 +150,6 @@ function ReminderBell({
       disabled={reminder.isPending}
       className="absolute right-2 top-2 rounded-md border bg-card/70 px-1.5 py-1 active:opacity-70"
       style={{
-        borderColor: reminder.active ? "rgba(70,227,206,0.4)" : "#103133",
         opacity: reminder.isPending ? 0.5 : 1,
       }}
       accessibilityRole="button"
@@ -202,8 +195,6 @@ function EpgCard({
         <View
           className="absolute left-2 top-2 rounded-md px-1.5 py-0.5"
           style={{
-            borderWidth: 1,
-            borderColor: pillar.borderColor,
             backgroundColor: pillar.backgroundColor,
           }}
         >
@@ -281,16 +272,13 @@ function Chip({
   active: boolean;
   onPress: () => void;
   label: string;
-  toneActive?: { borderColor: string; backgroundColor: string; color: string };
+  toneActive?: { backgroundColor: string; color: string };
 }) {
   return (
     <Pressable
       onPress={onPress}
       className="rounded-full border px-3 py-1 active:opacity-70"
       style={{
-        borderColor: active
-          ? toneActive?.borderColor ?? "rgba(70,227,206,0.5)"
-          : "#103133",
         backgroundColor: active
           ? toneActive?.backgroundColor ?? "rgba(70,227,206,0.1)"
           : "rgba(15,15,15,0.6)",
@@ -325,7 +313,6 @@ function DayChip({
       onPress={onPress}
       className="items-center rounded-xl border px-4 py-2 active:opacity-70"
       style={{
-        borderColor: active ? "rgba(70,227,206,0.5)" : "#103133",
         backgroundColor: active
           ? "rgba(70,227,206,0.1)"
           : "rgba(15,15,15,0.6)",

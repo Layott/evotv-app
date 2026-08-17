@@ -44,9 +44,7 @@ function HeroCard({ show }: { show: Show }) {
             <View
               className="rounded-md px-1.5 py-0.5"
               style={{
-                backgroundColor: BRAND_RGBA(0.15),
-                borderWidth: 1,
-                borderColor: BRAND_RGBA(0.4),
+                backgroundColor: BRAND_RGBA(0.3),
               }}
             >
               <Text
@@ -68,9 +66,7 @@ function HeroCard({ show }: { show: Show }) {
             <View
               className="rounded-md px-1.5 py-0.5"
               style={{
-                backgroundColor: `${PILLAR_TINT[show.pillar]}20`,
-                borderWidth: 1,
-                borderColor: `${PILLAR_TINT[show.pillar]}50`,
+                backgroundColor: `${PILLAR_TINT[show.pillar]}45`,
               }}
             >
               <Text
@@ -135,7 +131,7 @@ function ShowPosterCard({ show }: { show: Show }) {
         <View
           className="self-start rounded px-1 py-0.5"
           style={{
-            backgroundColor: `${PILLAR_TINT[show.pillar]}15`,
+            backgroundColor: `${PILLAR_TINT[show.pillar]}45`,
           }}
         >
           <Text

@@ -24,27 +24,23 @@ function formatNgn(n: number): string {
 }
 
 function tierStyle(t: string): {
-  borderColor: string;
   backgroundColor: string;
   color: string;
 } {
   switch (t) {
     case "s":
       return {
-        borderColor: "rgba(245,158,11,0.4)",
-        backgroundColor: "rgba(245,158,11,0.1)",
+        backgroundColor: "rgba(245,158,11,0.3)",
         color: "#fcd34d",
       };
     case "a":
     case "b":
       return {
-        borderColor: "rgba(70,227,206,0.4)",
-        backgroundColor: "rgba(70,227,206,0.1)",
+        backgroundColor: "rgba(70,227,206,0.3)",
         color: "#67e8f9",
       };
     default:
       return {
-        borderColor: "#17454A",
         backgroundColor: "#103133",
         color: "#d4d4d4",
       };
@@ -56,9 +52,7 @@ function LiveBadge() {
     <View
       className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
       style={{
-        borderWidth: 1,
-        borderColor: "rgba(239,68,68,0.3)",
-        backgroundColor: "rgba(239,68,68,0.1)",
+        backgroundColor: "rgba(239,68,68,0.25)",
       }}
     >
       <View
@@ -113,8 +107,6 @@ function EventCard({
         <View
           className="absolute left-2 top-2 rounded-md px-1.5 py-0.5"
           style={{
-            borderWidth: 1,
-            borderColor: tier.borderColor,
             backgroundColor: tier.backgroundColor,
           }}
         >
@@ -184,16 +176,13 @@ function Chip({
   active: boolean;
   onPress: () => void;
   label: string;
-  toneActive?: { borderColor: string; backgroundColor: string; color: string };
+  toneActive?: { backgroundColor: string; color: string };
 }) {
   return (
     <Pressable
       onPress={onPress}
       className="rounded-full border px-3 py-1 active:opacity-70"
       style={{
-        borderColor: active
-          ? toneActive?.borderColor ?? "rgba(70,227,206,0.5)"
-          : "#103133",
         backgroundColor: active
           ? toneActive?.backgroundColor ?? "rgba(70,227,206,0.1)"
           : "rgba(15,15,15,0.6)",

@@ -45,7 +45,7 @@ export function WatchHistoryList({
   if (vods.length === 0) {
     return (
       <View
-        className="rounded-xl border border-dashed border-border bg-card p-8"
+        className="rounded-xl bg-card p-8"
       >
         <Text className="text-center text-sm text-muted-foreground">
           Nothing watched yet.

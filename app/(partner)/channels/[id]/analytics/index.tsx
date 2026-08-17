@@ -61,7 +61,7 @@ export default function ChannelAnalyticsScreen() {
                   "rounded-full border px-3 py-1.5",
                   period === opt.value
                     ? "border-brand/50 bg-brand/10"
-                    : "border-neutral-800 bg-neutral-900",
+                    : "bg-neutral-900",
                 )}
               >
                 <Text
@@ -83,7 +83,7 @@ export default function ChannelAnalyticsScreen() {
               <Skeleton className="h-44 rounded-2xl" />
             </View>
           ) : analyticsQ.isError ? (
-            <View className="mt-5 rounded-xl border border-rose-500/30 bg-rose-500/5 p-4">
+            <View className="mt-5 rounded-xl bg-rose-500/20 bg-rose-500/5 p-4">
               <Text className="text-sm text-rose-300">
                 {(analyticsQ.error as Error)?.message ?? "Failed to load analytics"}
               </Text>
@@ -160,7 +160,7 @@ function SummaryCard({
 }) {
   return (
     <View
-      className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-3"
+      className="rounded-xl bg-neutral-900/60 p-3"
       style={{ minWidth: "30%", flexGrow: 1 }}
     >
       <View className="flex-row items-center gap-1.5">
@@ -188,7 +188,7 @@ function SparkSection({
   const values = rows.map(accessor);
   const max = Math.max(1, ...values);
   return (
-    <View className="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4">
+    <View className="rounded-2xl bg-neutral-900/60 p-4">
       <Text className="text-sm font-semibold text-foreground">{title}</Text>
       {rows.length === 0 ? (
         <Text className="mt-4 text-center text-xs text-muted-foreground">

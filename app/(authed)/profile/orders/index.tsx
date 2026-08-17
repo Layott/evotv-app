@@ -133,7 +133,7 @@ export default function ProfileOrdersScreen() {
         </View>
 
         {orders.length === 0 ? (
-          <View className="mx-4 items-center rounded-2xl border border-dashed border-border bg-card p-10">
+          <View className="mx-4 items-center rounded-2xl bg-card p-10">
             <Package size={36} color="#525252" />
             <Text className="mt-3 text-base font-semibold text-foreground">
               No orders yet.
@@ -164,7 +164,7 @@ export default function ProfileOrdersScreen() {
                   >
                     <View
                       className="h-10 w-10 items-center justify-center rounded-lg"
-                      style={{ backgroundColor: c.bg, borderWidth: 1, borderColor: c.border }}
+                      style={{ backgroundColor: c.bg }}
                     >
                       <Package size={16} color={c.text} />
                     </View>

@@ -251,7 +251,7 @@ function ApplicationCard({
             <Pressable
               onPress={() => onReview("in_review")}
               disabled={disabled || row.status === "in_review"}
-              className="flex-1 flex-row items-center justify-center gap-1 rounded-full border border-amber-500/60 bg-amber-500/10 px-3 py-2 active:opacity-80"
+              className="flex-1 flex-row items-center justify-center gap-1 rounded-full bg-amber-500/25 px-3 py-2 active:opacity-80"
             >
               <Clock size={13} color="#F59E0B" />
               <Text className="text-xs font-semibold text-amber-300">
@@ -261,7 +261,7 @@ function ApplicationCard({
             <Pressable
               onPress={() => onReview("approved")}
               disabled={disabled || row.status === "approved"}
-              className="flex-1 flex-row items-center justify-center gap-1 rounded-full border border-emerald-500/60 bg-emerald-500/10 px-3 py-2 active:opacity-80"
+              className="flex-1 flex-row items-center justify-center gap-1 rounded-full bg-emerald-500/25 px-3 py-2 active:opacity-80"
             >
               <Check size={13} color="#34D399" />
               <Text className="text-xs font-semibold text-emerald-300">
@@ -271,7 +271,7 @@ function ApplicationCard({
             <Pressable
               onPress={() => onReview("rejected")}
               disabled={disabled || row.status === "rejected"}
-              className="flex-1 flex-row items-center justify-center gap-1 rounded-full border border-rose-500/60 bg-rose-500/10 px-3 py-2 active:opacity-80"
+              className="flex-1 flex-row items-center justify-center gap-1 rounded-full bg-rose-500/25 px-3 py-2 active:opacity-80"
             >
               <X size={13} color="#EF4444" />
               <Text className="text-xs font-semibold text-rose-300">

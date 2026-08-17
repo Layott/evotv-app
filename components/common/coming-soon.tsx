@@ -29,7 +29,7 @@ export function ComingSoon({
       <Stack.Screen options={{ title }} />
       <Animated.View
         entering={FadeIn.duration(500).reduceMotion(rm)}
-        className="h-16 w-16 items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-500/10"
+        className="h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/25"
       >
         <Sparkles size={28} color="#46E3CE" />
       </Animated.View>

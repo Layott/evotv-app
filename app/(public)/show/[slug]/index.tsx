@@ -66,7 +66,7 @@ function EpisodeRow({
       </View>
       <View className="flex-1 gap-1">
         <View className="flex-row items-center gap-2">
-          <Text className="text-[10px] uppercase tracking-widest text-muted-foreground">
+          <Text className="text-[10px] st text-muted-foreground">
             E{episode.episodeNumber}
           </Text>
           <Text
@@ -323,7 +323,7 @@ export default function ShowLandingScreen() {
         {/* SEASON PICKER */}
         {seasonsQ.data && seasonsQ.data.length > 0 ? (
           <View className="pt-8 gap-3">
-            <Text className="px-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <Text className="px-4 text-xs font-semibold st text-muted-foreground">
               Seasons
             </Text>
             <ScrollView

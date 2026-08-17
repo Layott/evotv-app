@@ -80,12 +80,6 @@ export default function PublicLayout() {
           title: "Profile",
           tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
         }}
-        listeners={{
-          tabPress: (e) => {
-            e.preventDefault();
-            router.push("/profile" as never);
-          },
-        }}
       />
 
       {/* Hidden public routes - exist as routes, not in tab bar */}

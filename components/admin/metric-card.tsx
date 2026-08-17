@@ -34,7 +34,7 @@ export function MetricCard({
       )}
     >
       <View className="flex-row items-start justify-between">
-        <Text className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+        <Text className="text-[10px] font-medium r text-muted-foreground">
           {title}
         </Text>
         {Icon ? (

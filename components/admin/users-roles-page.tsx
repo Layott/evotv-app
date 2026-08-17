@@ -369,7 +369,7 @@ export function UsersRolesPage() {
                         >
                           <View className="flex-row items-start justify-between gap-2">
                             <View className="flex-1">
-                              <Text className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                              <Text className="text-xs font-bold r text-amber-400">
                                 {s.kind.replace("_", " ")}
                               </Text>
                               <Text className="text-xs text-foreground mt-0.5">
@@ -488,7 +488,7 @@ export function UsersRolesPage() {
 function InfoCell({ label, value }: { label: string; value: string }) {
   return (
     <View className="min-w-[44%]">
-      <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+      <Text className="text-[10px] r text-muted-foreground">
         {label}
       </Text>
       <Text className="text-sm text-foreground" numberOfLines={1}>

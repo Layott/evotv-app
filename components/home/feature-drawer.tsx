@@ -60,7 +60,7 @@ const GROUPS: FeatureGroup[] = [
   {
     title: "You",
     items: [
-      { label: "Profile", href: "/profile", Icon: UserIcon },
+      { label: "Profile", href: "/profile-tab", Icon: UserIcon },
       { label: "Library", href: "/library-tab", Icon: Library },
       { label: "Notifications", href: "/notifications", Icon: Bell },
       { label: "Cart", href: "/cart", Icon: ShoppingBag },
@@ -196,7 +196,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
             return (
               <View key={group.title} className="px-4 pt-5">
                 <Text
-                  className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2"
+                  className="text-[10px] st text-muted-foreground mb-2"
                   style={{ letterSpacing: 1.4 }}
                 >
                   {group.title}
@@ -247,7 +247,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
 
           <View className="px-4 pt-6">
             <Text
-              className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2"
+              className="text-[10px] st text-muted-foreground mb-2"
               style={{ letterSpacing: 1.4 }}
             >
               Session

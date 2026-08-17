@@ -264,7 +264,7 @@ export function OverviewPage() {
           </StatusBadge>
         </View>
         <View className="rounded-xl bg-background p-3">
-          <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="text-[10px] r text-muted-foreground">
             30-day views trend
           </Text>
           <ListState

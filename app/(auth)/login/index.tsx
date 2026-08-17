@@ -173,7 +173,7 @@ export default function LoginScreen() {
 
             <View className="my-2 flex-row items-center gap-3">
               <View className="h-px flex-1 bg-border" />
-              <Text className="text-[11px] uppercase tracking-widest text-muted-foreground">
+              <Text className="text-[11px] st text-muted-foreground">
                 or continue with
               </Text>
               <View className="h-px flex-1 bg-border" />

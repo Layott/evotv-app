@@ -89,7 +89,7 @@ export default function PayoutsScreen() {
                   </View>
                   <View className="mt-3 flex-row items-center justify-between">
                     <View>
-                      <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <Text className="text-[10px] r text-muted-foreground">
                         Net payout
                       </Text>
                       <Text className="mt-0.5 text-lg font-bold text-foreground">
@@ -97,7 +97,7 @@ export default function PayoutsScreen() {
                       </Text>
                     </View>
                     <View className="items-end">
-                      <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <Text className="text-[10px] r text-muted-foreground">
                         Gross · Fee
                       </Text>
                       <Text className="mt-0.5 text-xs text-muted-foreground">

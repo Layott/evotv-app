@@ -167,7 +167,7 @@ function SummaryCard({
     >
       <View className="flex-row items-center gap-1.5">
         {icon}
-        <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+        <Text className="text-[10px] r text-muted-foreground">
           {label}
         </Text>
       </View>

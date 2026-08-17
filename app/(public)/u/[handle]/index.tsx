@@ -351,7 +351,7 @@ export default function PublicProfileScreen() {
             <View className="flex-row gap-2">
               {viewerId && viewerId === profileQ.data.id ? (
                 <Pressable
-                  onPress={() => router.push("/profile" as never)}
+                  onPress={() => router.push("/profile-tab" as never)}
                   className="flex-1 flex-row items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 active:opacity-80"
                   style={{
                     backgroundColor: "transparent",
@@ -417,7 +417,7 @@ export default function PublicProfileScreen() {
           {/* CHANNELS */}
           {profileQ.data.channels.length > 0 ? (
             <View className="px-4 pt-8 gap-3">
-              <Text className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              <Text className="text-xs font-semibold st text-muted-foreground">
                 Channels
               </Text>
               {profileQ.data.channels.map((c) => (
@@ -430,7 +430,7 @@ export default function PublicProfileScreen() {
           {profileQ.data.recentClips.length > 0 ? (
             <View className="pt-8 gap-3">
               <View className="flex-row items-center justify-between px-4">
-                <Text className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                <Text className="text-xs font-semibold st text-muted-foreground">
                   Recent clips
                 </Text>
                 <Badge
@@ -457,7 +457,7 @@ export default function PublicProfileScreen() {
           {profileQ.data.recentVods.length > 0 ? (
             <View className="pt-8 gap-3">
               <View className="flex-row items-center justify-between px-4">
-                <Text className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                <Text className="text-xs font-semibold st text-muted-foreground">
                   Recent VODs
                 </Text>
                 <Badge

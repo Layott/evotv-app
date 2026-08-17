@@ -229,7 +229,7 @@ export default function AdminChannelsScreen() {
 
                   {selected.suspendedAt ? (
                     <View className="rounded-md bg-destructive/25 p-3 mb-3">
-                      <Text className="text-[11px] uppercase tracking-wider text-destructive">
+                      <Text className="text-[11px] r text-destructive">
                         Suspended
                       </Text>
                       <Text className="mt-1 text-sm text-foreground">

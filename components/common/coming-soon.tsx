@@ -43,7 +43,7 @@ export function ComingSoon({
       </Animated.Text>
       <Animated.Text
         entering={rise(150)}
-        className="mt-1 text-center text-[11px] font-semibold uppercase tracking-[3px] text-cyan-400"
+        className="mt-1 text-center text-[11px] font-semibold text-cyan-400"
       >
         Coming soon
       </Animated.Text>

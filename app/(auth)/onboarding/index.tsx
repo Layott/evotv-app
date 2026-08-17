@@ -240,7 +240,7 @@ export default function OnboardingScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View className="mb-3 flex-row items-center justify-between">
-          <Text className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          <Text className="text-xs font-semibold st text-muted-foreground">
             Step {step} of 4
           </Text>
           <Link href="/(public)/home" asChild>
@@ -430,7 +430,7 @@ function StepGames({
                   {g.shortName}
                 </Text>
                 <View className="rounded bg-muted px-1.5 py-0.5">
-                  <Text className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <Text className="text-[10px] font-medium text-muted-foreground">
                     {g.platform}
                   </Text>
                 </View>

@@ -200,7 +200,7 @@ export function OrderView({ id }: OrderViewProps) {
         <View className="rounded-2xl border border-border bg-card p-5">
           <View className="flex-row flex-wrap items-start justify-between gap-3">
             <View className="flex-1">
-              <Text className="text-[11px] uppercase tracking-wider text-muted-foreground">
+              <Text className="text-[11px] r text-muted-foreground">
                 Order
               </Text>
               <Text className="font-mono text-lg font-bold text-foreground">

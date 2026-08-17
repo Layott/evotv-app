@@ -130,7 +130,7 @@ function Row({
         >
           {n.body}
         </Text>
-        <Text className="mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+        <Text className="mt-1 text-[11px] text-muted-foreground">
           {relativeTime(n.createdAt)}
         </Text>
       </View>
@@ -167,7 +167,7 @@ function GroupedList({
       {order.map((k) => (
         <View key={k}>
           <View className="mb-1 px-1">
-            <Text className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            <Text className="text-[11px] r text-muted-foreground">
               {k}
             </Text>
           </View>

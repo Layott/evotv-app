@@ -56,7 +56,7 @@ function AuditRow({ row }: { row: AuditLogEntry }) {
     >
       <View className="flex-row items-center justify-between mb-1.5">
         <Text
-          className="text-[11px] font-bold uppercase tracking-widest"
+          className="text-[11px] font-bold st"
           style={{ color: actionColor(row.action) }}
         >
           {row.action}

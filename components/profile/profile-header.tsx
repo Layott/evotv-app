@@ -1,7 +1,8 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { Edit, MapPin, ShieldCheck, Star } from "lucide-react-native";
+import { Edit, MapPin, ShieldCheck, BadgeCheck } from "@/components/icons";
 
 import type { Profile } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
@@ -62,6 +63,7 @@ export function ProfileHeader({
   isFollowing,
   onFollowToggle,
 }: ProfileHeaderProps) {
+  const palette = useTokens();
   const isPremium = profile.role === "premium";
   const isAdmin = profile.role === "admin";
 
@@ -91,9 +93,9 @@ export function ProfileHeader({
                 height: 88,
                 borderRadius: 44,
                 borderWidth: 3,
-                borderColor: "#05191B",
+                borderColor: palette.bg,
                 overflow: "hidden",
-                backgroundColor: "#103133",
+                backgroundColor: palette.subtle,
               }}
             >
               <Image
@@ -121,10 +123,10 @@ export function ProfileHeader({
               <View
                 className="absolute -bottom-0.5 -right-0.5 rounded-full p-1.5"
                 style={{
-                  backgroundColor: "#103133",
+                  backgroundColor: palette.subtle,
                 }}
               >
-                <Edit size={14} color="#46E3CE" />
+                <Edit size={14} color={palette.brand} />
               </View>
             ) : null}
           </Pressable>
@@ -137,7 +139,7 @@ export function ProfileHeader({
                 onPress={onEdit}
                 className="border-border"
               >
-                <Edit size={14} color="#46E3CE" />
+                <Edit size={14} color={palette.brand} />
                 <Text className="text-sm font-medium text-foreground">
                   Edit
                 </Text>
@@ -151,7 +153,7 @@ export function ProfileHeader({
               >
                 <Text
                   className="text-sm font-medium"
-                  style={{ color: isFollowing ? "#EAF6F5" : "#05191B" }}
+                  style={{ color: isFollowing ? palette.fg : palette.bg }}
                 >
                   {isFollowing ? "Following" : "Follow"}
                 </Text>
@@ -175,7 +177,7 @@ export function ProfileHeader({
                 backgroundColor: "rgba(245,158,11,0.15)",
               }}
             >
-              <Star size={10} color="#fcd34d" />
+              <BadgeCheck size={10} color="#fcd34d" />
               <Text
                 className="text-xs font-medium"
                 style={{ color: "#fcd34d" }}
@@ -209,7 +211,7 @@ export function ProfileHeader({
 
         <View className="mt-1 flex-row flex-wrap items-center gap-3">
           <View className="flex-row items-center gap-1">
-            <MapPin size={12} color="#737373" />
+            <MapPin size={12} color={palette.muted} />
             <Text className="text-xs text-muted-foreground">
               {profile.country}
             </Text>
@@ -226,9 +228,9 @@ export function ProfileHeader({
         {stats ? (
           <View className="mt-4 flex-row rounded-xl border border-border bg-background py-3">
             <StatCell label="Followers" value={stats.followers} />
-            <View style={{ width: 1, backgroundColor: "#103133" }} />
+            <View style={{ width: 1, backgroundColor: palette.subtle }} />
             <StatCell label="Following" value={stats.following} />
-            <View style={{ width: 1, backgroundColor: "#103133" }} />
+            <View style={{ width: 1, backgroundColor: palette.subtle }} />
             <StatCell label="Videos" value={stats.videos} />
           </View>
         ) : null}

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -11,10 +12,10 @@ import {
   Eye,
   Lock,
   Share2,
-  Sparkles,
+  Unlock,
   ThumbsDown,
   ThumbsUp,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import { getVodById, listRelatedVods } from "@/lib/api/vods";
 import { getProgress, upsertProgress } from "@/lib/api/vod-progress";
@@ -108,7 +109,7 @@ function PaywallOverlay({ vod, onUpgrade }: PaywallProps) {
           className="bg-amber-500"
           textClassName="text-black font-semibold"
         >
-          <Sparkles size={16} color="#000" />
+          <Unlock size={16} color="#000" />
           Upgrade with Paystack
         </Button>
       </View>
@@ -121,11 +122,12 @@ interface ChaptersProps {
 }
 
 function VodChapters({ vod }: ChaptersProps) {
+  const palette = useTokens();
   if (!vod.chapters || vod.chapters.length === 0) return null;
   return (
     <View className="rounded-xl border border-border bg-card p-3">
       <View className="flex-row items-center gap-2 mb-2">
-        <Clock size={14} color="#9FBDBD" />
+        <Clock size={14} color={palette.muted} />
         <Text className="text-sm font-semibold text-foreground">Chapters</Text>
       </View>
       <View className="gap-1.5">
@@ -157,6 +159,7 @@ function VodChapters({ vod }: ChaptersProps) {
 }
 
 export default function VodScreen() {
+  const palette = useTokens();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { role } = useAuth();
@@ -287,7 +290,7 @@ export default function VodScreen() {
               </EmptyDescription>
             </EmptyHeader>
             <Button variant="outline" onPress={() => router.back()}>
-              <ArrowLeft size={16} color="#EAF6F5" />
+              <ArrowLeft size={16} color={palette.fg} />
               <Text className="text-foreground text-sm font-medium">
                 Go back
               </Text>
@@ -400,7 +403,7 @@ export default function VodScreen() {
             </Text>
             <View className="mt-2 flex-row flex-wrap items-center gap-2">
               <View className="flex-row items-center gap-1">
-                <Eye size={13} color="#9FBDBD" />
+                <Eye size={13} color={palette.muted} />
                 <Text className="text-xs text-muted-foreground">
                   {compact(vod.viewCount)} views
                 </Text>
@@ -428,8 +431,8 @@ export default function VodScreen() {
               >
                 <ThumbsUp
                   size={14}
-                  color={liked ? "#46E3CE" : "#EAF6F5"}
-                  fill={liked ? "#46E3CE" : "transparent"}
+                  color={liked ? palette.brand : palette.fg}
+                  weight={liked ? "fill" : "regular"}
                 />
                 <Text className="text-sm text-foreground">
                   {compact(likes)}
@@ -442,8 +445,8 @@ export default function VodScreen() {
               >
                 <ThumbsDown
                   size={14}
-                  color={disliked ? "#f87171" : "#EAF6F5"}
-                  fill={disliked ? "#f87171" : "transparent"}
+                  color={disliked ? "#f87171" : palette.fg}
+                  weight={disliked ? "fill" : "regular"}
                 />
                 {dislikes > 0 ? (
                   <Text className="text-sm text-foreground">
@@ -453,7 +456,7 @@ export default function VodScreen() {
               </Pressable>
             </View>
             <Button variant="outline" size="sm" onPress={onShare}>
-              <Share2 size={14} color="#EAF6F5" />
+              <Share2 size={14} color={palette.fg} />
               Share
             </Button>
             <Button
@@ -465,7 +468,7 @@ export default function VodScreen() {
             >
               <BookmarkPlus
                 size={14}
-                color={saved ? "#000" : "#EAF6F5"}
+                color={saved ? "#000" : palette.fg}
               />
               {saved ? "Saved" : "Save"}
             </Button>

@@ -1,9 +1,11 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Toaster as SonnerToaster, toast } from "sonner-native";
 
 export type ToasterProps = React.ComponentProps<typeof SonnerToaster>;
 
 function Toaster(props: ToasterProps) {
+  const palette = useTokens();
   return (
     <SonnerToaster
       position="top-center"
@@ -11,14 +13,14 @@ function Toaster(props: ToasterProps) {
       duration={3500}
       closeButton
       style={{
-        backgroundColor: "#05191B",
+        backgroundColor: palette.bg,
       }}
       toastOptions={{
         style: {
-          backgroundColor: "#05191B",
+          backgroundColor: palette.bg,
         },
-        titleStyle: { color: "#EAF6F5" },
-        descriptionStyle: { color: "#9FBDBD" },
+        titleStyle: { color: palette.fg },
+        descriptionStyle: { color: palette.muted },
       }}
       {...props}
     />

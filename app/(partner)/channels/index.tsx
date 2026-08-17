@@ -1,11 +1,13 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Link, Stack } from "expo-router";
-import { ArrowRight, Radio } from "lucide-react-native";
+import { ArrowRight, Radio } from "@/components/icons";
 
 import { useAuth } from "@/components/providers";
 
 export default function ChannelsListScreen() {
+  const palette = useTokens();
   const { publisherMemberships } = useAuth();
   const channels = publisherMemberships.flatMap((m) =>
     m.channels.map((c) => ({ ...c, publisherName: m.publisher.name })),
@@ -27,12 +29,12 @@ export default function ChannelsListScreen() {
               href={`/(partner)/channels/${c.id}` as never}
               asChild
             >
-              <Pressable className="flex-row items-center gap-3 rounded-xl bg-neutral-900/60 p-3 active:opacity-80">
+              <Pressable className="flex-row items-center gap-3 rounded-xl bg-card/60 p-3 active:opacity-80">
                 <View
                   className="h-10 w-10 items-center justify-center rounded-md"
                   style={{ backgroundColor: "#1f1f1f" }}
                 >
-                  <Radio size={18} color="#46E3CE" />
+                  <Radio size={18} color={palette.brand} />
                 </View>
                 <View className="flex-1">
                   <Text
@@ -46,7 +48,7 @@ export default function ChannelsListScreen() {
                     {c.followerCount.toLocaleString()} followers
                   </Text>
                 </View>
-                <ArrowRight size={16} color="#737373" />
+                <ArrowRight size={16} color={palette.muted} />
               </Pressable>
             </Link>
           ))}

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   Alert,
   Pressable,
@@ -11,7 +12,7 @@ import { Stack } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
-import { Copy, KeyRound, Trash2 } from "lucide-react-native";
+import { Copy, KeyRound, Trash2 } from "@/components/icons";
 
 import {
   createApiKey,
@@ -32,6 +33,7 @@ function fmtDate(iso: string | null): string {
 }
 
 export default function ApiKeysScreen() {
+  const palette = useTokens();
   const queryClient = useQueryClient();
   const [newKeyName, setNewKeyName] = React.useState("");
   const [revealedKey, setRevealedKey] = React.useState<string | null>(null);
@@ -107,7 +109,7 @@ export default function ApiKeysScreen() {
         {revealedKey ? (
           <View className="mt-5 rounded-xl bg-brand/20 p-4">
             <View className="mb-2 flex-row items-center gap-2">
-              <KeyRound size={14} color="#46E3CE" />
+              <KeyRound size={14} color={palette.brand} />
               <Text className="text-sm font-bold text-brand">
                 Copy this key now
               </Text>
@@ -125,7 +127,7 @@ export default function ApiKeysScreen() {
                 onPress={() => handleCopy(revealedKey)}
                 className="flex-1 flex-row items-center justify-center gap-2 rounded-md bg-brand px-3 py-2"
               >
-                <Copy size={14} color="#05191B" />
+                <Copy size={14} color={palette.bg} />
                 <Text className="text-sm font-semibold text-black">Copy key</Text>
               </Pressable>
               <Pressable
@@ -149,7 +151,7 @@ export default function ApiKeysScreen() {
             value={newKeyName}
             onChangeText={setNewKeyName}
             placeholder="e.g. CI bot, my-laptop script"
-            placeholderTextColor="#737373"
+            placeholderTextColor={palette.muted}
             maxLength={120}
             className="mt-3 h-10 rounded-md border border-border bg-background px-3 text-sm text-foreground"
           />
@@ -158,7 +160,7 @@ export default function ApiKeysScreen() {
             disabled={!newKeyName.trim() || createMut.isPending}
             className="mt-3 h-10"
           >
-            {createMut.isPending ? <Spinner color="#05191B" /> : null}
+            {createMut.isPending ? <Spinner color={palette.bg} /> : null}
             <Text className="text-sm font-semibold text-black">
               {createMut.isPending ? "Creating…" : "Create key"}
             </Text>
@@ -179,7 +181,7 @@ export default function ApiKeysScreen() {
           </View>
         ) : activeKeys.length === 0 ? (
           <View className="rounded-xl border border-border bg-card/30 p-6 items-center">
-            <KeyRound size={20} color="#737373" />
+            <KeyRound size={20} color={palette.muted} />
             <Text className="mt-2 text-sm text-muted-foreground">
               No active keys yet.
             </Text>

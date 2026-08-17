@@ -1,8 +1,9 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { ArrowLeft, Calendar, MapPin, Trophy } from "lucide-react-native";
+import { ArrowLeft, Calendar, MapPin, Trophy } from "@/components/icons";
 
 import type { EsportsEvent, Game } from "@/lib/types";
 
@@ -52,6 +53,7 @@ function safeDateLabel(iso: string | null | undefined): string {
 }
 
 export function EventHero({ event, game }: EventHeroProps) {
+  const palette = useTokens();
   const router = useRouter();
   const tier = tierStyle(event.tier);
   const startLabel = safeDateLabel(event.startsAt);
@@ -78,8 +80,8 @@ export function EventHero({ event, game }: EventHeroProps) {
             onPress={() => router.push("/events")}
             className="flex-row items-center gap-1 self-start"
           >
-            <ArrowLeft size={12} color="#9FBDBD" />
-            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>All events</Text>
+            <ArrowLeft size={12} color={palette.muted} />
+            <Text style={{ fontSize: 11, color: palette.muted }}>All events</Text>
           </Pressable>
           <View className="flex-row items-center gap-2">
             <View
@@ -130,7 +132,7 @@ export function EventHero({ event, game }: EventHeroProps) {
               <View
                 className="rounded-md px-2 py-0.5"
                 style={{
-                  backgroundColor: "#103133",
+                  backgroundColor: palette.subtle,
                 }}
               >
                 <Text
@@ -138,7 +140,7 @@ export function EventHero({ event, game }: EventHeroProps) {
                     fontSize: 10,
                     fontWeight: "600",
                     letterSpacing: 1,
-                    color: "#9FBDBD",
+                    color: palette.muted,
                   }}
                 >
                   CONCLUDED

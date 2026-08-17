@@ -1,8 +1,9 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { ShieldCheck } from "lucide-react-native";
+import { ShieldCheck } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
@@ -96,6 +97,7 @@ interface ShippingFields {
 const PHONE_REGEX = /^\+234[0-9\s-]{7,}$/;
 
 export default function CheckoutScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { user } = useAuth();
   const params = useLocalSearchParams<{ plan?: string }>();
@@ -407,7 +409,7 @@ export default function CheckoutScreen() {
                   <Text className="text-sm text-muted-foreground">Shipping</Text>
                   <Text className="text-sm text-foreground">
                     {shipping === 0 ? (
-                      <Text style={{ color: "#46E3CE" }}>Free</Text>
+                      <Text style={{ color: palette.brand }}>Free</Text>
                     ) : (
                       formatNgn(shipping)
                     )}
@@ -583,7 +585,7 @@ export default function CheckoutScreen() {
             </View>
 
             <View className="mt-3 flex-row items-center justify-center gap-1">
-              <ShieldCheck size={12} color="#46E3CE" />
+              <ShieldCheck size={12} color={palette.brand} />
               <Text className="text-[11px] text-muted-foreground">
                 256-bit secure. No card data leaves Paystack.
               </Text>

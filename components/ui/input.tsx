@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { TextInput, type TextInputProps } from "react-native";
 
 import { cn } from "@/lib/utils";
@@ -8,11 +9,12 @@ export interface InputProps extends TextInputProps {
 }
 
 const Input = React.forwardRef<TextInput, InputProps>(
-  ({ className, placeholderTextColor = "#9FBDBD", ...props }, ref) => {
+  ({ className, placeholderTextColor, ...props }, ref) => {
+    const palette = useTokens();
     return (
       <TextInput
         ref={ref}
-        placeholderTextColor={placeholderTextColor}
+        placeholderTextColor={placeholderTextColor ?? palette.muted}
         className={cn(
           "h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base text-foreground",
           props.editable === false && "opacity-50",

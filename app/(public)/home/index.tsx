@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { RefreshControl, ScrollView, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -25,6 +26,7 @@ const section = (idx: number) =>
   FadeInDown.duration(SECTION_DURATION).delay(idx * SECTION_STEP);
 
 export default function HomeScreen() {
+  const palette = useTokens();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -81,9 +83,9 @@ export default function HomeScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#46E3CE"
-            colors={["#46E3CE"]}
-            progressBackgroundColor="#05191B"
+            tintColor={palette.brand}
+            colors={[palette.brand]}
+            progressBackgroundColor={palette.bg}
           />
         }
       >

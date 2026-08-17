@@ -41,3 +41,28 @@ export function roleRank(role: string | null | undefined): number {
 export function hasMinRole(role: string | null | undefined, min: Role): boolean {
   return roleRank(role) >= RANK[min];
 }
+
+/**
+ * The human name for a role, matching the website's `roleLabel`.
+ *
+ * Copied rather than imported, same reason as the ladder above: the repos are
+ * not coupled. What matters is that "finance_admin" reads as "Finance" in both
+ * places, because an access message that names a role the user has never seen
+ * written that way is not a message, it is a puzzle.
+ */
+const LABELS: Record<Role, string> = {
+  guest: "Guest",
+  user: "User",
+  premium: "Premium",
+  creator: "Creator",
+  support_admin: "Support",
+  moderator: "Moderator",
+  finance_admin: "Finance",
+  admin: "Admin",
+  head_admin: "Head admin",
+};
+
+export function roleLabel(role: string | null | undefined): string {
+  if (!role) return "User";
+  return LABELS[role as Role] ?? "User";
+}

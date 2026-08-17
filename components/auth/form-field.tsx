@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { TextInput, View, Text, type TextInputProps } from "react-native";
 
 import { cn } from "@/lib/utils";
@@ -55,7 +56,7 @@ export const FormField = React.forwardRef<TextInput, Omit<TextFieldProps, "id">>
           {leftIcon ? <View className="absolute left-3 top-0 bottom-0 z-10 justify-center" pointerEvents="none">{leftIcon}</View> : null}
           <Input
             ref={ref}
-            placeholderTextColor="#737373"
+            placeholderTextColor="#9FBDBD"
             className={cn("h-11 border bg-card text-foreground", leftIcon && "pl-10", rightIcon && "pr-10", error && "border-red-500", !error && "border-border", inputClassName)}
             {...props}
           />
@@ -100,7 +101,7 @@ export const TextField = React.forwardRef<TextInput, TextFieldProps>(
           ) : null}
           <Input
             ref={ref}
-            placeholderTextColor="#737373"
+            placeholderTextColor="#9FBDBD"
             className={cn(
               "h-11 border bg-card text-foreground",
               leftIcon && "pl-10",

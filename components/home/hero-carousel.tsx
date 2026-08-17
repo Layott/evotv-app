@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   Dimensions,
   FlatList,
@@ -11,7 +12,7 @@ import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { MaturityBadge } from "@/components/common/maturity-badge";
 import { PressableScale } from "@/components/common/pressable-scale";
 import { useRouter } from "expo-router";
-import { Eye, Play } from "lucide-react-native";
+import { Eye, Play } from "@/components/icons";
 
 import type { Stream } from "@/lib/types";
 
@@ -27,6 +28,7 @@ function formatViewers(n: number): string {
 }
 
 export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) {
+  const palette = useTokens();
   const router = useRouter();
   const listRef = React.useRef<FlatList<Stream>>(null);
   const [index, setIndex] = React.useState(0);
@@ -155,14 +157,14 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
               </Text>
               <View
                 className="mt-1 flex-row items-center gap-2 self-start rounded-md px-3 py-1.5"
-                style={{ backgroundColor: "#46E3CE" }}
+                style={{ backgroundColor: palette.brand }}
               >
-                <Play size={14} color="#05191B" fill="#05191B" />
+                <Play size={14} color={palette.bg} />
                 <Text
                   style={{
                     fontSize: 12,
                     fontWeight: "600",
-                    color: "#05191B",
+                    color: palette.bg,
                   }}
                 >
                   Watch now
@@ -188,7 +190,7 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
               width: i === index ? 24 : 6,
               borderRadius: 3,
               backgroundColor:
-                i === index ? "#46E3CE" : "rgba(115,115,115,0.6)",
+                i === index ? palette.brand : "rgba(115,115,115,0.6)",
             }}
           />
         ))}

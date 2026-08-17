@@ -1,10 +1,11 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { toast } from "sonner-native";
 import { useQuery } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
-import { AlertTriangle, Copy, Key, RefreshCw } from "lucide-react-native";
+import { AlertTriangle, Copy, Key, RefreshCw } from "@/components/icons";
 
 import {
   getChannelKeyState,
@@ -17,6 +18,7 @@ const RTMP_INGEST_URL =
   process.env.EXPO_PUBLIC_RTMP_INGEST_URL ?? "rtmps://ingest.evotv.tv/live";
 
 export default function StreamKeyScreen() {
+  const palette = useTokens();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [busy, setBusy] = React.useState(false);
   const [revealed, setRevealed] = React.useState<RotatedKey | null>(null);
@@ -74,15 +76,15 @@ export default function StreamKeyScreen() {
       <ScrollView className="flex-1 bg-background">
         <View className="px-5 py-6">
           <View className="flex-row items-center gap-2">
-            <Key size={20} color="#46E3CE" />
+            <Key size={20} color={palette.brand} />
             <Text className="text-2xl font-bold text-foreground">Stream key</Text>
           </View>
           <Text className="mt-1 text-sm text-muted-foreground">
             Configure OBS, vMix, or any RTMP encoder with the URL + key below.
           </Text>
 
-          <View className="mt-5 rounded-2xl bg-neutral-900/60 p-4">
-            <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          <View className="mt-5 rounded-2xl bg-card/60 p-4">
+            <Text className="text-[10px] r text-muted-foreground">
               Ingest URL
             </Text>
             <View className="mt-2 flex-row items-center gap-2">
@@ -94,9 +96,9 @@ export default function StreamKeyScreen() {
               </Text>
               <Pressable
                 onPress={() => onCopy(RTMP_INGEST_URL, "Ingest URL")}
-                className="h-8 w-8 items-center justify-center rounded-md   bg-neutral-950 active:opacity-80"
+                className="h-8 w-8 items-center justify-center rounded-md   bg-background active:opacity-80"
               >
-                <Copy size={14} color="#EAF6F5" />
+                <Copy size={14} color={palette.fg} />
               </Pressable>
             </View>
           </View>
@@ -127,8 +129,8 @@ export default function StreamKeyScreen() {
               </Button>
             </View>
           ) : (
-            <View className="mt-4 rounded-2xl bg-neutral-900/60 p-4">
-              <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <View className="mt-4 rounded-2xl bg-card/60 p-4">
+              <Text className="text-[10px] r text-muted-foreground">
                 Active key
               </Text>
               <Text className="mt-2 text-sm text-foreground">

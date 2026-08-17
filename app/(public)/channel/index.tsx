@@ -1,9 +1,10 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Clock, Eye, Info, Radio } from "lucide-react-native";
+import { Clock, Eye, Info, Radio } from "@/components/icons";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,7 @@ function fmtUptime(startedAt: string): string {
 }
 
 export default function ChannelScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const channelQ = useQuery({
     queryKey: ["channel", "main"],
@@ -140,7 +142,7 @@ export default function ChannelScreen() {
                       fontSize: 10,
                       fontWeight: "600",
                       letterSpacing: 1,
-                      color: "#9FBDBD",
+                      color: palette.muted,
                     }}
                   >
                     OFFLINE
@@ -195,23 +197,23 @@ export default function ChannelScreen() {
             <View className="mt-4 flex-row flex-wrap items-center gap-3">
               {isLive && channel ? (
                 <View className="flex-row items-center gap-1">
-                  <Eye size={13} color="#9FBDBD" />
-                  <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+                  <Eye size={13} color={palette.muted} />
+                  <Text style={{ fontSize: 11, color: palette.muted }}>
                     {fmtViewers(channel.viewerCount)} watching
                   </Text>
                 </View>
               ) : null}
               {isLive && channel?.startedAt ? (
                 <View className="flex-row items-center gap-1">
-                  <Clock size={13} color="#9FBDBD" />
-                  <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+                  <Clock size={13} color={palette.muted} />
+                  <Text style={{ fontSize: 11, color: palette.muted }}>
                     {fmtUptime(channel.startedAt)}
                   </Text>
                 </View>
               ) : null}
               <View className="flex-row items-center gap-1">
                 <Radio size={13} color="#67e8f9" />
-                <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+                <Text style={{ fontSize: 11, color: palette.muted }}>
                   Simulcast on app + web
                 </Text>
               </View>
@@ -242,7 +244,7 @@ export default function ChannelScreen() {
             <Text className="text-lg font-semibold tracking-tight text-foreground">
               Today's schedule
             </Text>
-            <Text style={{ fontSize: 11, color: "#737373" }}>
+            <Text style={{ fontSize: 11, color: palette.muted }}>
               All times local
             </Text>
           </View>
@@ -267,11 +269,11 @@ export default function ChannelScreen() {
                   style={{
                     backgroundColor: i % 2 === 0 ? "rgba(15,15,15,0.3)" : "transparent",
                     borderBottomWidth: i < scheduleRows.length - 1 ? 1 : 0,
-                    borderBottomColor: "#103133",
+                    borderBottomColor: palette.subtle,
                   }}
                 >
                   <Text
-                    style={{ fontSize: 12, color: "#9FBDBD" }}
+                    style={{ fontSize: 12, color: palette.muted }}
                     className="shrink-0"
                   >
                     {fmtSlot(row)}
@@ -291,9 +293,7 @@ export default function ChannelScreen() {
                     <Text
                       style={{
                         fontSize: 10,
-                        letterSpacing: 1,
-                        color: "#9FBDBD",
-                        textTransform: "uppercase",
+                        color: palette.muted,
                       }}
                     >
                       {epgTag(row)}
@@ -380,7 +380,7 @@ export default function ChannelScreen() {
                         style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
                       >
                         <Text
-                          style={{ fontSize: 10, color: "#e5e5e5" }}
+                          style={{ fontSize: 10, color: palette.fg }}
                         >
                           {fmtViewers(s.viewerCount)}
                         </Text>
@@ -393,7 +393,7 @@ export default function ChannelScreen() {
                       >
                         {s.title}
                       </Text>
-                      <Text style={{ fontSize: 11, color: "#737373" }}>
+                      <Text style={{ fontSize: 11, color: palette.muted }}>
                         {s.streamerName}
                       </Text>
                     </View>
@@ -439,7 +439,7 @@ export default function ChannelScreen() {
                       style={{
                         fontSize: 11,
                         fontWeight: "500",
-                        color: "#e5e5e5",
+                        color: palette.fg,
                       }}
                       numberOfLines={2}
                     >
@@ -494,9 +494,7 @@ export default function ChannelScreen() {
                   <Text
                     style={{
                       fontSize: 10,
-                      letterSpacing: 1,
-                      color: "#737373",
-                      textTransform: "uppercase",
+                      color: palette.muted,
                     }}
                   >
                     {new Date(e.startsAt).toLocaleDateString()}
@@ -509,7 +507,7 @@ export default function ChannelScreen() {
                   {e.title}
                 </Text>
                 <Text
-                  style={{ fontSize: 11, color: "#737373", marginTop: 4 }}
+                  style={{ fontSize: 11, color: palette.muted, marginTop: 4 }}
                 >
                   {e.region}
                 </Text>

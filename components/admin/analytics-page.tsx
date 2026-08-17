@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ScrollView, Text, View } from "react-native";
-import { Clock, PercentCircle, Radio, Users } from "lucide-react-native";
+import { Clock, PercentCircle, Radio, Users } from "@/components/icons";
 import { useQuery } from "@tanstack/react-query";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";

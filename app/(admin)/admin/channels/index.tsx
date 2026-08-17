@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   Alert,
   Modal,
@@ -10,7 +11,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Stack } from "expo-router";
-import { RotateCcw, Search, ShieldBan, X } from "lucide-react-native";
+import { RotateCcw, Search, ShieldBan, X } from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -26,6 +27,7 @@ import { StatusBadge } from "@/components/admin/status-badge";
 type Filter = "active" | "suspended";
 
 export default function AdminChannelsScreen() {
+  const palette = useTokens();
   const queryClient = useQueryClient();
   const [filter, setFilter] = React.useState<Filter>("active");
   const [search, setSearch] = React.useState("");
@@ -110,12 +112,12 @@ export default function AdminChannelsScreen() {
           </Text>
 
           <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
-            <Search size={14} color="#9FBDBD" />
+            <Search size={14} color={palette.muted} />
             <TextInput
               value={search}
               onChangeText={setSearch}
               placeholder="Search name, slug or publisher"
-              placeholderTextColor="#737373"
+              placeholderTextColor={palette.muted}
               className="h-9 flex-1 text-sm text-foreground"
             />
           </View>
@@ -221,13 +223,13 @@ export default function AdminChannelsScreen() {
                       </Text>
                     </View>
                     <Pressable onPress={() => setSelected(null)} hitSlop={8}>
-                      <X size={20} color="#9FBDBD" />
+                      <X size={20} color={palette.muted} />
                     </Pressable>
                   </View>
 
                   {selected.suspendedAt ? (
                     <View className="rounded-md bg-destructive/25 p-3 mb-3">
-                      <Text className="text-[11px] uppercase tracking-wider text-destructive">
+                      <Text className="text-[11px] r text-destructive">
                         Suspended
                       </Text>
                       <Text className="mt-1 text-sm text-foreground">
@@ -259,7 +261,7 @@ export default function AdminChannelsScreen() {
                         value={reason}
                         onChangeText={setReason}
                         placeholder="Why is this channel being suspended?"
-                        placeholderTextColor="#737373"
+                        placeholderTextColor={palette.muted}
                         multiline
                         numberOfLines={3}
                         maxLength={500}

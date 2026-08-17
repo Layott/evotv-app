@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Link, Stack, useRouter } from "expo-router";
@@ -10,8 +11,8 @@ import {
   Shield,
   SlidersHorizontal,
   Users,
-  type LucideIcon,
-} from "lucide-react-native";
+  type Icon,
+} from "@/components/icons";
 import { toast } from "sonner-native";
 
 import { Button } from "@/components/ui/button";
@@ -102,7 +103,7 @@ const NOTIF_ITEMS: { key: NotifKey; title: string; body: string }[] = [
 const STEP_TITLES: ReadonlyArray<{
   title: string;
   subtitle: string;
-  Icon: LucideIcon;
+  Icon: Icon;
 }> = [
   {
     title: "Pick your games",
@@ -127,6 +128,7 @@ const STEP_TITLES: ReadonlyArray<{
 ];
 
 export default function OnboardingScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { completeOnboarding } = useAuth();
 
@@ -238,7 +240,7 @@ export default function OnboardingScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View className="mb-3 flex-row items-center justify-between">
-          <Text className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          <Text className="text-xs font-semibold st text-muted-foreground">
             Step {step} of 4
           </Text>
           <Link href="/(public)/home" asChild>
@@ -261,7 +263,7 @@ export default function OnboardingScreen() {
 
         <View className="mt-6 mb-4">
           <View className="flex-row items-center gap-2">
-            <Icon color="#46E3CE" size={20} />
+            <Icon color={palette.brand} size={20} />
             <Text className="text-2xl font-bold text-foreground">
               {current.title}
             </Text>
@@ -315,7 +317,7 @@ export default function OnboardingScreen() {
             disabled={step === 1 || submitting}
             className="h-11 flex-1"
           >
-            <ArrowLeft color="#EAF6F5" size={16} />
+            <ArrowLeft color={palette.fg} size={16} />
             <Text className="text-sm font-medium text-foreground">Back</Text>
           </Button>
           <Button
@@ -326,18 +328,18 @@ export default function OnboardingScreen() {
           >
             {submitting ? (
               <View className="flex-row items-center gap-2">
-                <Spinner color="#05191B" />
+                <Spinner color={palette.bg} />
                 <Text className="font-semibold text-black">Finishing...</Text>
               </View>
             ) : step === 4 ? (
               <View className="flex-row items-center gap-2">
                 <Text className="font-semibold text-black">Finish</Text>
-                <Check color="#05191B" size={16} />
+                <Check color={palette.bg} size={16} />
               </View>
             ) : (
               <View className="flex-row items-center gap-2">
                 <Text className="font-semibold text-black">Continue</Text>
-                <ArrowRight color="#05191B" size={16} />
+                <ArrowRight color={palette.bg} size={16} />
               </View>
             )}
           </Button>
@@ -360,6 +362,7 @@ function StepGames({
   selected: string[];
   onToggle: (id: string) => void;
 }) {
+  const palette = useTokens();
   if (loading) {
     return (
       <View className="gap-3">
@@ -414,7 +417,7 @@ function StepGames({
                 <View
                   className="absolute right-2 top-2 h-6 w-6 items-center justify-center rounded-full bg-brand"
                 >
-                  <Check color="#05191B" size={14} />
+                  <Check color={palette.bg} size={14} />
                 </View>
               ) : null}
             </View>
@@ -427,7 +430,7 @@ function StepGames({
                   {g.shortName}
                 </Text>
                 <View className="rounded bg-muted px-1.5 py-0.5">
-                  <Text className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <Text className="text-[10px] font-medium text-muted-foreground">
                     {g.platform}
                   </Text>
                 </View>
@@ -455,6 +458,7 @@ function StepTeams({
   selected: string[];
   onToggle: (id: string) => void;
 }) {
+  const palette = useTokens();
   if (loading) {
     return (
       <View className="gap-2">
@@ -497,7 +501,7 @@ function StepTeams({
               style={{
                 width: 40,
                 height: 40,
-                backgroundColor: "#103133",
+                backgroundColor: palette.subtle,
               }}
             >
               <Image
@@ -532,10 +536,10 @@ function StepTeams({
               // Both states are fills: an unticked box used to be an outline
               // around nothing, which is the shape being removed.
               style={{
-                backgroundColor: isSelected ? "#46E3CE" : "#17454A",
+                backgroundColor: isSelected ? palette.brand : palette.input,
               }}
             >
-              {isSelected ? <Check color="#05191B" size={12} /> : null}
+              {isSelected ? <Check color={palette.bg} size={12} /> : null}
             </View>
           </Pressable>
         );

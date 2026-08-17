@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Switch as RNSwitch, type SwitchProps as RNSwitchProps } from "react-native";
 
 import { cn } from "@/lib/utils";
@@ -11,15 +12,16 @@ export interface SwitchProps extends Omit<RNSwitchProps, "value" | "onValueChang
 
 const Switch = React.forwardRef<RNSwitch, SwitchProps>(
   ({ checked, onCheckedChange, disabled, className, ...props }, ref) => {
+    const palette = useTokens();
     return (
       <RNSwitch
         ref={ref}
         value={checked}
         onValueChange={onCheckedChange}
         disabled={disabled}
-        trackColor={{ false: "#103133", true: "#46E3CE" }}
-        thumbColor={checked ? "#EAF6F5" : "#9FBDBD"}
-        ios_backgroundColor="#103133"
+        trackColor={{ false: palette.subtle, true: palette.brand }}
+        thumbColor={checked ? palette.fg : palette.muted}
+        ios_backgroundColor={palette.subtle}
         className={cn(disabled ? "opacity-50" : "", className)}
         {...props}
       />

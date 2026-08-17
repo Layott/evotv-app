@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
-import { Plus, X } from "lucide-react-native";
+import { Plus, X } from "@/components/icons";
 import { toast } from "sonner-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 

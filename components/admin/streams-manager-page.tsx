@@ -20,7 +20,7 @@ import {
   X,
   Square,
   Trash2,
-} from "lucide-react-native";
+} from "@/components/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 
@@ -43,6 +43,7 @@ import { Input } from "@/components/ui/input";
 import type { MaturityRating } from "@/lib/types";
 
 import { PageHeader } from "./page-header";
+import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { ContentTagsEditor, MaturityEditor } from "./content-meta-editors";
 import { formatCompact, timeAgo } from "./utils";
@@ -287,6 +288,8 @@ export function StreamsManagerPage() {
           description="Read-only browse - stream keys + create + rotate via dedicated screens later."
         />
 
+        <SectionLinks parent="/admin/streams" />
+
         <View className="mb-3 flex-row items-center gap-2">
           <View className="flex-1 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
             <Search size={14} color="#9FBDBD" />
@@ -464,7 +467,7 @@ export function StreamsManagerPage() {
                   {selected.isPremium ? (
                     <StatusBadge tone="amber">Premium</StatusBadge>
                   ) : null}
-                  <StatusBadge tone="violet">{selected.streamerType}</StatusBadge>
+                  <StatusBadge tone="neutral">{selected.streamerType}</StatusBadge>
                   <StatusBadge tone="neutral">{selected.language}</StatusBadge>
                 </View>
 
@@ -684,17 +687,17 @@ function ScheduleEditor({
           EPG schedule
         </Text>
         {stream.scheduledStartAt ? (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+          <Text className="ml-auto text-[10px] r text-cyan-400">
             Programmed
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="ml-auto text-[10px] r text-muted-foreground">
             Unscheduled
           </Text>
         )}
       </View>
 
-      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+      <Text className="mb-1 text-[11px] r text-muted-foreground">
         Airs at (local time)
       </Text>
       <Input
@@ -704,7 +707,7 @@ function ScheduleEditor({
         className="mb-3 h-9"
       />
 
-      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+      <Text className="mb-1 text-[11px] r text-muted-foreground">
         Duration (minutes)
       </Text>
       <Input
@@ -793,17 +796,17 @@ function HlsUrlEditor({
           Playback URL (HLS)
         </Text>
         {stream.hlsUrl ? (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+          <Text className="ml-auto text-[10px] r text-cyan-400">
             Set
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="ml-auto text-[10px] r text-muted-foreground">
             Auto
           </Text>
         )}
       </View>
 
-      <Text className="mb-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+      <Text className="mb-1 text-[11px] r text-muted-foreground">
         .m3u8 manifest URL
       </Text>
       <Input
@@ -886,11 +889,11 @@ function ThumbnailEditor({
           Thumbnail
         </Text>
         {stream.thumbnailUrl ? (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+          <Text className="ml-auto text-[10px] r text-cyan-400">
             Set
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="ml-auto text-[10px] r text-muted-foreground">
             None
           </Text>
         )}
@@ -972,11 +975,11 @@ function PlayoutFileEditor({
           Playout file
         </Text>
         {current ? (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-cyan-400">
+          <Text className="ml-auto text-[10px] r text-cyan-400">
             Chosen
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">
+          <Text className="ml-auto text-[10px] r text-muted-foreground">
             None
           </Text>
         )}
@@ -1075,7 +1078,7 @@ function toLocalDatetimeInputValue(iso: string): string {
 function InfoCell({ label, value }: { label: string; value: string }) {
   return (
     <View className="min-w-[44%]">
-      <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+      <Text className="text-[10px] r text-muted-foreground">
         {label}
       </Text>
       <Text

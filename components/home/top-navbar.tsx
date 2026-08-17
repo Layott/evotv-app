@@ -1,10 +1,11 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, Menu, Search } from "lucide-react-native";
+import { Bell, Menu, Search } from "@/components/icons";
 
 import { FeatureDrawer } from "./feature-drawer";
 import { useAuth } from "@/components/providers";
@@ -20,6 +21,7 @@ interface TopNavbarProps {
 }
 
 export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
+  const t = useTokens();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -45,7 +47,7 @@ export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
       <View
         style={{
           paddingTop: insets.top,
-          backgroundColor: "#05191B",
+          backgroundColor: t.bg,
           borderBottomWidth: 1,
           borderBottomColor: "rgba(70,227,206, 0.2)",
         }}
@@ -58,7 +60,7 @@ export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
             hitSlop={8}
             className="rounded-lg p-1 active:opacity-70"
           >
-            <Menu size={24} color="#EAF6F5" />
+            <Menu size={24} color={t.fg} />
           </Pressable>
 
           <Pressable
@@ -72,7 +74,7 @@ export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
               style={{ width: 28, height: 28 }}
               contentFit="contain"
             />
-            <Text className="text-base font-bold text-white">EVO TV</Text>
+            <Text className="text-base font-bold text-foreground">EVO TV</Text>
           </Pressable>
 
           <View className="flex-row items-center gap-1">
@@ -88,7 +90,7 @@ export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
                 className="relative rounded-lg p-1 active:opacity-70"
                 hitSlop={8}
               >
-                <Bell size={22} color="#EAF6F5" />
+                <Bell size={22} color={t.fg} />
                 {unread > 0 ? (
                   <View
                     className="absolute items-center justify-center rounded-full bg-brand"
@@ -116,7 +118,7 @@ export default function TopNavbar({ onSearchPress }: TopNavbarProps) {
               accessibilityLabel="Search"
               className="rounded-lg p-1 active:opacity-70"
             >
-              <Search size={24} color="#46E3CE" />
+              <Search size={24} color={t.brand} />
             </Pressable>
           </View>
         </View>

@@ -6,7 +6,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Check, ExternalLink, Flag, X } from "lucide-react-native";
+import { Check, ExternalLink, Flag, X } from "@/components/icons";
 import { useRouter } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
 import { PageHeader } from "./page-header";
+import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { timeAgo } from "./utils";
 
@@ -92,7 +93,7 @@ function ReportCard({
 
       {report.targetPreview ? (
         <View className="mt-2 rounded-md bg-amber-500/20 bg-amber-500/5 p-2">
-          <Text className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
+          <Text className="text-[10px] font-bold r text-amber-400">
             Reported message
           </Text>
           <Text className="mt-1 text-sm italic text-foreground">
@@ -109,7 +110,7 @@ function ReportCard({
 
       {report.resolutionNotes ? (
         <View className="mt-2 rounded-md border border-border bg-background/50 p-2">
-          <Text className="text-[11px] uppercase tracking-wider text-muted-foreground">
+          <Text className="text-[11px] r text-muted-foreground">
             Resolution notes
           </Text>
           <Text className="text-sm text-foreground">
@@ -169,7 +170,9 @@ function targetHref(r: ContentReport): string | null {
         ? `/stream/${r.targetPreview.streamId}`
         : null;
     case "party":
-      return `/watch-parties/${r.targetId}`;
+      // Watch parties were removed from the app along with the rest of the
+      // coming-soon screens, so there is nothing to open.
+      return null;
     default:
       return null;
   }
@@ -250,6 +253,8 @@ export function ModerationPage() {
           title="Moderation"
           description="User-submitted reports against streams, VODs, clips, users, chat messages."
         />
+
+        <SectionLinks parent="/admin/moderation" />
 
         <View className="mb-3 flex-row gap-2">
           {STATUS_TABS.map((t) => (

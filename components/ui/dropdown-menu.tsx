@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   Modal,
   Pressable,
@@ -8,7 +9,7 @@ import {
   type TextProps,
   type ViewProps,
 } from "react-native";
-import { Check, ChevronRight, Circle } from "lucide-react-native";
+import { Check, ChevronRight, Circle } from "@/components/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -319,7 +320,7 @@ const DropdownMenuRadioItem = React.forwardRef<
       {...props}
     >
       <View className="absolute left-2 h-3.5 w-3.5 items-center justify-center">
-        {checked ? <Circle size={8} color="#46E3CE" fill="#46E3CE" /> : null}
+        {checked ? <Circle size={8} color="#46E3CE" /> : null}
       </View>
       {React.Children.map(children, (child) => {
         if (typeof child === "string" || typeof child === "number") {

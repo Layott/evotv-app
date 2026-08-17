@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { Check, Mail, Palette, Save, ToggleLeft } from "lucide-react-native";
+import { Check, Mail, Palette, Save, ToggleLeft } from "@/components/icons";
 import { toast } from "sonner-native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { PageHeader } from "./page-header";
+import { SectionLinks } from "./section-links";
 
 const EMAIL_TEMPLATES: Record<string, { label: string; body: string }> = {
   welcome: {
@@ -69,6 +70,8 @@ export function AdminSettingsPage() {
           title="Settings"
           description="Feature flags, branding and email templates."
         />
+
+        <SectionLinks parent="/admin/settings" />
 
         <Tabs defaultValue="flags">
           <TabsList className="mb-4">

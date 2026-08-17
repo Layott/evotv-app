@@ -1,7 +1,8 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
-import { CreditCard, Crown } from "lucide-react-native";
+import { CreditCard, BadgeCheck } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import {
@@ -30,6 +31,7 @@ const PROVIDER_LABELS: Record<Subscription["provider"], string> = {
 };
 
 export default function BillingScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { user } = useAuth();
   const [sub, setSub] = React.useState<Subscription | null>(null);
@@ -94,9 +96,9 @@ export default function BillingScreen() {
         <View className="px-4">
           <View className="rounded-2xl border border-border bg-card p-5">
             <View className="flex-row items-start gap-3">
-              <Crown
+              <BadgeCheck
                 size={26}
-                color={sub ? "#fbbf24" : "#525252"}
+                color={sub ? "#fbbf24" : palette.muted}
               />
               <View className="flex-1">
                 <View className="flex-row flex-wrap items-center gap-2">
@@ -212,23 +214,23 @@ export default function BillingScreen() {
 
             <View className="mt-3 overflow-hidden rounded-xl border border-border">
               <View className="flex-row items-center bg-background px-3 py-2">
-                <Text className="flex-1 text-[11px] uppercase tracking-wider text-muted-foreground">
+                <Text className="flex-1 text-[11px] r text-muted-foreground">
                   Date
                 </Text>
                 <Text
-                  className="text-[11px] uppercase tracking-wider text-muted-foreground"
+                  className="text-[11px] r text-muted-foreground"
                   style={{ width: 110 }}
                 >
                   Reference
                 </Text>
                 <Text
-                  className="text-[11px] uppercase tracking-wider text-muted-foreground text-right"
+                  className="text-[11px] r text-muted-foreground text-right"
                   style={{ width: 90 }}
                 >
                   Amount
                 </Text>
                 <Text
-                  className="text-[11px] uppercase tracking-wider text-muted-foreground text-right"
+                  className="text-[11px] r text-muted-foreground text-right"
                   style={{ width: 60 }}
                 >
                   Status

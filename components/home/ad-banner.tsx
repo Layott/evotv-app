@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Linking, Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 
@@ -10,6 +11,7 @@ interface AdBannerProps {
 }
 
 export function AdBanner({ placement = "home_banner" }: AdBannerProps) {
+  const palette = useTokens();
   const [ad, setAd] = React.useState<Ad | null>(null);
 
   React.useEffect(() => {
@@ -66,7 +68,7 @@ export function AdBanner({ placement = "home_banner" }: AdBannerProps) {
               fontSize: 10,
               fontWeight: "500",
               letterSpacing: 1,
-              color: "#9FBDBD",
+              color: palette.muted,
             }}
           >
             AD &middot; {ad.advertiser.toUpperCase()}

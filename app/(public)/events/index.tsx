@@ -1,9 +1,10 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, MapPin, Trophy } from "lucide-react-native";
+import { Calendar, MapPin, Trophy } from "@/components/icons";
 
 import { PressableScale } from "@/components/common/pressable-scale";
 import { TopNavbar } from "@/components/home/top-navbar";
@@ -84,6 +85,7 @@ function EventCard({
   event: EsportsEvent;
   gameName?: string;
 }) {
+  const palette = useTokens();
   const router = useRouter();
   const tier = tierStyle(event.tier);
   return (
@@ -139,8 +141,8 @@ function EventCard({
         ) : null}
         <View className="flex-row items-center gap-3">
           <View className="flex-row items-center gap-1">
-            <Calendar size={11} color="#9FBDBD" />
-            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+            <Calendar size={11} color={palette.muted} />
+            <Text style={{ fontSize: 11, color: palette.muted }}>
               {new Date(event.startsAt).toLocaleDateString(undefined, {
                 month: "short",
                 day: "numeric",
@@ -148,8 +150,8 @@ function EventCard({
             </Text>
           </View>
           <View className="flex-row items-center gap-1">
-            <MapPin size={11} color="#9FBDBD" />
-            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+            <MapPin size={11} color={palette.muted} />
+            <Text style={{ fontSize: 11, color: palette.muted }}>
               {event.region}
             </Text>
           </View>
@@ -178,6 +180,7 @@ function Chip({
   label: string;
   toneActive?: { backgroundColor: string; color: string };
 }) {
+  const palette = useTokens();
   return (
     <Pressable
       onPress={onPress}
@@ -194,7 +197,7 @@ function Chip({
           fontWeight: "500",
           color: active
             ? toneActive?.color ?? "#67e8f9"
-            : "#9FBDBD",
+            : palette.muted,
         }}
       >
         {label}
@@ -212,6 +215,7 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
 }
 
 export default function EventsScreen() {
+  const palette = useTokens();
   const [gameFilter, setGameFilter] = React.useState<string | null>(null);
   const [tierFilter, setTierFilter] = React.useState<EventTier | null>(null);
   const [sort, setSort] = React.useState<SortKey>("soonest");
@@ -293,7 +297,7 @@ export default function EventsScreen() {
 
         <View className="mt-3 px-4">
           <View className="flex-row flex-wrap items-center gap-2">
-            <Text style={{ fontSize: 11, color: "#737373" }}>Tier:</Text>
+            <Text style={{ fontSize: 11, color: palette.muted }}>Tier:</Text>
             {(["s", "a", "b", "c"] as EventTier[]).map((t) => {
               const tone = tierStyle(t);
               return (
@@ -307,7 +311,7 @@ export default function EventsScreen() {
               );
             })}
             <View className="ml-auto flex-row items-center gap-2">
-              <Text style={{ fontSize: 11, color: "#737373" }}>Sort:</Text>
+              <Text style={{ fontSize: 11, color: palette.muted }}>Sort:</Text>
               <Chip
                 active={sort === "soonest"}
                 onPress={() => setSort("soonest")}

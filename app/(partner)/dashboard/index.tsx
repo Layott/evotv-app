@@ -1,12 +1,14 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Link, Stack } from "expo-router";
-import { ArrowRight, BadgeCheck, Banknote, Building2, Radio } from "lucide-react-native";
+import { ArrowRight, BadgeCheck, Banknote, Building2, Radio } from "@/components/icons";
 
 import { useAuth } from "@/components/providers";
 import { cn } from "@/lib/utils";
 
 export default function PartnerDashboard() {
+  const palette = useTokens();
   const { publisherMemberships } = useAuth();
 
   const channelCount = publisherMemberships.reduce(
@@ -20,7 +22,7 @@ export default function PartnerDashboard() {
       <ScrollView className="flex-1 bg-background">
         <View className="px-5 py-6">
           <View className="flex-row items-center gap-2">
-            <Radio size={22} color="#46E3CE" />
+            <Radio size={22} color={palette.brand} />
             <Text className="text-2xl font-bold text-foreground">
               Partner dashboard
             </Text>
@@ -31,24 +33,24 @@ export default function PartnerDashboard() {
 
           <View className="mt-5 flex-row gap-3">
             <SummaryCard
-              icon={<Building2 size={16} color="#EAF6F5" />}
+              icon={<Building2 size={16} color={palette.fg} />}
               label="Publishers"
               value={publisherMemberships.length}
             />
             <SummaryCard
-              icon={<Radio size={16} color="#EAF6F5" />}
+              icon={<Radio size={16} color={palette.fg} />}
               label="Channels"
               value={channelCount}
             />
           </View>
 
           <Link href={"/(partner)/payouts" as never} asChild>
-            <Pressable className="mt-3 flex-row items-center gap-3 rounded-xl bg-neutral-900/60 p-3 active:opacity-80">
+            <Pressable className="mt-3 flex-row items-center gap-3 rounded-xl bg-card/60 p-3 active:opacity-80">
               <View
                 className="h-9 w-9 items-center justify-center rounded-md"
                 style={{ backgroundColor: "#1f1f1f" }}
               >
-                <Banknote size={16} color="#46E3CE" />
+                <Banknote size={16} color={palette.brand} />
               </View>
               <View className="flex-1">
                 <Text className="text-sm font-semibold text-foreground">
@@ -58,14 +60,14 @@ export default function PartnerDashboard() {
                   Weekly rollup of net revenue per publisher
                 </Text>
               </View>
-              <ArrowRight size={16} color="#737373" />
+              <ArrowRight size={16} color={palette.muted} />
             </Pressable>
           </Link>
 
           {publisherMemberships.map((m) => (
             <View
               key={m.publisher.id}
-              className="mt-5 rounded-2xl bg-neutral-900/60 p-4"
+              className="mt-5 rounded-2xl bg-card/60 p-4"
             >
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center gap-2">
@@ -73,11 +75,11 @@ export default function PartnerDashboard() {
                     {m.publisher.name}
                   </Text>
                   {m.publisher.isEvotvOwned ? (
-                    <BadgeCheck size={14} color="#46E3CE" />
+                    <BadgeCheck size={14} color={palette.brand} />
                   ) : null}
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <Text className="text-[10px] r text-muted-foreground">
                     {m.role}
                   </Text>
                   <Text
@@ -106,12 +108,12 @@ export default function PartnerDashboard() {
                     href={`/(partner)/channels/${c.id}` as never}
                     asChild
                   >
-                    <Pressable className="flex-row items-center gap-3 rounded-xl   bg-neutral-950 p-3 active:opacity-80">
+                    <Pressable className="flex-row items-center gap-3 rounded-xl   bg-background p-3 active:opacity-80">
                       <View
                         className="h-9 w-9 items-center justify-center rounded-md"
                         style={{ backgroundColor: "#1f1f1f" }}
                       >
-                        <Radio size={16} color="#46E3CE" />
+                        <Radio size={16} color={palette.brand} />
                       </View>
                       <View className="flex-1">
                         <Text
@@ -124,7 +126,7 @@ export default function PartnerDashboard() {
                           @{c.slug} · {c.followerCount.toLocaleString()} followers
                         </Text>
                       </View>
-                      <ArrowRight size={16} color="#737373" />
+                      <ArrowRight size={16} color={palette.muted} />
                     </Pressable>
                   </Link>
                 ))}
@@ -147,10 +149,10 @@ function SummaryCard({
   value: number;
 }) {
   return (
-    <View className="flex-1 rounded-xl bg-neutral-900/60 p-3">
+    <View className="flex-1 rounded-xl bg-card/60 p-3">
       <View className="flex-row items-center gap-1.5">
         {icon}
-        <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+        <Text className="text-[10px] r text-muted-foreground">
           {label}
         </Text>
       </View>

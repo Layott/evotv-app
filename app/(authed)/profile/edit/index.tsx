@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,7 +12,7 @@ import {
 import { Stack, useRouter } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner-native";
-import { ArrowLeft, Loader2, Save } from "lucide-react-native";
+import { ArrowLeft, Loader2, Save } from "@/components/icons";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -24,6 +25,7 @@ const BRAND = "#46E3CE";
 const HANDLE_RE = /^[a-zA-Z0-9_]+$/;
 
 export default function ProfileEditScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const qc = useQueryClient();
   const { user, updateProfile } = useAuth();
@@ -138,7 +140,7 @@ export default function ProfileEditScreen() {
             className="mt-6 rounded-xl px-4 py-2.5"
             style={{ backgroundColor: BRAND }}
           >
-            <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
+            <Text style={{ color: palette.bg, fontWeight: "700", fontSize: 13 }}>
               Back
             </Text>
           </Pressable>
@@ -162,7 +164,7 @@ export default function ProfileEditScreen() {
             accessibilityLabel="Back"
             hitSlop={8}
           >
-            <ArrowLeft color="#EAF6F5" size={18} />
+            <ArrowLeft color={palette.fg} size={18} />
           </Pressable>
           <Text className="text-2xl font-bold text-foreground">
             Edit profile
@@ -180,7 +182,7 @@ export default function ProfileEditScreen() {
               value={name}
               onChangeText={setName}
               placeholder="Your name"
-              placeholderTextColor="#525252"
+              placeholderTextColor={palette.muted}
               maxLength={80}
               autoCapitalize="words"
               style={inputStyle}
@@ -196,7 +198,7 @@ export default function ProfileEditScreen() {
               value={handle}
               onChangeText={(v) => setHandle(v.toLowerCase())}
               placeholder="yourhandle"
-              placeholderTextColor="#525252"
+              placeholderTextColor={palette.muted}
               maxLength={20}
               autoCapitalize="none"
               autoCorrect={false}
@@ -213,7 +215,7 @@ export default function ProfileEditScreen() {
               value={bio}
               onChangeText={setBio}
               placeholder="Tell people what you're about."
-              placeholderTextColor="#525252"
+              placeholderTextColor={palette.muted}
               maxLength={280}
               multiline
               numberOfLines={4}
@@ -227,7 +229,7 @@ export default function ProfileEditScreen() {
               value={country}
               onChangeText={(v) => setCountry(v.toUpperCase())}
               placeholder="NG"
-              placeholderTextColor="#525252"
+              placeholderTextColor={palette.muted}
               maxLength={64}
               autoCapitalize="characters"
               autoCorrect={false}
@@ -257,11 +259,11 @@ export default function ProfileEditScreen() {
               }}
             >
               {saveMutation.isPending ? (
-                <Loader2 size={16} color="#05191B" />
+                <Loader2 size={16} color={palette.bg} />
               ) : (
-                <Save size={16} color="#05191B" />
+                <Save size={16} color={palette.bg} />
               )}
-              <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 14 }}>
+              <Text style={{ color: palette.bg, fontWeight: "700", fontSize: 14 }}>
                 {saveMutation.isPending ? "Saving…" : "Save changes"}
               </Text>
             </Pressable>

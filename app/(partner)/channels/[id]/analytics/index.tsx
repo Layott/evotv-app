@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -10,7 +11,7 @@ import {
   Radio,
   TrendingUp,
   Users,
-} from "lucide-react-native";
+} from "@/components/icons";
 
 import {
   getChannelAnalytics,
@@ -30,6 +31,7 @@ const PERIOD_OPTIONS: { value: AnalyticsPeriod; label: string }[] = [
 const CHART_HEIGHT = 140;
 
 export default function ChannelAnalyticsScreen() {
+  const palette = useTokens();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [period, setPeriod] = React.useState<AnalyticsPeriod>("30d");
 
@@ -45,7 +47,7 @@ export default function ChannelAnalyticsScreen() {
       <ScrollView className="flex-1 bg-background">
         <View className="px-5 py-6">
           <View className="flex-row items-center gap-2">
-            <BarChart3 size={22} color="#46E3CE" />
+            <BarChart3 size={22} color={palette.brand} />
             <Text className="text-2xl font-bold text-foreground">Analytics</Text>
           </View>
           <Text className="mt-1 text-sm text-muted-foreground">
@@ -61,7 +63,7 @@ export default function ChannelAnalyticsScreen() {
                   "rounded-full border px-3 py-1.5",
                   period === opt.value
                     ? "border-brand/50 bg-brand/10"
-                    : "bg-neutral-900",
+                    : "bg-card",
                 )}
               >
                 <Text
@@ -92,22 +94,22 @@ export default function ChannelAnalyticsScreen() {
             <View className="mt-5 gap-4">
               <View className="flex-row flex-wrap gap-3">
                 <SummaryCard
-                  icon={<Eye size={14} color="#EAF6F5" />}
+                  icon={<Eye size={14} color={palette.fg} />}
                   label="Views"
                   value={analyticsQ.data.totals.views.toLocaleString()}
                 />
                 <SummaryCard
-                  icon={<Users size={14} color="#EAF6F5" />}
+                  icon={<Users size={14} color={palette.fg} />}
                   label="Unique"
                   value={analyticsQ.data.totals.uniqueViewers.toLocaleString()}
                 />
                 <SummaryCard
-                  icon={<TrendingUp size={14} color="#EAF6F5" />}
+                  icon={<TrendingUp size={14} color={palette.fg} />}
                   label="Watch min"
                   value={analyticsQ.data.totals.watchMinutes.toLocaleString()}
                 />
                 <SummaryCard
-                  icon={<Radio size={14} color="#EAF6F5" />}
+                  icon={<Radio size={14} color={palette.fg} />}
                   label="Peak"
                   value={analyticsQ.data.totals.peakConcurrent.toLocaleString()}
                 />
@@ -127,7 +129,7 @@ export default function ChannelAnalyticsScreen() {
                 title="Views per day"
                 rows={analyticsQ.data.rows}
                 accessor={(r) => r.views}
-                color="#46E3CE"
+                color={palette.brand}
               />
               <SparkSection
                 title="Watch minutes per day"
@@ -160,12 +162,12 @@ function SummaryCard({
 }) {
   return (
     <View
-      className="rounded-xl bg-neutral-900/60 p-3"
+      className="rounded-xl bg-card/60 p-3"
       style={{ minWidth: "30%", flexGrow: 1 }}
     >
       <View className="flex-row items-center gap-1.5">
         {icon}
-        <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
+        <Text className="text-[10px] r text-muted-foreground">
           {label}
         </Text>
       </View>
@@ -188,7 +190,7 @@ function SparkSection({
   const values = rows.map(accessor);
   const max = Math.max(1, ...values);
   return (
-    <View className="rounded-2xl bg-neutral-900/60 p-4">
+    <View className="rounded-2xl bg-card/60 p-4">
       <Text className="text-sm font-semibold text-foreground">{title}</Text>
       {rows.length === 0 ? (
         <Text className="mt-4 text-center text-xs text-muted-foreground">

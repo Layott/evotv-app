@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Platform, Pressable, ScrollView, Text, View } from "react-native";
-import { Download, Search } from "lucide-react-native";
+import { Download, Search } from "@/components/icons";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner-native";
 import * as Clipboard from "expo-clipboard";

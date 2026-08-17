@@ -220,7 +220,7 @@ function ApplicationCard({
       {open ? (
         <View className="mt-3 gap-3 border-t border-border pt-3">
           <View className="gap-1">
-            <Text className="text-[11px] r text-muted-foreground">
+            <Text className="text-[11px] text-muted-foreground">
               Primary game
             </Text>
             <Text className="text-xs text-foreground">{row.primaryGameId}</Text>
@@ -228,7 +228,7 @@ function ApplicationCard({
 
           {row.reviewerNote ? (
             <View className="gap-1">
-              <Text className="text-[11px] r text-muted-foreground">
+              <Text className="text-[11px] text-muted-foreground">
                 Previous note
               </Text>
               <Text className="text-xs text-foreground">{row.reviewerNote}</Text>
@@ -236,7 +236,7 @@ function ApplicationCard({
           ) : null}
 
           <View className="gap-1">
-            <Text className="text-[11px] r text-muted-foreground">
+            <Text className="text-[11px] text-muted-foreground">
               Review note (optional)
             </Text>
             <TextInput

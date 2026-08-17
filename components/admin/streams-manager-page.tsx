@@ -687,17 +687,17 @@ function ScheduleEditor({
           EPG schedule
         </Text>
         {stream.scheduledStartAt ? (
-          <Text className="ml-auto text-[10px] r text-cyan-400">
+          <Text className="ml-auto text-[10px] text-cyan-400">
             Programmed
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] r text-muted-foreground">
+          <Text className="ml-auto text-[10px] text-muted-foreground">
             Unscheduled
           </Text>
         )}
       </View>
 
-      <Text className="mb-1 text-[11px] r text-muted-foreground">
+      <Text className="mb-1 text-[11px] text-muted-foreground">
         Airs at (local time)
       </Text>
       <Input
@@ -707,7 +707,7 @@ function ScheduleEditor({
         className="mb-3 h-9"
       />
 
-      <Text className="mb-1 text-[11px] r text-muted-foreground">
+      <Text className="mb-1 text-[11px] text-muted-foreground">
         Duration (minutes)
       </Text>
       <Input
@@ -796,17 +796,17 @@ function HlsUrlEditor({
           Playback URL (HLS)
         </Text>
         {stream.hlsUrl ? (
-          <Text className="ml-auto text-[10px] r text-cyan-400">
+          <Text className="ml-auto text-[10px] text-cyan-400">
             Set
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] r text-muted-foreground">
+          <Text className="ml-auto text-[10px] text-muted-foreground">
             Auto
           </Text>
         )}
       </View>
 
-      <Text className="mb-1 text-[11px] r text-muted-foreground">
+      <Text className="mb-1 text-[11px] text-muted-foreground">
         .m3u8 manifest URL
       </Text>
       <Input
@@ -889,11 +889,11 @@ function ThumbnailEditor({
           Thumbnail
         </Text>
         {stream.thumbnailUrl ? (
-          <Text className="ml-auto text-[10px] r text-cyan-400">
+          <Text className="ml-auto text-[10px] text-cyan-400">
             Set
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] r text-muted-foreground">
+          <Text className="ml-auto text-[10px] text-muted-foreground">
             None
           </Text>
         )}
@@ -975,11 +975,11 @@ function PlayoutFileEditor({
           Playout file
         </Text>
         {current ? (
-          <Text className="ml-auto text-[10px] r text-cyan-400">
+          <Text className="ml-auto text-[10px] text-cyan-400">
             Chosen
           </Text>
         ) : (
-          <Text className="ml-auto text-[10px] r text-muted-foreground">
+          <Text className="ml-auto text-[10px] text-muted-foreground">
             None
           </Text>
         )}
@@ -1078,7 +1078,7 @@ function toLocalDatetimeInputValue(iso: string): string {
 function InfoCell({ label, value }: { label: string; value: string }) {
   return (
     <View className="min-w-[44%]">
-      <Text className="text-[10px] r text-muted-foreground">
+      <Text className="text-[10px] text-muted-foreground">
         {label}
       </Text>
       <Text

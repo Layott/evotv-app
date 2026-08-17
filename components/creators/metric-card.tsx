@@ -44,7 +44,7 @@ export function MetricCard({
   return (
     <View className="rounded-2xl border border-border bg-card/40 p-4">
       <View className="flex-row items-start justify-between">
-        <Text className="text-[10px] st text-muted-foreground">
+        <Text className="text-[10px] text-muted-foreground">
           {label}
         </Text>
         {Icon ? (

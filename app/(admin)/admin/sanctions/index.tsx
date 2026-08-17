@@ -155,7 +155,7 @@ export default function SanctionsListScreen() {
                 </View>
                 <View className="mt-3">
                   <Text
-                    className="text-[11px] font-bold r"
+                    className="text-[11px] font-bold"
                     style={{ color: kindColor(s.kind as SanctionKind) }}
                   >
                     {s.kind.replace("_", " ")}

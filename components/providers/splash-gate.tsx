@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Image, Text, View } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 
@@ -45,6 +46,7 @@ interface SplashGateProps {
 }
 
 function EmergingHero() {
+  const palette = useTokens();
   const [elapsed, setElapsed] = React.useState(0);
 
   React.useEffect(() => {
@@ -119,7 +121,7 @@ function EmergingHero() {
             position: "absolute",
             width: 128,
             height: 128,
-            tintColor: "#EAF6F5",
+            tintColor: palette.fg,
             opacity: bloomOpacity,
             transform: [{ scale: bloomScale }],
           }}
@@ -131,11 +133,12 @@ function EmergingHero() {
 }
 
 function SplashScreenView() {
+  const palette = useTokens();
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: "#05191B",
+        backgroundColor: palette.bg,
         alignItems: "center",
         justifyContent: "center",
       }}
@@ -160,6 +163,7 @@ function SplashScreenView() {
 }
 
 function FadingChildren({ children }: { children: React.ReactNode }) {
+  const palette = useTokens();
   const [opacity, setOpacity] = React.useState(0);
 
   React.useEffect(() => {
@@ -179,7 +183,7 @@ function FadingChildren({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#05191B", opacity }}>
+    <View style={{ flex: 1, backgroundColor: palette.bg, opacity }}>
       {children}
     </View>
   );

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -94,6 +95,7 @@ function PaymentMethodCard({
   soon,
   priceNgn,
 }: PaymentMethodCardProps) {
+  const palette = useTokens();
   return (
     <Pressable
       onPress={onPress}
@@ -137,7 +139,7 @@ function PaymentMethodCard({
             COMING SOON
           </Text>
         ) : (
-          <Text style={{ color: "#46E3CE", fontSize: 12, fontWeight: "600" }}>
+          <Text style={{ color: palette.brand, fontSize: 12, fontWeight: "600" }}>
             Continue →
           </Text>
         )}
@@ -154,6 +156,7 @@ interface TierCardProps {
 }
 
 function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
+  const palette = useTokens();
   return (
     <View
       className={`relative rounded-2xl border p-6 gap-3 ${
@@ -169,7 +172,7 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
         >
           <View
             className="rounded-full px-3 py-1"
-            style={{ backgroundColor: "#46E3CE" }}
+            style={{ backgroundColor: palette.brand }}
           >
             <Text
               style={{
@@ -189,7 +192,7 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
         {highlight ? (
           <Crown size={18} color="#fbbf24" />
         ) : (
-          <Star size={18} color="#737373" />
+          <Star size={18} color={palette.muted} />
         )}
         <Text className="text-lg font-bold text-foreground">{tier.name}</Text>
       </View>
@@ -207,7 +210,7 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
           <View key={f} className="flex-row gap-2 items-start">
             <Check
               size={15}
-              color={highlight ? "#46E3CE" : "#737373"}
+              color={highlight ? palette.brand : palette.muted}
               style={{ marginTop: 2 }}
             />
             <Text className="text-sm text-foreground flex-1">{f}</Text>
@@ -217,7 +220,7 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
       <View className="mt-3">
         {current ? (
           <Button variant="outline" disabled className="w-full">
-            <X size={14} color="#9FBDBD" />
+            <X size={14} color={palette.muted} />
             {tier.cta}
           </Button>
         ) : (
@@ -235,6 +238,7 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
 }
 
 export default function UpgradeScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const tiersQ = useQuery({
     queryKey: ["tiers"],
@@ -269,7 +273,7 @@ export default function UpgradeScreen() {
             onPress={() => router.back()}
             className="flex-row items-center gap-1 active:opacity-70"
           >
-            <ArrowLeft size={13} color="#9FBDBD" />
+            <ArrowLeft size={13} color={palette.muted} />
             <Text className="text-xs text-muted-foreground">Back</Text>
           </Pressable>
         </View>

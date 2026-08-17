@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   Image,
   Platform,
@@ -47,6 +48,7 @@ function formatViewers(count: number): string {
 const WIDE_BREAKPOINT = 1024;
 
 export default function StreamScreen() {
+  const palette = useTokens();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const streamId = id ?? "";
@@ -115,7 +117,7 @@ export default function StreamScreen() {
               </EmptyDescription>
             </EmptyHeader>
             <Button variant="outline" onPress={() => router.back()}>
-              <ArrowLeft color="#EAF6F5" size={16} />
+              <ArrowLeft color={palette.fg} size={16} />
               <Text className="text-foreground text-sm font-medium">Go back</Text>
             </Button>
           </Empty>
@@ -144,7 +146,7 @@ export default function StreamScreen() {
               resizeMode="cover"
             />
           ) : null}
-          <Lock color="#EAF6F5" size={24} />
+          <Lock color={palette.fg} size={24} />
           <Text className="mt-3 text-base font-semibold text-foreground">
             Sign in to watch
           </Text>
@@ -188,7 +190,7 @@ export default function StreamScreen() {
       </Text>
       <View className="flex-row items-center gap-3">
         <View className="flex-row items-center gap-1">
-          <Eye color="#9FBDBD" size={14} />
+          <Eye color={palette.muted} size={14} />
           <Text className="text-xs text-muted-foreground">
             {formatViewers(stream.viewerCount)} watching
           </Text>
@@ -275,11 +277,11 @@ export default function StreamScreen() {
           <View className="px-4 pt-3">
             <TabsList>
               <TabsTrigger value="chat">
-                <MessageSquare color="#9FBDBD" size={14} />
+                <MessageSquare color={palette.muted} size={14} />
                 <Text className="text-sm font-medium text-foreground">Chat</Text>
               </TabsTrigger>
               <TabsTrigger value="about">
-                <Info color="#9FBDBD" size={14} />
+                <Info color={palette.muted} size={14} />
                 <Text className="text-sm font-medium text-foreground">About</Text>
               </TabsTrigger>
             </TabsList>

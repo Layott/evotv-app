@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -12,6 +13,7 @@ import { listTeams } from "@/lib/api/teams";
 import type { Team } from "@/lib/types";
 
 export default function EventBracketScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const eventId = id as string;
@@ -69,8 +71,8 @@ export default function EventBracketScreen() {
             }
             className="flex-row items-center gap-1 self-start active:opacity-70"
           >
-            <ArrowLeft size={12} color="#9FBDBD" />
-            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+            <ArrowLeft size={12} color={palette.muted} />
+            <Text style={{ fontSize: 11, color: palette.muted }}>
               Back to event
             </Text>
           </Pressable>

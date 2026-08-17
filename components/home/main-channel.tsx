@@ -7,7 +7,7 @@ import type { MainChannelResponse } from "@/lib/api/channel";
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { PressableScale } from "@/components/common/pressable-scale";
 import { Skeleton } from "@/components/ui/skeleton";
-import { tokens } from "@/lib/theme/tokens";
+import { tokens, useTokens } from "@/lib/theme/tokens";
 
 /**
  * The flagship channel, pinned to the top of home.
@@ -56,6 +56,7 @@ function LiveBadge() {
 }
 
 export function MainChannel({ data, loading }: Props) {
+  const palette = useTokens();
   const router = useRouter();
 
   if (loading) {
@@ -75,7 +76,7 @@ export function MainChannel({ data, loading }: Props) {
   return (
     <View className="px-4 pb-2 pt-1">
       <PressableScale onPress={() => router.push(`/stream/${channel.id}`)}>
-        <View className="overflow-hidden rounded-xl" style={{ backgroundColor: "#0A2426" }}>
+        <View className="overflow-hidden rounded-xl" style={{ backgroundColor: palette.surface }}>
           <View style={{ height: 190 }}>
             <ImageWithFallback
               source={channel.posterUrl || channel.thumbnailUrl}
@@ -92,9 +93,9 @@ export function MainChannel({ data, loading }: Props) {
                 style={{ backgroundColor: "rgba(5,25,27,0.72)" }}
               >
                 {channel.requiresAuth ? (
-                  <Lock color={tokens.fg} size={22} />
+                  <Lock color={palette.fg} size={22} />
                 ) : (
-                  <Play color={tokens.fg} size={24} fill={tokens.fg} />
+                  <Play color={palette.fg} size={24} fill={palette.fg} />
                 )}
               </View>
             </View>
@@ -105,8 +106,8 @@ export function MainChannel({ data, loading }: Props) {
                   className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
                   style={{ backgroundColor: "rgba(5,25,27,0.72)" }}
                 >
-                  <Eye color={tokens.muted} size={11} />
-                  <Text style={{ fontSize: 10, color: tokens.muted }}>
+                  <Eye color={palette.muted} size={11} />
+                  <Text style={{ fontSize: 10, color: palette.muted }}>
                     {formatViewers(channel.viewerCount)}
                   </Text>
                 </View>
@@ -117,7 +118,7 @@ export function MainChannel({ data, loading }: Props) {
           <View className="gap-1 p-4">
             <Text
               numberOfLines={1}
-              style={{ fontSize: 18, fontWeight: "700", color: tokens.fg }}
+              style={{ fontSize: 18, fontWeight: "700", color: palette.fg }}
             >
               {channel.title}
             </Text>
@@ -125,22 +126,22 @@ export function MainChannel({ data, loading }: Props) {
             {/* On air: what is playing. Off air: when it comes back. Never a
                 bare "offline", which tells a viewer nothing they can act on. */}
             {onNow ? (
-              <Text numberOfLines={1} style={{ fontSize: 13, color: tokens.brand }}>
+              <Text numberOfLines={1} style={{ fontSize: 13, color: palette.brand }}>
                 On now, {onNow.title}
                 {onNow.subtitle ? `: ${onNow.subtitle}` : ""}
               </Text>
             ) : upNext.length > 0 ? (
-              <Text numberOfLines={1} style={{ fontSize: 13, color: tokens.brand }}>
+              <Text numberOfLines={1} style={{ fontSize: 13, color: palette.brand }}>
                 Back at {timeLabel(upNext[0].airsAt)} with {upNext[0].title}
               </Text>
             ) : channel.tagline ? (
-              <Text numberOfLines={1} style={{ fontSize: 13, color: tokens.muted }}>
+              <Text numberOfLines={1} style={{ fontSize: 13, color: palette.muted }}>
                 {channel.tagline}
               </Text>
             ) : null}
 
             {upNext.length > 0 && onNow ? (
-              <Text numberOfLines={1} style={{ fontSize: 12, color: tokens.muted }}>
+              <Text numberOfLines={1} style={{ fontSize: 12, color: palette.muted }}>
                 Up next {timeLabel(upNext[0].airsAt)}, {upNext[0].title}
               </Text>
             ) : null}

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   FlatList,
   Pressable,
@@ -86,6 +87,7 @@ function AuditRow({ row }: { row: AuditLogEntry }) {
 }
 
 export default function AuditLogScreen() {
+  const palette = useTokens();
   const searchParams = useLocalSearchParams<{ actorId?: string }>();
   const presetActorId = typeof searchParams.actorId === "string" ? searchParams.actorId : undefined;
 
@@ -189,7 +191,7 @@ export default function AuditLogScreen() {
                 : "border-border bg-card"
             }`}
           >
-            <SlidersHorizontal size={11} color={showAdvanced ? "#46E3CE" : "#EAF6F5"} />
+            <SlidersHorizontal size={11} color={showAdvanced ? palette.brand : palette.fg} />
             <Text
               className={`text-xs font-semibold ${
                 showAdvanced ? "text-brand" : "text-foreground"
@@ -216,21 +218,21 @@ export default function AuditLogScreen() {
               value={actorId}
               onChangeText={setActorId}
               placeholder="actorId (admin user ID)"
-              placeholderTextColor="#737373"
+              placeholderTextColor={palette.muted}
               className="h-9 rounded-md border border-border bg-card px-3 text-xs text-foreground"
             />
             <TextInput
               value={targetType}
               onChangeText={setTargetType}
               placeholder="targetType (stream, user, vod, …)"
-              placeholderTextColor="#737373"
+              placeholderTextColor={palette.muted}
               className="h-9 rounded-md border border-border bg-card px-3 text-xs text-foreground"
             />
             <TextInput
               value={targetId}
               onChangeText={setTargetId}
               placeholder="targetId"
-              placeholderTextColor="#737373"
+              placeholderTextColor={palette.muted}
               className="h-9 rounded-md border border-border bg-card px-3 text-xs text-foreground"
             />
             <View className="flex-row gap-2">
@@ -238,14 +240,14 @@ export default function AuditLogScreen() {
                 value={fromDate}
                 onChangeText={setFromDate}
                 placeholder="from (YYYY-MM-DD)"
-                placeholderTextColor="#737373"
+                placeholderTextColor={palette.muted}
                 className="h-9 flex-1 rounded-md border border-border bg-card px-3 text-xs text-foreground"
               />
               <TextInput
                 value={toDate}
                 onChangeText={setToDate}
                 placeholder="to (YYYY-MM-DD)"
-                placeholderTextColor="#737373"
+                placeholderTextColor={palette.muted}
                 className="h-9 flex-1 rounded-md border border-border bg-card px-3 text-xs text-foreground"
               />
             </View>
@@ -274,7 +276,7 @@ export default function AuditLogScreen() {
             <RefreshControl
               refreshing={isFetching && !isLoading}
               onRefresh={refetch}
-              tintColor="#46E3CE"
+              tintColor={palette.brand}
             />
           }
           ListEmptyComponent={

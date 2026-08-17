@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Stack } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -39,6 +40,7 @@ function fmtDate(iso: string | null): string {
 }
 
 export default function AdminCreatorProgramScreen() {
+  const palette = useTokens();
   const [filter, setFilter] = React.useState<CreatorAppStatus | "all">("all");
   const [openId, setOpenId] = React.useState<string | null>(null);
   const [note, setNote] = React.useState("");
@@ -75,7 +77,7 @@ export default function AdminCreatorProgramScreen() {
       <ScrollView className="flex-1 bg-background" contentContainerClassName="pb-12">
         <View className="px-4 pt-4 pb-2 gap-2 border-b border-border">
           <View className="flex-row items-center gap-2">
-            <Sparkles size={18} color="#46E3CE" />
+            <Sparkles size={18} color={palette.brand} />
             <Text className="text-xl font-bold text-foreground">
               Creator applications
             </Text>
@@ -169,6 +171,7 @@ function ApplicationCard({
   onReview: (status: "in_review" | "approved" | "rejected") => void;
   disabled: boolean;
 }) {
+  const palette = useTokens();
   return (
     <View className="rounded-2xl border border-border bg-card p-4">
       <Pressable onPress={onToggle}>
@@ -201,7 +204,7 @@ function ApplicationCard({
 
         <View className="mt-2 flex-row items-center gap-3">
           <View className="flex-row items-center gap-1">
-            <Clock size={11} color="#9FBDBD" />
+            <Clock size={11} color={palette.muted} />
             <Text className="text-[10px] text-muted-foreground">
               Submitted {fmtDate(row.submittedAt)}
             </Text>
@@ -240,7 +243,7 @@ function ApplicationCard({
               value={note}
               onChangeText={onNoteChange}
               placeholder="Why this decision?"
-              placeholderTextColor="#737373"
+              placeholderTextColor={palette.muted}
               multiline
               className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
               style={{ minHeight: 60 }}

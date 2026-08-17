@@ -22,6 +22,8 @@ export interface ThemeTokens {
   bg: string;
   /** One step off the page, for cards and rows. */
   surface: string;
+  /** Two steps off: chips, wells and pressed rows sitting on a card. */
+  subtle: string;
   fg: string;
   muted: string;
   /** Hairline borders are banned product-wide; this stays transparent. */
@@ -36,6 +38,7 @@ const dark: ThemeTokens = {
   brandDim: "rgba(70, 227, 206, 0.2)",
   bg: "#05191B",
   surface: "#0A2426",
+  subtle: "#103133",
   fg: "#EAF6F5",
   muted: "#9FBDBD",
   border: "transparent",
@@ -53,6 +56,7 @@ const light: ThemeTokens = {
   // raised without a stroke around it.
   bg: "#F4F7F6",
   surface: "#FFFFFF",
+  subtle: "#E2EEEC",
   fg: "#082224",
   muted: "#526E6E",
   border: "transparent",

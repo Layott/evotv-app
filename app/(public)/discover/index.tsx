@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 
@@ -83,12 +84,13 @@ function Chip({
   onPress: () => void;
   label: string;
 }) {
+  const palette = useTokens();
   return (
     <Pressable
       onPress={onPress}
       className="rounded-full border px-3 py-1 active:opacity-70"
       style={{
-        borderColor: active ? "rgba(70,227,206,0.5)" : "#103133",
+        borderColor: active ? "rgba(70,227,206,0.5)" : palette.subtle,
         backgroundColor: active
           ? "rgba(70,227,206,0.1)"
           : "rgba(15,15,15,0.6)",
@@ -98,7 +100,7 @@ function Chip({
         style={{
           fontSize: 12,
           fontWeight: "500",
-          color: active ? "#67e8f9" : "#9FBDBD",
+          color: active ? "#67e8f9" : palette.muted,
           textTransform: "capitalize",
         }}
       >
@@ -109,6 +111,7 @@ function Chip({
 }
 
 export default function DiscoverScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const [query, setQuery] = React.useState("");
   const debounced = useDebounced(query, 200);
@@ -200,12 +203,12 @@ export default function DiscoverScreen() {
             className="flex-row items-center rounded-xl border border-border bg-card px-3"
             style={{ height: 44 }}
           >
-            <Search size={16} color="#737373" />
+            <Search size={16} color={palette.muted} />
             <TextInput
               value={query}
               onChangeText={setQuery}
               placeholder="Search streams, events, teams, players…"
-              placeholderTextColor="#737373"
+              placeholderTextColor={palette.muted}
               className="ml-2 flex-1 text-sm text-foreground"
               autoCorrect={false}
               autoCapitalize="none"
@@ -216,7 +219,7 @@ export default function DiscoverScreen() {
                 onPress={() => setQuery("")}
                 className="active:opacity-70"
               >
-                <X size={16} color="#737373" />
+                <X size={16} color={palette.muted} />
               </Pressable>
             ) : null}
           </View>
@@ -229,7 +232,7 @@ export default function DiscoverScreen() {
                   onPress={() => setQuery(s)}
                   className="flex-row items-center gap-2 border-b border-border px-3 py-2 active:opacity-70"
                 >
-                  <Search size={14} color="#737373" />
+                  <Search size={14} color={palette.muted} />
                   <Text className="text-sm text-foreground">{s}</Text>
                 </Pressable>
               ))}
@@ -350,11 +353,11 @@ export default function DiscoverScreen() {
                             className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
                             style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
                           >
-                            <Eye size={11} color="#e5e5e5" />
+                            <Eye size={11} color={palette.fg} />
                             <Text
                               style={{
                                 fontSize: 11,
-                                color: "#e5e5e5",
+                                color: palette.fg,
                               }}
                             >
                               {formatViewers(s.viewerCount)}
@@ -369,7 +372,7 @@ export default function DiscoverScreen() {
                             {s.title}
                           </Text>
                           <Text
-                            style={{ fontSize: 11, color: "#9FBDBD" }}
+                            style={{ fontSize: 11, color: palette.muted }}
                           >
                             {s.streamerName}
                           </Text>
@@ -425,9 +428,9 @@ export default function DiscoverScreen() {
                             className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
                             style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
                           >
-                            <Clock size={11} color="#e5e5e5" />
+                            <Clock size={11} color={palette.fg} />
                             <Text
-                              style={{ fontSize: 11, color: "#e5e5e5" }}
+                              style={{ fontSize: 11, color: palette.fg }}
                             >
                               {formatDuration(v.durationSec)}
                             </Text>
@@ -487,14 +490,14 @@ export default function DiscoverScreen() {
                             {t.name}
                           </Text>
                           <Text
-                            style={{ fontSize: 11, color: "#9FBDBD" }}
+                            style={{ fontSize: 11, color: palette.muted }}
                           >
                             {t.tag} · {game?.shortName}
                           </Text>
                           <View className="flex-row items-center gap-1">
-                            <Users size={11} color="#737373" />
+                            <Users size={11} color={palette.muted} />
                             <Text
-                              style={{ fontSize: 11, color: "#737373" }}
+                              style={{ fontSize: 11, color: palette.muted }}
                             >
                               {formatViewers(t.followers)} followers
                             </Text>
@@ -538,15 +541,15 @@ export default function DiscoverScreen() {
                             {p.handle}
                           </Text>
                           <Text
-                            style={{ fontSize: 11, color: "#9FBDBD" }}
+                            style={{ fontSize: 11, color: palette.muted }}
                             numberOfLines={1}
                           >
                             {p.role} · {game?.shortName}
                           </Text>
                           <View className="flex-row items-center gap-1">
-                            <UserRound size={11} color="#737373" />
+                            <UserRound size={11} color={palette.muted} />
                             <Text
-                              style={{ fontSize: 11, color: "#737373" }}
+                              style={{ fontSize: 11, color: palette.muted }}
                             >
                               KDA {p.kda.toFixed(2)}
                             </Text>

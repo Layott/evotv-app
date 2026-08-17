@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -25,6 +26,7 @@ function formatRuntime(sec: number): string {
 }
 
 export default function EpisodePlayerScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const params = useLocalSearchParams<{
     slug: string;
@@ -133,7 +135,7 @@ export default function EpisodePlayerScreen() {
           className="mt-6 rounded-xl px-4 py-2.5"
           style={{ backgroundColor: BRAND }}
         >
-          <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
+          <Text style={{ color: palette.bg, fontWeight: "700", fontSize: 13 }}>
             Go back
           </Text>
         </Pressable>

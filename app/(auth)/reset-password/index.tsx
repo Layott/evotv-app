@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -34,6 +35,7 @@ const schema = z
 type Values = z.infer<typeof schema>;
 
 export default function ResetPasswordScreen() {
+  const palette = useTokens();
   const router = useRouter();
   // `email` arrives from the forgot-password redirect. Legacy `token` deep
   // links still parse cleanly but the OTP flow ignores them.
@@ -115,7 +117,7 @@ export default function ResetPasswordScreen() {
                 backgroundColor: "rgba(70,227,206,0.25)",
               }}
             >
-              <ShieldCheck color="#46E3CE" size={26} />
+              <ShieldCheck color={palette.brand} size={26} />
             </View>
             <Text className="text-center text-2xl font-bold text-foreground">
               Set a new password
@@ -202,7 +204,7 @@ export default function ResetPasswordScreen() {
             >
               {submitting ? (
                 <View className="flex-row items-center gap-2">
-                  <Spinner color="#05191B" />
+                  <Spinner color={palette.bg} />
                   <Text className="font-semibold text-black">
                     Updating...
                   </Text>

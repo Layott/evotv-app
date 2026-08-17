@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Text, View } from "react-native";
 
 export interface CountdownTimerProps {
@@ -22,6 +23,7 @@ export function CountdownTimer({
   label,
   className,
 }: CountdownTimerProps) {
+  const palette = useTokens();
   const targetMs = React.useMemo(() => new Date(target).getTime(), [target]);
   const [t, setT] = React.useState(() => diff(targetMs));
 
@@ -46,7 +48,7 @@ export function CountdownTimer({
             marginBottom: 8,
             fontSize: 11,
             letterSpacing: 1,
-            color: "#9FBDBD",
+            color: palette.muted,
             textTransform: "uppercase",
           }}
         >
@@ -74,7 +76,7 @@ export function CountdownTimer({
               style={{
                 fontSize: 10,
                 letterSpacing: 1,
-                color: "#737373",
+                color: palette.muted,
                 textTransform: "uppercase",
               }}
             >

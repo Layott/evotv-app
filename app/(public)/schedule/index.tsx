@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -129,6 +130,7 @@ function ReminderBell({
   airsAt: string;
   isAuthenticated: boolean;
 }) {
+  const palette = useTokens();
   const router = useRouter();
   const reminder = useReminder(targetId, airsAt, isAuthenticated);
 
@@ -141,7 +143,7 @@ function ReminderBell({
   };
 
   const Icon = reminder.active ? Bell : BellOff;
-  const color = reminder.active ? "#67e8f9" : "#737373";
+  const color = reminder.active ? "#67e8f9" : palette.muted;
 
   return (
     <Pressable
@@ -167,6 +169,7 @@ function EpgCard({
   row: EpgRow;
   isAuthenticated: boolean;
 }) {
+  const palette = useTokens();
   const router = useRouter();
   const pillar = pillarStyle(row.pillar);
   const isLive = row.state === "live";
@@ -225,11 +228,11 @@ function EpgCard({
           />
         ) : null}
         <View className="flex-row items-center gap-1 pr-7">
-          <Clock size={11} color="#9FBDBD" />
-          <Text style={{ fontSize: 11, color: "#9FBDBD", fontWeight: "500" }}>
+          <Clock size={11} color={palette.muted} />
+          <Text style={{ fontSize: 11, color: palette.muted, fontWeight: "500" }}>
             {formatTime(row.airsAt)}
           </Text>
-          <Text style={{ fontSize: 11, color: "#525252" }}>
+          <Text style={{ fontSize: 11, color: palette.muted }}>
             · {row.durationMin}m
           </Text>
         </View>
@@ -242,7 +245,7 @@ function EpgCard({
         </Text>
 
         <Text
-          style={{ fontSize: 12, color: "#9FBDBD" }}
+          style={{ fontSize: 12, color: palette.muted }}
           numberOfLines={1}
         >
           {row.subtitle}
@@ -250,7 +253,7 @@ function EpgCard({
 
         <View className="mt-auto flex-row items-center gap-1 pt-1">
           <KindIcon kind={row.kind} />
-          <Text style={{ fontSize: 11, color: "#737373" }}>
+          <Text style={{ fontSize: 11, color: palette.muted }}>
             {row.kind === "live_stream"
               ? "Live broadcast"
               : row.kind === "match"
@@ -274,6 +277,7 @@ function Chip({
   label: string;
   toneActive?: { backgroundColor: string; color: string };
 }) {
+  const palette = useTokens();
   return (
     <Pressable
       onPress={onPress}
@@ -288,7 +292,7 @@ function Chip({
         style={{
           fontSize: 12,
           fontWeight: "500",
-          color: active ? toneActive?.color ?? "#67e8f9" : "#9FBDBD",
+          color: active ? toneActive?.color ?? "#67e8f9" : palette.muted,
         }}
       >
         {label}
@@ -308,6 +312,7 @@ function DayChip({
   label: string;
   sub: string;
 }) {
+  const palette = useTokens();
   return (
     <Pressable
       onPress={onPress}
@@ -323,7 +328,7 @@ function DayChip({
         style={{
           fontSize: 12,
           fontWeight: "600",
-          color: active ? "#67e8f9" : "#e5e5e5",
+          color: active ? "#67e8f9" : palette.fg,
         }}
       >
         {label}
@@ -331,7 +336,7 @@ function DayChip({
       <Text
         style={{
           fontSize: 11,
-          color: active ? "#67e8f9" : "#737373",
+          color: active ? "#67e8f9" : palette.muted,
           marginTop: 2,
         }}
       >
@@ -350,6 +355,7 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
 }
 
 export default function ScheduleScreen() {
+  const palette = useTokens();
   const days = React.useMemo(() => buildDayStrip(), []);
   const [selectedDay, setSelectedDay] = React.useState<string>(
     isoDay(new Date()),
@@ -448,7 +454,7 @@ export default function ScheduleScreen() {
           ) : rows.length === 0 ? (
             <View className="mx-4 rounded-xl border border-border bg-card p-8">
               <View className="items-center gap-2">
-                <Calendar size={28} color="#525252" />
+                <Calendar size={28} color={palette.muted} />
                 <Text className="text-center text-sm text-muted-foreground">
                   Nothing on the schedule for this day yet.
                 </Text>

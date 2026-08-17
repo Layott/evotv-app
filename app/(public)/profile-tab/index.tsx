@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { View } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 
@@ -13,11 +14,12 @@ import { useRouter, useFocusEffect } from "expo-router";
  * the redirect target is hit immediately on tap without rendering this stub.
  */
 export default function ProfileTabRedirect() {
+  const palette = useTokens();
   const router = useRouter();
   useFocusEffect(
     React.useCallback(() => {
       router.replace("/profile" as never);
     }, [router]),
   );
-  return <View style={{ flex: 1, backgroundColor: "#05191B" }} />;
+  return <View style={{ flex: 1, backgroundColor: palette.bg }} />;
 }

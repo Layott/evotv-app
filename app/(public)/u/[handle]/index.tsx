@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import {
@@ -70,6 +71,7 @@ function HeaderSkeleton() {
 }
 
 function NotFound({ handle, onBack }: { handle: string; onBack: () => void }) {
+  const palette = useTokens();
   return (
     <View className="flex-1 items-center justify-center bg-background px-6">
       <View
@@ -89,7 +91,7 @@ function NotFound({ handle, onBack }: { handle: string; onBack: () => void }) {
         className="mt-6 rounded-xl px-4 py-2.5"
         style={{ backgroundColor: BRAND }}
       >
-        <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
+        <Text style={{ color: palette.bg, fontWeight: "700", fontSize: 13 }}>
           Back home
         </Text>
       </Pressable>
@@ -131,6 +133,7 @@ function ChannelCard({ channel }: { channel: PublicProfileChannel }) {
 }
 
 function ClipCard({ clip }: { clip: PublicProfileClip }) {
+  const palette = useTokens();
   const router = useRouter();
   return (
     <Pressable
@@ -147,7 +150,7 @@ function ClipCard({ clip }: { clip: PublicProfileClip }) {
           />
         ) : (
           <View className="h-full w-full items-center justify-center bg-muted">
-            <Play size={24} color="#525252" />
+            <Play size={24} color={palette.muted} />
           </View>
         )}
         <View
@@ -164,7 +167,7 @@ function ClipCard({ clip }: { clip: PublicProfileClip }) {
           {clip.title}
         </Text>
         <View className="mt-1 flex-row items-center gap-1">
-          <Eye size={10} color="#737373" />
+          <Eye size={10} color={palette.muted} />
           <Text className="text-[10px] text-muted-foreground">
             {formatCount(clip.viewCount)}
           </Text>
@@ -175,6 +178,7 @@ function ClipCard({ clip }: { clip: PublicProfileClip }) {
 }
 
 function VodCard({ vod }: { vod: PublicProfileVod }) {
+  const palette = useTokens();
   const router = useRouter();
   return (
     <Pressable
@@ -191,7 +195,7 @@ function VodCard({ vod }: { vod: PublicProfileVod }) {
           />
         ) : (
           <View className="h-full w-full items-center justify-center bg-muted">
-            <Tv2 size={28} color="#525252" />
+            <Tv2 size={28} color={palette.muted} />
           </View>
         )}
         <View
@@ -208,7 +212,7 @@ function VodCard({ vod }: { vod: PublicProfileVod }) {
           {vod.title}
         </Text>
         <View className="mt-1 flex-row items-center gap-1">
-          <Eye size={11} color="#737373" />
+          <Eye size={11} color={palette.muted} />
           <Text className="text-[11px] text-muted-foreground">
             {formatCount(vod.viewCount)} views
           </Text>
@@ -219,6 +223,7 @@ function VodCard({ vod }: { vod: PublicProfileVod }) {
 }
 
 export default function PublicProfileScreen() {
+  const palette = useTokens();
   const { handle: raw } = useLocalSearchParams<{ handle: string }>();
   const handle = (raw ?? "").replace(/^@/, "").trim();
   const router = useRouter();
@@ -290,7 +295,7 @@ export default function PublicProfileScreen() {
                   />
                 ) : (
                   <View className="h-full w-full items-center justify-center">
-                    <Text style={{ color: "#737373", fontSize: 28, fontWeight: "700" }}>
+                    <Text style={{ color: palette.muted, fontSize: 28, fontWeight: "700" }}>
                       {profileQ.data.displayName.charAt(0).toUpperCase()}
                     </Text>
                   </View>
@@ -310,20 +315,20 @@ export default function PublicProfileScreen() {
                 </Text>
                 <View className="mt-1.5 flex-row items-center gap-3 flex-wrap">
                   <View className="flex-row items-center gap-1">
-                    <Users size={11} color="#9FBDBD" />
+                    <Users size={11} color={palette.muted} />
                     <Text className="text-xs text-muted-foreground">
                       {formatCount(profileQ.data.followerCount)} followers
                     </Text>
                   </View>
                   <View className="flex-row items-center gap-1">
-                    <Calendar size={11} color="#9FBDBD" />
+                    <Calendar size={11} color={palette.muted} />
                     <Text className="text-xs text-muted-foreground">
                       Joined {formatJoined(profileQ.data.joinedAt)}
                     </Text>
                   </View>
                   {profileQ.data.country ? (
                     <View className="flex-row items-center gap-1">
-                      <MapPin size={11} color="#9FBDBD" />
+                      <MapPin size={11} color={palette.muted} />
                       <Text className="text-xs text-muted-foreground">
                         {profileQ.data.country}
                       </Text>
@@ -372,7 +377,7 @@ export default function PublicProfileScreen() {
                   // are fills now: solid brand to follow, muted once followed.
                   style={{
                     backgroundColor:
-                      followingLocal && viewerId ? "#17454A" : BRAND,
+                      followingLocal && viewerId ? palette.input : BRAND,
                   }}
                   disabled={followMutation.isPending}
                 >
@@ -385,8 +390,8 @@ export default function PublicProfileScreen() {
                     </>
                   ) : (
                     <>
-                      <UserPlus size={14} color="#05191B" />
-                      <Text style={{ color: "#05191B", fontWeight: "700", fontSize: 13 }}>
+                      <UserPlus size={14} color={palette.bg} />
+                      <Text style={{ color: palette.bg, fontWeight: "700", fontSize: 13 }}>
                         {viewerId ? "Follow" : "Sign in to follow"}
                       </Text>
                     </>
@@ -402,7 +407,7 @@ export default function PublicProfileScreen() {
                   }
                   className="flex-row items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2.5 active:opacity-70"
                 >
-                  <Flag size={13} color="#9FBDBD" />
+                  <Flag size={13} color={palette.muted} />
                   <Text className="text-xs text-muted-foreground">Report</Text>
                 </Pressable>
               ) : null}

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Clock, Sparkles } from "lucide-react-native";
@@ -36,6 +37,7 @@ export function Recommendations({
   games,
   loading,
 }: RecommendationsProps) {
+  const palette = useTokens();
   const router = useRouter();
   const gameMap = React.useMemo(
     () => new Map(games.map((g) => [g.id, g])),
@@ -74,8 +76,8 @@ export function Recommendations({
                 className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
                 style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
               >
-                <Clock size={12} color="#e5e5e5" />
-                <Text style={{ fontSize: 11, color: "#e5e5e5" }}>
+                <Clock size={12} color={palette.fg} />
+                <Text style={{ fontSize: 11, color: palette.fg }}>
                   {formatDuration(v.durationSec)}
                 </Text>
               </View>
@@ -88,7 +90,7 @@ export function Recommendations({
                 {v.title}
               </Text>
               {game ? (
-                <Text style={{ fontSize: 11, color: "#46E3CE" }}>
+                <Text style={{ fontSize: 11, color: palette.brand }}>
                   {game.shortName}
                 </Text>
               ) : null}
@@ -111,7 +113,7 @@ export function Recommendations({
     <View className="gap-3">
       <View className="flex-row items-center justify-between px-4">
         <View className="flex-row items-center gap-2">
-          <Sparkles size={16} color="#46E3CE" />
+          <Sparkles size={16} color={palette.brand} />
           <Text className="text-xl font-semibold text-foreground">
             Recommended for you
           </Text>
@@ -120,7 +122,7 @@ export function Recommendations({
           onPress={() => router.push("/discover")}
           className="active:opacity-70"
         >
-          <Text className="text-xs font-medium" style={{ color: "#46E3CE" }}>
+          <Text className="text-xs font-medium" style={{ color: palette.brand }}>
             See all
           </Text>
         </Pressable>

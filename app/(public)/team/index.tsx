@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
@@ -17,6 +18,7 @@ function formatFollowers(n: number): string {
 }
 
 function TeamCard({ team }: { team: Team }) {
+  const palette = useTokens();
   const router = useRouter();
   const winRate =
     team.wins + team.losses === 0
@@ -46,7 +48,7 @@ function TeamCard({ team }: { team: Team }) {
           </Text>
           <View
             className="rounded px-1.5 py-0.5"
-            style={{ backgroundColor: "#103133" }}
+            style={{ backgroundColor: palette.subtle }}
           >
             <Text
               style={{
@@ -61,7 +63,7 @@ function TeamCard({ team }: { team: Team }) {
           </View>
         </View>
         <Text
-          style={{ fontSize: 11, color: "#9FBDBD", marginTop: 2 }}
+          style={{ fontSize: 11, color: palette.muted, marginTop: 2 }}
         >
           {team.country} · {team.region}
         </Text>
@@ -73,8 +75,8 @@ function TeamCard({ team }: { team: Team }) {
             </Text>
           </View>
           <View className="flex-row items-center gap-1">
-            <Users size={11} color="#9FBDBD" />
-            <Text style={{ fontSize: 11, color: "#9FBDBD" }}>
+            <Users size={11} color={palette.muted} />
+            <Text style={{ fontSize: 11, color: palette.muted }}>
               {formatFollowers(team.followers)}
             </Text>
           </View>

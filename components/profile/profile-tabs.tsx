@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -26,6 +27,7 @@ function formatViewers(n: number): string {
 }
 
 function VideoGrid({ vods }: { vods: Vod[] }) {
+  const palette = useTokens();
   const router = useRouter();
   if (vods.length === 0) {
     return (
@@ -33,7 +35,7 @@ function VideoGrid({ vods }: { vods: Vod[] }) {
         className="rounded-2xl bg-card p-8"
       >
         <View className="items-center">
-          <Video size={32} color="#525252" />
+          <Video size={32} color={palette.muted} />
         </View>
         <Text className="mt-3 text-center text-sm font-semibold text-foreground">
           No videos yet
@@ -73,8 +75,8 @@ function VideoGrid({ vods }: { vods: Vod[] }) {
                   {v.title}
                 </Text>
                 <View className="flex-row items-center gap-1">
-                  <Eye size={10} color="#737373" />
-                  <Text style={{ fontSize: 10, color: "#737373" }}>
+                  <Eye size={10} color={palette.muted} />
+                  <Text style={{ fontSize: 10, color: palette.muted }}>
                     {formatViewers(v.viewCount)}
                   </Text>
                 </View>
@@ -89,6 +91,7 @@ function VideoGrid({ vods }: { vods: Vod[] }) {
 }
 
 function ClipsGrid({ clips }: { clips: Clip[] }) {
+  const palette = useTokens();
   const router = useRouter();
   if (clips.length === 0) {
     return (
@@ -96,7 +99,7 @@ function ClipsGrid({ clips }: { clips: Clip[] }) {
         className="rounded-2xl bg-card p-8"
       >
         <View className="items-center">
-          <Film size={32} color="#525252" />
+          <Film size={32} color={palette.muted} />
         </View>
         <Text className="mt-3 text-center text-sm font-semibold text-foreground">
           No clips yet
@@ -187,19 +190,20 @@ export function ProfileTabs({
   clips = [],
   defaultValue = "videos",
 }: ProfileTabsProps) {
+  const palette = useTokens();
   return (
     <Tabs defaultValue={defaultValue} className="gap-4">
       <TabsList>
         <TabsTrigger value="videos">
-          <Video size={14} color="#9FBDBD" />
+          <Video size={14} color={palette.muted} />
           <Text className="text-sm font-medium">Videos</Text>
         </TabsTrigger>
         <TabsTrigger value="clips">
-          <Film size={14} color="#9FBDBD" />
+          <Film size={14} color={palette.muted} />
           <Text className="text-sm font-medium">Clips</Text>
         </TabsTrigger>
         <TabsTrigger value="about">
-          <Info size={14} color="#9FBDBD" />
+          <Info size={14} color={palette.muted} />
           <Text className="text-sm font-medium">About</Text>
         </TabsTrigger>
       </TabsList>

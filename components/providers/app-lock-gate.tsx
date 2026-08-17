@@ -8,7 +8,7 @@ import {
   authenticate,
   isLockEnabled,
 } from "@/lib/security/app-lock";
-import { tokens } from "@/lib/theme/tokens";
+import { tokens, useTokens } from "@/lib/theme/tokens";
 
 /**
  * Holds the app behind the device's own unlock when the setting is on.
@@ -33,6 +33,7 @@ interface Props {
 }
 
 export function AppLockGate({ children }: Props) {
+  const palette = useTokens();
   const { isAuthenticated, isLoading, logout } = useAuth();
   const [enabled, setEnabled] = React.useState<boolean | null>(null);
   const [locked, setLocked] = React.useState(false);
@@ -147,7 +148,7 @@ export function AppLockGate({ children }: Props) {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: tokens.bg,
+        backgroundColor: palette.bg,
         padding: 24,
       }}
     >
@@ -159,7 +160,7 @@ export function AppLockGate({ children }: Props) {
       <Text
         style={{
           marginTop: 24,
-          color: tokens.fg,
+          color: palette.fg,
           fontSize: 20,
           fontWeight: "700",
         }}
@@ -170,7 +171,7 @@ export function AppLockGate({ children }: Props) {
         style={{
           marginTop: 8,
           textAlign: "center",
-          color: tokens.muted,
+          color: palette.muted,
           fontSize: 14,
           maxWidth: 300,
         }}
@@ -187,11 +188,11 @@ export function AppLockGate({ children }: Props) {
           justifyContent: "center",
           paddingHorizontal: 28,
           borderRadius: 7,
-          backgroundColor: tokens.brand,
+          backgroundColor: palette.brand,
           opacity: prompting ? 0.6 : 1,
         }}
       >
-        <Text style={{ color: tokens.bg, fontSize: 16, fontWeight: "700" }}>
+        <Text style={{ color: palette.bg, fontSize: 16, fontWeight: "700" }}>
           {prompting ? "Waiting…" : "Unlock"}
         </Text>
       </Pressable>
@@ -214,10 +215,10 @@ export function AppLockGate({ children }: Props) {
           justifyContent: "center",
           paddingHorizontal: 24,
           borderRadius: 7,
-          backgroundColor: "#17454A",
+          backgroundColor: palette.input,
         }}
       >
-        <Text style={{ color: tokens.fg, fontSize: 15, fontWeight: "600" }}>
+        <Text style={{ color: palette.fg, fontSize: 15, fontWeight: "600" }}>
           Sign in with email or Google
         </Text>
       </Pressable>

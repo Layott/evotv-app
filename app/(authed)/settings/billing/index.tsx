@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { CreditCard, Crown } from "lucide-react-native";
@@ -30,6 +31,7 @@ const PROVIDER_LABELS: Record<Subscription["provider"], string> = {
 };
 
 export default function BillingScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { user } = useAuth();
   const [sub, setSub] = React.useState<Subscription | null>(null);
@@ -96,7 +98,7 @@ export default function BillingScreen() {
             <View className="flex-row items-start gap-3">
               <Crown
                 size={26}
-                color={sub ? "#fbbf24" : "#525252"}
+                color={sub ? "#fbbf24" : palette.muted}
               />
               <View className="flex-1">
                 <View className="flex-row flex-wrap items-center gap-2">

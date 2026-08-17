@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
@@ -34,6 +35,7 @@ function compact(n: number): string {
 }
 
 function ClipCard({ clip }: { clip: Clip }) {
+  const palette = useTokens();
   const router = useRouter();
   return (
     <Pressable
@@ -84,7 +86,7 @@ function ClipCard({ clip }: { clip: Clip }) {
             <Text style={{ fontSize: 10, color: "#d4d4d4" }} numberOfLines={1}>
               @{clip.creatorHandle}
             </Text>
-            <Text style={{ fontSize: 10, color: "#9FBDBD" }}>
+            <Text style={{ fontSize: 10, color: palette.muted }}>
               {relTime(clip.createdAt)}
             </Text>
           </View>

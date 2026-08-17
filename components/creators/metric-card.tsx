@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Text, View } from "react-native";
 import { ArrowDownRight, ArrowUpRight, type LucideIcon } from "lucide-react-native";
 

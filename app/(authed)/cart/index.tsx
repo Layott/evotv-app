@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
@@ -30,6 +31,7 @@ const SHIPPING = 2500;
 const FREE_SHIPPING_MIN = 50_000;
 
 export default function CartScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const [lines, setLines] = React.useState<CartLine[]>([]);
   const [products, setProducts] = React.useState<Record<string, Product>>({});
@@ -105,7 +107,7 @@ export default function CartScreen() {
       <>
         <Stack.Screen options={{ title: "Cart" }} />
         <View className="flex-1 items-center justify-center bg-background px-4">
-          <ShoppingBag size={48} color="#525252" />
+          <ShoppingBag size={48} color={palette.muted} />
           <Text className="mt-4 text-xl font-bold text-foreground">
             Your cart is empty
           </Text>
@@ -216,7 +218,7 @@ export default function CartScreen() {
                 <Text className="text-sm text-muted-foreground">Shipping</Text>
                 <Text className="text-sm text-foreground">
                   {shipping === 0 && subtotal >= FREE_SHIPPING_MIN ? (
-                    <Text style={{ color: "#46E3CE" }}>Free</Text>
+                    <Text style={{ color: palette.brand }}>Free</Text>
                   ) : (
                     formatNgn(shipping)
                   )}

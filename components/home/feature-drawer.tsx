@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useRouter } from "expo-router";
@@ -108,6 +109,7 @@ interface FeatureDrawerProps {
 }
 
 export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
+  const palette = useTokens();
   const router = useRouter();
   const { user, role, login, logout } = useAuth();
   if (!open) return null;
@@ -156,7 +158,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
           bottom: 0,
           width: "85%",
           maxWidth: 360,
-          backgroundColor: "#05191B",
+          backgroundColor: palette.bg,
           borderLeftWidth: 1,
           borderLeftColor: "#1F1F1F",
         }}
@@ -168,7 +170,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
                 className="h-10 w-10 rounded-full items-center justify-center"
                 style={{ backgroundColor: "rgba(70,227,206, 0.15)" }}
               >
-                <UserIcon size={18} color="#46E3CE" />
+                <UserIcon size={18} color={palette.brand} />
               </View>
               <View>
                 <Text className="text-sm font-semibold text-foreground">
@@ -185,7 +187,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
               accessibilityLabel="Close menu"
               className="p-1"
             >
-              <X size={20} color="#9FBDBD" />
+              <X size={20} color={palette.muted} />
             </Pressable>
           </View>
 
@@ -218,7 +220,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
                           className="h-8 w-8 rounded-md items-center justify-center"
                           style={{ backgroundColor: "rgba(70,227,206, 0.10)" }}
                         >
-                          <Icon size={16} color="#46E3CE" />
+                          <Icon size={16} color={palette.brand} />
                         </View>
                         <Text className="flex-1 text-sm text-foreground">
                           {item.label}
@@ -281,7 +283,7 @@ export function FeatureDrawer({ open, onClose }: FeatureDrawerProps) {
                   className="h-8 w-8 rounded-md items-center justify-center"
                   style={{ backgroundColor: "rgba(70,227,206, 0.12)" }}
                 >
-                  <LogIn size={16} color="#46E3CE" />
+                  <LogIn size={16} color={palette.brand} />
                 </View>
                 <Text className="text-sm font-medium text-brand">Sign in</Text>
               </Pressable>

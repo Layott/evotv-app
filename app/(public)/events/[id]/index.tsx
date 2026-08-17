@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -42,6 +43,7 @@ function writeReminders(s: Set<string>) {
 }
 
 export default function EventDetailScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const eventId = id as string;
@@ -179,7 +181,7 @@ export default function EventDetailScreen() {
               style={{
                 borderColor: reminded
                   ? "rgba(70,227,206,0.5)"
-                  : "#103133",
+                  : palette.subtle,
                 backgroundColor: reminded
                   ? "rgba(70,227,206,0.1)"
                   : "rgba(15,15,15,0.6)",
@@ -189,13 +191,13 @@ export default function EventDetailScreen() {
               {reminded ? (
                 <Bell size={16} color="#67e8f9" fill="#67e8f9" />
               ) : (
-                <BellOff size={16} color="#e5e5e5" />
+                <BellOff size={16} color={palette.fg} />
               )}
               <Text
                 style={{
                   fontSize: 13,
                   fontWeight: "600",
-                  color: reminded ? "#67e8f9" : "#e5e5e5",
+                  color: reminded ? "#67e8f9" : palette.fg,
                 }}
               >
                 {reminded ? "Reminder on" : "Remind me"}
@@ -205,7 +207,7 @@ export default function EventDetailScreen() {
               onPress={() => router.push(`/events/${event.id}/bracket`)}
               className="flex-row items-center gap-2 rounded-md border border-border bg-card px-4 py-2 active:opacity-80"
             >
-              <ListTree size={16} color="#e5e5e5" />
+              <ListTree size={16} color={palette.fg} />
               <Text className="text-sm font-semibold text-foreground">
                 View bracket
               </Text>
@@ -215,25 +217,25 @@ export default function EventDetailScreen() {
           <View className="rounded-xl border border-border bg-card p-4">
             <View className="flex-row flex-wrap" style={{ gap: 12 }}>
               <View style={{ width: "48%" }}>
-                <Text style={{ fontSize: 11, color: "#737373" }}>Format</Text>
+                <Text style={{ fontSize: 11, color: palette.muted }}>Format</Text>
                 <Text className="mt-0.5 text-sm font-medium text-foreground">
                   {event.format}
                 </Text>
               </View>
               <View style={{ width: "48%" }}>
-                <Text style={{ fontSize: 11, color: "#737373" }}>Region</Text>
+                <Text style={{ fontSize: 11, color: palette.muted }}>Region</Text>
                 <Text className="mt-0.5 text-sm font-medium text-foreground">
                   {event.region}
                 </Text>
               </View>
               <View style={{ width: "48%" }}>
-                <Text style={{ fontSize: 11, color: "#737373" }}>Teams</Text>
+                <Text style={{ fontSize: 11, color: palette.muted }}>Teams</Text>
                 <Text className="mt-0.5 text-sm font-medium text-foreground">
                   {event.teamIds?.length ?? 0}
                 </Text>
               </View>
               <View style={{ width: "48%" }}>
-                <Text style={{ fontSize: 11, color: "#737373" }}>Matches</Text>
+                <Text style={{ fontSize: 11, color: palette.muted }}>Matches</Text>
                 <Text className="mt-0.5 text-sm font-medium text-foreground">
                   {matchesByState.length}
                 </Text>
@@ -282,7 +284,7 @@ export default function EventDetailScreen() {
                 <View
                   className="self-start rounded-md px-2.5 py-1"
                   style={{
-                    backgroundColor: "#103133",
+                    backgroundColor: palette.subtle,
                   }}
                 >
                   <Text
@@ -290,7 +292,7 @@ export default function EventDetailScreen() {
                       fontSize: 11,
                       fontWeight: "600",
                       letterSpacing: 1,
-                      color: "#9FBDBD",
+                      color: palette.muted,
                     }}
                   >
                     CONCLUDED

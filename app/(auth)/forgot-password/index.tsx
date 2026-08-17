@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -26,6 +27,7 @@ const schema = z.object({
 type Values = z.infer<typeof schema>;
 
 export default function ForgotPasswordScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const [sent, setSent] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
@@ -102,9 +104,9 @@ export default function ForgotPasswordScreen() {
               }}
             >
               {sent ? (
-                <CheckCircle2 color="#46E3CE" size={26} />
+                <CheckCircle2 color={palette.brand} size={26} />
               ) : (
-                <KeyRound color="#46E3CE" size={26} />
+                <KeyRound color={palette.brand} size={26} />
               )}
             </View>
             <Text className="text-center text-2xl font-bold text-foreground">
@@ -145,7 +147,7 @@ export default function ForgotPasswordScreen() {
               >
                 {submitting ? (
                   <View className="flex-row items-center gap-2">
-                    <Spinner color="#05191B" />
+                    <Spinner color={palette.bg} />
                     <Text className="font-semibold text-black">
                       Sending link...
                     </Text>

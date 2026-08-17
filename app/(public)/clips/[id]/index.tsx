@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Share, Text, View } from "react-native";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -169,6 +170,7 @@ function ActionButton({ icon, label, onPress }: ActionButtonProps) {
 }
 
 export default function ClipDetailScreen() {
+  const palette = useTokens();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { isFollowing, toggleFollow } = useAuth();
@@ -257,7 +259,7 @@ export default function ClipDetailScreen() {
               </EmptyDescription>
             </EmptyHeader>
             <Button variant="outline" onPress={() => router.back()}>
-              <ArrowLeft size={16} color="#EAF6F5" />
+              <ArrowLeft size={16} color={palette.fg} />
               <Text className="text-foreground text-sm font-medium">
                 Go back
               </Text>

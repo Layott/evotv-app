@@ -31,7 +31,7 @@ const toneClasses: Record<Tone, { bg: string; text: string; ring: string; dot: s
     dot: "bg-blue-400",
   },
   neutral: {
-    bg: "bg-neutral-700/40",
+    bg: "bg-muted/40",
     text: "text-neutral-300",
     ring: "border-neutral-600/50",
     dot: "bg-neutral-400",

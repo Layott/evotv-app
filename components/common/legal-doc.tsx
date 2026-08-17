@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { ScrollView, Text, View } from "react-native";
 
 /**
@@ -32,6 +33,7 @@ interface LegalDocProps {
 }
 
 export function LegalDoc({ title, body }: LegalDocProps) {
+  const palette = useTokens();
   const blocks = body.split(/\n\n+/);
 
   return (
@@ -48,7 +50,7 @@ export function LegalDoc({ title, body }: LegalDocProps) {
             <View
               key={idx}
               className="my-4 h-px"
-              style={{ backgroundColor: "#103133" }}
+              style={{ backgroundColor: palette.subtle }}
             />
           );
         }

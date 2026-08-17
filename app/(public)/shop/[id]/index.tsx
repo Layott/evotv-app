@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 import { ImageWithFallback } from "@/components/common/image-with-fallback";
@@ -23,6 +24,7 @@ import type { Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export default function ShopProductScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const productId = id as string;
@@ -125,7 +127,7 @@ export default function ShopProductScreen() {
           onPress={() => router.push("/shop")}
           className="mb-4 flex-row items-center gap-1 self-start active:opacity-70"
         >
-          <ArrowLeft size={14} color="#9FBDBD" />
+          <ArrowLeft size={14} color={palette.muted} />
           <Text className="text-sm text-muted-foreground">Back to shop</Text>
         </Pressable>
 
@@ -204,7 +206,7 @@ export default function ShopProductScreen() {
                   fontSize: 11,
                   fontWeight: "600",
                   letterSpacing: 0.5,
-                  color: "#9FBDBD",
+                  color: palette.muted,
                   textTransform: "uppercase",
                 }}
               >
@@ -234,19 +236,19 @@ export default function ShopProductScreen() {
             <View className="mt-4 gap-1">
               <View className="flex-row items-center gap-2">
                 <Check size={12} color="#67e8f9" />
-                <Text style={{ fontSize: 11, color: "#737373" }}>
+                <Text style={{ fontSize: 11, color: palette.muted }}>
                   Ships NG-wide · 3-5 business days
                 </Text>
               </View>
               <View className="flex-row items-center gap-2">
                 <Check size={12} color="#67e8f9" />
-                <Text style={{ fontSize: 11, color: "#737373" }}>
+                <Text style={{ fontSize: 11, color: palette.muted }}>
                   Paystack secured checkout
                 </Text>
               </View>
               <View className="flex-row items-center gap-2">
                 <Check size={12} color="#67e8f9" />
-                <Text style={{ fontSize: 11, color: "#737373" }}>
+                <Text style={{ fontSize: 11, color: palette.muted }}>
                   14-day returns on apparel
                 </Text>
               </View>

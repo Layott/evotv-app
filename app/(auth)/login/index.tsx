@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -33,6 +34,7 @@ const loginSchema = z.object({
 type LoginValues = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { signIn, signInWithSocial } = useAuth();
   const [submitting, setSubmitting] = React.useState(false);
@@ -161,7 +163,7 @@ export default function LoginScreen() {
             >
               {submitting ? (
                 <View className="flex-row items-center gap-2">
-                  <Spinner color="#05191B" />
+                  <Spinner color={palette.bg} />
                   <Text className="text-black font-semibold">Signing in...</Text>
                 </View>
               ) : (
@@ -185,9 +187,9 @@ export default function LoginScreen() {
                 className="h-11 w-full"
               >
                 {socialBusy === "google" ? (
-                  <Spinner color="#EAF6F5" />
+                  <Spinner color={palette.fg} />
                 ) : (
-                  <ChromeIcon color="#EAF6F5" size={18} />
+                  <ChromeIcon color={palette.fg} size={18} />
                 )}
                 <Text className="text-sm font-medium text-foreground">
                   {socialBusy === "google" ? "Opening Google…" : "Continue with Google"}

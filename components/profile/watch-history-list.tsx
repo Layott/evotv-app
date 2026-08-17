@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -40,6 +41,7 @@ export function WatchHistoryList({
   vods,
   onItemMore,
 }: WatchHistoryListProps) {
+  const palette = useTokens();
   const router = useRouter();
 
   if (vods.length === 0) {
@@ -64,7 +66,7 @@ export function WatchHistoryList({
               <View
                 style={{
                   height: 1,
-                  backgroundColor: "#103133",
+                  backgroundColor: palette.subtle,
                 }}
               />
             ) : null}
@@ -77,7 +79,7 @@ export function WatchHistoryList({
                 style={{
                   width: 112,
                   aspectRatio: 16 / 9,
-                  backgroundColor: "#103133",
+                  backgroundColor: palette.subtle,
                 }}
               >
                 <Image
@@ -88,13 +90,13 @@ export function WatchHistoryList({
                 {typeof v.progressPct === "number" ? (
                   <View
                     className="absolute inset-x-0 bottom-0"
-                    style={{ height: 3, backgroundColor: "#103133" }}
+                    style={{ height: 3, backgroundColor: palette.subtle }}
                   >
                     <View
                       style={{
                         height: "100%",
                         width: `${Math.max(0, Math.min(100, v.progressPct))}%`,
-                        backgroundColor: "#46E3CE",
+                        backgroundColor: palette.brand,
                       }}
                     />
                   </View>
@@ -123,7 +125,7 @@ export function WatchHistoryList({
                 hitSlop={8}
                 className="rounded p-1 active:opacity-60"
               >
-                <MoreVertical size={18} color="#737373" />
+                <MoreVertical size={18} color={palette.muted} />
               </Pressable>
             </Pressable>
           </View>

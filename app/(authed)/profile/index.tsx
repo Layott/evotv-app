@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { LogOut, Settings } from "lucide-react-native";
@@ -13,6 +14,7 @@ import { useAuth } from "@/components/providers";
 import { pickAndUploadAvatar } from "@/lib/api/profile";
 
 export default function ProfileScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { user, signOut, updateProfile } = useAuth();
   const [avatarUploading, setAvatarUploading] = React.useState(false);
@@ -80,7 +82,7 @@ export default function ProfileScreen() {
               accessibilityLabel="Open settings"
               hitSlop={8}
             >
-              <Settings color="#EAF6F5" size={18} />
+              <Settings color={palette.fg} size={18} />
             </Pressable>
           </View>
 

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   FlatList,
   Pressable,
@@ -39,6 +40,7 @@ interface RowProps {
 }
 
 function MessageRow({ msg }: RowProps) {
+  const palette = useTokens();
   return (
     <View className="flex-row items-start gap-2 px-3 py-1.5">
       <View
@@ -47,7 +49,7 @@ function MessageRow({ msg }: RowProps) {
           height: 24,
           borderRadius: 12,
           overflow: "hidden",
-          backgroundColor: "#103133",
+          backgroundColor: palette.subtle,
         }}
       >
         {msg.userAvatarUrl ? (
@@ -76,6 +78,7 @@ function MessageRow({ msg }: RowProps) {
 }
 
 export function LiveChat({ streamId, className }: LiveChatProps) {
+  const palette = useTokens();
   const { user } = useAuth();
   const { messages, send, status } = useStreamChat(streamId);
   const [input, setInput] = React.useState("");
@@ -125,7 +128,7 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
         className="flex-row items-center justify-between border-b border-border px-3 py-2"
       >
         <View className="flex-row items-center gap-2">
-          <Users size={16} color="#EAF6F5" />
+          <Users size={16} color={palette.fg} />
           <Text className="text-sm font-semibold text-foreground">
             Stream Chat
           </Text>
@@ -164,7 +167,7 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
             value={input}
             onChangeText={(text) => setInput(text.slice(0, CHAR_LIMIT))}
             placeholder={user ? "Send a message" : "Sign in to chat"}
-            placeholderTextColor="#737373"
+            placeholderTextColor={palette.muted}
             editable={!!user}
             onSubmitEditing={handleSend}
             returnKeyType="send"
@@ -178,16 +181,16 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
               "h-9 w-9 items-center justify-center rounded-md",
               !user || !input.trim() ? "opacity-50" : "active:opacity-80",
             )}
-            style={{ backgroundColor: "#46E3CE" }}
+            style={{ backgroundColor: palette.brand }}
           >
-            <Send size={16} color="#05191B" />
+            <Send size={16} color={palette.bg} />
           </Pressable>
         </View>
         <Text
           className="mt-1 text-right text-[10px]"
           style={{
             color:
-              input.length > CHAR_LIMIT * 0.9 ? "#fbbf24" : "#737373",
+              input.length > CHAR_LIMIT * 0.9 ? "#fbbf24" : palette.muted,
           }}
         >
           {input.length} / {CHAR_LIMIT}

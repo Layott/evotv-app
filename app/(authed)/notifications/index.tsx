@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
@@ -73,6 +74,7 @@ function Row({
   n: NotificationItem;
   onPress: () => void;
 }) {
+  const palette = useTokens();
   const Icon = ICONS[n.type] ?? Bell;
   const unread = n.readAt === null;
   return (
@@ -96,16 +98,16 @@ function Row({
           </View>
         ) : (
           <View className="h-12 w-12 items-center justify-center rounded-lg bg-muted">
-            <Icon size={20} color="#46E3CE" />
+            <Icon size={20} color={palette.brand} />
           </View>
         )}
         {unread ? (
           <View
             className="absolute -right-1 -top-1 h-3 w-3 rounded-full"
             style={{
-              backgroundColor: "#46E3CE",
+              backgroundColor: palette.brand,
               borderWidth: 2,
-              borderColor: "#05191B",
+              borderColor: palette.bg,
             }}
           />
         ) : null}
@@ -181,9 +183,10 @@ function GroupedList({
 }
 
 function EmptyState({ label = "Nothing here yet." }: { label?: string }) {
+  const palette = useTokens();
   return (
     <View className="items-center rounded-2xl bg-card p-10">
-      <Bell size={36} color="#525252" />
+      <Bell size={36} color={palette.muted} />
       <Text className="mt-3 text-sm font-semibold text-foreground">
         {label}
       </Text>
@@ -192,6 +195,7 @@ function EmptyState({ label = "Nothing here yet." }: { label?: string }) {
 }
 
 export default function NotificationsScreen() {
+  const palette = useTokens();
   const { user } = useAuth();
   const router = useRouter();
   const [items, setItems] = React.useState<NotificationItem[]>([]);
@@ -281,7 +285,7 @@ export default function NotificationsScreen() {
               onPress={handleMarkAll}
               disabled={unread.length === 0}
             >
-              <CheckCheck size={14} color="#EAF6F5" />
+              <CheckCheck size={14} color={palette.fg} />
               <Text className="text-sm font-medium text-foreground">
                 Mark all read
               </Text>

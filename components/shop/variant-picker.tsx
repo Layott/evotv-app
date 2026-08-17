@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, Text, View } from "react-native";
 
 import type { ProductVariant } from "@/lib/types";
@@ -15,6 +16,7 @@ export function VariantPicker({
   value,
   onChange,
 }: VariantPickerProps) {
+  const palette = useTokens();
   if (!variants.length) return null;
   const selectedInventory = variants.find((v) => v.id === value)?.inventory ?? 0;
   return (
@@ -25,7 +27,7 @@ export function VariantPicker({
           fontSize: 11,
           fontWeight: "600",
           letterSpacing: 0.5,
-          color: "#9FBDBD",
+          color: palette.muted,
           textTransform: "uppercase",
         }}
       >
@@ -57,7 +59,7 @@ export function VariantPicker({
                 style={{
                   fontSize: 13,
                   fontWeight: "600",
-                  color: selected ? "#67e8f9" : "#e5e5e5",
+                  color: selected ? "#67e8f9" : palette.fg,
                   textDecorationLine: oos ? "line-through" : "none",
                   textAlign: "center",
                 }}
@@ -69,7 +71,7 @@ export function VariantPicker({
         })}
       </View>
       {value ? (
-        <Text style={{ marginTop: 8, fontSize: 11, color: "#737373" }}>
+        <Text style={{ marginTop: 8, fontSize: 11, color: palette.muted }}>
           {selectedInventory} in stock
         </Text>
       ) : null}

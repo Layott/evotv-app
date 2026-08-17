@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import {
@@ -103,6 +104,7 @@ function pushRowCopy(state: ReturnType<typeof useNativePushState>): string {
 }
 
 export default function SettingsScreen() {
+  const palette = useTokens();
   const router = useRouter();
   const { user, accountEmail, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
@@ -274,7 +276,7 @@ export default function SettingsScreen() {
               className="h-10 w-10 items-center justify-center rounded-lg"
               style={{ backgroundColor: "rgba(70,227,206,0.12)" }}
             >
-              <CreditCard size={18} color="#46E3CE" />
+              <CreditCard size={18} color={palette.brand} />
             </View>
             <View className="flex-1">
               <Text className="text-sm font-semibold text-foreground">
@@ -284,7 +286,7 @@ export default function SettingsScreen() {
                 Plan, payment method, receipts
               </Text>
             </View>
-            <ChevronRight size={18} color="#737373" />
+            <ChevronRight size={18} color={palette.muted} />
           </Pressable>
 
           <Pressable
@@ -306,7 +308,7 @@ export default function SettingsScreen() {
                 How we handle your data
               </Text>
             </View>
-            <ChevronRight size={18} color="#737373" />
+            <ChevronRight size={18} color={palette.muted} />
           </Pressable>
 
           <Pressable
@@ -328,7 +330,7 @@ export default function SettingsScreen() {
                 Rules of the road
               </Text>
             </View>
-            <ChevronRight size={18} color="#737373" />
+            <ChevronRight size={18} color={palette.muted} />
           </Pressable>
 
           {/* Account */}
@@ -547,8 +549,8 @@ export default function SettingsScreen() {
               onPress={() => router.push("/(authed)/notifications")}
               className="mt-3 flex-row items-center gap-1 self-start active:opacity-70"
             >
-              <Bell size={14} color="#46E3CE" />
-              <Text className="text-sm font-medium" style={{ color: "#46E3CE" }}>
+              <Bell size={14} color={palette.brand} />
+              <Text className="text-sm font-medium" style={{ color: palette.brand }}>
                 Open notification inbox
               </Text>
             </Pressable>
@@ -720,7 +722,7 @@ export default function SettingsScreen() {
                   onPress={handleExport}
                   disabled={exporting}
                 >
-                  <Download size={14} color="#EAF6F5" />
+                  <Download size={14} color={palette.fg} />
                   <Text className="text-sm font-medium text-foreground">
                     {exporting ? "Queueing..." : "Request"}
                   </Text>
@@ -789,11 +791,11 @@ export default function SettingsScreen() {
                   >
                     <View
                       className="h-8 w-8 items-center justify-center rounded-full"
-                      style={{ backgroundColor: selected ? "#46E3CE22" : "#1f1f1f" }}
+                      style={{ backgroundColor: selected ? palette.brandDim : palette.subtle }}
                     >
                       <Icon
                         size={14}
-                        color={selected ? "#46E3CE" : "#9FBDBD"}
+                        color={selected ? palette.brand : palette.muted}
                       />
                     </View>
                     <View className="flex-1">
@@ -828,7 +830,7 @@ export default function SettingsScreen() {
                 onPress={() => router.push("/(authed)/cart")}
                 className="flex-row items-center gap-3 rounded-xl border border-border bg-background p-3 active:opacity-80"
               >
-                <Globe size={16} color="#9FBDBD" />
+                <Globe size={16} color={palette.muted} />
                 <View className="flex-1">
                   <Text className="text-sm font-semibold text-foreground">
                     Cart & shop
@@ -837,13 +839,13 @@ export default function SettingsScreen() {
                     Review your cart
                   </Text>
                 </View>
-                <ChevronRight size={16} color="#737373" />
+                <ChevronRight size={16} color={palette.muted} />
               </Pressable>
               <Pressable
                 onPress={() => router.push("/(authed)/profile/orders")}
                 className="flex-row items-center gap-3 rounded-xl border border-border bg-background p-3 active:opacity-80"
               >
-                <UserCog size={16} color="#9FBDBD" />
+                <UserCog size={16} color={palette.muted} />
                 <View className="flex-1">
                   <Text className="text-sm font-semibold text-foreground">
                     Orders
@@ -852,7 +854,7 @@ export default function SettingsScreen() {
                     View shipping & receipts
                   </Text>
                 </View>
-                <ChevronRight size={16} color="#737373" />
+                <ChevronRight size={16} color={palette.muted} />
               </Pressable>
             </View>
           </SectionCard>

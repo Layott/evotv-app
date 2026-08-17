@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTokens } from "@/lib/theme/tokens";
 import {
   Pressable,
   ScrollView,
@@ -114,6 +115,7 @@ function StreamStatusBanner({
   liveStreamId: string | null;
   loading: boolean;
 }) {
+  const palette = useTokens();
   const isLive = !!liveStreamId;
   return (
     <View
@@ -121,11 +123,11 @@ function StreamStatusBanner({
       style={{ backgroundColor: isLive ? "#0c2429" : "#1a1a1a" }}
     >
       {loading ? (
-        <CircleDot size={14} color="#737373" />
+        <CircleDot size={14} color={palette.muted} />
       ) : isLive ? (
-        <Wifi size={14} color="#46E3CE" />
+        <Wifi size={14} color={palette.brand} />
       ) : (
-        <WifiOff size={14} color="#737373" />
+        <WifiOff size={14} color={palette.muted} />
       )}
       <Text className="text-xs font-medium text-foreground">
         {loading ? "Checking stream status…" : isLive ? "Stream live · mod actions broadcast to viewers" : "Channel offline"}
@@ -135,9 +137,10 @@ function StreamStatusBanner({
 }
 
 function OfflineState() {
+  const palette = useTokens();
   return (
     <View className="flex-1 items-center justify-center px-6">
-      <WifiOff size={32} color="#525252" />
+      <WifiOff size={32} color={palette.muted} />
       <Text className="mt-3 text-base font-semibold text-foreground">
         Channel is offline
       </Text>
@@ -191,6 +194,7 @@ function ModMessageRow({
   message: ChatMessage;
   channelId: string;
 }) {
+  const palette = useTokens();
   const [pinning, setPinning] = React.useState(false);
   const [deleting, setDeleting] = React.useState(false);
   const [timingOut, setTimingOut] = React.useState(false);
@@ -247,13 +251,13 @@ function ModMessageRow({
   };
 
   return (
-    <View className="mb-2 rounded-lg bg-neutral-900/60 p-3">
+    <View className="mb-2 rounded-lg bg-card/60 p-3">
       <View className="flex-row items-center justify-between">
         <View className="flex-1 flex-row items-center gap-2">
           <Text className="text-xs font-semibold text-foreground">
             @{message.userHandle}
           </Text>
-          {message.isPinned ? <Pin size={12} color="#46E3CE" /> : null}
+          {message.isPinned ? <Pin size={12} color={palette.brand} /> : null}
           <Text className="text-[10px] text-muted-foreground">
             {formatTime(message.createdAt)}
           </Text>
@@ -262,7 +266,7 @@ function ModMessageRow({
           <ActionButton
             onPress={handlePin}
             disabled={pinning}
-            icon={<Pin size={13} color={message.isPinned ? "#46E3CE" : "#EAF6F5"} />}
+            icon={<Pin size={13} color={message.isPinned ? palette.brand : palette.fg} />}
             label={message.isPinned ? "Unpin" : "Pin"}
           />
           <ActionButton
@@ -287,7 +291,7 @@ function ModMessageRow({
             <Pressable
               key={opt.label}
               onPress={() => handleTimeout(opt.durationSec, opt.label)}
-              className="flex-1 items-center rounded-md   bg-neutral-900 px-2 py-1.5 active:opacity-70"
+              className="flex-1 items-center rounded-md   bg-card px-2 py-1.5 active:opacity-70"
             >
               <Text className="text-xs font-medium text-foreground">
                 {opt.label}

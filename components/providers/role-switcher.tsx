@@ -42,7 +42,7 @@ export function RoleSwitcher() {
     <View pointerEvents="box-none" className="absolute bottom-6 right-4 z-50">
       <Pressable
         onPress={() => setOpen(true)}
-        className="flex-row items-center gap-2 rounded-full   bg-neutral-950/90 px-3 py-2"
+        className="flex-row items-center gap-2 rounded-full   bg-background/90 px-3 py-2"
       >
         <CurrentIcon size={14} color={FG} />
         <Text className="text-xs font-medium text-neutral-100">
@@ -63,10 +63,10 @@ export function RoleSwitcher() {
         >
           <Pressable
             onPress={(e) => e.stopPropagation()}
-            className="mb-20 w-56 rounded-lg   bg-neutral-950"
+            className="mb-20 w-56 rounded-lg   bg-background"
           >
             <View className="  px-3 py-2">
-              <Text className="text-[10px] uppercase tracking-wider text-neutral-500">
+              <Text className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 Dev role switcher
               </Text>
             </View>
@@ -88,7 +88,7 @@ export function RoleSwitcher() {
                     className={
                       active
                         ? "text-xs font-medium"
-                        : "text-xs text-neutral-200"
+                        : "text-xs text-foreground"
                     }
                     style={active ? { color: BRAND } : undefined}
                   >

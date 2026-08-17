@@ -5,14 +5,6 @@ import { Stack, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
-  Check,
-  CreditCard,
-  Crown,
-  Phone,
-  Sparkles,
-  Star,
-  Ticket,
-  X,
 } from "lucide-react-native";
 
 import { toast } from "sonner-native";
@@ -68,86 +60,6 @@ function formatNgn(n: number): string {
   }).format(n);
 }
 
-interface PaymentMethodCardProps {
-  badge: string;
-  title: string;
-  subtitle: string;
-  Icon: import("lucide-react-native").LucideIcon;
-  iconBg: string;
-  iconFg: string;
-  onPress: () => void;
-  primary?: boolean;
-  /** Method not live yet - dims the card + shows "Coming soon". */
-  soon?: boolean;
-  /** Premium monthly price from the tiers API. Omitted while loading. */
-  priceNgn?: number;
-}
-
-function PaymentMethodCard({
-  badge,
-  title,
-  subtitle,
-  Icon,
-  iconBg,
-  iconFg,
-  onPress,
-  primary,
-  soon,
-  priceNgn,
-}: PaymentMethodCardProps) {
-  const palette = useTokens();
-  return (
-    <Pressable
-      onPress={onPress}
-      className={`rounded-2xl border bg-card p-5 gap-3 active:opacity-80 ${
-        primary ? "border-brand" : "border-border"
-      }`}
-      style={soon ? { opacity: 0.6 } : undefined}
-    >
-      <View className="flex-row items-start gap-3">
-        <View
-          className="h-10 w-10 items-center justify-center rounded-xl"
-          style={{ backgroundColor: iconBg }}
-        >
-          <Icon size={20} color={iconFg} />
-        </View>
-        <View className="flex-1">
-          <Text
-            className="text-xs font-semibold uppercase text-muted-foreground"
-            style={{ letterSpacing: 0.4 }}
-          >
-            {badge}
-          </Text>
-          <Text className="text-sm font-semibold text-foreground">
-            {title}
-          </Text>
-          <Text className="text-xs text-muted-foreground" numberOfLines={2}>
-            {subtitle}
-          </Text>
-        </View>
-      </View>
-      <View className="flex-row items-center justify-between border-t border-border pt-3">
-        {typeof priceNgn === "number" ? (
-          <Text className="text-xs text-muted-foreground">
-            Premium · {formatNgn(priceNgn)}/mo
-          </Text>
-        ) : (
-          <View />
-        )}
-        {soon ? (
-          <Text style={{ color: "#A855F7", fontSize: 11, fontWeight: "700", letterSpacing: 1 }}>
-            COMING SOON
-          </Text>
-        ) : (
-          <Text style={{ color: palette.brand, fontSize: 12, fontWeight: "600" }}>
-            Continue →
-          </Text>
-        )}
-      </View>
-    </Pressable>
-  );
-}
-
 interface TierCardProps {
   tier: DisplayTier;
   current?: boolean;
@@ -188,14 +100,7 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
           </View>
         </View>
       ) : null}
-      <View className="flex-row items-center gap-2">
-        {highlight ? (
-          <Crown size={18} color="#fbbf24" />
-        ) : (
-          <Star size={18} color={palette.muted} />
-        )}
-        <Text className="text-lg font-bold text-foreground">{tier.name}</Text>
-      </View>
+      <Text className="text-lg font-bold text-foreground">{tier.name}</Text>
       <Text className="text-sm text-muted-foreground">{tier.tagline}</Text>
       <View className="flex-row items-baseline gap-1">
         <Text className="text-3xl font-extrabold text-foreground">
@@ -207,20 +112,14 @@ function TierCard({ tier, current, highlight, onUpgrade }: TierCardProps) {
       </View>
       <View className="gap-2 mt-1">
         {tier.features.map((f) => (
-          <View key={f} className="flex-row gap-2 items-start">
-            <Check
-              size={15}
-              color={highlight ? palette.brand : palette.muted}
-              style={{ marginTop: 2 }}
-            />
-            <Text className="text-sm text-foreground flex-1">{f}</Text>
-          </View>
+          <Text key={f} className="text-sm text-foreground">
+            {f}
+          </Text>
         ))}
       </View>
       <View className="mt-3">
         {current ? (
           <Button variant="outline" disabled className="w-full">
-            <X size={14} color={palette.muted} />
             {tier.cta}
           </Button>
         ) : (
@@ -279,12 +178,8 @@ export default function UpgradeScreen() {
         </View>
 
         <View className="px-4 pt-4 gap-3 items-center">
-          <Badge
-            variant="outline"
-            className="border-amber-500"
-            textClassName="text-amber-300"
-          >
-            <Sparkles size={11} color="#fbbf24" /> EVO TV Premium
+          <Badge className="bg-amber-500/25" textClassName="text-amber-100">
+            EVO TV Premium
           </Badge>
           <Text className="text-2xl font-bold text-foreground text-center">
             Watch deeper. No ads. 1080p.
@@ -318,52 +213,6 @@ export default function UpgradeScreen() {
           Secure checkout via Paystack · Cancel anytime
         </Text>
 
-        <View className="px-4 pt-10 gap-3">
-          <Text className="text-base font-semibold text-foreground text-center">
-            Choose how you want to pay
-          </Text>
-          <PaymentMethodCard
-            badge="Card"
-            title="Paystack"
-            subtitle="Visa, Mastercard, Verve, bank transfer."
-            Icon={CreditCard}
-            iconBg="rgba(56,189,248,0.15)"
-            iconFg="#7dd3fc"
-            primary
-            priceNgn={premiumPriceNgn}
-            onPress={onUpgrade}
-          />
-          <PaymentMethodCard
-            badge="Mobile money"
-            title="M-Pesa, MoMo, Airtel"
-            subtitle="STK push to your phone. Launching soon."
-            Icon={Phone}
-            iconBg="rgba(16,185,129,0.15)"
-            iconFg="#34d399"
-            soon
-            priceNgn={premiumPriceNgn}
-            onPress={() =>
-              toast.info("Mobile money is coming soon", {
-                description: "Pay with card via Paystack for now.",
-              })
-            }
-          />
-          <PaymentMethodCard
-            badge="USSD"
-            title="Dial-to-pay"
-            subtitle="No app needed. Launching soon."
-            Icon={Ticket}
-            iconBg="rgba(245,158,11,0.15)"
-            iconFg="#fbbf24"
-            soon
-            priceNgn={premiumPriceNgn}
-            onPress={() =>
-              toast.info("USSD payments are coming soon", {
-                description: "Pay with card via Paystack for now.",
-              })
-            }
-          />
-        </View>
 
         <View className="px-4 pt-10 gap-3">
           <Text className="text-base font-semibold text-foreground text-center">

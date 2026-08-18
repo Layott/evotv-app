@@ -130,7 +130,7 @@ export function OverviewPage() {
   const metrics = metricsQ.data;
   const liveCount = metrics?.liveStreams ?? streamsQ.data?.length ?? 0;
   const totalViewers = (streamsQ.data ?? []).reduce(
-    (acc, s) => acc + s.viewerCount,
+    (acc, s) => acc + (s.viewerCount ?? 0),
     0,
   );
   const topStreams = (streamsQ.data ?? []).slice(0, 5);
@@ -350,7 +350,7 @@ export function OverviewPage() {
                 className="w-12 text-right text-sm text-foreground"
                 style={{ fontVariant: ["tabular-nums"] }}
               >
-                {formatCompact(s.viewerCount)}
+                {formatCompact(s.viewerCount ?? 0)}
               </Text>
             </View>
           ))}

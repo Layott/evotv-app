@@ -74,12 +74,14 @@ function VideoGrid({ vods }: { vods: Vod[] }) {
                 >
                   {v.title}
                 </Text>
-                <View className="flex-row items-center gap-1">
-                  <Eye size={10} color={palette.muted} />
-                  <Text style={{ fontSize: 10, color: palette.muted }}>
-                    {formatViewers(v.viewCount)}
-                  </Text>
-                </View>
+                {typeof v.viewCount === "number" ? (
+                  <View className="flex-row items-center gap-1">
+                    <Eye size={10} color={palette.muted} />
+                    <Text style={{ fontSize: 10, color: palette.muted }}>
+                      {formatViewers(v.viewCount)}
+                    </Text>
+                  </View>
+                ) : null}
               </View>
             </Pressable>
           ))}

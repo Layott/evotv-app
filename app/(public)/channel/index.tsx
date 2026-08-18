@@ -195,7 +195,7 @@ export default function ChannelScreen() {
               </View>
             </View>
             <View className="mt-4 flex-row flex-wrap items-center gap-3">
-              {isLive && channel ? (
+              {isLive && typeof channel?.viewerCount === "number" ? (
                 <View className="flex-row items-center gap-1">
                   <Eye size={13} color={palette.muted} />
                   <Text style={{ fontSize: 11, color: palette.muted }}>
@@ -375,16 +375,18 @@ export default function ChannelScreen() {
                           LIVE
                         </Text>
                       </View>
-                      <View
-                        className="absolute right-2 top-2 rounded-md px-1.5 py-0.5"
-                        style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
-                      >
-                        <Text
-                          style={{ fontSize: 10, color: palette.fg }}
+                      {typeof s.viewerCount === "number" ? (
+                        <View
+                          className="absolute right-2 top-2 rounded-md px-1.5 py-0.5"
+                          style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
                         >
-                          {fmtViewers(s.viewerCount)}
-                        </Text>
-                      </View>
+                          <Text
+                            style={{ fontSize: 10, color: palette.fg }}
+                          >
+                            {fmtViewers(s.viewerCount)}
+                          </Text>
+                        </View>
+                      ) : null}
                     </View>
                     <View className="p-3">
                       <Text

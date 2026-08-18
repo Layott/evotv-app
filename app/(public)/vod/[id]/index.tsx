@@ -402,13 +402,17 @@ export default function VodScreen() {
               {vod.title}
             </Text>
             <View className="mt-2 flex-row flex-wrap items-center gap-2">
-              <View className="flex-row items-center gap-1">
-                <Eye size={13} color={palette.muted} />
-                <Text className="text-xs text-muted-foreground">
-                  {compact(vod.viewCount)} views
-                </Text>
-              </View>
-              <Text className="text-xs text-muted-foreground">·</Text>
+              {typeof vod.viewCount === "number" ? (
+                <>
+                  <View className="flex-row items-center gap-1">
+                    <Eye size={13} color={palette.muted} />
+                    <Text className="text-xs text-muted-foreground">
+                      {compact(vod.viewCount)} views
+                    </Text>
+                  </View>
+                  <Text className="text-xs text-muted-foreground">·</Text>
+                </>
+              ) : null}
               <Text className="text-xs text-muted-foreground">
                 {relTime(vod.publishedAt)}
               </Text>

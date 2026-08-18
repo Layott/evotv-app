@@ -97,7 +97,10 @@ export function VodRelated({ vods }: { vods: Vod[] }) {
                 className="mt-1 text-xs text-muted-foreground"
                 numberOfLines={1}
               >
-                {compact(v.viewCount)} views · {relTime(v.publishedAt)}
+                {typeof v.viewCount === "number"
+                  ? `${compact(v.viewCount)} views · `
+                  : ""}
+                {relTime(v.publishedAt)}
               </Text>
             </View>
           </Pressable>

@@ -26,6 +26,14 @@ export interface HlsPlayerProps {
   startAtSec?: number | null;
   /** Fires once when playback reaches the end of media. */
   onEnded?: () => void;
+  /**
+   * A live broadcast rather than a recording.
+   *
+   * Hides the browser's own controls on live, which are a scrub bar and a
+   * clock. The app target renders a real `<video>`, so unlike native these come
+   * from the browser and are removed by not asking for them.
+   */
+  isLive?: boolean;
 }
 
 export function HlsPlayer({
@@ -34,6 +42,7 @@ export function HlsPlayer({
   autoPlay = true,
   muted = true,
   controls = true,
+  isLive = false,
   className,
   onLoad,
   onError,
@@ -203,6 +212,17 @@ export function HlsPlayer({
       {React.createElement("video", {
         ref: videoRef,
         playsInline: true,
+        /*
+         * Left as the browser's full control set, including the scrub bar.
+         *
+         * `controls` is all or nothing on a `<video>`: there is no way to keep
+         * play, volume and fullscreen while dropping the seek bar, and
+         * `controlsList` has no "noseek". Turning it off for live would leave
+         * this target with no way to pause at all, which is worse than a scrub
+         * bar nobody needs. The real web player is the Next app's, which draws
+         * its own controls and does remove seeking on live; this target is the
+         * app's preview build.
+         */
         controls: controls && hasStarted,
         muted,
         autoPlay,

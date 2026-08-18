@@ -193,6 +193,34 @@ $propsText = [regex]::Replace(
     'org\.gradle\.jvmargs=.*',
     'org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1g'
 )
+
+# Drop the emulator architectures.
+#
+# Prebuild writes all four: armeabi-v7a, arm64-v8a, x86 and x86_64. The two x86
+# ones exist for the Android emulator and cannot run on a phone, and measured on
+# build 197 they were 40.8 MB of a 95.7 MB download, so 43% of what a viewer
+# waited for was bytes their device can never execute.
+#
+# Both ARM entries stay. arm64-v8a covers essentially every phone sold since
+# 2016; armeabi-v7a is kept for the cheap 32-bit devices still common in this
+# market, and costs 13.5 MB to support rather than excluding those users.
+#
+# If the emulator is ever needed again, pass it per build:
+#   ./gradlew assembleRelease -PreactNativeArchitectures=x86_64
+$propsText = [regex]::Replace(
+    $propsText,
+    'reactNativeArchitectures=.*',
+    'reactNativeArchitectures=armeabi-v7a,arm64-v8a'
+)
+
+# NOT enabled here: R8. The Expo template ships release builds unshrunk, and the
+# dex was 15.1 MB on build 197, so there is real weight to win. It is left off
+# deliberately, because minifying a React Native app strips classes that native
+# modules reach by reflection, and the failure is a crash on one screen in a
+# release build rather than an error at build time. Worth doing on its own,
+# behind a full walk of the app on a device, not folded into a size change that
+# is otherwise risk-free.
+
 [IO.File]::WriteAllText($props, $propsText, (New-Object Text.UTF8Encoding $false))
 
 # ---------------------------------------------------------------- build

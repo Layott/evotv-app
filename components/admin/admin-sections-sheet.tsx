@@ -141,20 +141,50 @@ export function AdminSectionsSheet({
 /**
  * The button that opens the sheet. Sits in every admin screen's header.
  */
-export function AdminSectionsButton() {
-  const t = useTokens();
+/**
+ * Open state for the sections sheet, held above the navigator.
+ *
+ * The button and the sheet have to live in different places. `headerRight`
+ * renders into the native stack header, which is a real platform view and
+ * cannot host a full-screen `Modal`: the button set its state, the sheet
+ * mounted inside the header, and nothing appeared on screen. That is why the
+ * control looked dead on a phone while the code read as correct.
+ *
+ * So the button stays in the header and the sheet renders as a sibling of the
+ * navigator, with this carrying the one piece of state between them.
+ */
+const SectionsContext = React.createContext<{
+  open: boolean;
+  setOpen: (v: boolean) => void;
+} | null>(null);
+
+export function AdminSectionsProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [open, setOpen] = React.useState(false);
+  const value = React.useMemo(() => ({ open, setOpen }), [open]);
   return (
-    <>
-      <Pressable
-        onPress={() => setOpen(true)}
-        hitSlop={12}
-        accessibilityLabel="Admin sections"
-        className="px-3 py-1.5 rounded-lg bg-accent active:opacity-70"
-      >
-        <Text className="text-xs font-semibold text-foreground">Sections</Text>
-      </Pressable>
+    <SectionsContext.Provider value={value}>
+      {children}
+      {/* Outside the navigator, so the Modal has a normal React Native view to
+          mount into rather than the native header. */}
       <AdminSectionsSheet open={open} onClose={() => setOpen(false)} />
-    </>
+    </SectionsContext.Provider>
+  );
+}
+
+export function AdminSectionsButton() {
+  const ctx = React.useContext(SectionsContext);
+  return (
+    <Pressable
+      onPress={() => ctx?.setOpen(true)}
+      hitSlop={12}
+      accessibilityLabel="Admin sections"
+      className="px-3 py-1.5 rounded-lg bg-accent active:opacity-70"
+    >
+      <Text className="text-xs font-semibold text-foreground">Sections</Text>
+    </Pressable>
   );
 }

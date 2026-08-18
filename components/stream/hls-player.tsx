@@ -27,6 +27,17 @@ export interface HlsPlayerProps {
   /** Fires once when playback reaches the end of media. Used to mark a
    *  VOD/episode as completed in watch progress. */
   onEnded?: () => void;
+  /**
+   * A live broadcast rather than a recording.
+   *
+   * Removes seeking from the player. The website's live player dropped its
+   * scrub bar and skip buttons for a reason: every second scrubbed back is
+   * latency the viewer cannot see the value of, and landing near the live edge
+   * re-buffers on arrival. The app kept them because these controls are drawn
+   * by the platform, not by us, so hiding them meant telling the platform not
+   * to offer them.
+   */
+  isLive?: boolean;
 }
 
 export function HlsPlayer({
@@ -42,6 +53,7 @@ export function HlsPlayer({
   progressIntervalMs = 15_000,
   startAtSec,
   onEnded,
+  isLive = false,
 }: HlsPlayerProps) {
   const palette = useTokens();
   const [hasStarted, setHasStarted] = React.useState(autoPlay);
@@ -139,6 +151,17 @@ export function HlsPlayer({
         style={{ width: "100%", height: "100%" }}
         contentFit="contain"
         nativeControls={controls && hasStarted}
+        /*
+         * No seeking on a live broadcast, and no timecode next to it.
+         *
+         * These controls come from the OS player, so the website's approach of
+         * simply not rendering a scrub bar does not apply: the platform has to
+         * be told. `requiresLinearPlayback` removes skipping on both iOS and
+         * Android; `showsTimecodes` hides the position readout on iOS, where a
+         * clock against a stream with no beginning means nothing.
+         */
+        requiresLinearPlayback={isLive}
+        showsTimecodes={!isLive}
         allowsFullscreen
         allowsPictureInPicture
         startsPictureInPictureAutomatically

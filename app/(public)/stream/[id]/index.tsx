@@ -163,7 +163,13 @@ export default function StreamScreen() {
           </Button>
         </View>
       ) : (
-        <HLSPlayer src={stream.hlsUrl} poster={stream.thumbnailUrl} />
+        <HLSPlayer
+          src={stream.hlsUrl}
+          poster={stream.thumbnailUrl}
+          // Removes seeking. Without it the platform player offers a scrub bar
+          // and skip buttons on a broadcast that has no beginning.
+          isLive={stream.isLive}
+        />
       )}
       <Pressable
         onPress={() => router.back()}

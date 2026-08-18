@@ -8,7 +8,10 @@ import {
   requiredRoleForPath,
   WEAKEST_ADMIN_ROLE,
 } from "@/lib/admin/nav-items";
-import { AdminSectionsButton } from "@/components/admin/admin-sections-sheet";
+import {
+  AdminSectionsButton,
+  AdminSectionsProvider,
+} from "@/components/admin/admin-sections-sheet";
 
 /**
  * The admin group.
@@ -67,16 +70,27 @@ export default function AdminLayout() {
   }
 
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: { backgroundColor: t.bg },
-        headerTintColor: t.fg,
-        headerTitleStyle: { color: t.fg, fontFamily: "ArchivoSemiBold" },
-        headerBackTitle: "Back",
-        headerRight: () => <AdminSectionsButton />,
-        contentStyle: { backgroundColor: t.bg },
-        animation: "slide_from_right",
-      }}
-    />
+    /*
+     * The sheet mounts here rather than in the header.
+     *
+     * `headerRight` renders into the native stack header, which is a platform
+     * view and cannot host a full-screen Modal, so the sheet that used to live
+     * beside the button never appeared: pressing Sections set state and nothing
+     * happened. The provider keeps the button in the header and puts the sheet
+     * outside the navigator where a Modal works.
+     */
+    <AdminSectionsProvider>
+      <Stack
+        screenOptions={{
+          headerStyle: { backgroundColor: t.bg },
+          headerTintColor: t.fg,
+          headerTitleStyle: { color: t.fg, fontFamily: "ArchivoSemiBold" },
+          headerBackTitle: "Back",
+          headerRight: () => <AdminSectionsButton />,
+          contentStyle: { backgroundColor: t.bg },
+          animation: "slide_from_right",
+        }}
+      />
+    </AdminSectionsProvider>
   );
 }

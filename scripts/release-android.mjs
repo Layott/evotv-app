@@ -53,6 +53,27 @@ const skipPublish = flag("skip-publish");
 const repo = path.resolve(import.meta.dirname, "..");
 const buildsDir = path.join(repo, "builds");
 
+/**
+ * EAS credentials come out of the same gitignored file as the publish ones.
+ *
+ * `eas login` writes a session to ~/.expo, which is fine for a person at a
+ * keyboard and useless here: the prompt needs a TTY, and this script is run
+ * from tooling that has none. A robot token in `.publish.env` covers both, and
+ * keeps the value out of shell history and out of any transcript.
+ */
+const envPath = path.join(repo, ".publish.env");
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) continue;
+    const key = trimmed.slice(0, eq).trim();
+    const value = trimmed.slice(eq + 1).trim().replace(/^["'](.*)["']$/, "$1");
+    if (!process.env[key]) process.env[key] = value;
+  }
+}
+
 function run(cmd, cmdArgs, opts = {}) {
   const res = spawnSync(cmd, cmdArgs, {
     cwd: repo,

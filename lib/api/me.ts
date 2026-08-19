@@ -80,3 +80,17 @@ export async function changePassword(
     body: { currentPassword, newPassword, revokeOtherSessions: true },
   });
 }
+
+/**
+ * POST /api/auth/change-email - Better-Auth built-in.
+ *
+ * Nothing changes until the link in the confirmation email is opened, and that
+ * email goes to the address currently on the account, not the new one. Callers
+ * must say so: a plain "Saved" here would be wrong twice over.
+ */
+export async function changeEmail(newEmail: string): Promise<void> {
+  await api("/api/auth/change-email", {
+    method: "POST",
+    body: { newEmail },
+  });
+}

@@ -17,6 +17,7 @@
       "distribution": "internal",
       "channel": "preview",
       "autoIncrement": true,
+      "credentialsSource": "local",
       "ios": {
         "simulator": false
       },

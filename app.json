@@ -65,7 +65,8 @@
           "supportsBackgroundPlayback": true,
           "supportsPictureInPicture": true
         }
-      ]
+      ],
+      "./plugins/with-phone-abis.js"
     ],
     "experiments": {
       "typedRoutes": true,

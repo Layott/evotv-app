@@ -74,12 +74,28 @@ if (fs.existsSync(envPath)) {
   }
 }
 
+/**
+ * Windows needs `shell: true` to run `pnpm`, which is a .cmd, and a shell
+ * concatenates the arguments instead of passing them through. An argument with
+ * a space in it therefore arrives as several arguments.
+ *
+ * That is not hypothetical: the first release got as far as publishing the APK
+ * and then died on `eas update --message Merge pull request #44 from
+ * Layott/staging`, because the commit subject was a sentence. Quote anything
+ * with whitespace, and escape the quotes inside it.
+ */
+function quoteForShell(arg) {
+  if (!/[\s"]/.test(arg)) return arg;
+  return `"${arg.replace(/"/g, '\\"')}"`;
+}
+
 function run(cmd, cmdArgs, opts = {}) {
-  const res = spawnSync(cmd, cmdArgs, {
+  const useShell = process.platform === "win32";
+  const res = spawnSync(cmd, useShell ? cmdArgs.map(quoteForShell) : cmdArgs, {
     cwd: repo,
     stdio: opts.capture ? ["inherit", "pipe", "inherit"] : "inherit",
     encoding: "utf8",
-    shell: process.platform === "win32",
+    shell: useShell,
     ...opts,
   });
   if (res.status !== 0) {

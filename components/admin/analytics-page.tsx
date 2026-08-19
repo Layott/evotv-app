@@ -4,8 +4,10 @@ import { Clock, PercentCircle, Radio, Users } from "@/components/icons";
 import { useQuery } from "@tanstack/react-query";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { RangeInput } from "@/lib/analytics-range";
 import {
   getFreeToPremiumConversion,
+  getViewsInWindow,
   getOverviewMetrics,
   getRetention,
   getRevenueByMonth,
@@ -13,26 +15,40 @@ import {
   getViewsOverTime,
 } from "@/lib/api/admin";
 
+import { DayPicker } from "./day-picker";
 import { MetricCard } from "./metric-card";
 import { PageHeader } from "./page-header";
 import { formatCompact, formatNgn, formatNumber } from "./utils";
 
 const DATE_RANGES = [
-  { value: "7d", label: "7d" },
-  { value: "30d", label: "30d" },
-  { value: "90d", label: "90d" },
-  { value: "1y", label: "1y" },
+  { value: "1d", label: "Today", days: 1 },
+  { value: "7d", label: "7d", days: 7 },
+  { value: "30d", label: "30d", days: 30 },
+  { value: "90d", label: "90d", days: 90 },
+  { value: "1y", label: "1y", days: 365 },
+  { value: "custom", label: "Dates", days: 0 },
 ];
 
+/** Today as a UTC day key, matching the API and the buckets behind it. */
+function todayKey(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
 function rangeToDays(r: string): number {
-  if (r === "7d") return 7;
-  if (r === "30d") return 30;
-  if (r === "90d") return 90;
-  return 365;
+  return DATE_RANGES.find((d) => d.value === r)?.days || 30;
 }
 
 export function AnalyticsPage() {
   const [range, setRange] = React.useState("30d");
+  /*
+   * A chosen window, kept beside the preset rather than inside it.
+   *
+   * The presets could not answer how a particular night went, which is the
+   * question the channel actually asks. "Dates" opens a month grid; everything
+   * else is a preset, and the two cannot both be active.
+   */
+  const [dates, setDates] = React.useState<RangeInput>({ from: todayKey() });
+  const custom = range === "custom";
 
   const overviewQ = useQuery({
     queryKey: ["admin-analytics-overview"],
@@ -41,8 +57,9 @@ export function AnalyticsPage() {
   });
 
   const viewsQ = useQuery({
-    queryKey: ["admin-analytics-views", range],
-    queryFn: () => getViewsOverTime(rangeToDays(range)),
+    queryKey: ["admin-analytics-views", range, dates.from, dates.to],
+    queryFn: () =>
+      custom ? getViewsInWindow(dates) : getViewsOverTime(rangeToDays(range)),
     staleTime: 60_000,
   });
 
@@ -104,6 +121,12 @@ export function AnalyticsPage() {
           ))}
         </TabsList>
       </Tabs>
+
+      {custom ? (
+        <View className="mb-4">
+          <DayPicker value={dates} onChange={setDates} />
+        </View>
+      ) : null}
 
       <View className="gap-3">
         <View className="flex-row gap-3">

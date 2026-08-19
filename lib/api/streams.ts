@@ -30,10 +30,22 @@ export async function getStreamById(id: string): Promise<Stream | null> {
   }
 }
 
-/** Convenience: the main 24/7 channel stream. */
+/**
+ * The main 24/7 channel, whichever stream is currently flagged as it.
+ *
+ * `channel_main` was hardcoded as the id and no stream by that name exists: the
+ * flagship is whatever row carries `isMainChannel`, which is what the admin
+ * "Make main channel" button sets and what `/api/channel/main` resolves. So
+ * this answered null on production while the channel was live, the screen said
+ * off air, and Watch now pushed a route that cannot resolve.
+ */
 export async function getMainChannel(): Promise<Stream | null> {
   try {
-    return await api<Stream>("/api/streams/channel_main");
+    const res = await api<{ channel: { id: string } | null }>(
+      "/api/channel/main",
+    );
+    const id = res?.channel?.id;
+    return id ? await getStreamById(id) : null;
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) return null;
     throw err;

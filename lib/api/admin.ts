@@ -100,6 +100,23 @@ export async function getViewsOverTime(days = 30): Promise<ViewsPoint[]> {
   return api<ViewsPoint[]>(`/api/admin/analytics/views?days=${days}`);
 }
 
+/**
+ * The same series for a chosen window rather than a preset.
+ *
+ * `from` on its own is a single day, which is the question the preset chips
+ * cannot ask: how the premiere did on the night it went out.
+ */
+export async function getViewsInWindow(window: {
+  from?: string;
+  to?: string;
+}): Promise<ViewsPoint[]> {
+  if (!window.from) return getViewsOverTime(30);
+  const to = window.to ?? window.from;
+  return api<ViewsPoint[]>(
+    `/api/admin/analytics/views?from=${encodeURIComponent(window.from)}&to=${encodeURIComponent(to)}`,
+  );
+}
+
 export interface RetentionData {
   cohorts: { weekStart: string; size: number }[];
   matrix: (number | null)[][];

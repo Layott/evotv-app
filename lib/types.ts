@@ -112,6 +112,8 @@ export type Role =
   | "premium"
   | "creator"
   | "support_admin"
+  | "programmer"
+  | "broadcast_op"
   | "moderator"
   | "finance_admin"
   | "admin"
@@ -119,6 +121,8 @@ export type Role =
 
 export const ADMIN_TIER_ROLES: ReadonlyArray<Role> = [
   "support_admin",
+  "programmer",
+  "broadcast_op",
   "moderator",
   "finance_admin",
   "admin",

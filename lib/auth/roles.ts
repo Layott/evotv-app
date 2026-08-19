@@ -19,6 +19,10 @@ export const RANK: Record<Role, number> = {
   premium: 2,
   creator: 5,
   support_admin: 10,
+  // The two room roles. Rank is seniority here, not access: what they may open
+  // comes from `capabilities.ts`, which is a copy of the backend's table.
+  programmer: 15,
+  broadcast_op: 15,
   moderator: 20,
   finance_admin: 30,
   admin: 40,
@@ -56,6 +60,8 @@ const LABELS: Record<Role, string> = {
   premium: "Premium",
   creator: "Creator",
   support_admin: "Support",
+  programmer: "Programmer",
+  broadcast_op: "Broadcast",
   moderator: "Moderator",
   finance_admin: "Finance",
   admin: "Admin",

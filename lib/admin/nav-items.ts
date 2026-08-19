@@ -20,7 +20,7 @@ import {
   type Icon,
 } from "@/components/icons";
 
-import { hasMinRole } from "@/lib/auth/roles";
+import { hasCapability, type Capability } from "@/lib/auth/capabilities";
 import type { Role } from "@/lib/types";
 
 export interface AdminNavItem {
@@ -30,13 +30,14 @@ export interface AdminNavItem {
   /** Only `/admin` itself needs an exact match, or it lights up everywhere. */
   exact?: boolean;
   /**
-   * The weakest role that may open this section. Defaults to `admin`.
+   * The room this section belongs to. Defaults to `roster`, which only admins
+   * and above hold, so a new entry is private until somebody says otherwise.
    *
    * Filtering the list is a courtesy, not a control: every route under
    * `/api/admin/*` checks the same ladder. What it prevents is a moderator
    * opening Ads and being told off for it.
    */
-  minRole?: Role;
+  capability?: Capability;
 }
 
 /**
@@ -60,22 +61,22 @@ export interface AdminNavItem {
  */
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   { href: "/admin", label: "Overview", Icon: LayoutDashboard, exact: true },
-  { href: "/admin/shows", label: "Shows", Icon: Tv },
-  { href: "/admin/schedule", label: "Schedule", Icon: CalendarRange },
-  { href: "/admin/library", label: "Library", Icon: Film, minRole: "moderator" },
-  { href: "/admin/streams", label: "Streams", Icon: Radio },
-  { href: "/admin/content", label: "Content", Icon: FileText },
-  { href: "/admin/polls", label: "Polls", Icon: Vote },
-  { href: "/admin/announcements", label: "Announcements", Icon: Bell },
-  { href: "/admin/ads", label: "Ads", Icon: Megaphone },
-  { href: "/admin/users", label: "Users & roles", Icon: Users, minRole: "support_admin" },
+  { href: "/admin/shows", label: "Shows", Icon: Tv, capability: "editorial" },
+  { href: "/admin/schedule", label: "Schedule", Icon: CalendarRange, capability: "editorial" },
+  { href: "/admin/library", label: "Library", Icon: Film, capability: "editorial" },
+  { href: "/admin/streams", label: "Streams", Icon: Radio, capability: "broadcast" },
+  { href: "/admin/content", label: "Content", Icon: FileText, capability: "editorial" },
+  { href: "/admin/polls", label: "Polls", Icon: Vote, capability: "editorial" },
+  { href: "/admin/announcements", label: "Announcements", Icon: Bell, capability: "editorial" },
+  { href: "/admin/ads", label: "Ads", Icon: Megaphone, capability: "commerce" },
+  { href: "/admin/users", label: "Users & roles", Icon: Users, capability: "support" },
   { href: "/admin/analytics", label: "Analytics", Icon: BarChart3 },
-  { href: "/admin/shop", label: "Shop", Icon: Store, minRole: "support_admin" },
-  { href: "/admin/orders", label: "Orders", Icon: ShoppingBag, minRole: "support_admin" },
-  { href: "/admin/subscriptions", label: "Subscriptions", Icon: CreditCard, minRole: "finance_admin" },
-  { href: "/admin/moderation", label: "Moderation", Icon: Shield, minRole: "moderator" },
-  { href: "/admin/billing", label: "Billing & USSD", Icon: Landmark, minRole: "finance_admin" },
-  { href: "/admin/forensic", label: "Forensic", Icon: Fingerprint },
+  { href: "/admin/shop", label: "Shop", Icon: Store, capability: "commerce" },
+  { href: "/admin/orders", label: "Orders", Icon: ShoppingBag, capability: "support" },
+  { href: "/admin/subscriptions", label: "Subscriptions", Icon: CreditCard, capability: "commerce" },
+  { href: "/admin/moderation", label: "Moderation", Icon: Shield, capability: "community" },
+  { href: "/admin/billing", label: "Billing & USSD", Icon: Landmark, capability: "commerce" },
+  { href: "/admin/forensic", label: "Forensic", Icon: Fingerprint, capability: "broadcast" },
   { href: "/admin/settings", label: "Settings", Icon: Settings },
 ];
 
@@ -103,7 +104,9 @@ export const EXTRA_SECTIONS: Record<string, Array<{ href: string; label: string 
 
 /** The sections a role may open, in nav order. */
 export function adminNavFor(role: string | null | undefined): AdminNavItem[] {
-  return ADMIN_NAV_ITEMS.filter((item) => hasMinRole(role, item.minRole ?? "admin"));
+  return ADMIN_NAV_ITEMS.filter((item) =>
+    hasCapability(role, item.capability ?? "roster"),
+  );
 }
 
 /** Shared so a screen and the section list cannot disagree about what is active. */
@@ -114,7 +117,7 @@ export function isAdminNavItemActive(item: AdminNavItem, pathname: string | null
 }
 
 /**
- * The role a given admin route needs.
+ * The room a given admin route belongs to.
  *
  * The website gates page by page: `AdminGuard` takes a `minRole`, so a
  * moderator opens /admin/moderation and a finance admin opens /admin/billing,
@@ -127,22 +130,24 @@ export function isAdminNavItemActive(item: AdminNavItem, pathname: string | null
  * new screen cannot be added without a gate, and the gate cannot disagree with
  * whether the section is listed.
  */
-export function requiredRoleForPath(pathname: string | null): Role {
-  if (!pathname) return "admin";
+export function requiredCapabilityForPath(pathname: string | null): Capability {
+  // Roster is the closed default: only admin and above hold it, so an
+  // unrecognised path is private rather than accidentally open.
+  if (!pathname) return "roster";
 
   // Nested screens inherit the gate of the section that owns them: sanctions is
   // moderation's, VODs and clips are the library's.
   for (const [parent, subs] of Object.entries(EXTRA_SECTIONS)) {
     if (subs.some((s) => pathname === s.href || pathname.startsWith(s.href + "/"))) {
       const owner = ADMIN_NAV_ITEMS.find((i) => i.href === parent);
-      return owner?.minRole ?? "admin";
+      return owner?.capability ?? "roster";
     }
   }
 
   const match = [...ADMIN_NAV_ITEMS]
     .sort((a, b) => b.href.length - a.href.length)
     .find((item) => isAdminNavItemActive(item, pathname));
-  return match?.minRole ?? "admin";
+  return match?.capability ?? "roster";
 }
 
 /**

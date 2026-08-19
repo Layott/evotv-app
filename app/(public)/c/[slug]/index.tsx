@@ -34,10 +34,9 @@ export default function ChannelPublicPage() {
     queryKey: ["channel", slug],
     queryFn: () => getChannelPage(slug!),
     enabled: !!slug,
-    // liveStream.viewerCount on the channel page comes from the same
-    // read-time count as /stream/[id]. Refresh on a 60s cadence so a
-    // newly-live channel + viewer-count ticks reflect without a manual
-    // reload. Falls back to false when liveStream is null.
+    // Refreshed on a 60s cadence so a channel going live shows up without a
+    // manual reload. It used to be here for the viewer count as well, which is
+    // staff only now. Falls back to false when liveStream is null.
     refetchInterval: (query) =>
       query.state.data?.liveStream ? 60_000 : false,
   });
@@ -226,12 +225,14 @@ export default function ChannelPublicPage() {
                   <Text className="text-sm font-semibold text-foreground" numberOfLines={1}>
                     {liveStream.title}
                   </Text>
-                  <View className="mt-1 flex-row items-center gap-1">
-                    <Users size={11} color={palette.muted} />
-                    <Text className="text-[11px] text-muted-foreground">
-                      {liveStream.viewerCount.toLocaleString()} watching
-                    </Text>
-                  </View>
+                  {typeof liveStream.viewerCount === "number" ? (
+                    <View className="mt-1 flex-row items-center gap-1">
+                      <Users size={11} color={palette.muted} />
+                      <Text className="text-[11px] text-muted-foreground">
+                        {liveStream.viewerCount.toLocaleString()} watching
+                      </Text>
+                    </View>
+                  ) : null}
                 </View>
               </Pressable>
             </Link>
@@ -280,9 +281,11 @@ export default function ChannelPublicPage() {
                       >
                         {v.title}
                       </Text>
-                      <Text className="mt-1 text-[10px] text-muted-foreground">
-                        {v.viewCount.toLocaleString()} views
-                      </Text>
+                      {typeof v.viewCount === "number" ? (
+                        <Text className="mt-1 text-[10px] text-muted-foreground">
+                          {v.viewCount.toLocaleString()} views
+                        </Text>
+                      ) : null}
                     </View>
                   </Pressable>
                 </Link>

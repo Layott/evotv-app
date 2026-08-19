@@ -22,7 +22,8 @@ export interface ChannelLiveStream {
   hlsPath: string;
   thumbnailUrl: string;
   startedAt: string | null;
-  viewerCount: number;
+  /** Staff only, stripped server-side. Absent is not the same as 0. */
+  viewerCount?: number;
 }
 
 export interface ChannelVod {
@@ -31,7 +32,8 @@ export interface ChannelVod {
   durationSec: number;
   thumbnailUrl: string;
   publishedAt: string;
-  viewCount: number;
+  /** Staff only, stripped server-side. Absent is not the same as 0. */
+  viewCount?: number;
   likeCount: number;
 }
 

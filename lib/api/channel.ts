@@ -40,7 +40,8 @@ export interface MainChannel {
   hlsUrl: string;
   /** Present when the stream is gated: watching needs an account. */
   requiresAuth?: true;
-  viewerCount: number;
+  /** Staff only, stripped server-side. Absent is not the same as 0. */
+  viewerCount?: number;
   startedAt: string | null;
 }
 

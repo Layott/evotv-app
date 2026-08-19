@@ -150,12 +150,14 @@ export function TrendingClips({ clips, loading }: TrendingClipsProps) {
                   >
                     {c.title}
                   </Text>
-                  <View className="flex-row items-center gap-1">
-                    <Eye size={11} color="#d4d4d4" />
-                    <Text style={{ fontSize: 10, color: "#d4d4d4" }}>
-                      {formatViewers(c.viewCount)}
-                    </Text>
-                  </View>
+                  {typeof c.viewCount === "number" ? (
+                    <View className="flex-row items-center gap-1">
+                      <Eye size={11} color="#d4d4d4" />
+                      <Text style={{ fontSize: 10, color: "#d4d4d4" }}>
+                        {formatViewers(c.viewCount)}
+                      </Text>
+                    </View>
+                  ) : null}
                 </View>
               </View>
             </PressableScale>

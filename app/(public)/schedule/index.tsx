@@ -121,6 +121,32 @@ function LiveBadge() {
   );
 }
 
+/**
+ * Which programme is imminent, on a list where every row is in the future.
+ *
+ * Quieter than LIVE on purpose: one thing is happening, the other is only
+ * about to. Same shape, no red, and no dot, since nothing is on air.
+ */
+function UpNextBadge() {
+  return (
+    <View
+      className="rounded-md px-2 py-0.5"
+      style={{ backgroundColor: "rgba(56,189,248,0.25)" }}
+    >
+      <Text
+        style={{
+          fontSize: 10,
+          fontWeight: "600",
+          letterSpacing: 1,
+          color: "#7dd3fc",
+        }}
+      >
+        UP NEXT
+      </Text>
+    </View>
+  );
+}
+
 function ReminderBell({
   targetId,
   airsAt,
@@ -165,9 +191,12 @@ function ReminderBell({
 function EpgCard({
   row,
   isAuthenticated,
+  upNext = false,
 }: {
   row: EpgRow;
   isAuthenticated: boolean;
+  /** The programme that starts next. Only ever one card on a day. */
+  upNext?: boolean;
 }) {
   const palette = useTokens();
   const router = useRouter();
@@ -215,6 +244,11 @@ function EpgCard({
         {isLive ? (
           <View className="absolute left-2 top-9">
             <LiveBadge />
+          </View>
+        ) : null}
+        {upNext ? (
+          <View className="absolute left-2 top-9">
+            <UpNextBadge />
           </View>
         ) : null}
       </View>
@@ -484,8 +518,17 @@ export default function ScheduleScreen() {
                     {isToday ? "Coming up today" : "Scheduled"}
                   </SectionHeader>
                   <View className="gap-3 px-4">
-                    {upcoming.map((r) => (
-                      <EpgCard key={r.id} row={r} isAuthenticated={isAuthenticated} />
+                    {upcoming.map((r, i) => (
+                      <EpgCard
+                        key={r.id}
+                        row={r}
+                        isAuthenticated={isAuthenticated}
+                        /* The list is ordered by airtime, so the first card is
+                           what comes on next. Only on a day that is running:
+                           on a future day every row is upcoming and none of
+                           them is next. */
+                        upNext={isToday && i === 0}
+                      />
                     ))}
                   </View>
                 </View>

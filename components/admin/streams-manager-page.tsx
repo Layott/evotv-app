@@ -405,7 +405,7 @@ export function StreamsManagerPage() {
                     <StatusBadge tone="amber">Premium</StatusBadge>
                   ) : null}
                   <Text className="text-xs text-muted-foreground">
-                    {formatCompact(row.viewerCount)} viewers
+                    {formatCompact(row.viewerCount ?? 0)} viewers
                   </Text>
                 </View>
               </View>
@@ -472,8 +472,8 @@ export function StreamsManagerPage() {
                 </View>
 
                 <View className="mt-3 flex-row flex-wrap gap-3">
-                  <InfoCell label="Viewers" value={formatCompact(selected.viewerCount)} />
-                  <InfoCell label="Peak" value={formatCompact(selected.peakViewerCount)} />
+                  <InfoCell label="Viewers" value={formatCompact(selected.viewerCount ?? 0)} />
+                  <InfoCell label="Peak" value={formatCompact(selected.peakViewerCount ?? 0)} />
                   {selected.startedAt ? (
                     <InfoCell label="Started" value={timeAgo(selected.startedAt)} />
                   ) : null}

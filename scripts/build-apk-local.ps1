@@ -12,6 +12,11 @@
 # back to the physical path. A genuinely short path is the only fix.
 #
 # Usage:  pnpm apk         (from the repo root)
+#
+# This is for trying something on a phone, NOT for making a release. A release
+# is built on EAS and the website is handed that same artifact, so that the
+# download and the EAS build are one binary rather than two builds of one
+# commit (owner, 19 August 2026). Use `pnpm release:android` for that.
 
 $ErrorActionPreference = "Stop"
 

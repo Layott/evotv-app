@@ -76,3 +76,21 @@ Windows, so a build without EAS quota has to go through it.
 Walk the new build on a phone. The player controls, the admin sheets and
 anything else drawn by the platform cannot be verified anywhere else, and the
 web target proves nothing about them.
+
+## Signing
+
+Cloud builds sign with **the same keystore the local script uses**, not one EAS
+generates. That is not a preference: an APK signed with a different key cannot
+install over the copy already on a phone, and Android reports it as "app not
+installed" with no reason given.
+
+`eas.json` sets `credentialsSource: local` on the preview profile, and
+`credentials.json` (gitignored) points at `evotv-release.keystore` in the repo
+root. Both the keystore and that file stay out of git.
+
+The practical consequence: a release can only be cut from a machine holding the
+keystore. That is this one. If it has to move, copy `evotv-release.keystore` and
+recreate `credentials.json`; do not let EAS generate a new key.
+
+Fingerprint of the key every build so far has used:
+`62:FE:7A:B1:0A:BC:FE:BF:9F:FC:AE:2C:A0:2D:00:6E:00:41:E3:0A:CD:04:44:6B:6C:E4:DD:BF:4F:D5:DA:46`

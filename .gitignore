@@ -55,3 +55,6 @@ graphify-out/
 
 # Credentials for scripts/publish-apk.mjs. Never commit.
 .publish.env
+
+# EAS local credentials: points at the release keystore and holds its passwords
+credentials.json

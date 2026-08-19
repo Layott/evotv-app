@@ -94,3 +94,16 @@ recreate `credentials.json`; do not let EAS generate a new key.
 
 Fingerprint of the key every build so far has used:
 `62:FE:7A:B1:0A:BC:FE:BF:9F:FC:AE:2C:A0:2D:00:6E:00:41:E3:0A:CD:04:44:6B:6C:E4:DD:BF:4F:D5:DA:46`
+
+## Size
+
+A release APK should be about **55 MB**. If one comes out near 100 MB, it has
+all four ABIs in it and the emulator halves are riding along.
+
+`expo prebuild` writes all four architectures every time, and the local build
+script patched them out, which helped only the builds that script made. The
+first cloud build came out at **99.4 MB** for exactly that reason. It is now a
+config plugin, `plugins/with-phone-abis.js`, so prebuild produces the right
+list wherever it runs.
+
+Check the number the release prints before walking away from it.

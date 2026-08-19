@@ -32,6 +32,7 @@ import { ArrowRightIcon as PArrowRight } from "phosphor-react-native/src/icons/A
 import { ArrowSquareOutIcon as PArrowSquareOut } from "phosphor-react-native/src/icons/ArrowSquareOut";
 import { ArrowUpRightIcon as PArrowUpRight } from "phosphor-react-native/src/icons/ArrowUpRight";
 import { ArrowsClockwiseIcon as PArrowsClockwise } from "phosphor-react-native/src/icons/ArrowsClockwise";
+import { ArrowsOutIcon as PArrowsOut } from "phosphor-react-native/src/icons/ArrowsOut";
 import { BankIcon as PBank } from "phosphor-react-native/src/icons/Bank";
 import { BellIcon as PBell } from "phosphor-react-native/src/icons/Bell";
 import { BellRingingIcon as PBellRinging } from "phosphor-react-native/src/icons/BellRinging";
@@ -258,6 +259,7 @@ export const LogIn = make(PSignIn, "bold");
 export const LogOut = make(PSignOut, "bold");
 export const Mail = make(PEnvelope, "fill");
 export const MapPin = make(PMapPin, "fill");
+export const Maximize = make(PArrowsOut, "bold");
 export const Medal = make(PMedal, "fill");
 export const Megaphone = make(PMegaphone, "fill");
 export const Menu = make(PList, "bold");

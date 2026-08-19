@@ -221,7 +221,7 @@ export default function ChannelScreen() {
             <View className="mt-6 flex-row gap-3">
               {isLive ? (
                 <Button
-                  onPress={() => router.push("/stream/channel_main")}
+                  onPress={() => channel && router.push(`/stream/${channel.id}`)}
                   className="rounded-full bg-brand"
                   textClassName="text-black"
                 >
@@ -327,7 +327,7 @@ export default function ChannelScreen() {
           ) : (
             <View className="gap-4">
               {(liveQ.data ?? [])
-                .filter((s) => s.id !== "channel_main")
+                .filter((s) => s.id !== channel?.id)
                 .slice(0, 6)
                 .map((s) => (
                   <Pressable

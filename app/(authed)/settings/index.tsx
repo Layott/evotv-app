@@ -51,7 +51,7 @@ import {
   enableNativePush,
   openSystemNotificationSettings,
 } from "@/lib/push/register";
-import { changePassword } from "@/lib/api/me";
+import { changeEmail, changePassword } from "@/lib/api/me";
 import { exportOwnData } from "@/lib/api/profile";
 import { getMyPrefs, patchMyPrefs } from "@/lib/api/prefs";
 import { deleteOwnAccount } from "@/lib/api/profile";
@@ -193,6 +193,8 @@ export default function SettingsScreen() {
   const [savingPwd, setSavingPwd] = React.useState(false);
   const [pwd, setPwd] = React.useState({ current: "", next: "", confirm: "" });
   const [pwdError, setPwdError] = React.useState<string | null>(null);
+  const [emailValue, setEmailValue] = React.useState("");
+  const [savingEmail, setSavingEmail] = React.useState(false);
 
   const [deleting, setDeleting] = React.useState(false);
   const [exporting, setExporting] = React.useState(false);
@@ -236,6 +238,39 @@ export default function SettingsScreen() {
   );
 
   const email = accountEmail ?? "";
+
+  // The field starts empty while /api/users/me is in flight, so seed it once
+  // the real address arrives rather than leaving somebody editing a blank.
+  React.useEffect(() => {
+    setEmailValue(email);
+  }, [email]);
+
+  /**
+   * Change the sign-in email, same as the website.
+   *
+   * This field was read-only, under the words "Contact support to change your
+   * email", on a platform with no support desk. Better-Auth's `changeEmail` is
+   * enabled, so it is a real form on both surfaces now.
+   */
+  const handleChangeEmail = React.useCallback(async () => {
+    const next = emailValue.trim();
+    if (!next || next.toLowerCase() === email.toLowerCase()) return;
+    setSavingEmail(true);
+    try {
+      await changeEmail(next);
+      toast.success("Check your inbox", {
+        description: `We sent ${email} a link to confirm the change to ${next}.`,
+      });
+      setEmailValue(email);
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Couldn't change your email",
+      );
+      setEmailValue(email);
+    } finally {
+      setSavingEmail(false);
+    }
+  }, [email, emailValue]);
 
   const handleChangePwd = React.useCallback(async () => {
     setPwdError(null);
@@ -404,13 +439,32 @@ export default function SettingsScreen() {
             <View className="gap-4">
               <View className="gap-1.5">
                 <Label>Email</Label>
-                <Input
-                  editable={false}
-                  value={email}
-                  className="bg-background/60"
-                />
+                <View className="flex-row items-center gap-2">
+                  <Input
+                    value={emailValue}
+                    onChangeText={setEmailValue}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    onPress={handleChangeEmail}
+                    disabled={
+                      savingEmail ||
+                      !emailValue.trim() ||
+                      emailValue.trim().toLowerCase() === email.toLowerCase()
+                    }
+                    className="h-10"
+                  >
+                    {savingEmail ? "Saving..." : "Change"}
+                  </Button>
+                </View>
                 <Text className="text-xs text-muted-foreground">
-                  Contact support to change your email.
+                  This is the address you sign in with. Changing it sends a
+                  confirmation link to your current address, and nothing
+                  changes until you open it.
                 </Text>
               </View>
 

@@ -11,7 +11,8 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "check": "pnpm typecheck && pnpm lint",
-    "apk": "powershell -ExecutionPolicy Bypass -File scripts/build-apk-local.ps1"
+    "apk": "powershell -ExecutionPolicy Bypass -File scripts/build-apk-local.ps1",
+    "release:android": "node scripts/release-android.mjs"
   },
   "dependencies": {
     "@babel/runtime": "^7.29.2",

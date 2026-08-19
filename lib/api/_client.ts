@@ -84,6 +84,22 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * The readable sentence out of an error body, if it has one.
+ *
+ * Our own routes answer `{ error: "..." }` and Better-Auth answers
+ * `{ message: "..." }`. Anything longer than a toast is dropped rather than
+ * truncated, since a wall of text is not a message.
+ */
+function serverMessage(body: unknown): string | undefined {
+  if (!body || typeof body !== "object") return undefined;
+  const record = body as Record<string, unknown>;
+  const candidate = record.message ?? record.error;
+  if (typeof candidate !== "string") return undefined;
+  const text = candidate.trim();
+  return text && text.length <= 160 ? text : undefined;
+}
+
 interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
@@ -128,6 +144,9 @@ export async function api<T>(
     ? await res.json().catch(() => null)
     : await res.text().catch(() => null);
 
-  if (!res.ok) throw new ApiError(res.status, data);
+  // Carry the server's own sentence as the Error message when there is one.
+  // Screens show `err.message` in a toast, and "API 400" tells somebody who
+  // typed a taken email address nothing about what to do next.
+  if (!res.ok) throw new ApiError(res.status, data, serverMessage(data));
   return data as T;
 }

@@ -55,16 +55,18 @@ function ClipCard({ clip }: { clip: Clip }) {
           pointerEvents="none"
         />
 
-        {/* Play indicator */}
-        <View
-          className="absolute left-2 top-2 flex-row items-center gap-1 rounded px-1.5 py-0.5"
-          style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
-        >
-          <Play size={11} color="#fff" />
-          <Text style={{ fontSize: 10, color: "#fff" }}>
-            {compact(clip.viewCount)}
-          </Text>
-        </View>
+        {/* Play count, staff only */}
+        {typeof clip.viewCount === "number" ? (
+          <View
+            className="absolute left-2 top-2 flex-row items-center gap-1 rounded px-1.5 py-0.5"
+            style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
+          >
+            <Play size={11} color="#fff" />
+            <Text style={{ fontSize: 10, color: "#fff" }}>
+              {compact(clip.viewCount)}
+            </Text>
+          </View>
+        ) : null}
         <View
           className="absolute right-2 top-2 flex-row items-center gap-1 rounded px-1.5 py-0.5"
           style={{ backgroundColor: "rgba(0,0,0,0.7)" }}

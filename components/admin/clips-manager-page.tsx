@@ -208,7 +208,7 @@ export function ClipsManagerPage() {
                   {clip.title}
                 </Text>
                 <Text className="text-xs text-muted-foreground" numberOfLines={1}>
-                  @{clip.creatorHandle} · {formatCompact(clip.viewCount)} views ·{" "}
+                  @{clip.creatorHandle} · {formatCompact(clip.viewCount ?? 0)} views ·{" "}
                   {timeAgo(clip.createdAt)}
                 </Text>
               </View>

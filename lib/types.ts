@@ -264,8 +264,15 @@ export interface Stream {
    */
   requiresAuth?: true;
   thumbnailUrl: string;
-  viewerCount: number;
-  peakViewerCount: number;
+  /**
+   * Audience size, admin only.
+   *
+   * Absent means the caller is not allowed to know, which is different from 0,
+   * meaning nobody is watching. The backend strips it from every public
+   * response, so the app simply renders nothing when it is not there.
+   */
+  viewerCount?: number;
+  peakViewerCount?: number;
   language: string;
   tags: string[];
   isPremium: boolean;
@@ -307,7 +314,14 @@ export interface Vod {
   thumbnailUrl: string;
   publishedAt: ISODate;
   chapters: VodChapter[];
-  viewCount: number;
+  /**
+   * Audience size, admin only.
+   *
+   * Absent means the caller is not allowed to know, which is different from 0,
+   * meaning nobody is watching. The backend strips it from every public
+   * response, so the app simply renders nothing when it is not there.
+   */
+  viewCount?: number;
   likeCount: number;
   isPremium: boolean;
   pillar?: ContentPillar;
@@ -327,7 +341,14 @@ export interface Clip {
   durationSec: number;
   mp4Url: string;
   thumbnailUrl: string;
-  viewCount: number;
+  /**
+   * Audience size, admin only.
+   *
+   * Absent means the caller is not allowed to know, which is different from 0,
+   * meaning nobody is watching. The backend strips it from every public
+   * response, so the app simply renders nothing when it is not there.
+   */
+  viewCount?: number;
   likeCount: number;
   createdAt: ISODate;
   gameId: UUID;

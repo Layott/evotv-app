@@ -166,12 +166,14 @@ function ClipCard({ clip }: { clip: PublicProfileClip }) {
         <Text className="text-xs font-medium text-foreground" numberOfLines={2}>
           {clip.title}
         </Text>
-        <View className="mt-1 flex-row items-center gap-1">
-          <Eye size={10} color={palette.muted} />
-          <Text className="text-[10px] text-muted-foreground">
-            {formatCount(clip.viewCount)}
-          </Text>
-        </View>
+        {typeof clip.viewCount === "number" ? (
+          <View className="mt-1 flex-row items-center gap-1">
+            <Eye size={10} color={palette.muted} />
+            <Text className="text-[10px] text-muted-foreground">
+              {formatCount(clip.viewCount)}
+            </Text>
+          </View>
+        ) : null}
       </View>
     </Pressable>
   );
@@ -211,12 +213,14 @@ function VodCard({ vod }: { vod: PublicProfileVod }) {
         <Text className="text-sm font-medium text-foreground" numberOfLines={2}>
           {vod.title}
         </Text>
-        <View className="mt-1 flex-row items-center gap-1">
-          <Eye size={11} color={palette.muted} />
-          <Text className="text-[11px] text-muted-foreground">
-            {formatCount(vod.viewCount)} views
-          </Text>
-        </View>
+        {typeof vod.viewCount === "number" ? (
+          <View className="mt-1 flex-row items-center gap-1">
+            <Eye size={11} color={palette.muted} />
+            <Text className="text-[11px] text-muted-foreground">
+              {formatCount(vod.viewCount)} views
+            </Text>
+          </View>
+        ) : null}
       </View>
     </Pressable>
   );

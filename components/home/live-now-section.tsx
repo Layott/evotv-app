@@ -131,15 +131,17 @@ export function LiveNow({ streams, games, loading }: LiveNowProps) {
                     <LiveBadge />
                     <MaturityBadge rating={s.maturityRating} />
                   </View>
-                  <View
-                    className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
-                    style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
-                  >
-                    <Eye size={12} color={palette.fg} />
-                    <Text style={{ fontSize: 11, color: palette.fg }}>
-                      {formatViewers(s.viewerCount)}
-                    </Text>
-                  </View>
+                  {typeof s.viewerCount === "number" ? (
+                    <View
+                      className="absolute bottom-2 right-2 flex-row items-center gap-1 rounded-md px-1.5 py-0.5"
+                      style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
+                    >
+                      <Eye size={12} color={palette.fg} />
+                      <Text style={{ fontSize: 11, color: palette.fg }}>
+                        {formatViewers(s.viewerCount)}
+                      </Text>
+                    </View>
+                  ) : null}
                 </View>
                 <View className="gap-1 p-3">
                   <Text

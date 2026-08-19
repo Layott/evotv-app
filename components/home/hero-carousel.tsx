@@ -139,12 +139,14 @@ export function HeroCarousel({ streams, intervalMs = 5000 }: HeroCarouselProps) 
                   </Text>
                 </View>
                 <MaturityBadge rating={s.maturityRating} />
-                <View className="flex-row items-center gap-1">
-                  <Eye size={12} color="#d4d4d4" />
-                  <Text className="text-xs text-neutral-300">
-                    {formatViewers(s.viewerCount)}
-                  </Text>
-                </View>
+                {typeof s.viewerCount === "number" ? (
+                  <View className="flex-row items-center gap-1">
+                    <Eye size={12} color="#d4d4d4" />
+                    <Text className="text-xs text-neutral-300">
+                      {formatViewers(s.viewerCount)}
+                    </Text>
+                  </View>
+                ) : null}
               </View>
               <Text
                 className="text-lg font-bold text-white"

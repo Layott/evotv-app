@@ -101,14 +101,14 @@ export function MainChannel({ data, loading }: Props) {
             </View>
             <View className="absolute left-3 top-3 flex-row items-center gap-2">
               {channel.isLive ? <LiveBadge /> : null}
-              {channel.isLive && channel.viewerCount > 0 ? (
+              {channel.isLive && (channel.viewerCount ?? 0) > 0 ? (
                 <View
                   className="flex-row items-center gap-1 rounded-md px-2 py-0.5"
                   style={{ backgroundColor: "rgba(5,25,27,0.72)" }}
                 >
                   <Eye color={palette.muted} size={11} />
                   <Text style={{ fontSize: 10, color: palette.muted }}>
-                    {formatViewers(channel.viewerCount)}
+                    {formatViewers(channel.viewerCount ?? 0)}
                   </Text>
                 </View>
               ) : null}

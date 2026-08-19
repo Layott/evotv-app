@@ -61,11 +61,12 @@ export default function StreamScreen() {
     queryKey: ["stream", streamId],
     queryFn: () => getStreamById(streamId),
     enabled: streamId.length > 0,
-    // viewerCount is computed read-time on the backend from watch_events
-    // heartbeats over the last 90s. The detail page must refetch on a
-    // cadence or the count is frozen at first-mount. 30s matches what
-    // viewers expect ("see the number tick up while watching") without
-    // hammering the API.
+    // Refetched while live so the screen notices the broadcast ending rather
+    // than sitting on a dead player until the viewer backs out.
+    //
+    // It used to be here for viewerCount, which is now stripped server-side for
+    // everyone but staff, so for most viewers this is only tracking isLive. Not
+    // worth a second, count-only cadence for the few who do see the number.
     refetchInterval: (query) => (query.state.data?.isLive ? 30_000 : false),
   });
 
@@ -195,12 +196,14 @@ export default function StreamScreen() {
         {stream.title}
       </Text>
       <View className="flex-row items-center gap-3">
-        <View className="flex-row items-center gap-1">
-          <Eye color={palette.muted} size={14} />
-          <Text className="text-xs text-muted-foreground">
-            {formatViewers(stream.viewerCount)} watching
-          </Text>
-        </View>
+        {typeof stream.viewerCount === "number" ? (
+          <View className="flex-row items-center gap-1">
+            <Eye color={palette.muted} size={14} />
+            <Text className="text-xs text-muted-foreground">
+              {formatViewers(stream.viewerCount)} watching
+            </Text>
+          </View>
+        ) : null}
         {stream.tags.slice(0, 2).map((tag) => (
           <Badge key={tag} variant="outline">
             {tag}

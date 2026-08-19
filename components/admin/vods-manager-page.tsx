@@ -281,7 +281,7 @@ export function VodsManagerPage() {
                   {vod.title}
                 </Text>
                 <Text className="text-xs text-muted-foreground" numberOfLines={1}>
-                  {formatCompact(vod.viewCount)} views ·{" "}
+                  {formatCompact(vod.viewCount ?? 0)} views ·{" "}
                   {formatDate(vod.publishedAt)}
                 </Text>
               </View>

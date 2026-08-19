@@ -26,9 +26,20 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const file = process.argv[2];
+const args = process.argv.slice(2);
+const notesFlag = args.indexOf("--notes");
+/**
+ * Free text stored on the release row, used to record where the binary came
+ * from. `release-android.mjs` puts the EAS build id and artifact URL here, so
+ * the file the website hands out can always be traced back to the build that
+ * produced it rather than being taken on trust.
+ */
+const notes = notesFlag === -1 ? undefined : args[notesFlag + 1];
+if (notesFlag !== -1) args.splice(notesFlag, 2);
+
+const file = args[0];
 if (!file) {
-  console.error("usage: node scripts/publish-apk.mjs <path-to-apk>");
+  console.error("usage: node scripts/publish-apk.mjs <path-to-apk> [--notes <text>]");
   process.exit(1);
 }
 if (!fs.existsSync(file)) {
@@ -142,6 +153,37 @@ async function api(pathname, init = {}) {
 
 console.log(`publishing ${name} (${Math.round(bytes.length / 1024 / 1024)} MB)`);
 
+/*
+ * A release has to have a higher build number than the one already up, and
+ * this is worth failing on rather than discovering later.
+ *
+ * The site hands out whichever row has the highest build number, so a lower
+ * one is simply invisible: the upload succeeds, the row is written, and the
+ * download button carries on offering the old file. Android is stricter still
+ * and refuses to install a lower versionCode over an existing app, so anybody
+ * who did reach it would see "app not installed" with no reason given.
+ *
+ * It matters most when the source of build numbers changes. The local script
+ * uses the commit count; EAS keeps its own counter, which starts at 1 unless
+ * somebody sets it (`eas build:version:set`).
+ */
+const { releases } = await api(`/api/admin/app-releases?platform=android`);
+const highest = releases?.[0]?.buildNumber ?? 0;
+if (Number(buildNumber) <= highest) {
+  console.error(
+    [
+      `refusing to publish build ${buildNumber}: the site already offers build ${highest}.`,
+      "",
+      "A lower build number would never be handed out, and Android would",
+      "refuse to install it over the copy already on a phone.",
+      "",
+      "If this came from EAS, its counter is behind the local builds. Set it",
+      `once with \`eas build:version:set\` to something above ${highest}.`,
+    ].join("\n"),
+  );
+  process.exit(1);
+}
+
 const presign = await api("/api/admin/uploads/client", {
   method: "POST",
   body: JSON.stringify({
@@ -181,6 +223,7 @@ const { release } = await api("/api/admin/app-releases", {
     commitSha,
     fileUrl: presign.publicUrl,
     sizeBytes: bytes.length,
+    ...(notes ? { notes } : {}),
   }),
 });
 

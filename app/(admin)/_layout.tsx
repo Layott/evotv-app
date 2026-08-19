@@ -3,10 +3,14 @@ import { Text, View } from "react-native";
 
 import { useTokens } from "@/lib/theme/tokens";
 import { useAuth } from "@/components/providers";
-import { hasMinRole, roleLabel } from "@/lib/auth/roles";
+import { roleLabel } from "@/lib/auth/roles";
 import {
-  requiredRoleForPath,
-  WEAKEST_ADMIN_ROLE,
+  ROOM_LABELS,
+  hasCapability,
+  isStaffRole,
+} from "@/lib/auth/capabilities";
+import {
+  requiredCapabilityForPath,
 } from "@/lib/admin/nav-items";
 import {
   AdminSectionsButton,
@@ -45,25 +49,27 @@ export default function AdminLayout() {
     return <Redirect href="/(auth)/login" />;
   }
 
-  // Outer gate: can this account open anything in here at all? On the ladder,
-  // not `role !== "admin"` - that comparison is true for a head_admin, which
-  // once bounced the highest role on the platform out of the dashboard it owns.
-  if (!hasMinRole(user.role, WEAKEST_ADMIN_ROLE)) {
+  // Outer gate: does this account hold any room at all? Not a rank comparison:
+  // a programmer ranks below moderator and still belongs in here, and
+  // `role !== "admin"` was true for a head_admin, which once bounced the
+  // highest role on the platform out of the dashboard it owns.
+  if (!isStaffRole(user.role)) {
     return <Redirect href="/" />;
   }
 
   // Inner gate: this particular section. Rendered rather than redirected,
   // because silently sending someone home reads as a broken link.
-  const needed = requiredRoleForPath(pathname);
-  if (!hasMinRole(user.role, needed)) {
+  const needed = requiredCapabilityForPath(pathname);
+  if (!hasCapability(user.role, needed)) {
+    const roomLabel = ROOM_LABELS[needed];
     return (
       <View className="flex-1 items-center justify-center bg-background px-8">
         <Text className="text-lg font-semibold text-foreground text-center">
-          {roleLabel(needed)} access required
+          {roomLabel} access required
         </Text>
         <Text className="mt-2 text-sm text-muted-foreground text-center leading-5">
-          This section needs the {roleLabel(needed)} role or higher. You are
-          signed in as {roleLabel(user.role)}.
+          This section belongs to the {roomLabel.toLowerCase()} room. You are
+          signed in as {roleLabel(user.role)}, which does not hold it.
         </Text>
       </View>
     );

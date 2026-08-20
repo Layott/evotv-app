@@ -127,6 +127,10 @@ not have. That case is still `pnpm release:android`.
 
 **Escape hatch.** Put `[skip ota]` in the merge subject.
 
+**By hand.** `gh workflow run "OTA on merge" --repo Layott/evotv-app` publishes
+whatever `main` holds right now: for a merge that landed before the workflow
+existed, or one skipped and wanted after all.
+
 **It needs one secret**, set once:
 
 ```

@@ -20,6 +20,9 @@ on:
       - "**/*.md"
       - "docs/**"
       - ".github/**"
+  # For the merge that landed before this workflow existed, or one skipped with
+  # `[skip ota]` and wanted after all. Publishes whatever `main` holds now.
+  workflow_dispatch:
 
 # A burst of merges should publish the last state once, not each of them in turn.
 concurrency:
@@ -31,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     # `[skip ota]` anywhere in the subject is the escape hatch for a merge that
     # is deliberately not for phones yet.
-    if: ${{ !contains(github.event.head_commit.message, '[skip ota]') }}
+    if: ${{ github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip ota]') }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,6 +47,12 @@ jobs:
           # An OTA replaces the JavaScript bundle and nothing else. These files
           # decide what the binary itself contains, so a change to any of them
           # means the installed app is the wrong shape for the new bundle.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Asked for by hand: publish what main holds, whatever the last
+            # commit happened to touch.
+            echo "native=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           changed=$(git diff --name-only HEAD^ HEAD || true)
           echo "$changed"
           if echo "$changed" | grep -qE '^(app\.json|app\.config\.[jt]s|eas\.json|package\.json|pnpm-lock\.yaml|android/|ios/|plugins/)'; then

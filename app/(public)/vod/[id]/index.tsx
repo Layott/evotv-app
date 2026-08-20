@@ -37,9 +37,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { HLSPlayer } from "@/components/stream/hls-player";
 import { VodRelated } from "@/components/vod/vod-related";
-// VodComments hidden - no backend comments endpoint yet. Re-enable when
-// /api/vods/[id]/comments lands.
-// import { VodComments } from "@/components/vod/vod-comments";
+import { VodComments } from "@/components/vod/vod-comments";
 import { ReportButton } from "@/components/common/report-button";
 import { useAuth } from "@/components/providers";
 
@@ -488,6 +486,11 @@ export default function VodScreen() {
           ) : null}
 
           <VodChapters vod={vod} />
+
+          {/* The comment thread. It was commented out with "no backend
+              comments endpoint yet", which stopped being true when the chat
+              table started serving recordings. */}
+          <VodComments vodId={vod.id} />
 
           {related && related.length > 0 ? <VodRelated vods={related} /> : null}
 

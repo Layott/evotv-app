@@ -24,6 +24,13 @@ export interface CreatePollPayload {
   question: string;
   options: Array<{ id: string; label: string }>;
   closesAt: string;
+  /** Anyone with an account, or subscribers only. */
+  whoCanVote?: "signed_in" | "subscribers";
+  /** Off holds the totals back until the poll closes. */
+  showResultsLive?: boolean;
+  /** The result takes the picture at the close. */
+  showWinnerOnStream?: boolean;
+  allowVoteChange?: boolean;
 }
 
 /** POST /api/streams/[id]/polls - admin only. */
@@ -36,6 +43,18 @@ export async function createPoll(payload: CreatePollPayload): Promise<Poll> {
         question: payload.question,
         options: payload.options,
         closesAt: payload.closesAt,
+        /*
+         * The four decisions a poll carries, sent from here too.
+         *
+         * The website gained them and the app kept posting three fields, so a
+         * poll started from a phone silently reverted to "anyone with an
+         * account, totals visible, no winner card", which is not what the
+         * person starting it had in mind if they had used the other screen.
+         */
+        whoCanVote: payload.whoCanVote ?? "signed_in",
+        showResultsLive: payload.showResultsLive ?? true,
+        showWinnerOnStream: payload.showWinnerOnStream ?? false,
+        allowVoteChange: payload.allowVoteChange ?? false,
       },
     },
   );

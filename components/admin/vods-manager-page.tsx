@@ -59,6 +59,7 @@ import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 import { ContentTagsEditor, MaturityEditor } from "./content-meta-editors";
 import { formatCompact, formatDate } from "./utils";
@@ -210,6 +211,7 @@ export function VodsManagerPage() {
             </Button>
           }
         />
+        <HowTo page="library" />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
           <Search size={14} color="#9FBDBD" />

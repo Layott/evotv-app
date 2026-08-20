@@ -21,6 +21,7 @@ import { useTokens } from "@/lib/theme/tokens";
 
 import { ListState } from "./list-state";
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 import { formatDate, formatNgn } from "./utils";
 
@@ -144,6 +145,7 @@ export function SubscriptionsPage() {
           title="Subscriptions"
           description="Who is past the paywall and until when. Refunds happen in Paystack; this controls access periods."
         />
+        <HowTo page="subscriptions" />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-lg bg-card px-3">
           <Search size={14} color={t.muted} />

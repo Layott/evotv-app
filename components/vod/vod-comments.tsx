@@ -1,26 +1,30 @@
 import { Text, View } from "react-native";
-import { useTokens } from "@/lib/theme/tokens";
-import { MessageCircle, MessageSquare } from "@/components/icons";
+
+import { LiveChat } from "@/components/stream/live-chat";
 
 /**
- * Comments backend does not exist yet (no /api/vods/[id]/comments).
- * Render an honest coming-soon state instead of seeded fake threads.
- * Props signature kept so existing call sites compile unchanged.
+ * The conversation under a recording.
+ *
+ * This screen said "Comments are coming soon" because there was no endpoint
+ * behind it, which was honest and is no longer true: the backend serves a
+ * recording's chat from the same table, with the same rules, the same ban list
+ * and the same live feed as a broadcast.
+ *
+ * So it is the chat component, pointed at a VOD. A second implementation would
+ * have needed the rules, the bans and the moderation queue again, and would
+ * have drifted from the first within a week.
  */
-export function VodComments(_props: { vodId: string }) {
-  const palette = useTokens();
+export function VodComments({ vodId }: { vodId: string }) {
   return (
     <View>
-      <View className="mb-3 flex-row items-center gap-2">
-        <MessageCircle size={16} color={palette.muted} />
-        <Text className="text-lg font-semibold text-foreground">Comments</Text>
+      {/* A fixed height, because a thread that grows the page pushes the
+          related rail out of reach on a phone. */}
+      <View className="h-[26rem] overflow-hidden rounded-xl bg-card/40">
+        <LiveChat vodId={vodId} />
       </View>
-      <View className="items-center gap-2 rounded-xl border border-border bg-card/40 p-5">
-        <MessageSquare size={20} color={palette.muted} />
-        <Text className="text-sm text-muted-foreground">
-          Comments are coming soon.
-        </Text>
-      </View>
+      <Text className="mt-2 text-[11px] text-muted-foreground">
+        Long-press a comment to reply to it.
+      </Text>
     </View>
   );
 }

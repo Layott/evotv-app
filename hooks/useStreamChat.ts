@@ -1,4 +1,12 @@
 /**
+ * The chat feed for a broadcast or a recording.
+ *
+ * A recording used to have no chat at all: the VOD page said "Comments are
+ * coming soon" while the same table already held every message said during the
+ * broadcast. One hook serves both because the frames, the bans and the rules
+ * are the same on the server; only the path differs.
+ */
+/**
  * useStreamChat - native variant. Uses react-native-sse for EventSource on RN.
  *
  * Bootstraps with REST history then opens SSE for live deltas.
@@ -9,6 +17,7 @@ import * as React from "react";
 import EventSource from "react-native-sse";
 
 import { listInitialMessages, sendMessage as apiSendMessage, ChatPostError } from "@/lib/api/chat";
+import { chatSsePath, toChatTarget, type ChatTarget } from "@/lib/api/chat-target";
 import type { ChatMessage } from "@/lib/types";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? "http://localhost:3060";
@@ -64,12 +73,19 @@ function handleSseEvent(
 
 export interface UseStreamChatResult {
   messages: ChatMessage[];
-  send: (body: string) => Promise<void>;
+  /** `parentId` makes it a reply. Everything else is unchanged. */
+  send: (body: string, parentId?: string | null) => Promise<void>;
   status: "connecting" | "open" | "closed" | "error";
   error: string | null;
 }
 
-export function useStreamChat(streamId: string): UseStreamChatResult {
+export function useStreamChat(
+  target: ChatTarget | string,
+): UseStreamChatResult {
+  // A bare stream id still works: the stream screen passes one.
+  const resolved = toChatTarget(target);
+  const kind = resolved.kind;
+  const id = resolved.id;
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
   const [status, setStatus] = React.useState<UseStreamChatResult["status"]>("connecting");
   const [error, setError] = React.useState<string | null>(null);
@@ -82,7 +98,7 @@ export function useStreamChat(streamId: string): UseStreamChatResult {
 
     void (async () => {
       try {
-        const initial = await listInitialMessages(streamId);
+        const initial = await listInitialMessages({ kind, id });
         if (!cancelled) setMessages(initial);
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load chat");
@@ -90,7 +106,7 @@ export function useStreamChat(streamId: string): UseStreamChatResult {
     })();
 
     const connect = () => {
-      const url = `${BASE_URL}/api/sse/chat/${streamId}`;
+      const url = `${BASE_URL}${chatSsePath({ kind, id })}`;
       const es = new EventSource(url);
       sourceRef.current = es;
       setStatus("connecting");
@@ -126,16 +142,18 @@ export function useStreamChat(streamId: string): UseStreamChatResult {
       sourceRef.current = null;
       setStatus("closed");
     };
-  }, [streamId]);
+  }, [kind, id]);
 
   const send = React.useCallback(
-    async (body: string) => {
+    async (body: string, parentId?: string | null) => {
       const trimmed = body.trim();
       if (!trimmed) return;
       try {
         const optimistic: ChatMessage = {
           id: `local_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-          streamId,
+          streamId: kind === "stream" ? id : null,
+          vodId: kind === "vod" ? id : null,
+          parentId: parentId ?? null,
           userId: "self",
           userHandle: "you",
           userAvatarUrl: "",
@@ -146,7 +164,7 @@ export function useStreamChat(streamId: string): UseStreamChatResult {
           isPinned: false,
         };
         setMessages((prev) => [...prev, optimistic]);
-        const sent = await apiSendMessage(streamId, trimmed);
+        const sent = await apiSendMessage({ kind, id }, trimmed, parentId);
         setMessages((prev) =>
           prev.map((m) => (m.id === optimistic.id ? sent : m)),
         );
@@ -159,7 +177,7 @@ export function useStreamChat(streamId: string): UseStreamChatResult {
         throw err;
       }
     },
-    [streamId],
+    [kind, id],
   );
 
   return { messages, send, status, error };

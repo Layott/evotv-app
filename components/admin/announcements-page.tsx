@@ -26,6 +26,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useTokens } from "@/lib/theme/tokens";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 
 /**
  * Telling viewers something.
@@ -132,6 +133,7 @@ export function AnnouncementsPage() {
           title="Announcements"
           description="One message, three ways: the notification list, the app, and the browser. There is no unsend."
         />
+        <HowTo page="announcements" />
 
         <View className="rounded-2xl bg-card p-4">
           <Field label="Title">

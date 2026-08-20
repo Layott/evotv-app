@@ -18,6 +18,7 @@ import {
 import { DayPicker } from "./day-picker";
 import { MetricCard } from "./metric-card";
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { formatCompact, formatNgn, formatNumber } from "./utils";
 
 const DATE_RANGES = [
@@ -111,6 +112,7 @@ export function AnalyticsPage() {
         title="Analytics"
         description="Audience, retention and revenue signals."
       />
+      <HowTo page="analytics" />
 
       <Tabs value={range} onValueChange={setRange}>
         <TabsList className="mb-4">

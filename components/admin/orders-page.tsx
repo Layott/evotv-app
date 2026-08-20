@@ -10,6 +10,7 @@ import type { Order, OrderStatus } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 import { formatDateTime, formatNgn } from "./utils";
 
@@ -64,6 +65,7 @@ export function OrdersPage() {
           title="Orders"
           description="Customer orders, payments and refunds."
         />
+        <HowTo page="orders" />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
           <Search size={14} color="#9FBDBD" />

@@ -1,16 +1,18 @@
 /**
- * Chat API - backed by /api/streams/[id]/chat (REST) + /api/sse/chat/[streamId] (SSE).
+ * Chat, live and under a recording.
  *
  * Wire shape:
- *   - listInitialMessages(streamId)  GET  /api/streams/:id/chat → { messages: ChatMessage[] }
- *   - sendMessage(streamId, body)    POST /api/streams/:id/chat → ChatMessage
+ *   - listInitialMessages(target)      GET  /api/streams/:id/chat
+ *                                      GET  /api/vods/:id/chat     → { messages }
+ *   - sendMessage(target, body, parentId?)  POST the same paths     → { message }
  *
  * Realtime delivery lives in hooks/useStreamChat.ts via SSE.
- * Moderation tools (pin/delete/ban) live on lib/mock/chat until the partner
- * dashboard ships in Phase 3.
+ * Moderation tools (pin/delete/ban) live on the backend's own routes; the app
+ * has no moderator surface yet outside the partner screen.
  */
 
 import { api, ApiError } from "./_client";
+import { chatPath, toChatTarget, type ChatTarget } from "./chat-target";
 import type { ChatMessage } from "@/lib/types";
 
 interface ListResponse {
@@ -18,10 +20,10 @@ interface ListResponse {
 }
 
 export async function listInitialMessages(
-  streamId: string,
+  target: ChatTarget | string,
 ): Promise<ChatMessage[]> {
   try {
-    const res = await api<ListResponse>(`/api/streams/${streamId}/chat`);
+    const res = await api<ListResponse>(chatPath(toChatTarget(target)));
     return res.messages;
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) return [];
@@ -31,7 +33,13 @@ export async function listInitialMessages(
 
 export class ChatPostError extends Error {
   status: number;
-  code: "auth_required" | "stream_not_found" | "rate_limited" | "banned_word" | "invalid_body" | "unknown";
+  code:
+    | "auth_required"
+    | "stream_not_found"
+    | "rate_limited"
+    | "banned_word"
+    | "invalid_body"
+    | "unknown";
   constructor(status: number, code: ChatPostError["code"], message: string) {
     super(message);
     this.status = status;
@@ -44,21 +52,30 @@ interface SendResponse {
 }
 
 export async function sendMessage(
-  streamId: string,
+  target: ChatTarget | string,
   body: string,
+  parentId?: string | null,
 ): Promise<ChatMessage> {
   try {
-    const res = await api<SendResponse>(`/api/streams/${streamId}/chat`, {
+    const res = await api<SendResponse>(chatPath(toChatTarget(target)), {
       method: "POST",
-      body: { body },
+      body: parentId ? { body, parentId } : { body },
     });
     return res.message;
   } catch (err) {
     if (err instanceof ApiError) {
       if (err.status === 401)
         throw new ChatPostError(401, "auth_required", "Sign in to chat");
+      if (err.status === 403) {
+        const errBody = err.body as { error?: string } | null;
+        throw new ChatPostError(
+          403,
+          "banned_word",
+          errBody?.error ?? "You are banned from chat",
+        );
+      }
       if (err.status === 404)
-        throw new ChatPostError(404, "stream_not_found", "Stream not found");
+        throw new ChatPostError(404, "stream_not_found", "Not found");
       if (err.status === 429)
         throw new ChatPostError(
           429,

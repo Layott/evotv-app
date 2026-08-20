@@ -43,6 +43,7 @@ import { Input } from "@/components/ui/input";
 import type { MaturityRating } from "@/lib/types";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { ContentTagsEditor, MaturityEditor } from "./content-meta-editors";
@@ -287,6 +288,7 @@ export function StreamsManagerPage() {
           title="Streams"
           description="Read-only browse - stream keys + create + rotate via dedicated screens later."
         />
+        <HowTo page="streams" />
 
         <SectionLinks parent="/admin/streams" />
 

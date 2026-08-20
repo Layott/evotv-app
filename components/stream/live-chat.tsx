@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "expo-image";
-import { Send, Users } from "@/components/icons";
+import { Send, Users, X } from "@/components/icons";
 import { toast } from "sonner-native";
 
 import type { ChatMessage, Role } from "@/lib/types";
@@ -19,8 +19,16 @@ import { cn } from "@/lib/utils";
 
 const CHAR_LIMIT = 400;
 
+/**
+ * The chat, live or under a recording.
+ *
+ * It took a `streamId` and nothing else, so a recording had no conversation at
+ * all. Same component, same rules, same bans: the only difference is which id
+ * it is pointed at, and whether the header says the feed is live.
+ */
 interface LiveChatProps {
-  streamId: string;
+  streamId?: string;
+  vodId?: string;
   className?: string;
 }
 
@@ -37,12 +45,19 @@ function roleColor(role: Role): string {
 
 interface RowProps {
   msg: ChatMessage;
+  onReply: (msg: ChatMessage) => void;
+  canReply: boolean;
 }
 
-function MessageRow({ msg }: RowProps) {
+function MessageRow({ msg, onReply, canReply }: RowProps) {
   const palette = useTokens();
+  const parent = msg.parent;
   return (
-    <View className="flex-row items-start gap-2 px-3 py-1.5">
+    <Pressable
+      onLongPress={canReply ? () => onReply(msg) : undefined}
+      delayLongPress={220}
+      className="flex-row items-start gap-2 px-3 py-1.5 active:opacity-70"
+    >
       <View
         style={{
           width: 24,
@@ -61,6 +76,18 @@ function MessageRow({ msg }: RowProps) {
         ) : null}
       </View>
       <View className="flex-1">
+        {/* The quoted line, so a reply reads on its own once the message it
+            answers has scrolled away. */}
+        {parent ? (
+          <View className="mb-0.5 rounded-md bg-card/70 px-2 py-1">
+            <Text className="text-[11px]" numberOfLines={1}>
+              <Text style={{ color: palette.brand, fontWeight: "600" }}>
+                {parent.userHandle ?? "someone"}
+              </Text>
+              <Text className="text-muted-foreground">{`  ${parent.body}`}</Text>
+            </Text>
+          </View>
+        ) : null}
         <Text className="text-[13px]">
           <Text
             style={{
@@ -70,18 +97,28 @@ function MessageRow({ msg }: RowProps) {
           >
             {msg.userHandle}
           </Text>
-          <Text className="text-neutral-300">{`  ${msg.body}`}</Text>
+          <Text className="text-neutral-300">
+            {`  ${msg.isDeleted ? "[message removed]" : msg.body}`}
+          </Text>
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
-export function LiveChat({ streamId, className }: LiveChatProps) {
+export function LiveChat({ streamId, vodId, className }: LiveChatProps) {
   const palette = useTokens();
   const { user } = useAuth();
-  const { messages, send, status } = useStreamChat(streamId);
+  const target = React.useMemo(
+    () =>
+      vodId
+        ? ({ kind: "vod", id: vodId } as const)
+        : ({ kind: "stream", id: streamId ?? "" } as const),
+    [streamId, vodId],
+  );
+  const { messages, send, status } = useStreamChat(target);
   const [input, setInput] = React.useState("");
+  const [replyTo, setReplyTo] = React.useState<ChatMessage | null>(null);
   const listRef = React.useRef<FlatList<ChatMessage>>(null);
   const stuckToBottom = React.useRef(true);
 
@@ -99,10 +136,14 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
       toast.error("Sign in to chat");
       return;
     }
+    const parentId = replyTo?.id ?? null;
     setInput("");
+    setReplyTo(null);
     stuckToBottom.current = true;
     try {
-      await send(body);
+      // A local id never existed on the server, so replying to a message that
+      // has not come back yet would be rejected. Send it as an ordinary one.
+      await send(body, parentId && !parentId.startsWith("local_") ? parentId : null);
     } catch (err) {
       if (err instanceof ChatPostError) {
         toast.error(err.message);
@@ -112,8 +153,9 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
     }
   };
 
-  const statusLabel =
-    status === "open"
+  const statusLabel = vodId
+    ? `${messages.length} ${messages.length === 1 ? "comment" : "comments"}`
+    : status === "open"
       ? "Live"
       : status === "connecting"
         ? "Connecting…"
@@ -124,13 +166,11 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
   return (
     <View className={cn("flex-1 bg-background", className)}>
       {/* Header */}
-      <View
-        className="flex-row items-center justify-between border-b border-border px-3 py-2"
-      >
+      <View className="flex-row items-center justify-between px-3 py-2">
         <View className="flex-row items-center gap-2">
           <Users size={16} color={palette.fg} />
           <Text className="text-sm font-semibold text-foreground">
-            Stream Chat
+            {vodId ? "Comments" : "Stream Chat"}
           </Text>
           <Text className="text-[10px] text-muted-foreground">· {statusLabel}</Text>
         </View>
@@ -141,7 +181,9 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
         ref={listRef}
         data={messages}
         keyExtractor={(m) => m.id}
-        renderItem={({ item }) => <MessageRow msg={item} />}
+        renderItem={({ item }) => (
+          <MessageRow msg={item} onReply={setReplyTo} canReply={!!user} />
+        )}
         contentContainerStyle={{ paddingVertical: 4 }}
         onScroll={(e) => {
           const { contentOffset, contentSize, layoutMeasurement } =
@@ -154,24 +196,54 @@ export function LiveChat({ streamId, className }: LiveChatProps) {
         ListEmptyComponent={
           <View className="items-center justify-center py-8">
             <Text className="text-xs text-muted-foreground">
-              Chat is warming up...
+              {vodId ? "No comments yet. Say the first thing." : "Chat is warming up..."}
             </Text>
           </View>
         }
       />
 
       {/* Input */}
-      <View className="border-t border-border p-2">
+      <View className="p-2">
+        {/* What you are answering, with a way out of it. Long-press a message
+            to get here; there is no hover on a phone to hide a Reply button
+            behind. */}
+        {replyTo ? (
+          <View className="mb-2 flex-row items-center gap-2 rounded-md bg-card px-2 py-1.5">
+            <View className="flex-1">
+              <Text className="text-[11px]" numberOfLines={1}>
+                <Text style={{ color: palette.brand, fontWeight: "600" }}>
+                  {`Replying to ${replyTo.userHandle}`}
+                </Text>
+                <Text className="text-muted-foreground">{`  ${replyTo.body}`}</Text>
+              </Text>
+            </View>
+            <Pressable
+              onPress={() => setReplyTo(null)}
+              accessibilityLabel="Cancel reply"
+              hitSlop={8}
+            >
+              <X size={14} color={palette.muted} />
+            </Pressable>
+          </View>
+        ) : null}
         <View className="flex-row items-center gap-2">
           <TextInput
             value={input}
             onChangeText={(text) => setInput(text.slice(0, CHAR_LIMIT))}
-            placeholder={user ? "Send a message" : "Sign in to chat"}
+            placeholder={
+              user
+                ? replyTo
+                  ? "Write a reply"
+                  : vodId
+                    ? "Add a comment"
+                    : "Send a message"
+                : "Sign in to chat"
+            }
             placeholderTextColor={palette.muted}
             editable={!!user}
             onSubmitEditing={handleSend}
             returnKeyType="send"
-            className="h-9 flex-1 rounded-md border border-border bg-card px-3 text-sm text-foreground"
+            className="h-9 flex-1 rounded-md bg-card px-3 text-sm text-foreground"
           />
           <Pressable
             onPress={handleSend}

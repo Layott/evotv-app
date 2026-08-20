@@ -56,6 +56,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 import { formatDate, formatNgn, formatNumber } from "./utils";
 
@@ -181,6 +182,7 @@ export function ContentManagerPage() {
             ) : null
           }
         />
+        <HowTo page="content" />
 
         <Tabs value={tab} onValueChange={(v) => setTab(v as ContentTab)}>
           <TabsList className="mb-3">

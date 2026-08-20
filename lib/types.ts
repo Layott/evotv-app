@@ -365,7 +365,19 @@ export interface Clip {
 
 export interface ChatMessage {
   id: UUID;
-  streamId: UUID;
+  /** Null under a recording. One of the two is always set. */
+  streamId: UUID | null;
+  vodId?: UUID | null;
+  /** The message this one answers, if any. */
+  parentId?: UUID | null;
+  /**
+   * The parent as the server resolved it, so a reply reads on its own.
+   *
+   * Quoting the id would make the app fetch a message it may never show, and
+   * quoting the body the client happens to hold would mean a reply to
+   * something scrolled away has nothing to quote.
+   */
+  parent?: { id: UUID; userHandle: string | null; body: string } | null;
   userId: UUID;
   userHandle: string;
   userAvatarUrl: string;

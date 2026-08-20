@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { SectionLinks } from "./section-links";
 
 const EMAIL_TEMPLATES: Record<string, { label: string; body: string }> = {
@@ -70,6 +71,7 @@ export function AdminSettingsPage() {
           title="Settings"
           description="Feature flags, branding and email templates."
         />
+        <HowTo page="settings" />
 
         <SectionLinks parent="/admin/settings" />
 

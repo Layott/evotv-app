@@ -31,6 +31,7 @@ import { ImageWithFallback } from "@/components/common/image-with-fallback";
 import { ListState } from "./list-state";
 import { MetricCard } from "./metric-card";
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 import { formatCompact, formatNgn, formatNumber, timeAgo } from "./utils";
 
@@ -203,6 +204,7 @@ export function OverviewPage() {
         title="Overview"
         description="Operational snapshot across streams, subscriptions and revenue."
       />
+      <HowTo page="overview" />
 
       <View className="gap-3">
         <View className="flex-row gap-3">

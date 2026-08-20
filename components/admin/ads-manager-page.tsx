@@ -29,6 +29,8 @@ import {
 } from "@/components/ui/dialog";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
+import { ChannelBreaksCard } from "./channel-breaks-card";
 import { StatusBadge } from "./status-badge";
 import { formatDate, formatNumber } from "./utils";
 
@@ -141,6 +143,7 @@ export function AdsManagerPage() {
             </Button>
           }
         />
+        <HowTo page="ads" />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
           <Search size={14} color="#9FBDBD" />
@@ -287,6 +290,12 @@ export function AdsManagerPage() {
             })}
           </>
         )}
+
+        {/* When the on-air cards show, how often, and which of them. Same
+            endpoint as the website's Ads page, so the two cannot disagree. */}
+        <View className="mt-6">
+          <ChannelBreaksCard />
+        </View>
       </ScrollView>
 
       {(editing || createOpen) && (

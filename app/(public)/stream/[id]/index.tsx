@@ -28,10 +28,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HLSPlayer } from "@/components/stream/hls-player";
 import { LiveChat } from "@/components/stream/live-chat";
+import { ChannelOverlayHost } from "@/components/stream/channel-overlay-host";
+import { getMainChannel } from "@/lib/api/channel";
 import { ReportButton } from "@/components/common/report-button";
 import { useAuth } from "@/components/providers";
 import { useStreamHeartbeat } from "@/hooks/useStreamHeartbeat";
 import type { Stream } from "@/lib/types";
+
+/** `HH:MM` on the device's clock, which is the channel's clock in Lagos. */
+function clock(iso: string): string {
+  return format(new Date(iso), "HH:mm");
+}
 
 function formatViewers(count: number): string {
   if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
@@ -83,6 +90,20 @@ export default function StreamScreen() {
     qc.invalidateQueries({ queryKey: ["stream", streamId] });
   }, [qc, streamId]);
   useStreamHeartbeat(stream?.id, !!stream?.isLive, onHeartbeatAck);
+
+  /*
+   * What is on and what follows, for the on-air cards.
+   *
+   * Only while something is actually live: a recording has no "up next", and
+   * asking for the guide on every VOD open would be a request per screen for
+   * an answer nothing draws.
+   */
+  const guide = useQuery({
+    queryKey: ["channel", "main"],
+    queryFn: () => getMainChannel(),
+    enabled: !!stream?.isLive,
+    staleTime: 60_000,
+  });
 
   if (isLoading) {
     return (
@@ -136,6 +157,29 @@ export default function StreamScreen() {
    */
   const gated = Boolean(stream.requiresAuth) && !stream.hlsUrl;
 
+  // Nothing is written per show: the words come straight off the guide, so a
+  // programme added this afternoon is announced tonight with nothing redrawn.
+  const onNow = guide.data?.onNow ?? null;
+  const upNext = guide.data?.upNext ?? [];
+  const nowNext = {
+    now: onNow ? { title: onNow.title, subtitle: onNow.subtitle } : null,
+    next: upNext[0]
+      ? {
+          title: upNext[0].title,
+          startLabel: clock(upNext[0].airsAt),
+          airsAt: upNext[0].airsAt,
+          subtitle: upNext[0].subtitle,
+          durationMin: upNext[0].durationMin,
+          pillar: upNext[0].pillar,
+          posterUrl: upNext[0].thumbnailUrl || undefined,
+        }
+      : null,
+    lineup: upNext.slice(0, 4).map((row) => ({
+      startLabel: clock(row.airsAt),
+      title: row.title,
+    })),
+  };
+
   const playerBlock = (
     <View className="relative bg-black">
       {gated ? (
@@ -179,6 +223,10 @@ export default function StreamScreen() {
       >
         <ArrowLeft color="#FFFFFF" size={20} />
       </Pressable>
+      {/* The channel's own furniture: a lower third while a programme runs and
+          a full-screen card before the next one starts. Timings come from the
+          dashboard, so the app and the site announce the same thing. */}
+      {stream.isLive ? <ChannelOverlayHost nowNext={nowNext} /> : null}
       {stream.isLive ? (
         <View className="absolute left-3 bottom-3 flex-row items-center gap-1.5 rounded bg-red-600/90 px-2 py-1">
           <View className="size-1.5 rounded-full bg-white" />

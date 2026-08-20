@@ -50,6 +50,10 @@ export function PollsManagerPage() {
       question: string;
       options: string[];
       durationMinutes: number;
+      whoCanVote: "signed_in" | "subscribers";
+      showResultsLive: boolean;
+      showWinnerOnStream: boolean;
+      allowVoteChange: boolean;
     }) =>
       createPoll({
         streamId: payload.streamId,
@@ -61,6 +65,10 @@ export function PollsManagerPage() {
         closesAt: new Date(
           Date.now() + payload.durationMinutes * 60_000,
         ).toISOString(),
+        whoCanVote: payload.whoCanVote,
+        showResultsLive: payload.showResultsLive,
+        showWinnerOnStream: payload.showWinnerOnStream,
+        allowVoteChange: payload.allowVoteChange,
       }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["admin-polls"] });
@@ -275,12 +283,27 @@ function CreatePollDrawer({
     question: string;
     options: string[];
     durationMinutes: number;
+    whoCanVote: "signed_in" | "subscribers";
+    showResultsLive: boolean;
+    showWinnerOnStream: boolean;
+    allowVoteChange: boolean;
   }) => void;
 }) {
   const [streamId, setStreamId] = React.useState(liveStreams[0]?.id ?? "");
   const [question, setQuestion] = React.useState("");
   const [options, setOptions] = React.useState<string[]>(["", ""]);
   const [duration, setDuration] = React.useState(5);
+  /*
+   * The same four decisions the website offers.
+   *
+   * Without them a poll started from a phone quietly reverted to "anyone with
+   * an account, totals visible, no winner card", which is not what somebody who
+   * had used the other screen would expect.
+   */
+  const [whoCanVote, setWhoCanVote] = React.useState<"signed_in" | "subscribers">("signed_in");
+  const [showResultsLive, setShowResultsLive] = React.useState(true);
+  const [showWinnerOnStream, setShowWinnerOnStream] = React.useState(false);
+  const [allowVoteChange, setAllowVoteChange] = React.useState(false);
 
   React.useEffect(() => {
     if (open) {
@@ -288,6 +311,10 @@ function CreatePollDrawer({
       setQuestion("");
       setOptions(["", ""]);
       setDuration(5);
+      setWhoCanVote("signed_in");
+      setShowResultsLive(true);
+      setShowWinnerOnStream(false);
+      setAllowVoteChange(false);
     }
   }, [open, liveStreams]);
 
@@ -425,6 +452,59 @@ function CreatePollDrawer({
               ))}
             </View>
 
+            <Text className="mb-1.5 mt-4 text-xs text-muted-foreground">
+              Who can vote
+            </Text>
+            <View className="flex-row gap-1.5">
+              {(
+                [
+                  ["signed_in", "Anyone with an account"],
+                  ["subscribers", "Subscribers only"],
+                ] as const
+              ).map(([value, label]) => (
+                <Pressable
+                  key={value}
+                  onPress={() => setWhoCanVote(value)}
+                  className={`flex-1 rounded-md px-3 py-2 ${
+                    whoCanVote === value ? "bg-cyan-500/20" : "bg-card"
+                  }`}
+                >
+                  <Text
+                    className={`text-xs ${
+                      whoCanVote === value ? "text-cyan-300" : "text-muted-foreground"
+                    }`}
+                  >
+                    {label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            {(
+              [
+                ["Show the totals while it runs", showResultsLive, setShowResultsLive],
+                ["Put the winner on screen", showWinnerOnStream, setShowWinnerOnStream],
+                ["Let people change their mind", allowVoteChange, setAllowVoteChange],
+              ] as const
+            ).map(([label, value, setter]) => (
+              <Pressable
+                key={label}
+                onPress={() => setter(!value)}
+                className="mt-2 flex-row items-center justify-between rounded-md bg-card px-3 py-2.5"
+              >
+                <Text className="flex-1 pr-3 text-xs text-foreground">{label}</Text>
+                <View
+                  className={`h-6 w-10 justify-center rounded-full px-0.5 ${
+                    value ? "bg-cyan-500" : "bg-muted"
+                  }`}
+                >
+                  <View
+                    className={`h-5 w-5 rounded-full bg-white ${value ? "self-end" : "self-start"}`}
+                  />
+                </View>
+              </Pressable>
+            ))}
+
             <View className="mt-5 flex-row gap-2">
               <Button variant="outline" className="flex-1" onPress={onClose}>
                 <Text className="text-sm text-foreground">Cancel</Text>
@@ -438,6 +518,10 @@ function CreatePollDrawer({
                     question: question.trim(),
                     options: validOptions,
                     durationMinutes: duration,
+                    whoCanVote,
+                    showResultsLive,
+                    showWinnerOnStream,
+                    allowVoteChange,
                   })
                 }
               >

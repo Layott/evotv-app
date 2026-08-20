@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
+import { ChatRulesPanel } from "./chat-rules-panel";
 import { PageHeader } from "./page-header";
 import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
@@ -31,6 +32,15 @@ const STATUS_TABS: { value: ReportStatus; label: string }[] = [
   { value: "resolved", label: "Resolved" },
   { value: "dismissed", label: "Dismissed" },
 ];
+
+/**
+ * The rules sit beside the reports on purpose.
+ *
+ * A report is somebody complaining after the fact; the rules are what stops the
+ * next one. Putting them on another screen means the person clearing a queue of
+ * scam links never finds the switch that would have caught them.
+ */
+type ModerationTab = ReportStatus | "rules";
 
 function categoryTone(c: string): "red" | "amber" | "blue" | "neutral" {
   if (c === "csam" || c === "illegal" || c === "abuse") return "red";
@@ -181,7 +191,7 @@ function targetHref(r: ContentReport): string | null {
 export function ModerationPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [status, setStatus] = React.useState<ReportStatus>("open");
+  const [status, setStatus] = React.useState<ModerationTab>("open");
   const [selectMode, setSelectMode] = React.useState(false);
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
 
@@ -218,7 +228,10 @@ export function ModerationPage() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-reports", status],
-    queryFn: () => listAdminReports({ status, limit: 100 }),
+    // The rules tab has no report list behind it, so it must not ask for one.
+    queryFn: () =>
+      listAdminReports({ status: status as ReportStatus, limit: 100 }),
+    enabled: status !== "rules",
     staleTime: 30_000,
   });
 
@@ -257,7 +270,7 @@ export function ModerationPage() {
         <SectionLinks parent="/admin/moderation" />
 
         <View className="mb-3 flex-row gap-2">
-          {STATUS_TABS.map((t) => (
+          {[...STATUS_TABS, { value: "rules" as const, label: "Rules" }].map((t) => (
             <Pressable
               key={t.value}
               onPress={() => setStatus(t.value)}
@@ -278,7 +291,9 @@ export function ModerationPage() {
           ))}
         </View>
 
-        {status === "open" ? (
+        {status === "rules" ? (
+          <ChatRulesPanel />
+        ) : status === "open" ? (
           <View className="mb-3 flex-row items-center gap-2">
             <Pressable
               onPress={() => {

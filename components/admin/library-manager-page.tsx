@@ -60,6 +60,7 @@ import { useTokens } from "@/lib/theme/tokens";
 
 import { ListState } from "./list-state";
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { formatDate } from "./utils";
@@ -275,6 +276,7 @@ export function LibraryManagerPage() {
             ) : null
           }
         />
+        <HowTo page="library" />
 
         <SectionLinks parent="/admin/library" />
 

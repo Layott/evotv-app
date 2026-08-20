@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 import { formatDate, formatNumber } from "./utils";
 
@@ -141,6 +142,7 @@ export function AdsManagerPage() {
             </Button>
           }
         />
+        <HowTo page="ads" />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
           <Search size={14} color="#9FBDBD" />

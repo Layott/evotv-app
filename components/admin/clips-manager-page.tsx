@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 import { ContentTagsEditor, MaturityEditor } from "./content-meta-editors";
 import { formatCompact, timeAgo } from "./utils";
@@ -137,6 +138,7 @@ export function ClipsManagerPage() {
           title="Clips"
           description="User-generated short clips. Filter for deleted to restore."
         />
+        <HowTo page="library" />
 
         <View className="mb-3 flex-row items-center gap-2 rounded-md border border-border bg-card px-3">
           <Search size={14} color="#9FBDBD" />

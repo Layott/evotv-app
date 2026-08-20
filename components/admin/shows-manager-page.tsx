@@ -50,6 +50,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 
 /**
@@ -102,6 +103,7 @@ export function ShowsManagerPage() {
             </Button>
           }
         />
+        <HowTo page="shows" />
 
         {showsQ.isLoading ? (
           <View className="items-center py-12">

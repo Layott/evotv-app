@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 import { formatNumber, timeAgo } from "./utils";
 
@@ -113,6 +114,7 @@ export function PollsManagerPage() {
             </Button>
           }
         />
+        <HowTo page="polls" />
 
         {pollsQuery.isLoading ? (
           <View className="items-center py-12">

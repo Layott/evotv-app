@@ -23,6 +23,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 import { ChatRulesPanel } from "./chat-rules-panel";
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { timeAgo } from "./utils";
@@ -266,6 +267,7 @@ export function ModerationPage() {
           title="Moderation"
           description="User-submitted reports against streams, VODs, clips, users, chat messages."
         />
+        <HowTo page="moderation" />
 
         <SectionLinks parent="/admin/moderation" />
 

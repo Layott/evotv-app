@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { SectionLinks } from "./section-links";
 import { StatusBadge } from "./status-badge";
 import { formatDate, timeAgo } from "./utils";
@@ -162,6 +163,7 @@ export function UsersRolesPage() {
           title="Users & roles"
           description="Search accounts, manage roles."
         />
+        <HowTo page="users" />
 
         <SectionLinks parent="/admin/users" />
 

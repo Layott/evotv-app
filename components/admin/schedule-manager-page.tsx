@@ -60,6 +60,7 @@ import {
 } from "@/components/ui/select";
 
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 import { timeAgo } from "./utils";
 
@@ -602,6 +603,7 @@ export function ScheduleManagerPage() {
           title="Schedule"
           description="Program the channel guide: pick a day, manage airtimes, and put new shows on the air."
         />
+        <HowTo page="schedule" />
 
         {/* Section 1: Guide */}
         <SectionTitle

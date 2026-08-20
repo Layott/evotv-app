@@ -26,6 +26,7 @@ import type { SubscriptionStatus } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "./page-header";
+import { HowTo } from "./how-to";
 import { StatusBadge } from "./status-badge";
 import { formatNgn, formatDateTime } from "./utils";
 
@@ -134,6 +135,7 @@ export function AdminBillingPage() {
             </Button>
           }
         />
+        <HowTo page="billing" />
 
         {/* Revenue cards */}
         <View className="mb-4 flex-row flex-wrap gap-2">

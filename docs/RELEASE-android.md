@@ -107,3 +107,31 @@ config plugin, `plugins/with-phone-abis.js`, so prebuild produces the right
 list wherever it runs.
 
 Check the number the release prints before walking away from it.
+
+## Merges publish themselves
+
+`.github/workflows/ota.yml` runs on every push to `main`. A JS-only merge is
+typechecked and pushed as an OTA to the `preview` channel with the commit
+subject as its message, so a fix reaches phones without anybody remembering to
+send it.
+
+Set by the owner on 20 August 2026, after the VOD comment thread shipped to
+nobody: the fix was merged, correct, and on no phone, because publishing was a
+thing a person had to decide to do.
+
+**What it will not do.** If the merge touches `app.json`, `app.config.*`,
+`eas.json`, `package.json`, `pnpm-lock.yaml`, `android/`, `ios/` or `plugins/`,
+it stops and says so in the run summary. Those decide what the binary contains,
+and an OTA would hand an installed app a bundle expecting native code it does
+not have. That case is still `pnpm release:android`.
+
+**Escape hatch.** Put `[skip ota]` in the merge subject.
+
+**It needs one secret**, set once:
+
+```
+gh secret set EXPO_TOKEN --repo Layott/evotv-app
+```
+
+The same robot token `.publish.env` holds. Without it the run fails loudly
+rather than quietly doing nothing.

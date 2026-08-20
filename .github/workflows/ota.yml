@@ -1,0 +1,115 @@
+# Every merge to main reaches phones on its own.
+#
+# The website has deployed itself from `main` since August; the app did not, so
+# a fix could sit merged and correct while every phone still ran the last build.
+# That is how the VOD comment thread shipped to nobody on 20 August, and how the
+# question "is this on my phone yet" became something a person had to remember
+# to ask.
+#
+# JS-only changes go out as an OTA on the same channel the last build listens
+# on. Anything that changes native code cannot: the job says so and stops,
+# rather than pushing a bundle that expects native modules the installed binary
+# does not have. That case needs `pnpm release:android`, which builds on EAS and
+# hands the website the same artifact.
+name: OTA on merge
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - ".github/**"
+
+# A burst of merges should publish the last state once, not each of them in turn.
+concurrency:
+  group: ota-main
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    # `[skip ota]` anywhere in the subject is the escape hatch for a merge that
+    # is deliberately not for phones yet.
+    if: ${{ !contains(github.event.head_commit.message, '[skip ota]') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Two commits, so the native-change check has something to diff against.
+          fetch-depth: 2
+
+      - name: Decide whether this can be an OTA at all
+        id: kind
+        run: |
+          # An OTA replaces the JavaScript bundle and nothing else. These files
+          # decide what the binary itself contains, so a change to any of them
+          # means the installed app is the wrong shape for the new bundle.
+          changed=$(git diff --name-only HEAD^ HEAD || true)
+          echo "$changed"
+          if echo "$changed" | grep -qE '^(app\.json|app\.config\.[jt]s|eas\.json|package\.json|pnpm-lock\.yaml|android/|ios/|plugins/)'; then
+            echo "native=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "native=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Say why this needs a build, not an update
+        if: steps.kind.outputs.native == 'true'
+        run: |
+          {
+            echo "### Not published as an OTA"
+            echo
+            echo "This merge touches something that decides what the binary contains"
+            echo "(app config, dependencies, or native directories). An OTA would hand"
+            echo "installed apps a bundle expecting native code they do not have."
+            echo
+            echo "Run \`pnpm release:android\` to build on EAS, publish that same"
+            echo "artifact to the website, and push the update with it."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: pnpm/action-setup@v4
+        if: steps.kind.outputs.native == 'false'
+
+      - uses: actions/setup-node@v4
+        if: steps.kind.outputs.native == 'false'
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        if: steps.kind.outputs.native == 'false'
+        run: pnpm install --frozen-lockfile
+
+      # The gate that stops a broken bundle reaching phones. There is no staging
+      # channel between here and a viewer's device, so this is the only one.
+      - name: Typecheck
+        if: steps.kind.outputs.native == 'false'
+        run: pnpm typecheck
+
+      - name: Publish the update
+        if: steps.kind.outputs.native == 'false'
+        env:
+          # Set once with: gh secret set EXPO_TOKEN --repo Layott/evotv-app
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "EXPO_TOKEN is not set on this repository, so nothing can be published." >&2
+            echo "Set it with: gh secret set EXPO_TOKEN --repo Layott/evotv-app" >&2
+            exit 1
+          fi
+          # `preview` is the channel the shipped builds listen on. It is the
+          # profile `pnpm release:android` uses, and the two must not drift.
+          pnpm exec eas update \
+            --channel preview \
+            --message "$(git log -1 --format=%s)" \
+            --non-interactive
+
+      - name: Say what went out
+        if: steps.kind.outputs.native == 'false'
+        run: |
+          {
+            echo "### Published to channel \`preview\`"
+            echo
+            echo "\`$(git log -1 --format='%h %s')\`"
+            echo
+            echo "Phones on runtime 0.1.0 pick it up on next launch."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -107,12 +107,11 @@ jobs:
           fi
           # `preview` is the channel the shipped builds listen on. It is the
           # profile `pnpm release:android` uses, and the two must not drift.
-          # `pnpm exec eas` works on the owner's machine because eas-cli is
-          # installed globally there. It is not a dependency of this repo, so
-          # a clean CI install has no such command. Fetched per run and pinned,
-          # so a release of the CLI cannot change what this job does without
-          # somebody choosing it.
-          pnpm dlx eas-cli@18.12.3 update \
+          # eas-cli is a devDependency, so this is the same binary at the same
+          # version the release script runs on the owner's machine. It used to
+          # be a global install there and nothing here, which is how the first
+          # run with a real token died on `Command "eas" not found`.
+          pnpm exec eas update \
             --channel preview \
             --message "$(git log -1 --format=%s)" \
             --non-interactive

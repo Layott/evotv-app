@@ -125,10 +125,11 @@ it stops and says so in the run summary. Those decide what the binary contains,
 and an OTA would hand an installed app a bundle expecting native code it does
 not have. That case is still `pnpm release:android`.
 
-**The CLI is fetched per run**, pinned with `pnpm dlx eas-cli@18.12.3`.
-`pnpm exec eas` works locally only because eas-cli is installed globally on
-the owner's machine; it is not a dependency of this repo, so CI has no such
-command.
+**The CLI is a devDependency**, so `pnpm exec eas` is the same binary at the
+same version here and in CI, pinned by `pnpm-lock.yaml` rather than by two
+hand-typed version numbers. It used to be a global install on the owner's
+machine and nothing in the repo, which is how the first CI run with a real
+token died on `Command "eas" not found`.
 
 **Escape hatch.** Put `[skip ota]` in the merge subject.
 
